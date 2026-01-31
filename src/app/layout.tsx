@@ -6,6 +6,7 @@ import { Footer } from "@/components/layout/Footer";
 import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { isRtl, type Locale } from '@/i18n/config';
+import { WalletProvider } from '@/lib/wallet';
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -30,11 +31,13 @@ export default async function RootLayout({
     <html lang={locale} dir={rtl ? 'rtl' : 'ltr'} className="dark">
       <body className={`${inter.className} bg-gray-950 text-white min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages}>
-          <Header />
-          <main className="flex-1">
-            {children}
-          </main>
-          <Footer />
+          <WalletProvider>
+            <Header />
+            <main className="flex-1">
+              {children}
+            </main>
+            <Footer />
+          </WalletProvider>
         </NextIntlClientProvider>
       </body>
     </html>

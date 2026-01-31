@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 
-// GET /api/tokens/[address] - получить токен по адресу
+// GET /api/tokens/[address] - получить токен по адресу или ID
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
@@ -9,7 +9,8 @@ export async function GET(
   try {
     const { address } = await params
 
-    const project = await prisma.project.findUnique({
+    // Сначала ищем по tokenAddress, потом по ID
+    let project = await prisma.project.findUnique({
       where: { tokenAddress: address },
       include: {
         owner: {
@@ -28,6 +29,29 @@ export async function GET(
         },
       },
     })
+
+    // Если не найден по адресу, ищем по ID
+    if (!project) {
+      project = await prisma.project.findUnique({
+        where: { id: address },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              username: true,
+              walletAddress: true,
+            },
+          },
+          metrics: {
+            orderBy: { date: 'desc' },
+            take: 30,
+          },
+          riskFlags: {
+            where: { isActive: true },
+          },
+        },
+      })
+    }
 
     if (!project) {
       return NextResponse.json(
