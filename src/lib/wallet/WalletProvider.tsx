@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useCallback, useEffect, type ReactNode } from 'react'
 import type { WalletContextType, WalletState } from './types'
 import { AXIOME_CHAIN } from './chain'
+import { isValidAxiomeAddress, isMobileDevice } from './axiome-connect'
 
 const initialState: WalletState = {
   isConnected: false,
@@ -12,83 +13,90 @@ const initialState: WalletState = {
   error: null,
 }
 
-const WalletContext = createContext<WalletContextType | null>(null)
+interface ExtendedWalletContext extends WalletContextType {
+  connectionMethod: 'keplr' | 'manual' | null
+  showConnectionModal: boolean
+  setShowConnectionModal: (show: boolean) => void
+  connectWithKeplr: () => Promise<void>
+  connectWithAddress: (address: string) => void
+  hasKeplr: boolean
+}
+
+const WalletContext = createContext<ExtendedWalletContext | null>(null)
+
+const STORAGE_KEY = 'axiome_wallet'
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WalletState>(initialState)
+  const [connectionMethod, setConnectionMethod] = useState<'keplr' | 'manual' | null>(null)
+  const [showConnectionModal, setShowConnectionModal] = useState(false)
+  const [hasKeplr, setHasKeplr] = useState(false)
 
-  // Check if Keplr is available
-  const getKeplr = useCallback(() => {
-    if (typeof window === 'undefined') return null
-    return window.keplr
+  // Check for Keplr on mount
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHasKeplr(!!window.keplr)
+    }
   }, [])
 
-  // Restore connection from localStorage
+  // Restore session from localStorage
   useEffect(() => {
-    const savedAddress = localStorage.getItem('wallet_address')
-    const savedName = localStorage.getItem('wallet_name')
+    if (typeof window === 'undefined') return
 
-    if (savedAddress) {
-      // Verify connection is still valid
-      const keplr = getKeplr()
-      if (keplr) {
-        keplr.getKey(AXIOME_CHAIN.chainId)
-          .then((key) => {
-            if (key.bech32Address === savedAddress) {
-              setState({
-                isConnected: true,
-                isConnecting: false,
-                address: savedAddress,
-                name: savedName || key.name,
-                error: null,
-              })
-            } else {
-              // Address changed, clear storage
-              localStorage.removeItem('wallet_address')
-              localStorage.removeItem('wallet_name')
-            }
-          })
-          .catch(() => {
-            // Connection no longer valid
-            localStorage.removeItem('wallet_address')
-            localStorage.removeItem('wallet_name')
-          })
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (!saved) return
+
+    try {
+      const { address, name, method } = JSON.parse(saved)
+      if (address && isValidAxiomeAddress(address)) {
+        setState({
+          isConnected: true,
+          isConnecting: false,
+          address,
+          name: name || null,
+          error: null,
+        })
+        setConnectionMethod(method || 'manual')
       }
+    } catch {
+      localStorage.removeItem(STORAGE_KEY)
     }
-  }, [getKeplr])
+  }, [])
 
-  // Listen for account changes
+  // Listen for Keplr account changes
   useEffect(() => {
+    if (typeof window === 'undefined' || !window.keplr) return
+    if (connectionMethod !== 'keplr') return
+
     const handleAccountChange = () => {
-      const keplr = getKeplr()
-      if (keplr && state.isConnected) {
-        keplr.getKey(AXIOME_CHAIN.chainId)
-          .then((key) => {
-            setState(prev => ({
-              ...prev,
-              address: key.bech32Address,
-              name: key.name,
-            }))
-            localStorage.setItem('wallet_address', key.bech32Address)
-            localStorage.setItem('wallet_name', key.name)
-          })
-          .catch(console.error)
-      }
+      window.keplr?.getKey(AXIOME_CHAIN.chainId)
+        .then((key) => {
+          setState(prev => ({
+            ...prev,
+            address: key.bech32Address,
+            name: key.name,
+          }))
+          saveSession(key.bech32Address, key.name, 'keplr')
+        })
+        .catch(console.error)
     }
 
     window.addEventListener('keplr_keystorechange', handleAccountChange)
     return () => window.removeEventListener('keplr_keystorechange', handleAccountChange)
-  }, [getKeplr, state.isConnected])
+  }, [connectionMethod])
 
-  const connect = useCallback(async () => {
-    const keplr = getKeplr()
+  const saveSession = (address: string, name: string | null, method: 'keplr' | 'manual') => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ address, name, method }))
+  }
+
+  const connectWithKeplr = useCallback(async () => {
+    const keplr = window.keplr
 
     if (!keplr) {
       setState(prev => ({
         ...prev,
-        error: 'Please install Keplr wallet extension',
+        error: 'Keplr wallet not found. Please install the extension.',
       }))
-      // Open Keplr installation page
       window.open('https://www.keplr.app/download', '_blank')
       return
     }
@@ -96,7 +104,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setState(prev => ({ ...prev, isConnecting: true, error: null }))
 
     try {
-      // Try to enable the chain, suggest it if not already added
+      // Try to enable the chain
       try {
         await keplr.enable(AXIOME_CHAIN.chainId)
       } catch {
@@ -125,34 +133,80 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         error: null,
       })
 
-      // Save to localStorage
-      localStorage.setItem('wallet_address', key.bech32Address)
-      localStorage.setItem('wallet_name', key.name)
+      setConnectionMethod('keplr')
+      saveSession(key.bech32Address, key.name, 'keplr')
+      setShowConnectionModal(false)
 
     } catch (error) {
-      console.error('Failed to connect wallet:', error)
+      console.error('Keplr connection failed:', error)
       setState(prev => ({
         ...prev,
         isConnecting: false,
-        error: error instanceof Error ? error.message : 'Failed to connect wallet',
+        error: error instanceof Error ? error.message : 'Failed to connect with Keplr',
       }))
     }
-  }, [getKeplr])
+  }, [])
+
+  const connectWithAddress = useCallback((address: string) => {
+    const trimmedAddress = address.trim()
+
+    if (!isValidAxiomeAddress(trimmedAddress)) {
+      setState(prev => ({
+        ...prev,
+        error: 'Invalid Axiome address. Address should start with "axm" and be 42 characters.',
+      }))
+      return
+    }
+
+    setState({
+      isConnected: true,
+      isConnecting: false,
+      address: trimmedAddress,
+      name: null,
+      error: null,
+    })
+
+    setConnectionMethod('manual')
+    saveSession(trimmedAddress, null, 'manual')
+    setShowConnectionModal(false)
+  }, [])
+
+  const connect = useCallback(async () => {
+    // If on mobile or no Keplr, show modal
+    // If has Keplr, try Keplr first
+    if (hasKeplr && !isMobileDevice()) {
+      await connectWithKeplr()
+    } else {
+      setShowConnectionModal(true)
+    }
+  }, [hasKeplr, connectWithKeplr])
 
   const disconnect = useCallback(() => {
     setState(initialState)
-    localStorage.removeItem('wallet_address')
-    localStorage.removeItem('wallet_name')
+    setConnectionMethod(null)
+    localStorage.removeItem(STORAGE_KEY)
   }, [])
 
   return (
-    <WalletContext.Provider value={{ ...state, connect, disconnect }}>
+    <WalletContext.Provider
+      value={{
+        ...state,
+        connect,
+        disconnect,
+        connectionMethod,
+        showConnectionModal,
+        setShowConnectionModal,
+        connectWithKeplr,
+        connectWithAddress,
+        hasKeplr,
+      }}
+    >
       {children}
     </WalletContext.Provider>
   )
 }
 
-export function useWallet(): WalletContextType {
+export function useWallet(): ExtendedWalletContext {
   const context = useContext(WalletContext)
   if (!context) {
     throw new Error('useWallet must be used within a WalletProvider')

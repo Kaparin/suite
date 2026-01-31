@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { isRtl, type Locale } from '@/i18n/config';
 import { WalletProvider } from '@/lib/wallet';
+import { ConnectWalletModal } from '@/components/wallet';
 
 const inter = Inter({
   subsets: ["latin", "cyrillic"],
@@ -37,6 +38,7 @@ export default async function RootLayout({
               {children}
             </main>
             <Footer />
+            <ConnectWalletModal />
           </WalletProvider>
         </NextIntlClientProvider>
       </body>

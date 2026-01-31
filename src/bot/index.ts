@@ -47,7 +47,7 @@ bot.command('start', async (ctx) => {
     .text('📊 Top Tokens', 'top')
     .text('🆕 New Tokens', 'new')
     .row()
-    .url('🌐 Open Website', 'https://axiome-launch.vercel.app')
+    .url('🌐 Open Website', 'https://suite-1.vercel.app')
 
   await ctx.reply(
     `🌌 *Welcome to Axiome Launch Suite!*
@@ -133,7 +133,7 @@ bot.command('token', async (ctx) => {
       : `⚠️ ${riskCount} risk flag(s)`
 
     const keyboard = new InlineKeyboard()
-      .url('📄 View Landing', `https://axiome-launch.vercel.app/t/${address}`)
+      .url('📄 View Landing', `https://suite-1.vercel.app/t/${address}`)
       .row()
       .url('💱 Buy/Sell', `https://app.axiometrade.pro/swap?token=${address}`)
 
@@ -297,7 +297,7 @@ What's the name of your token project?`,
 bot.callbackQuery('explorer', async (ctx) => {
   await ctx.answerCallbackQuery()
   const keyboard = new InlineKeyboard()
-    .url('🔍 Open Explorer', 'https://axiome-launch.vercel.app/explorer')
+    .url('🔍 Open Explorer', 'https://suite-1.vercel.app/explorer')
 
   await ctx.reply('Open the Explorer to browse all tokens:', { reply_markup: keyboard })
 })
@@ -374,7 +374,7 @@ Send "skip" to skip this step.`,
       })
 
       const keyboard = new InlineKeyboard()
-        .url('🚀 Generate with AI', `https://axiome-launch.vercel.app/studio?${params}`)
+        .url('🚀 Generate with AI', `https://suite-1.vercel.app/studio?${params}`)
 
       await ctx.reply(
         `🎉 *All set!*
