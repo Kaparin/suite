@@ -399,13 +399,3 @@ bot.catch((err) => {
 })
 
 export { bot }
-
-// Start bot function
-export async function startBot() {
-  console.log('🤖 Starting Telegram bot...')
-  await bot.start({
-    onStart: (botInfo) => {
-      console.log(`✅ Bot @${botInfo.username} is running!`)
-    }
-  })
-}
