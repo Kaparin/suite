@@ -1,0 +1,116 @@
+{
+  "common": {
+    "connectWallet": "连接钱包",
+    "createToken": "创建代币",
+    "exploreTokens": "探索代币",
+    "startBuilding": "开始构建",
+    "learnMore": "了解更多"
+  },
+  "nav": {
+    "home": "首页",
+    "explorer": "浏览器",
+    "studio": "工作室"
+  },
+  "home": {
+    "hero": {
+      "title": "在 Axiome 上启动您的代币",
+      "subtitle": "AI驱动的代币工作室、自动生成的着陆页、实时分析和风险评分——尽在一个宇宙平台。",
+      "cta": "开始旅程"
+    },
+    "features": {
+      "title": "启动所需的一切",
+      "studio": {
+        "title": "AI 代币工作室",
+        "description": "描述您的想法，获得由AI生成的完整代币经济学、描述、常见问题和启动计划。"
+      },
+      "landing": {
+        "title": "自动着陆页",
+        "description": "即时获得精美的项目页面。展示代币经济学、链接和链上指标——无需编码。"
+      },
+      "explorer": {
+        "title": "浏览器与评级",
+        "description": "通过风险评分发现新代币。一目了然地查看活动、持有者分布和警告标志。"
+      }
+    },
+    "cta": {
+      "title": "准备启动？",
+      "subtitle": "加入 Axiome 生态系统。借助AI在几分钟内创建您的代币项目。"
+    }
+  },
+  "explorer": {
+    "title": "代币浏览器",
+    "subtitle": "在 Axiome 上探索代币。检查评级、活动和风险标志。",
+    "search": "按名称、代号或地址搜索...",
+    "columns": {
+      "token": "代币",
+      "score": "评分",
+      "age": "年龄",
+      "holders": "持有者",
+      "volume": "24小时交易量",
+      "flags": "标志"
+    },
+    "noResults": "未找到匹配的代币。",
+    "clean": "安全"
+  },
+  "studio": {
+    "title": "代币工作室",
+    "subtitle": "描述您的代币想法，让AI生成启动所需的一切。",
+    "form": {
+      "title": "告诉我们您的代币",
+      "description": "填写详细信息，我们的AI将生成描述、代币经济学等。",
+      "projectName": "项目名称",
+      "projectNamePlaceholder": "例如：Moon Finance",
+      "idea": "您的代币想法是什么？",
+      "ideaPlaceholder": "描述您的代币做什么、解决什么问题或是什么使其独特...",
+      "audience": "目标受众",
+      "audiencePlaceholder": "例如：DeFi用户、NFT收藏家、游戏玩家...",
+      "utilities": "实用性/用例（可选）",
+      "utilitiesPlaceholder": "持有者可以用您的代币做什么？质押、治理、折扣...",
+      "tone": "语调",
+      "toneSerious": "专业/严肃",
+      "toneFun": "有趣/表情包风格",
+      "language": "语言",
+      "generate": "生成代币包"
+    },
+    "results": {
+      "description": "描述",
+      "tokenomics": "代币经济学",
+      "launchPlan": "启动计划",
+      "faq": "常见问题",
+      "promo": "推广",
+      "shortDesc": "简短描述",
+      "fullDesc": "完整描述",
+      "totalSupply": "总供应量",
+      "distribution": "分配",
+      "vesting": "归属期",
+      "telegramPost": "Telegram 帖子",
+      "twitterPost": "Twitter 帖子"
+    },
+    "createToken": {
+      "title": "准备创建代币？",
+      "subtitle": "在 Axiome Token Lab 中创建代币，然后返回发布您的着陆页。",
+      "edit": "编辑",
+      "openTokenLab": "打开 Token Lab"
+    }
+  },
+  "token": {
+    "buy": "购买",
+    "sell": "出售",
+    "holders": "持有者",
+    "volume24h": "24小时交易量",
+    "transactions": "交易",
+    "trustScore": "信任评分",
+    "riskAssessment": "风险评估",
+    "noRiskFlags": "未检测到风险标志。此代币看起来安全。",
+    "about": "关于",
+    "tokenomics": "代币经济学",
+    "totalSupply": "总供应量",
+    "links": "链接",
+    "contract": "合约",
+    "createdOn": "创建于",
+    "disclaimer": "这不是财务建议。投资前请务必自行研究。"
+  },
+  "footer": {
+    "disclaimer": "非财务建议。投资前请自行研究。"
+  }
+}

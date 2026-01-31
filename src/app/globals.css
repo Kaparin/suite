@@ -1,0 +1,138 @@
+@import "tailwindcss";
+
+:root {
+  --background: #030712;
+  --foreground: #f9fafb;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-inter);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(17, 24, 39, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.5);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.7);
+}
+
+/* Radial gradient utility */
+.bg-gradient-radial {
+  background: radial-gradient(circle at center, var(--tw-gradient-stops));
+}
+
+/* Glow effects */
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(147, 51, 234, 0.5);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+}
+
+/* Animate in utilities */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slide-in-from-top {
+  from { transform: translateY(-10px); }
+  to { transform: translateY(0); }
+}
+
+.animate-in {
+  animation-duration: 0.2s;
+  animation-fill-mode: both;
+}
+
+.fade-in {
+  animation-name: fade-in;
+}
+
+.slide-in-from-top-2 {
+  animation-name: slide-in-from-top;
+}
+
+/* Glass effect */
+.glass {
+  background: rgba(17, 24, 39, 0.7);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(75, 85, 99, 0.3);
+}
+
+/* Selection color */
+::selection {
+  background: rgba(59, 130, 246, 0.4);
+  color: white;
+}
+
+/* RTL support */
+[dir="rtl"] .rtl\:space-x-reverse > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-x-reverse: 1;
+}
+
+/* Remove background and shadow from hero logo */
+section img[alt="Axiome Launch Suite"],
+section img[alt="Axiome Launch Suite"] ~ *,
+section img[alt="Axiome Launch Suite"] + * {
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* Proportional flame glow margins */
+.flame-glow-outer {
+  margin-top: -178px; /* Mobile: 0.64x of desktop + 50px */
+}
+
+@media (min-width: 640px) {
+  .flame-glow-outer {
+    margin-top: -210px; /* Tablet: 0.8x of desktop + 50px */
+  }
+}
+
+@media (min-width: 768px) {
+  .flame-glow-outer {
+    margin-top: -250px; /* Desktop: 1x + 50px */
+  }
+}
+
+.flame-glow-inner {
+  margin-top: -150px; /* Mobile: 0.625x of desktop + 50px */
+}
+
+@media (min-width: 640px) {
+  .flame-glow-inner {
+    margin-top: -175px; /* Tablet: 0.78x of desktop + 50px */
+  }
+}
+
+@media (min-width: 768px) {
+  .flame-glow-inner {
+    margin-top: -210px; /* Desktop: 1x + 50px */
+  }
+}

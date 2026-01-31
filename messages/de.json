@@ -1,0 +1,116 @@
+{
+  "common": {
+    "connectWallet": "Wallet verbinden",
+    "createToken": "Token erstellen",
+    "exploreTokens": "Token erkunden",
+    "startBuilding": "Jetzt starten",
+    "learnMore": "Mehr erfahren"
+  },
+  "nav": {
+    "home": "Startseite",
+    "explorer": "Explorer",
+    "studio": "Studio"
+  },
+  "home": {
+    "hero": {
+      "title": "Starte deinen Token auf Axiome",
+      "subtitle": "KI-gestütztes Token-Studio, automatische Landing Pages, Echtzeit-Analysen und Risikobewertung — alles in einer kosmischen Plattform.",
+      "cta": "Reise beginnen"
+    },
+    "features": {
+      "title": "Alles was du zum Launch brauchst",
+      "studio": {
+        "title": "KI Token Studio",
+        "description": "Beschreibe deine Idee und erhalte komplette Tokenomics, Beschreibungen, FAQ und Launch-Plan von der KI."
+      },
+      "landing": {
+        "title": "Auto Landing Pages",
+        "description": "Erhalte sofort eine schöne Projektseite. Zeige Tokenomics, Links und On-Chain-Metriken — ohne Code."
+      },
+      "explorer": {
+        "title": "Explorer & Bewertungen",
+        "description": "Entdecke neue Token mit Risikobewertung. Sieh Aktivität, Holder-Verteilung und Warnflags."
+      }
+    },
+    "cta": {
+      "title": "Bereit zum Launch?",
+      "subtitle": "Tritt dem Axiome-Ökosystem bei. Erstelle dein Token-Projekt in Minuten mit KI-Unterstützung."
+    }
+  },
+  "explorer": {
+    "title": "Token Explorer",
+    "subtitle": "Entdecke Token auf Axiome. Prüfe Bewertungen, Aktivität und Risikoflags.",
+    "search": "Suche nach Name, Ticker oder Adresse...",
+    "columns": {
+      "token": "Token",
+      "score": "Score",
+      "age": "Alter",
+      "holders": "Holder",
+      "volume": "Volumen 24h",
+      "flags": "Flags"
+    },
+    "noResults": "Keine Token gefunden.",
+    "clean": "Sauber"
+  },
+  "studio": {
+    "title": "Token Studio",
+    "subtitle": "Beschreibe deine Token-Idee und lass die KI alles für den Launch generieren.",
+    "form": {
+      "title": "Erzähl uns von deinem Token",
+      "description": "Fülle die Details aus und unsere KI generiert Beschreibungen, Tokenomics und mehr.",
+      "projectName": "Projektname",
+      "projectNamePlaceholder": "z.B. Moon Finance",
+      "idea": "Was ist deine Token-Idee?",
+      "ideaPlaceholder": "Beschreibe, was dein Token macht, welches Problem er löst oder was ihn einzigartig macht...",
+      "audience": "Zielgruppe",
+      "audiencePlaceholder": "z.B. DeFi-Nutzer, NFT-Sammler, Gamer...",
+      "utilities": "Nutzen / Anwendungsfälle (optional)",
+      "utilitiesPlaceholder": "Was können Holder mit deinem Token machen? Staking, Governance, Rabatte...",
+      "tone": "Ton",
+      "toneSerious": "Professionell / Seriös",
+      "toneFun": "Lustig / Meme-Stil",
+      "language": "Sprache",
+      "generate": "Token-Paket generieren"
+    },
+    "results": {
+      "description": "Beschreibung",
+      "tokenomics": "Tokenomics",
+      "launchPlan": "Launch-Plan",
+      "faq": "FAQ",
+      "promo": "Promo",
+      "shortDesc": "Kurzbeschreibung",
+      "fullDesc": "Vollständige Beschreibung",
+      "totalSupply": "Gesamtangebot",
+      "distribution": "Verteilung",
+      "vesting": "Vesting",
+      "telegramPost": "Telegram Post",
+      "twitterPost": "Twitter Post"
+    },
+    "createToken": {
+      "title": "Bereit deinen Token zu erstellen?",
+      "subtitle": "Erstelle deinen Token im Axiome Token Lab, dann komm zurück um deine Landing Page zu veröffentlichen.",
+      "edit": "Bearbeiten",
+      "openTokenLab": "Token Lab öffnen"
+    }
+  },
+  "token": {
+    "buy": "Kaufen",
+    "sell": "Verkaufen",
+    "holders": "Holder",
+    "volume24h": "Volumen 24h",
+    "transactions": "Transaktionen",
+    "trustScore": "Vertrauensscore",
+    "riskAssessment": "Risikobewertung",
+    "noRiskFlags": "Keine Risikoflags erkannt. Dieser Token erscheint sicher.",
+    "about": "Über",
+    "tokenomics": "Tokenomics",
+    "totalSupply": "Gesamtangebot",
+    "links": "Links",
+    "contract": "Vertrag",
+    "createdOn": "Erstellt am",
+    "disclaimer": "Dies ist keine Finanzberatung. Recherchiere immer selbst vor einer Investition."
+  },
+  "footer": {
+    "disclaimer": "Keine Finanzberatung. DYOR vor jeder Investition."
+  }
+}

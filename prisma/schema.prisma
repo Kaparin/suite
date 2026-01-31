@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// Пользователи (Telegram + кошелёк)
+model User {
+  id            String    @id @default(cuid())
+  telegramId    String?   @unique
+  walletAddress String?   @unique
+  username      String?
+  plan          Plan      @default(FREE)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  projects      Project[]
+  aiGenerations AiGeneration[]
+
+  @@map("users")
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+// Проекты токенов
+model Project {
+  id               String        @id @default(cuid())
+  ownerId          String
+  owner            User          @relation(fields: [ownerId], references: [id])
+
+  tokenAddress     String?       @unique
+  name             String
+  ticker           String
+  logo             String?
+
+  descriptionShort String?
+  descriptionLong  String?       @db.Text
+
+  // JSON поля
+  links            Json?         // { telegram, twitter, website, discord }
+  tokenomics       Json?         // { supply, distribution, vesting, tax }
+  launchPlan       Json?         // план запуска
+  faq              Json?         // вопросы-ответы
+  promoTexts       Json?         // тексты для постов
+
+  status           ProjectStatus @default(DRAFT)
+  isFeatured       Boolean       @default(false)
+  isVerified       Boolean       @default(false)
+
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+
+  metrics          TokenMetric[]
+  riskFlags        RiskFlag[]
+
+  @@map("projects")
+}
+
+enum ProjectStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+// Ежедневные метрики токенов
+model TokenMetric {
+  id              String   @id @default(cuid())
+  projectId       String
+  project         Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  date            DateTime @db.Date
+  txCount         Int      @default(0)
+  volumeEstimate  Float    @default(0)
+  holdersEstimate Int      @default(0)
+  priceUsd        Float?
+
+  createdAt       DateTime @default(now())
+
+  @@unique([projectId, date])
+  @@map("token_metrics")
+}
+
+// Флаги риска для токенов
+model RiskFlag {
+  id        String       @id @default(cuid())
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  flagType  RiskFlagType
+  severity  Severity     @default(MEDIUM)
+  details   Json?
+  isActive  Boolean      @default(true)
+
+  createdAt DateTime     @default(now())
+
+  @@map("risk_flags")
+}
+
+enum RiskFlagType {
+  TOO_NEW              // слишком новый
+  NO_SOCIALS           // нет соцсетей
+  HIGH_CONCENTRATION   // высокая концентрация у топ-холдеров
+  LOW_LIQUIDITY        // низкая ликвидность
+  SUDDEN_PUMP          // резкий памп
+  SUDDEN_DUMP          // резкий дамп
+  HONEYPOT_SUSPECT     // подозрение на honeypot
+  UNLOCKED_SUPPLY      // незалоченный supply
+}
+
+enum Severity {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+// AI генерации (для кэширования и лимитов)
+model AiGeneration {
+  id         String           @id @default(cuid())
+  userId     String
+  user       User             @relation(fields: [userId], references: [id])
+
+  type       AiGenerationType
+  promptHash String           // для кэширования
+  input      Json             // входные данные
+  result     Json             // результат генерации
+  model      String           // какая модель использовалась
+
+  createdAt  DateTime         @default(now())
+
+  @@index([promptHash])
+  @@map("ai_generations")
+}
+
+enum AiGenerationType {
+  TOKENOMICS
+  DESCRIPTION
+  FAQ
+  LAUNCH_PLAN
+  PROMO
+  FULL_PACKAGE
+}
+
+// Подписки на алерты (для бота)
+model AlertSubscription {
+  id            String    @id @default(cuid())
+  telegramId    String
+
+  alertType     AlertType
+  tokenAddress  String?   // для подписки на конкретный токен
+  isActive      Boolean   @default(true)
+
+  createdAt     DateTime  @default(now())
+
+  @@unique([telegramId, alertType, tokenAddress])
+  @@map("alert_subscriptions")
+}
+
+enum AlertType {
+  NEW_TOKEN
+  VOLUME_SPIKE
+  PRICE_CHANGE
+  RISK_FLAG
+  TOKEN_UPDATE
+}
