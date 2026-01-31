@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx prisma:*)",
+      "Bash(npm run build:*)",
+      "Bash(start cmd /c \"npm run dev\")",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\nInitial commit: Axiome Launch Suite MVP\n\nFeatures:\n- AI Token Studio with GPT-4o-mini integration\n- Auto-generated landing pages for tokens\n- Token Explorer with risk scoring\n- Multi-language support \\(EN, RU, DE, ZH, HE\\)\n- Cosmic UI with animations \\(framer-motion\\)\n- Telegram bot integration\n- Axiome blockchain indexer\n- PostgreSQL database \\(Prisma + Supabase\\)\n\nCo-Authored-By: Claude Opus 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git remote add:*)",
+      "Bash(git push:*)",
+      "Bash(git remote set-url:*)",
+      "Bash(git commit:*)"
+    ]
+  }
+}
