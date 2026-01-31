@@ -1,5 +1,6 @@
 import { Bot, Context, session, SessionFlavor, InlineKeyboard } from 'grammy'
 import { prisma } from '@/lib/prisma'
+import type { Project, TokenMetric, RiskFlag } from '@prisma/client'
 
 // Session data
 interface SessionData {
@@ -13,6 +14,20 @@ interface SessionData {
 }
 
 type MyContext = Context & SessionFlavor<SessionData>
+
+// Types for projects with relations
+type ProjectWithMetricsAndFlags = Project & {
+  metrics: TokenMetric[]
+  riskFlags: RiskFlag[]
+}
+
+type ProjectWithFlags = Project & {
+  riskFlags: RiskFlag[]
+}
+
+type ProjectWithScore = ProjectWithMetricsAndFlags & {
+  score: number
+}
 
 const bot = new Bot<MyContext>(process.env.TELEGRAM_BOT_TOKEN!)
 
@@ -150,7 +165,7 @@ ${riskText}
 // /top - Show top tokens
 bot.command('top', async (ctx) => {
   try {
-    const projects = await prisma.project.findMany({
+    const projects: ProjectWithMetricsAndFlags[] = await prisma.project.findMany({
       where: { status: 'PUBLISHED' },
       include: {
         metrics: { orderBy: { date: 'desc' }, take: 1 },
@@ -165,10 +180,8 @@ bot.command('top', async (ctx) => {
     }
 
     // Sort by score
-    type ProjectWithRelations = typeof projects[number]
-    type ProjectWithScore = ProjectWithRelations & { score: number }
-    const sorted = projects
-      .map((p: ProjectWithRelations): ProjectWithScore => ({
+    const sorted: ProjectWithScore[] = projects
+      .map((p: ProjectWithMetricsAndFlags): ProjectWithScore => ({
         ...p,
         score: Math.max(0, Math.min(100, 100 - p.riskFlags.length * 15 +
           ((p.metrics[0]?.txCount || 0) > 100 ? 5 : 0)))
@@ -176,7 +189,7 @@ bot.command('top', async (ctx) => {
       .sort((a: ProjectWithScore, b: ProjectWithScore) => b.score - a.score)
 
     const list = sorted
-      .map((p, i) => {
+      .map((p: ProjectWithScore, i: number) => {
         const emoji = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}.`
         const scoreEmoji = p.score >= 80 ? '🟢' : p.score >= 50 ? '🟡' : '🔴'
         return `${emoji} *${p.name}* ($${p.ticker}) ${scoreEmoji} ${p.score}`
@@ -196,7 +209,7 @@ bot.command('top', async (ctx) => {
 // /new - Show newest tokens
 bot.command('new', async (ctx) => {
   try {
-    const projects = await prisma.project.findMany({
+    const projects: ProjectWithFlags[] = await prisma.project.findMany({
       where: { status: 'PUBLISHED' },
       orderBy: { createdAt: 'desc' },
       take: 10,
@@ -211,7 +224,7 @@ bot.command('new', async (ctx) => {
     }
 
     const list = projects
-      .map(p => {
+      .map((p: ProjectWithFlags) => {
         const age = Math.floor((Date.now() - p.createdAt.getTime()) / (1000 * 60 * 60 * 24))
         const ageText = age === 0 ? 'today' : `${age}d ago`
         return `🆕 *${p.name}* ($${p.ticker}) - ${ageText}`
