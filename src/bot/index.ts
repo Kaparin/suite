@@ -166,13 +166,14 @@ bot.command('top', async (ctx) => {
 
     // Sort by score
     type ProjectWithRelations = typeof projects[number]
+    type ProjectWithScore = ProjectWithRelations & { score: number }
     const sorted = projects
-      .map((p: ProjectWithRelations) => ({
+      .map((p: ProjectWithRelations): ProjectWithScore => ({
         ...p,
         score: Math.max(0, Math.min(100, 100 - p.riskFlags.length * 15 +
           ((p.metrics[0]?.txCount || 0) > 100 ? 5 : 0)))
       }))
-      .sort((a, b) => b.score - a.score)
+      .sort((a: ProjectWithScore, b: ProjectWithScore) => b.score - a.score)
 
     const list = sorted
       .map((p, i) => {
