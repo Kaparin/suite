@@ -12,7 +12,14 @@
       "Bash(git remote set-url:*)",
       "Bash(git commit:*)",
       "WebSearch",
-      "WebFetch(domain:docs.axiomeinfo.org)"
+      "WebFetch(domain:docs.axiomeinfo.org)",
+      "WebFetch(domain:axiomechain.org)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:apps.apple.com)",
+      "WebFetch(domain:axiome.pro)",
+      "WebFetch(domain:rest.axiome.pro)",
+      "Bash(git restore:*)"
     ]
   }
 }

@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
     // Get user's projects
     const projects = await prisma.project.findMany({
-      where: { creatorId: user.id },
+      where: { ownerId: user.id },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
