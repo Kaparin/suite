@@ -4,12 +4,10 @@ import { createContext, useContext, useState, useCallback, useEffect, type React
 import type { WalletState } from './types'
 import { isValidAxiomeAddress } from './axiome-connect'
 
-const initialState: WalletState = {
-  isConnected: false,
-  isConnecting: false,
-  address: null,
-  name: null,
-  error: null,
+interface BalanceInfo {
+  axm: string
+  isLoading: boolean
+  error: string | null
 }
 
 interface WalletContextType extends WalletState {
@@ -18,6 +16,22 @@ interface WalletContextType extends WalletState {
   showConnectionModal: boolean
   setShowConnectionModal: (show: boolean) => void
   connectWithAddress: (address: string) => void
+  balance: BalanceInfo
+  refreshBalance: () => Promise<void>
+}
+
+const initialState: WalletState = {
+  isConnected: false,
+  isConnecting: false,
+  address: null,
+  name: null,
+  error: null,
+}
+
+const initialBalance: BalanceInfo = {
+  axm: '0',
+  isLoading: false,
+  error: null,
 }
 
 const WalletContext = createContext<WalletContextType | null>(null)
@@ -27,6 +41,41 @@ const STORAGE_KEY = 'axiome_wallet'
 export function WalletProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<WalletState>(initialState)
   const [showConnectionModal, setShowConnectionModal] = useState(false)
+  const [balance, setBalance] = useState<BalanceInfo>(initialBalance)
+
+  // Fetch balance from API
+  const fetchBalance = useCallback(async (address: string) => {
+    setBalance(prev => ({ ...prev, isLoading: true, error: null }))
+
+    try {
+      const response = await fetch(`/api/wallet/balance?address=${address}`)
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch balance')
+      }
+
+      setBalance({
+        axm: data.axm?.displayAmount || '0',
+        isLoading: false,
+        error: null,
+      })
+    } catch (error) {
+      console.error('Error fetching balance:', error)
+      setBalance(prev => ({
+        ...prev,
+        isLoading: false,
+        error: error instanceof Error ? error.message : 'Failed to fetch balance',
+      }))
+    }
+  }, [])
+
+  // Refresh balance manually
+  const refreshBalance = useCallback(async () => {
+    if (state.address) {
+      await fetchBalance(state.address)
+    }
+  }, [state.address, fetchBalance])
 
   // Restore session from localStorage
   useEffect(() => {
@@ -50,6 +99,26 @@ export function WalletProvider({ children }: { children: ReactNode }) {
       localStorage.removeItem(STORAGE_KEY)
     }
   }, [])
+
+  // Fetch balance when address changes
+  useEffect(() => {
+    if (state.address) {
+      fetchBalance(state.address)
+    } else {
+      setBalance(initialBalance)
+    }
+  }, [state.address, fetchBalance])
+
+  // Auto-refresh balance every 30 seconds
+  useEffect(() => {
+    if (!state.address) return
+
+    const interval = setInterval(() => {
+      fetchBalance(state.address!)
+    }, 30000)
+
+    return () => clearInterval(interval)
+  }, [state.address, fetchBalance])
 
   const saveSession = (address: string, name: string | null) => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify({ address, name }))
@@ -84,6 +153,7 @@ export function WalletProvider({ children }: { children: ReactNode }) {
 
   const disconnect = useCallback(() => {
     setState(initialState)
+    setBalance(initialBalance)
     localStorage.removeItem(STORAGE_KEY)
   }, [])
 
@@ -96,6 +166,8 @@ export function WalletProvider({ children }: { children: ReactNode }) {
         showConnectionModal,
         setShowConnectionModal,
         connectWithAddress,
+        balance,
+        refreshBalance,
       }}
     >
       {children}
