@@ -209,7 +209,7 @@ export function Header() {
                             My Dashboard
                           </Link>
                           <a
-                            href={`https://explorer.axiome.pro/account/${address}`}
+                            href={`https://axiomechain.org/account/${address}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"

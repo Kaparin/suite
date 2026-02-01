@@ -1,6 +1,11 @@
 // Axiome blockchain client using public REST API
+// Configure AXIOME_REST_URL environment variable with your node's REST endpoint
 
-const REST_URL = process.env.AXIOME_REST_URL || 'https://rest.axiome.pro'
+const REST_URL = process.env.AXIOME_REST_URL
+
+if (!REST_URL) {
+  console.warn('AXIOME_REST_URL not configured - blockchain features will be unavailable')
+}
 
 export interface TokenInfo {
   address: string
@@ -25,13 +30,17 @@ export interface Transaction {
 }
 
 class AxiomeClient {
-  private baseUrl: string
+  private baseUrl: string | undefined
 
-  constructor(baseUrl: string = REST_URL) {
-    this.baseUrl = baseUrl
+  constructor(baseUrl?: string) {
+    this.baseUrl = baseUrl || REST_URL
   }
 
   private async fetch<T>(endpoint: string): Promise<T> {
+    if (!this.baseUrl) {
+      throw new Error('AXIOME_REST_URL not configured')
+    }
+
     const response = await fetch(`${this.baseUrl}${endpoint}`, {
       headers: {
         'Content-Type': 'application/json',

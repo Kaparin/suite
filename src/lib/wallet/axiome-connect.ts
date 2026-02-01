@@ -191,7 +191,7 @@ export function getQRCodeData(deepLink: string): string {
   return deepLink
 }
 
-// App store links
-export const AXIOME_WALLET_IOS = 'https://apps.apple.com/app/axiome-wallet/id6449446721'
+// App store links (verified)
+export const AXIOME_WALLET_IOS = 'https://apps.apple.com/app/axiome-wallet/id6502285079'
 export const AXIOME_WALLET_ANDROID = 'https://play.google.com/store/apps/details?id=club.relounge.axiomewallet'
-export const AXIOME_WALLET_TESTFLIGHT = 'https://testflight.apple.com/join/AxiomeWallet'
+export const AXIOME_WALLET_TESTFLIGHT = 'https://testflight.apple.com/join/Bjz0XZ5v'

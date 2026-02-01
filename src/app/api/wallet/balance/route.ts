@@ -14,6 +14,20 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: 'Invalid address format' }, { status: 400 })
   }
 
+  // Check if REST API is configured
+  if (!process.env.AXIOME_REST_URL) {
+    // Return mock balance when API not configured
+    return NextResponse.json({
+      address,
+      balances: [],
+      axm: {
+        amount: '0',
+        displayAmount: '-.--'
+      },
+      warning: 'Blockchain API not configured'
+    })
+  }
+
   try {
     const balances = await axiomeClient.getBalances(address)
 
