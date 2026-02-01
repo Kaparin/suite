@@ -107,6 +107,7 @@ export function useTransaction() {
 
     const payload = buildCW20TransferPayload({
       contractAddress: params.contractAddress,
+      sender: address,
       recipient: params.recipient,
       amount: params.amount
     })
@@ -130,6 +131,7 @@ export function useTransaction() {
     }
 
     const payload = buildSendPayload({
+      sender: address,
       recipient: params.recipient,
       amount: params.amount
     })
@@ -157,6 +159,7 @@ export function useTransaction() {
 
     const payload = buildExecutePayload({
       contractAddress: params.contractAddress,
+      sender: address,
       msg: params.msg,
       funds: params.funds
     })

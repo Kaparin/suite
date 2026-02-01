@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 
-export type TransactionType = 'send' | 'receive' | 'contract' | 'instantiate'
+export type TransactionType = 'send' | 'receive' | 'contract' | 'instantiate' | 'delegate' | 'undelegate'
 export type TransactionStatus = 'success' | 'failed'
 
 export interface Transaction {

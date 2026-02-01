@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 
 const REST_URL = process.env.AXIOME_REST_URL
 
-type TransactionType = 'send' | 'receive' | 'contract' | 'instantiate'
+type TransactionType = 'send' | 'receive' | 'contract' | 'instantiate' | 'delegate' | 'undelegate'
 
 interface Transaction {
   hash: string
@@ -54,10 +54,12 @@ interface TxResponse {
         '@type': string
         from_address?: string
         to_address?: string
-        amount?: Array<{ denom: string; amount: string }>
+        amount?: Array<{ denom: string; amount: string }> | { denom: string; amount: string }
         sender?: string
         contract?: string
         msg?: unknown
+        delegator_address?: string
+        validator_address?: string
       }>
       memo?: string
     }
@@ -92,7 +94,8 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
     if (msgType === '/cosmos.bank.v1beta1.MsgSend') {
       from = firstMsg.from_address || ''
       to = firstMsg.to_address || ''
-      const amountData = firstMsg.amount?.[0]
+      const amountField = firstMsg.amount
+      const amountData = Array.isArray(amountField) ? amountField[0] : amountField
 
       if (amountData) {
         const formatted = formatAmount(amountData.amount, amountData.denom)
@@ -136,6 +139,38 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
       const instantiateEvent = events.find(e => e.type === 'instantiate')
       const contractAttr = instantiateEvent?.attributes?.find(a => a.key === '_contract_address')
       to = contractAttr?.value || ''
+    }
+    // Delegate (Staking)
+    else if (msgType.includes('MsgDelegate') && !msgType.includes('Undelegate')) {
+      from = firstMsg.delegator_address || ''
+      to = firstMsg.validator_address || ''
+      type = 'delegate'
+
+      const amountData = firstMsg.amount as { denom: string; amount: string } | undefined
+      if (amountData) {
+        const formatted = formatAmount(amountData.amount, amountData.denom)
+        amount = {
+          value: amountData.amount,
+          denom: amountData.denom,
+          ...formatted
+        }
+      }
+    }
+    // Undelegate (Unstaking)
+    else if (msgType.includes('MsgUndelegate')) {
+      from = firstMsg.delegator_address || ''
+      to = firstMsg.validator_address || ''
+      type = 'undelegate'
+
+      const amountData = firstMsg.amount as { denom: string; amount: string } | undefined
+      if (amountData) {
+        const formatted = formatAmount(amountData.amount, amountData.denom)
+        amount = {
+          value: amountData.amount,
+          denom: amountData.denom,
+          ...formatted
+        }
+      }
     }
 
     const feeAmount = rawTx.tx?.auth_info?.fee?.amount?.[0]?.amount || '0'
@@ -186,14 +221,17 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch transactions where address is sender
+    // Using 'query' parameter for Cosmos SDK v0.50+
+    const senderQuery = encodeURIComponent(`message.sender='${address}'`)
     const sentResponse = await fetch(
-      `${REST_URL}/cosmos/tx/v1beta1/txs?events=message.sender='${address}'&pagination.limit=50&order_by=ORDER_BY_DESC`,
+      `${REST_URL}/cosmos/tx/v1beta1/txs?query=${senderQuery}&pagination.limit=50&order_by=ORDER_BY_DESC`,
       { next: { revalidate: 30 } }
     )
 
     // Fetch transactions where address is recipient (bank transfers)
+    const recipientQuery = encodeURIComponent(`transfer.recipient='${address}'`)
     const receivedResponse = await fetch(
-      `${REST_URL}/cosmos/tx/v1beta1/txs?events=transfer.recipient='${address}'&pagination.limit=50&order_by=ORDER_BY_DESC`,
+      `${REST_URL}/cosmos/tx/v1beta1/txs?query=${recipientQuery}&pagination.limit=50&order_by=ORDER_BY_DESC`,
       { next: { revalidate: 30 } }
     )
 

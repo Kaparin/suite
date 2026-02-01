@@ -13,6 +13,7 @@ export {
   AXIOME_WALLET_IOS,
   AXIOME_WALLET_ANDROID,
 } from './axiome-connect'
+export type { TransactionPayload as AxiomeConnectPayload } from './axiome-connect'
 export { useTransaction } from './useTransaction'
 export { useTokenBalances } from './useTokenBalances'
 export type { CW20TokenBalance } from './useTokenBalances'
@@ -29,9 +30,6 @@ export {
 export type {
   TransactionPayload,
   CW20InstantiateMsg,
-  AxiomeConnectPayload,
-  CosmWasmExecutePayload,
-  CosmWasmInstantiatePayload,
-  BankSendPayload,
   AxiomeConnectFunds,
+  CosmosMsg,
 } from './transaction-builder'

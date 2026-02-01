@@ -1,9 +1,6 @@
 // Transaction builder for Axiome blockchain
 // Creates transaction payloads for signing via Axiome Connect
-// Based on official Axiome Connect documentation
-
-// Axiome Connect payload types
-export type AxiomeConnectType = 'cosmwasm_execute' | 'cosmwasm_instantiate' | 'bank_send'
+// Uses Cosmos SDK proto format with typeUrl
 
 export interface AxiomeConnectFunds {
   denom: string
@@ -33,50 +30,42 @@ export interface CW20InstantiateMsg {
   }
 }
 
-// Base payload for Axiome Connect
-export interface AxiomeConnectPayload {
-  type: AxiomeConnectType
-  network: string
+// Cosmos SDK proto message format
+export interface CosmosMsg {
+  typeUrl: string
+  value: Record<string, unknown>
+}
+
+// Full transaction payload for Axiome Connect
+export interface TransactionPayload {
+  chainId: string
+  msgs: CosmosMsg[]
   memo?: string
+  fee?: {
+    amount: AxiomeConnectFunds[]
+    gas: string
+  }
 }
 
-// CosmWasm Execute payload
-export interface CosmWasmExecutePayload extends AxiomeConnectPayload {
-  type: 'cosmwasm_execute'
-  contract_addr: string
-  funds?: AxiomeConnectFunds[]
-  msg: Record<string, unknown>
+// Default fee for transactions
+const DEFAULT_FEE = {
+  amount: [{ denom: 'uaxm', amount: '5000' }],
+  gas: '200000'
 }
-
-// CosmWasm Instantiate payload
-export interface CosmWasmInstantiatePayload extends AxiomeConnectPayload {
-  type: 'cosmwasm_instantiate'
-  code_id: number
-  label: string
-  funds?: AxiomeConnectFunds[]
-  msg: CW20InstantiateMsg | Record<string, unknown>
-  admin?: string
-}
-
-// Bank Send payload
-export interface BankSendPayload extends AxiomeConnectPayload {
-  type: 'bank_send'
-  to_address: string
-  amount: AxiomeConnectFunds[]
-}
-
-export type TransactionPayload = CosmWasmExecutePayload | CosmWasmInstantiatePayload | BankSendPayload
 
 // Build deep link for Axiome Connect
 // Format: axiomesign://<base64-encoded-json>
 export function buildAxiomeSignLink(payload: TransactionPayload): string {
   const jsonPayload = JSON.stringify(payload)
-  const base64Payload = Buffer.from(jsonPayload).toString('base64')
+  // Use btoa for browser compatibility, Buffer for Node
+  const base64Payload = typeof window !== 'undefined'
+    ? btoa(jsonPayload)
+    : Buffer.from(jsonPayload).toString('base64')
   return `axiomesign://${base64Payload}`
 }
 
-// Get network identifier
-function getNetwork(): string {
+// Get chain ID
+function getChainId(): string {
   return process.env.NEXT_PUBLIC_AXIOME_NETWORK || 'axiome-1'
 }
 
@@ -93,7 +82,7 @@ export function buildCW20InstantiatePayload(params: {
   logoUrl?: string
   projectUrl?: string
   description?: string
-}): CosmWasmInstantiatePayload {
+}): TransactionPayload {
   const {
     codeId,
     sender,
@@ -136,100 +125,147 @@ export function buildCW20InstantiatePayload(params: {
   }
 
   return {
-    type: 'cosmwasm_instantiate',
-    network: getNetwork(),
-    code_id: codeId,
-    label: label || `${symbol} Token`,
-    msg: instantiateMsg,
-    admin: sender,
-    memo: `Create ${symbol} token via Axiome Launch Suite`
+    chainId: getChainId(),
+    msgs: [
+      {
+        typeUrl: '/cosmwasm.wasm.v1.MsgInstantiateContract',
+        value: {
+          sender,
+          codeId: codeId.toString(),
+          label: label || `${symbol} Token`,
+          msg: instantiateMsg,
+          funds: [],
+          admin: sender
+        }
+      }
+    ],
+    memo: `Create ${symbol} token via Axiome Launch Suite`,
+    fee: DEFAULT_FEE
   }
 }
 
 // Build CW20 transfer transaction
 export function buildCW20TransferPayload(params: {
   contractAddress: string
+  sender: string
   recipient: string
   amount: string
   memo?: string
-}): CosmWasmExecutePayload {
-  const { contractAddress, recipient, amount, memo } = params
+}): TransactionPayload {
+  const { contractAddress, sender, recipient, amount, memo } = params
 
   return {
-    type: 'cosmwasm_execute',
-    network: getNetwork(),
-    contract_addr: contractAddress,
-    msg: {
-      transfer: {
-        recipient,
-        amount
+    chainId: getChainId(),
+    msgs: [
+      {
+        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+        value: {
+          sender,
+          contract: contractAddress,
+          msg: {
+            transfer: {
+              recipient,
+              amount
+            }
+          },
+          funds: []
+        }
       }
-    },
-    memo
+    ],
+    memo,
+    fee: DEFAULT_FEE
   }
 }
 
 // Build native token send transaction
 export function buildSendPayload(params: {
+  sender: string
   recipient: string
   amount: string
   denom?: string
   memo?: string
-}): BankSendPayload {
-  const { recipient, amount, denom = 'uaxm', memo } = params
+}): TransactionPayload {
+  const { sender, recipient, amount, denom = 'uaxm', memo } = params
 
   return {
-    type: 'bank_send',
-    network: getNetwork(),
-    to_address: recipient,
-    amount: [
+    chainId: getChainId(),
+    msgs: [
       {
-        denom,
-        amount
+        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+        value: {
+          fromAddress: sender,
+          toAddress: recipient,
+          amount: [
+            {
+              denom,
+              amount
+            }
+          ]
+        }
       }
     ],
-    memo
+    memo,
+    fee: DEFAULT_FEE
   }
 }
 
 // Build CW20 update marketing info transaction
 export function buildUpdateMarketingPayload(params: {
   contractAddress: string
+  sender: string
   project?: string
   description?: string
   marketing?: string
-}): CosmWasmExecutePayload {
-  const { contractAddress, project, description, marketing } = params
+}): TransactionPayload {
+  const { contractAddress, sender, project, description, marketing } = params
 
   return {
-    type: 'cosmwasm_execute',
-    network: getNetwork(),
-    contract_addr: contractAddress,
-    msg: {
-      update_marketing: {
-        project,
-        description,
-        marketing
+    chainId: getChainId(),
+    msgs: [
+      {
+        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+        value: {
+          sender,
+          contract: contractAddress,
+          msg: {
+            update_marketing: {
+              project,
+              description,
+              marketing
+            }
+          },
+          funds: []
+        }
       }
-    }
+    ],
+    fee: DEFAULT_FEE
   }
 }
 
 // Build generic CosmWasm execute transaction
 export function buildExecutePayload(params: {
   contractAddress: string
+  sender: string
   msg: Record<string, unknown>
   funds?: AxiomeConnectFunds[]
   memo?: string
-}): CosmWasmExecutePayload {
-  const { contractAddress, msg, funds, memo } = params
+}): TransactionPayload {
+  const { contractAddress, sender, msg, funds, memo } = params
 
   return {
-    type: 'cosmwasm_execute',
-    network: getNetwork(),
-    contract_addr: contractAddress,
-    msg,
-    funds,
-    memo
+    chainId: getChainId(),
+    msgs: [
+      {
+        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
+        value: {
+          sender,
+          contract: contractAddress,
+          msg,
+          funds: funds || []
+        }
+      }
+    ],
+    memo,
+    fee: DEFAULT_FEE
   }
 }
