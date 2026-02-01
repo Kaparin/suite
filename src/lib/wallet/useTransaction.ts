@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from 'react'
 import { useWallet } from './WalletProvider'
+import { AXIOME_CHAIN } from './chain'
 import {
   buildAxiomeSignLink,
   buildCW20InstantiatePayload,
@@ -55,7 +56,7 @@ export function useTransaction() {
 
   // Create CW20 token
   const createToken = useCallback((params: {
-    codeId: number
+    codeId?: number  // Uses AXIOME_CHAIN.contracts.cw20 by default
     name: string
     symbol: string
     initialSupply: string
@@ -71,7 +72,7 @@ export function useTransaction() {
     }
 
     const payload = buildCW20InstantiatePayload({
-      codeId: params.codeId,
+      codeId: params.codeId ?? AXIOME_CHAIN.contracts.cw20,
       sender: address,
       name: params.name,
       symbol: params.symbol,
