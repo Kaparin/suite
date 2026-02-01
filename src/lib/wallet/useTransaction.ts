@@ -7,7 +7,9 @@ import {
   buildCW20InstantiatePayload,
   buildCW20TransferPayload,
   buildSendPayload,
-  TransactionPayload
+  buildExecutePayload,
+  TransactionPayload,
+  AxiomeConnectFunds
 } from './transaction-builder'
 
 interface TransactionState {
@@ -59,6 +61,9 @@ export function useTransaction() {
     initialSupply: string
     decimals?: number
     enableMint?: boolean
+    logoUrl?: string
+    projectUrl?: string
+    description?: string
     onSuccess?: (txHash: string) => void
   }) => {
     if (!address) {
@@ -73,6 +78,9 @@ export function useTransaction() {
       initialSupply: params.initialSupply,
       decimals: params.decimals,
       enableMint: params.enableMint,
+      logoUrl: params.logoUrl,
+      projectUrl: params.projectUrl,
+      description: params.description,
       label: `${params.symbol} Token`
     })
 
@@ -98,7 +106,6 @@ export function useTransaction() {
 
     const payload = buildCW20TransferPayload({
       contractAddress: params.contractAddress,
-      sender: address,
       recipient: params.recipient,
       amount: params.amount
     })
@@ -122,7 +129,6 @@ export function useTransaction() {
     }
 
     const payload = buildSendPayload({
-      sender: address,
       recipient: params.recipient,
       amount: params.amount
     })
@@ -131,6 +137,33 @@ export function useTransaction() {
       payload,
       title: 'Send AXM',
       description: `Send ${Number(params.amount) / 1_000_000} AXM to ${params.recipient.slice(0, 12)}...`,
+      onSuccess: params.onSuccess
+    })
+  }, [address, openTransaction])
+
+  // Execute arbitrary contract call
+  const executeContract = useCallback((params: {
+    contractAddress: string
+    msg: Record<string, unknown>
+    funds?: AxiomeConnectFunds[]
+    title: string
+    description: string
+    onSuccess?: (txHash: string) => void
+  }) => {
+    if (!address) {
+      throw new Error('Wallet not connected')
+    }
+
+    const payload = buildExecutePayload({
+      contractAddress: params.contractAddress,
+      msg: params.msg,
+      funds: params.funds
+    })
+
+    openTransaction({
+      payload,
+      title: params.title,
+      description: params.description,
       onSuccess: params.onSuccess
     })
   }, [address, openTransaction])
@@ -144,6 +177,7 @@ export function useTransaction() {
     createToken,
     transferToken,
     sendAxm,
+    executeContract,
     openTransaction
   }
 }

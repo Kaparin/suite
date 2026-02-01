@@ -38,7 +38,7 @@ export async function GET(request: NextRequest) {
         status: true,
         tokenAddress: true,
         createdAt: true,
-        logoUrl: true
+        logo: true
       }
     })
 

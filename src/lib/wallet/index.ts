@@ -19,5 +19,15 @@ export {
   buildCW20InstantiatePayload,
   buildCW20TransferPayload,
   buildSendPayload,
+  buildUpdateMarketingPayload,
+  buildExecutePayload,
 } from './transaction-builder'
-export type { TransactionPayload, CW20InstantiateMsg } from './transaction-builder'
+export type {
+  TransactionPayload,
+  CW20InstantiateMsg,
+  AxiomeConnectPayload,
+  CosmWasmExecutePayload,
+  CosmWasmInstantiatePayload,
+  BankSendPayload,
+  AxiomeConnectFunds,
+} from './transaction-builder'

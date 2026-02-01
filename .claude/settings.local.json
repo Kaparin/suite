@@ -19,7 +19,8 @@
       "WebFetch(domain:apps.apple.com)",
       "WebFetch(domain:axiome.pro)",
       "WebFetch(domain:rest.axiome.pro)",
-      "Bash(git restore:*)"
+      "Bash(git restore:*)",
+      "WebFetch(domain:app.axiometrade.pro)"
     ]
   }
 }
