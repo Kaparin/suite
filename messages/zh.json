@@ -9,7 +9,9 @@
   "nav": {
     "home": "首页",
     "explorer": "浏览器",
-    "studio": "工作室"
+    "studio": "工作室",
+    "wallet": "钱包",
+    "dashboard": "仪表板"
   },
   "home": {
     "hero": {
@@ -88,9 +90,93 @@
     },
     "createToken": {
       "title": "准备创建代币？",
-      "subtitle": "在 Axiome Token Lab 中创建代币，然后返回发布您的着陆页。",
+      "subtitle": "使用您的钱包直接在 Axiome 区块链上创建代币。",
       "edit": "编辑",
+      "createNow": "创建代币",
       "openTokenLab": "打开 Token Lab"
+    }
+  },
+  "wallet": {
+    "title": "钱包",
+    "subtitle": "管理您的 Axiome 资产",
+    "tabs": {
+      "overview": "概览",
+      "history": "历史",
+      "send": "发送",
+      "receive": "接收"
+    },
+    "balance": {
+      "total": "总余额",
+      "tokens": "代币",
+      "refresh": "刷新"
+    },
+    "actions": {
+      "send": "发送",
+      "receive": "接收"
+    },
+    "history": {
+      "title": "交易历史",
+      "recent": "最近交易",
+      "viewAll": "查看全部",
+      "noTransactions": "暂无交易",
+      "loadMore": "加载更多",
+      "filter": {
+        "all": "全部",
+        "send": "已发送",
+        "receive": "已接收",
+        "contract": "合约"
+      }
+    },
+    "send": {
+      "title": "发送代币",
+      "selectToken": "选择代币",
+      "recipient": "收款地址",
+      "recipientPlaceholder": "axm1...",
+      "amount": "金额",
+      "max": "最大",
+      "preview": "预览",
+      "confirm": "确认并签名",
+      "success": "交易已发送！",
+      "errors": {
+        "invalidAddress": "无效的 Axiome 地址",
+        "insufficientBalance": "余额不足",
+        "amountRequired": "请输入金额",
+        "recipientRequired": "请输入收款地址"
+      }
+    },
+    "receive": {
+      "title": "接收代币",
+      "instruction": "分享此地址或二维码以接收代币",
+      "copied": "地址已复制！",
+      "warning": "仅向此地址发送 AXM 和 CW20 代币"
+    },
+    "connect": {
+      "title": "连接钱包",
+      "description": "连接您的 Axiome 钱包以查看余额、发送代币和管理资产。"
+    }
+  },
+  "createToken": {
+    "modalTitle": "创建代币",
+    "name": "代币名称",
+    "namePlaceholder": "我的精彩代币",
+    "symbol": "符号",
+    "symbolPlaceholder": "MAT",
+    "supply": "初始供应量",
+    "supplyPlaceholder": "1000000000",
+    "decimals": "小数位",
+    "enableMint": "启用铸造",
+    "enableMintHelp": "允许将来创建更多代币",
+    "logoUrl": "Logo URL（可选）",
+    "description": "描述（可选）",
+    "create": "创建代币",
+    "success": "代币已创建！",
+    "feeWarning": "需要网络费用",
+    "feeDescription": "创建代币需要少量网络费用（约 0.01 AXM）。",
+    "validation": {
+      "nameRequired": "代币名称为必填项",
+      "symbolRequired": "符号为必填项",
+      "supplyRequired": "初始供应量为必填项",
+      "supplyPositive": "供应量必须为正数"
     }
   },
   "token": {

@@ -9,7 +9,9 @@
   "nav": {
     "home": "Startseite",
     "explorer": "Explorer",
-    "studio": "Studio"
+    "studio": "Studio",
+    "wallet": "Wallet",
+    "dashboard": "Dashboard"
   },
   "home": {
     "hero": {
@@ -88,9 +90,93 @@
     },
     "createToken": {
       "title": "Bereit deinen Token zu erstellen?",
-      "subtitle": "Erstelle deinen Token im Axiome Token Lab, dann komm zurück um deine Landing Page zu veröffentlichen.",
+      "subtitle": "Erstelle deinen Token direkt auf der Axiome Blockchain mit deinem Wallet.",
       "edit": "Bearbeiten",
+      "createNow": "Token erstellen",
       "openTokenLab": "Token Lab öffnen"
+    }
+  },
+  "wallet": {
+    "title": "Wallet",
+    "subtitle": "Verwalte deine Axiome Assets",
+    "tabs": {
+      "overview": "Übersicht",
+      "history": "Verlauf",
+      "send": "Senden",
+      "receive": "Empfangen"
+    },
+    "balance": {
+      "total": "Gesamtguthaben",
+      "tokens": "Tokens",
+      "refresh": "Aktualisieren"
+    },
+    "actions": {
+      "send": "Senden",
+      "receive": "Empfangen"
+    },
+    "history": {
+      "title": "Transaktionsverlauf",
+      "recent": "Letzte Transaktionen",
+      "viewAll": "Alle anzeigen",
+      "noTransactions": "Noch keine Transaktionen",
+      "loadMore": "Mehr laden",
+      "filter": {
+        "all": "Alle",
+        "send": "Gesendet",
+        "receive": "Empfangen",
+        "contract": "Verträge"
+      }
+    },
+    "send": {
+      "title": "Token senden",
+      "selectToken": "Token auswählen",
+      "recipient": "Empfängeradresse",
+      "recipientPlaceholder": "axm1...",
+      "amount": "Betrag",
+      "max": "MAX",
+      "preview": "Vorschau",
+      "confirm": "Bestätigen & Signieren",
+      "success": "Transaktion gesendet!",
+      "errors": {
+        "invalidAddress": "Ungültige Axiome Adresse",
+        "insufficientBalance": "Unzureichendes Guthaben",
+        "amountRequired": "Betrag erforderlich",
+        "recipientRequired": "Empfängeradresse erforderlich"
+      }
+    },
+    "receive": {
+      "title": "Token empfangen",
+      "instruction": "Teile diese Adresse oder den QR-Code zum Empfangen von Token",
+      "copied": "Adresse kopiert!",
+      "warning": "Sende nur AXM und CW20 Token an diese Adresse"
+    },
+    "connect": {
+      "title": "Wallet verbinden",
+      "description": "Verbinde dein Axiome Wallet um Guthaben anzuzeigen, Token zu senden und Assets zu verwalten."
+    }
+  },
+  "createToken": {
+    "modalTitle": "Token erstellen",
+    "name": "Token Name",
+    "namePlaceholder": "Mein toller Token",
+    "symbol": "Symbol",
+    "symbolPlaceholder": "MTT",
+    "supply": "Anfängliches Angebot",
+    "supplyPlaceholder": "1000000000",
+    "decimals": "Dezimalstellen",
+    "enableMint": "Minting aktivieren",
+    "enableMintHelp": "Erlaubt das Erstellen weiterer Token in der Zukunft",
+    "logoUrl": "Logo URL (optional)",
+    "description": "Beschreibung (optional)",
+    "create": "Token erstellen",
+    "success": "Token erstellt!",
+    "feeWarning": "Netzwerkgebühr erforderlich",
+    "feeDescription": "Das Erstellen eines Tokens erfordert eine kleine Netzwerkgebühr (~0.01 AXM).",
+    "validation": {
+      "nameRequired": "Token Name erforderlich",
+      "symbolRequired": "Symbol erforderlich",
+      "supplyRequired": "Anfängliches Angebot erforderlich",
+      "supplyPositive": "Angebot muss eine positive Zahl sein"
     }
   },
   "token": {

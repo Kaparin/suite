@@ -9,7 +9,9 @@
   "nav": {
     "home": "בית",
     "explorer": "סייר",
-    "studio": "סטודיו"
+    "studio": "סטודיו",
+    "wallet": "ארנק",
+    "dashboard": "לוח בקרה"
   },
   "home": {
     "hero": {
@@ -88,9 +90,93 @@
     },
     "createToken": {
       "title": "מוכן ליצור את הטוקן שלך?",
-      "subtitle": "צור את הטוקן שלך ב-Axiome Token Lab, ואז חזור לפרסם את דף הנחיתה שלך.",
+      "subtitle": "צור את הטוקן שלך ישירות על בלוקצ'יין Axiome באמצעות הארנק שלך.",
       "edit": "ערוך",
+      "createNow": "צור טוקן",
       "openTokenLab": "פתח Token Lab"
+    }
+  },
+  "wallet": {
+    "title": "ארנק",
+    "subtitle": "נהל את נכסי Axiome שלך",
+    "tabs": {
+      "overview": "סקירה",
+      "history": "היסטוריה",
+      "send": "שלח",
+      "receive": "קבל"
+    },
+    "balance": {
+      "total": "יתרה כוללת",
+      "tokens": "טוקנים",
+      "refresh": "רענן"
+    },
+    "actions": {
+      "send": "שלח",
+      "receive": "קבל"
+    },
+    "history": {
+      "title": "היסטוריית עסקאות",
+      "recent": "עסקאות אחרונות",
+      "viewAll": "הצג הכל",
+      "noTransactions": "אין עסקאות עדיין",
+      "loadMore": "טען עוד",
+      "filter": {
+        "all": "הכל",
+        "send": "נשלח",
+        "receive": "התקבל",
+        "contract": "חוזים"
+      }
+    },
+    "send": {
+      "title": "שלח טוקנים",
+      "selectToken": "בחר טוקן",
+      "recipient": "כתובת מקבל",
+      "recipientPlaceholder": "axm1...",
+      "amount": "סכום",
+      "max": "מקסימום",
+      "preview": "תצוגה מקדימה",
+      "confirm": "אשר וחתום",
+      "success": "העסקה נשלחה!",
+      "errors": {
+        "invalidAddress": "כתובת Axiome לא חוקית",
+        "insufficientBalance": "יתרה לא מספיקה",
+        "amountRequired": "נדרש סכום",
+        "recipientRequired": "נדרשת כתובת מקבל"
+      }
+    },
+    "receive": {
+      "title": "קבל טוקנים",
+      "instruction": "שתף כתובת זו או קוד QR כדי לקבל טוקנים",
+      "copied": "הכתובת הועתקה!",
+      "warning": "שלח רק AXM וטוקני CW20 לכתובת זו"
+    },
+    "connect": {
+      "title": "חבר ארנק",
+      "description": "חבר את ארנק Axiome שלך כדי לצפות ביתרה, לשלוח טוקנים ולנהל נכסים."
+    }
+  },
+  "createToken": {
+    "modalTitle": "צור טוקן",
+    "name": "שם טוקן",
+    "namePlaceholder": "הטוקן המדהים שלי",
+    "symbol": "סימול",
+    "symbolPlaceholder": "MAT",
+    "supply": "היצע ראשוני",
+    "supplyPlaceholder": "1000000000",
+    "decimals": "נקודות עשרוניות",
+    "enableMint": "אפשר הטבעה",
+    "enableMintHelp": "מאפשר יצירת עוד טוקנים בעתיד",
+    "logoUrl": "URL לוגו (אופציונלי)",
+    "description": "תיאור (אופציונלי)",
+    "create": "צור טוקן",
+    "success": "הטוקן נוצר!",
+    "feeWarning": "נדרשת עמלת רשת",
+    "feeDescription": "יצירת טוקן דורשת עמלת רשת קטנה (~0.01 AXM).",
+    "validation": {
+      "nameRequired": "שם טוקן נדרש",
+      "symbolRequired": "סימול נדרש",
+      "supplyRequired": "היצע ראשוני נדרש",
+      "supplyPositive": "ההיצע חייב להיות מספר חיובי"
     }
   },
   "token": {

@@ -14,6 +14,10 @@ export {
   AXIOME_WALLET_ANDROID,
 } from './axiome-connect'
 export { useTransaction } from './useTransaction'
+export { useTokenBalances } from './useTokenBalances'
+export type { CW20TokenBalance } from './useTokenBalances'
+export { useTransactionHistory } from './useTransactionHistory'
+export type { Transaction, TransactionType, TransactionStatus } from './useTransactionHistory'
 export {
   buildAxiomeSignLink,
   buildCW20InstantiatePayload,

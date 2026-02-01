@@ -9,7 +9,9 @@
   "nav": {
     "home": "Главная",
     "explorer": "Обозреватель",
-    "studio": "Студия"
+    "studio": "Студия",
+    "wallet": "Кошелёк",
+    "dashboard": "Панель управления"
   },
   "home": {
     "hero": {
@@ -88,9 +90,93 @@
     },
     "createToken": {
       "title": "Готов создать токен?",
-      "subtitle": "Создай токен в Axiome Token Lab, затем вернись для публикации лендинга.",
+      "subtitle": "Создай токен прямо в блокчейне Axiome через свой кошелёк.",
       "edit": "Редактировать",
+      "createNow": "Создать токен",
       "openTokenLab": "Открыть Token Lab"
+    }
+  },
+  "wallet": {
+    "title": "Кошелёк",
+    "subtitle": "Управление активами Axiome",
+    "tabs": {
+      "overview": "Обзор",
+      "history": "История",
+      "send": "Отправить",
+      "receive": "Получить"
+    },
+    "balance": {
+      "total": "Общий баланс",
+      "tokens": "Токены",
+      "refresh": "Обновить"
+    },
+    "actions": {
+      "send": "Отправить",
+      "receive": "Получить"
+    },
+    "history": {
+      "title": "История транзакций",
+      "recent": "Последние транзакции",
+      "viewAll": "Показать все",
+      "noTransactions": "Транзакций пока нет",
+      "loadMore": "Загрузить ещё",
+      "filter": {
+        "all": "Все",
+        "send": "Отправленные",
+        "receive": "Полученные",
+        "contract": "Контракты"
+      }
+    },
+    "send": {
+      "title": "Отправить токены",
+      "selectToken": "Выберите токен",
+      "recipient": "Адрес получателя",
+      "recipientPlaceholder": "axm1...",
+      "amount": "Сумма",
+      "max": "МАКС",
+      "preview": "Предпросмотр",
+      "confirm": "Подтвердить и подписать",
+      "success": "Транзакция отправлена!",
+      "errors": {
+        "invalidAddress": "Неверный адрес Axiome",
+        "insufficientBalance": "Недостаточно средств",
+        "amountRequired": "Укажите сумму",
+        "recipientRequired": "Укажите адрес получателя"
+      }
+    },
+    "receive": {
+      "title": "Получить токены",
+      "instruction": "Поделитесь этим адресом или QR-кодом для получения токенов",
+      "copied": "Адрес скопирован!",
+      "warning": "Отправляйте только AXM и CW20 токены на этот адрес"
+    },
+    "connect": {
+      "title": "Подключите кошелёк",
+      "description": "Подключите кошелёк Axiome для просмотра баланса, отправки токенов и управления активами."
+    }
+  },
+  "createToken": {
+    "modalTitle": "Создать токен",
+    "name": "Название токена",
+    "namePlaceholder": "My Awesome Token",
+    "symbol": "Символ",
+    "symbolPlaceholder": "MAT",
+    "supply": "Начальная эмиссия",
+    "supplyPlaceholder": "1000000000",
+    "decimals": "Знаков после запятой",
+    "enableMint": "Разрешить минтинг",
+    "enableMintHelp": "Позволяет создавать больше токенов в будущем",
+    "logoUrl": "URL логотипа (опционально)",
+    "description": "Описание (опционально)",
+    "create": "Создать токен",
+    "success": "Токен создан!",
+    "feeWarning": "Требуется комиссия сети",
+    "feeDescription": "Создание токена требует небольшую комиссию (~0.01 AXM).",
+    "validation": {
+      "nameRequired": "Название токена обязательно",
+      "symbolRequired": "Символ обязателен",
+      "supplyRequired": "Начальная эмиссия обязательна",
+      "supplyPositive": "Эмиссия должна быть положительным числом"
     }
   },
   "token": {

@@ -9,7 +9,9 @@
   "nav": {
     "home": "Home",
     "explorer": "Explorer",
-    "studio": "Studio"
+    "studio": "Studio",
+    "wallet": "Wallet",
+    "dashboard": "Dashboard"
   },
   "home": {
     "hero": {
@@ -88,9 +90,93 @@
     },
     "createToken": {
       "title": "Ready to create your token?",
-      "subtitle": "Create your token in Axiome Token Lab, then come back to publish your landing page.",
+      "subtitle": "Create your token directly on Axiome blockchain using your wallet.",
       "edit": "Edit",
+      "createNow": "Create Token",
       "openTokenLab": "Open Token Lab"
+    }
+  },
+  "wallet": {
+    "title": "Wallet",
+    "subtitle": "Manage your Axiome assets",
+    "tabs": {
+      "overview": "Overview",
+      "history": "History",
+      "send": "Send",
+      "receive": "Receive"
+    },
+    "balance": {
+      "total": "Total Balance",
+      "tokens": "Tokens",
+      "refresh": "Refresh"
+    },
+    "actions": {
+      "send": "Send",
+      "receive": "Receive"
+    },
+    "history": {
+      "title": "Transaction History",
+      "recent": "Recent Transactions",
+      "viewAll": "View All",
+      "noTransactions": "No transactions yet",
+      "loadMore": "Load More",
+      "filter": {
+        "all": "All",
+        "send": "Sent",
+        "receive": "Received",
+        "contract": "Contracts"
+      }
+    },
+    "send": {
+      "title": "Send Tokens",
+      "selectToken": "Select Token",
+      "recipient": "Recipient Address",
+      "recipientPlaceholder": "axm1...",
+      "amount": "Amount",
+      "max": "MAX",
+      "preview": "Preview",
+      "confirm": "Confirm & Sign",
+      "success": "Transaction sent successfully!",
+      "errors": {
+        "invalidAddress": "Invalid Axiome address",
+        "insufficientBalance": "Insufficient balance",
+        "amountRequired": "Amount is required",
+        "recipientRequired": "Recipient address is required"
+      }
+    },
+    "receive": {
+      "title": "Receive Tokens",
+      "instruction": "Share this address or scan the QR code to receive tokens",
+      "copied": "Address copied!",
+      "warning": "Only send AXM and CW20 tokens to this address"
+    },
+    "connect": {
+      "title": "Connect Your Wallet",
+      "description": "Connect your Axiome wallet to view your balance, send tokens, and manage your assets."
+    }
+  },
+  "createToken": {
+    "modalTitle": "Create Token",
+    "name": "Token Name",
+    "namePlaceholder": "My Awesome Token",
+    "symbol": "Symbol",
+    "symbolPlaceholder": "MAT",
+    "supply": "Initial Supply",
+    "supplyPlaceholder": "1000000000",
+    "decimals": "Decimals",
+    "enableMint": "Enable Minting",
+    "enableMintHelp": "Allow creating more tokens in the future",
+    "logoUrl": "Logo URL (optional)",
+    "description": "Description (optional)",
+    "create": "Create Token",
+    "success": "Token Created!",
+    "feeWarning": "Network Fee Required",
+    "feeDescription": "Creating a token requires a small network fee (~0.01 AXM).",
+    "validation": {
+      "nameRequired": "Token name is required",
+      "symbolRequired": "Symbol is required",
+      "supplyRequired": "Initial supply is required",
+      "supplyPositive": "Supply must be a positive number"
     }
   },
   "token": {

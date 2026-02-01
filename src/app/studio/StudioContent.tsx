@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Textarea } from '@/components/ui'
+import { CreateTokenModal } from '@/components/wallet'
 import { useTranslations } from 'next-intl'
 
 type GenerationResult = {
@@ -47,6 +48,7 @@ export function StudioContent() {
   const [result, setResult] = useState<GenerationResult | null>(null)
   const [activeTab, setActiveTab] = useState<TabId>('description')
   const [error, setError] = useState('')
+  const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
 
   // Prefill from URL params (from Telegram bot)
   useEffect(() => {
@@ -378,21 +380,29 @@ export function StudioContent() {
                     </Button>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <a
-                      href="https://app.axiometrade.pro/pump/token-lab"
-                      target="_blank"
-                      rel="noopener noreferrer"
+                    <Button
+                      onClick={() => setShowCreateTokenModal(true)}
+                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 border-0"
                     >
-                      <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 border-0">
-                        {t('createToken.openTokenLab')}
-                      </Button>
-                    </a>
+                      {t('createToken.createNow')}
+                    </Button>
                   </motion.div>
                 </div>
               </CardContent>
             </Card>
           </motion.div>
         )}
+
+        {/* Create Token Modal */}
+        <CreateTokenModal
+          isOpen={showCreateTokenModal}
+          onClose={() => setShowCreateTokenModal(false)}
+          initialData={{
+            name: formData.projectName,
+            supply: result?.tokenomics.supply,
+            description: result?.description.short
+          }}
+        />
       </div>
     </div>
   )
