@@ -4,55 +4,50 @@
  * Protocol: axiomesign://<base64-payload>
  *
  * Flow:
- * 1. Create JSON payload with Cosmos SDK proto format (typeUrl + value)
+ * 1. Create JSON payload with Axiome Connect format
  * 2. Encode to Base64
  * 3. Create deep link with axiomesign:// prefix
  * 4. User opens in Axiome Wallet app
  * 5. User signs and submits transaction
  *
+ * Payload format (from official docs):
+ * {
+ *   "type": "cosmwasm_execute" | "cosmwasm_instantiate" | "bank_send",
+ *   "network": "axiome-1",
+ *   "contract_addr": "...",  // for execute
+ *   "to_address": "...",     // for bank_send
+ *   "msg": {...},
+ *   "funds": [...],
+ *   "memo": "..."
+ * }
+ *
  * Note: This is for SIGNING transactions, not for wallet connection.
- * For connection, we use Keplr on desktop or manual address entry on mobile.
+ * The wallet automatically adds the sender address from the connected account.
  */
 
 import { AXIOME_CHAIN } from './chain'
 
-// Cosmos SDK proto message format
-export interface CosmosMsg {
-  typeUrl: string
-  value: Record<string, unknown>
-}
+// Re-export types from transaction-builder for backwards compatibility
+export type {
+  AxiomeConnectFunds,
+  TransactionPayload,
+  CosmWasmExecutePayload,
+  CosmWasmInstantiatePayload,
+  BankSendPayload,
+} from './transaction-builder'
 
-// Full transaction payload for Axiome Connect
-export interface TransactionPayload {
-  chainId: string
-  msgs: CosmosMsg[]
-  memo?: string
-  fee?: {
-    amount: { denom: string; amount: string }[]
-    gas: string
-  }
-}
-
-// Default fee for transactions
-const DEFAULT_FEE = {
-  amount: [{ denom: 'uaxm', amount: '5000' }],
-  gas: '200000'
-}
+import type { TransactionPayload, AxiomeConnectFunds } from './transaction-builder'
 
 /**
  * Create Axiome Connect deep link from payload
  */
 export function createAxiomeConnectLink(payload: TransactionPayload): string {
-  // Ensure chainId is set
-  const fullPayload = {
-    ...payload,
-    chainId: payload.chainId || AXIOME_CHAIN.chainId,
-    fee: payload.fee || DEFAULT_FEE
-  }
-
-  // Encode to Base64
-  const jsonString = JSON.stringify(fullPayload)
-  const base64 = btoa(jsonString)
+  // Encode to Base64 with UTF-8 support
+  const jsonString = JSON.stringify(payload)
+  const encoder = new TextEncoder()
+  const bytes = encoder.encode(jsonString)
+  const binaryString = Array.from(bytes, byte => String.fromCharCode(byte)).join('')
+  const base64 = btoa(binaryString)
 
   return `axiomesign://${base64}`
 }
@@ -62,7 +57,7 @@ export function createAxiomeConnectLink(payload: TransactionPayload): string {
  */
 export function createTokenDeepLink(options: {
   codeId: number
-  sender: string
+  sender: string  // Used only for initial_balances
   name: string
   symbol: string
   decimals: number
@@ -72,59 +67,43 @@ export function createTokenDeepLink(options: {
   const { codeId, sender, name, symbol, decimals, initialSupply, memo } = options
 
   const payload: TransactionPayload = {
-    chainId: AXIOME_CHAIN.chainId,
-    msgs: [
-      {
-        typeUrl: '/cosmwasm.wasm.v1.MsgInstantiateContract',
-        value: {
-          sender,
-          codeId: codeId.toString(),
-          label: `${symbol} Token`,
-          msg: {
-            name,
-            symbol,
-            decimals,
-            initial_balances: [{ address: sender, amount: initialSupply }],
-            mint: { minter: sender }
-          },
-          funds: [],
-          admin: sender
-        }
-      }
-    ],
-    memo: memo || `Create ${symbol} token via Axiome Launch Suite`,
-    fee: DEFAULT_FEE
+    type: 'cosmwasm_instantiate',
+    network: AXIOME_CHAIN.chainId,
+    code_id: codeId.toString(),
+    label: `${symbol} Token`,
+    msg: {
+      name,
+      symbol,
+      decimals,
+      initial_balances: [{ address: sender, amount: initialSupply }],
+      mint: { minter: sender }
+    },
+    funds: [],
+    admin: sender,
+    memo: memo || `Create ${symbol} token via Axiome Launch Suite`
   }
 
   return createAxiomeConnectLink(payload)
 }
 
 /**
- * Create deep link for sending tokens
+ * Create deep link for sending native tokens (bank send)
  */
 export function createSendTokensDeepLink(options: {
-  fromAddress: string
+  fromAddress: string  // Not used - wallet adds it
   toAddress: string
   amount: string
   denom?: string
   memo?: string
 }): string {
-  const { fromAddress, toAddress, amount, denom = 'uaxm', memo } = options
+  const { toAddress, amount, denom = 'uaxm', memo } = options
 
   const payload: TransactionPayload = {
-    chainId: AXIOME_CHAIN.chainId,
-    msgs: [
-      {
-        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-        value: {
-          fromAddress,
-          toAddress,
-          amount: [{ denom, amount }]
-        }
-      }
-    ],
-    memo,
-    fee: DEFAULT_FEE
+    type: 'bank_send',
+    network: AXIOME_CHAIN.chainId,
+    to_address: toAddress,
+    amount: [{ denom, amount }],
+    memo
   }
 
   return createAxiomeConnectLink(payload)
@@ -135,33 +114,25 @@ export function createSendTokensDeepLink(options: {
  */
 export function createCW20TransferDeepLink(options: {
   contractAddress: string
-  sender: string
+  sender: string  // Not used - wallet adds it
   recipient: string
   amount: string
   memo?: string
 }): string {
-  const { contractAddress, sender, recipient, amount, memo } = options
+  const { contractAddress, recipient, amount, memo } = options
 
   const payload: TransactionPayload = {
-    chainId: AXIOME_CHAIN.chainId,
-    msgs: [
-      {
-        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-        value: {
-          sender,
-          contract: contractAddress,
-          msg: {
-            transfer: {
-              recipient,
-              amount
-            }
-          },
-          funds: []
-        }
+    type: 'cosmwasm_execute',
+    network: AXIOME_CHAIN.chainId,
+    contract_addr: contractAddress,
+    msg: {
+      transfer: {
+        recipient,
+        amount
       }
-    ],
-    memo,
-    fee: DEFAULT_FEE
+    },
+    funds: [],
+    memo
   }
 
   return createAxiomeConnectLink(payload)

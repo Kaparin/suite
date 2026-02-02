@@ -103,7 +103,8 @@
       "overview": "Übersicht",
       "history": "Verlauf",
       "send": "Senden",
-      "receive": "Empfangen"
+      "receive": "Empfangen",
+      "swap": "Tauschen"
     },
     "balance": {
       "total": "Gesamtguthaben",
@@ -153,6 +154,19 @@
     "connect": {
       "title": "Wallet verbinden",
       "description": "Verbinde dein Axiome Wallet um Guthaben anzuzeigen, Token zu senden und Assets zu verwalten."
+    },
+    "swap": {
+      "title": "Token tauschen",
+      "comingSoon": "Bald verfügbar",
+      "comingSoonDesc": "Token-Tausch wird bald verfügbar sein. Du kannst AXM direkt in deiner Wallet gegen jeden Token tauschen.",
+      "availableTokens": "Verfügbare Token zum Tauschen:",
+      "verified": "Verifiziert",
+      "youPay": "Du zahlst",
+      "youReceive": "Du erhältst",
+      "rate": "Kurs",
+      "slippage": "Slippage-Toleranz",
+      "networkFee": "Netzwerkgebühr",
+      "swap": "Tauschen"
     }
   },
   "createToken": {
@@ -194,9 +208,121 @@
     "links": "Links",
     "contract": "Vertrag",
     "createdOn": "Erstellt am",
-    "disclaimer": "Dies ist keine Finanzberatung. Recherchiere immer selbst vor einer Investition."
+    "disclaimer": "Dies ist keine Finanzberatung. Recherchiere immer selbst vor einer Investition.",
+    "owner": "Eigentümer",
+    "youAreOwner": "Du bist der Eigentümer dieses Tokens"
+  },
+  "ownerPanel": {
+    "title": "Token-Verwaltung",
+    "subtitle": "Du bist der Eigentümer dieses Tokens",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "saving": "Speichern...",
+    "cancel": "Abbrechen",
+    "saved": "Änderungen gespeichert!",
+    "basicInfo": "Grundinformationen",
+    "projectName": "Projektname",
+    "logo": "Logo (URL)",
+    "logoPreview": "Vorschau",
+    "shortDescription": "Kurzbeschreibung",
+    "fullDescription": "Vollständige Beschreibung",
+    "socialLinks": "Social Links",
+    "telegram": "Telegram",
+    "twitter": "Twitter / X",
+    "website": "Website",
+    "discord": "Discord",
+    "stats": {
+      "description": "Beschreibung",
+      "logo": "Logo",
+      "socials": "Soziale Medien",
+      "status": "Status",
+      "active": "Aktiv",
+      "yes": "Ja",
+      "no": "Nein"
+    }
   },
   "footer": {
     "disclaimer": "Keine Finanzberatung. DYOR vor jeder Investition."
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "loginWithTelegram": "Log in with Telegram",
+    "verifyWallet": "Verify Wallet",
+    "walletVerified": "Wallet Verified",
+    "createToLogin": "Log in to create tokens",
+    "welcome": "Welcome to Axiome Launch Suite",
+    "whyLogin": "Why log in?",
+    "benefits": {
+      "createTokens": "Create and manage your own tokens",
+      "commentReact": "Comment and react to token projects",
+      "aiGeneration": "Get AI-powered token generation",
+      "dashboard": "Access your personal dashboard"
+    }
+  },
+  "launchpad": {
+    "title": "Launchpad",
+    "subtitle": "Discover all tokens on Axiome. Find new projects, verified tokens, and track trends.",
+    "tabs": {
+      "live": "Live",
+      "upcoming": "Upcoming"
+    },
+    "liveTokens": "Live Tokens",
+    "upcomingTokens": "Upcoming Tokens",
+    "comingSoon": "Coming Soon",
+    "inPresale": "In Presale",
+    "noUpcoming": "No Upcoming Tokens",
+    "beFirst": "Be the first to create a token project!"
+  },
+  "create": {
+    "title": "Create Token",
+    "subtitle": "Define your token parameters and launch on Axiome blockchain",
+    "steps": {
+      "basicInfo": "Basic Info",
+      "details": "Details",
+      "links": "Links"
+    },
+    "fields": {
+      "tokenName": "Token Name",
+      "symbol": "Symbol",
+      "initialSupply": "Initial Supply",
+      "decimals": "Decimals",
+      "logoUrl": "Logo URL",
+      "shortDescription": "Short Description",
+      "fullDescription": "Full Description",
+      "estimatedLaunchDate": "Estimated Launch Date"
+    },
+    "saveAsDraft": "Save as Draft",
+    "publishToUpcoming": "Publish to Upcoming",
+    "success": "Token Created!",
+    "savedAsDraft": "Your token has been saved as a draft. You can edit it anytime from your dashboard."
+  },
+  "social": {
+    "comments": "Comments",
+    "writeComment": "Write a comment...",
+    "post": "Post",
+    "noComments": "No comments yet. Be the first to share your thoughts!",
+    "loadMore": "Load More Comments",
+    "loginToComment": "Log in to join the conversation",
+    "react": "React",
+    "loginToReact": "Log in to react",
+    "reactions": {
+      "rocket": "To the moon!",
+      "fire": "Hot!",
+      "heart": "Love it",
+      "eyes": "Watching",
+      "warning": "Be careful"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "myTokens": "My Tokens",
+    "noTokens": "You haven't created any tokens yet",
+    "createFirst": "Create your first token",
+    "stats": {
+      "totalTokens": "Total Tokens",
+      "totalReactions": "Total Reactions",
+      "totalComments": "Total Comments"
+    }
   }
 }

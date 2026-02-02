@@ -103,7 +103,8 @@
       "overview": "概览",
       "history": "历史",
       "send": "发送",
-      "receive": "接收"
+      "receive": "接收",
+      "swap": "兑换"
     },
     "balance": {
       "total": "总余额",
@@ -153,6 +154,19 @@
     "connect": {
       "title": "连接钱包",
       "description": "连接您的 Axiome 钱包以查看余额、发送代币和管理资产。"
+    },
+    "swap": {
+      "title": "兑换代币",
+      "comingSoon": "即将推出",
+      "comingSoonDesc": "代币兑换功能即将上线。您可以直接在钱包中用 AXM 兑换任何代币。",
+      "availableTokens": "可兑换的代币：",
+      "verified": "已验证",
+      "youPay": "您支付",
+      "youReceive": "您收到",
+      "rate": "汇率",
+      "slippage": "滑点容差",
+      "networkFee": "网络费用",
+      "swap": "兑换"
     }
   },
   "createToken": {
@@ -194,9 +208,121 @@
     "links": "链接",
     "contract": "合约",
     "createdOn": "创建于",
-    "disclaimer": "这不是财务建议。投资前请务必自行研究。"
+    "disclaimer": "这不是财务建议。投资前请务必自行研究。",
+    "owner": "所有者",
+    "youAreOwner": "您是此代币的所有者"
+  },
+  "ownerPanel": {
+    "title": "代币管理",
+    "subtitle": "您是此代币的所有者",
+    "edit": "编辑",
+    "save": "保存",
+    "saving": "保存中...",
+    "cancel": "取消",
+    "saved": "更改已保存！",
+    "basicInfo": "基本信息",
+    "projectName": "项目名称",
+    "logo": "Logo (URL)",
+    "logoPreview": "预览",
+    "shortDescription": "简短描述",
+    "fullDescription": "完整描述",
+    "socialLinks": "社交链接",
+    "telegram": "Telegram",
+    "twitter": "Twitter / X",
+    "website": "网站",
+    "discord": "Discord",
+    "stats": {
+      "description": "描述",
+      "logo": "Logo",
+      "socials": "社交媒体",
+      "status": "状态",
+      "active": "活跃",
+      "yes": "有",
+      "no": "无"
+    }
   },
   "footer": {
     "disclaimer": "非财务建议。投资前请自行研究。"
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "loginWithTelegram": "Log in with Telegram",
+    "verifyWallet": "Verify Wallet",
+    "walletVerified": "Wallet Verified",
+    "createToLogin": "Log in to create tokens",
+    "welcome": "Welcome to Axiome Launch Suite",
+    "whyLogin": "Why log in?",
+    "benefits": {
+      "createTokens": "Create and manage your own tokens",
+      "commentReact": "Comment and react to token projects",
+      "aiGeneration": "Get AI-powered token generation",
+      "dashboard": "Access your personal dashboard"
+    }
+  },
+  "launchpad": {
+    "title": "Launchpad",
+    "subtitle": "Discover all tokens on Axiome. Find new projects, verified tokens, and track trends.",
+    "tabs": {
+      "live": "Live",
+      "upcoming": "Upcoming"
+    },
+    "liveTokens": "Live Tokens",
+    "upcomingTokens": "Upcoming Tokens",
+    "comingSoon": "Coming Soon",
+    "inPresale": "In Presale",
+    "noUpcoming": "No Upcoming Tokens",
+    "beFirst": "Be the first to create a token project!"
+  },
+  "create": {
+    "title": "Create Token",
+    "subtitle": "Define your token parameters and launch on Axiome blockchain",
+    "steps": {
+      "basicInfo": "Basic Info",
+      "details": "Details",
+      "links": "Links"
+    },
+    "fields": {
+      "tokenName": "Token Name",
+      "symbol": "Symbol",
+      "initialSupply": "Initial Supply",
+      "decimals": "Decimals",
+      "logoUrl": "Logo URL",
+      "shortDescription": "Short Description",
+      "fullDescription": "Full Description",
+      "estimatedLaunchDate": "Estimated Launch Date"
+    },
+    "saveAsDraft": "Save as Draft",
+    "publishToUpcoming": "Publish to Upcoming",
+    "success": "Token Created!",
+    "savedAsDraft": "Your token has been saved as a draft. You can edit it anytime from your dashboard."
+  },
+  "social": {
+    "comments": "Comments",
+    "writeComment": "Write a comment...",
+    "post": "Post",
+    "noComments": "No comments yet. Be the first to share your thoughts!",
+    "loadMore": "Load More Comments",
+    "loginToComment": "Log in to join the conversation",
+    "react": "React",
+    "loginToReact": "Log in to react",
+    "reactions": {
+      "rocket": "To the moon!",
+      "fire": "Hot!",
+      "heart": "Love it",
+      "eyes": "Watching",
+      "warning": "Be careful"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "myTokens": "My Tokens",
+    "noTokens": "You haven't created any tokens yet",
+    "createFirst": "Create your first token",
+    "stats": {
+      "totalTokens": "Total Tokens",
+      "totalReactions": "Total Reactions",
+      "totalComments": "Total Comments"
+    }
   }
 }

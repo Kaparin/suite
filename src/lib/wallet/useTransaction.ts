@@ -71,24 +71,36 @@ export function useTransaction() {
       throw new Error('Wallet not connected')
     }
 
+    const codeId = params.codeId ?? AXIOME_CHAIN.contracts.cw20
+
+    // Build instantiate message
+    const instantiateMsg = {
+      name: params.name,
+      symbol: params.symbol,
+      decimals: params.decimals ?? 6,
+      initial_balances: [{ address, amount: params.initialSupply }],
+      ...(params.enableMint ? { mint: { minter: address } } : {})
+    }
+
+    // Try Axiome Connect format first
     const payload = buildCW20InstantiatePayload({
-      codeId: params.codeId ?? AXIOME_CHAIN.contracts.cw20,
+      codeId,
       sender: address,
       name: params.name,
       symbol: params.symbol,
       initialSupply: params.initialSupply,
       decimals: params.decimals,
       enableMint: params.enableMint,
-      logoUrl: params.logoUrl,
-      projectUrl: params.projectUrl,
-      description: params.description,
-      label: `${params.symbol} Token`
+      label: params.symbol
     })
+
+    // Log payload for debugging
+    console.log('Token creation payload:', JSON.stringify(payload, null, 2))
 
     openTransaction({
       payload,
       title: 'Create Token',
-      description: `You are about to create ${params.name} (${params.symbol}) token with initial supply of ${params.initialSupply}`,
+      description: `Create ${params.name} (${params.symbol})`,
       onSuccess: params.onSuccess
     })
   }, [address, openTransaction])

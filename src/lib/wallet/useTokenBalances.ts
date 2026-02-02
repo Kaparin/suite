@@ -10,6 +10,7 @@ export interface CW20TokenBalance {
   balance: string
   displayBalance: string
   logoUrl?: string
+  verified?: boolean
 }
 
 interface TokensResponse {

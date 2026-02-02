@@ -166,6 +166,9 @@ function TransactionRow({
 }) {
   const isOutgoing = tx.from.toLowerCase() === address.toLowerCase()
 
+  // Extended transaction type with contractAction
+  const txWithAction = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
+
   const typeConfig = {
     send: {
       color: 'text-red-400 bg-red-500/10',
@@ -232,6 +235,30 @@ function TransactionRow({
     minute: '2-digit'
   })
 
+  // Build label with action and token symbol
+  let label = config.label
+  if (tx.type === 'contract' && txWithAction.contractAction) {
+    const action = txWithAction.contractAction
+    const actionLabels: Record<string, string> = {
+      transfer: 'Transfer',
+      send: 'Send',
+      mint: 'Mint',
+      burn: 'Burn',
+      approve: 'Approve',
+      increase_allowance: 'Approve',
+      decrease_allowance: 'Revoke',
+      update_marketing: 'Update Info',
+      update_minter: 'Update Minter'
+    }
+    label = actionLabels[action] || action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ')
+  }
+  if (txWithAction.tokenSymbol) {
+    label = `${label} ${txWithAction.tokenSymbol}`
+  }
+
+  // Determine if amount should be shown
+  const hasAmount = tx.amount.value !== '0' && tx.amount.displayValue !== '0'
+
   return (
     <a
       href={`https://axiomechain.org/tx/${tx.hash}`}
@@ -247,7 +274,7 @@ function TransactionRow({
       {/* Details */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-white">{config.label}</span>
+          <span className="font-medium text-white">{label}</span>
           {tx.status === 'failed' && (
             <span className="px-2 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">
               Failed
@@ -263,10 +290,16 @@ function TransactionRow({
 
       {/* Amount */}
       <div className="text-right">
-        <p className={`font-mono font-medium ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
-          {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
-        </p>
-        <p className="text-sm text-gray-500">{tx.amount.displayDenom}</p>
+        {hasAmount ? (
+          <>
+            <p className={`font-mono font-medium ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
+              {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
+            </p>
+            <p className="text-sm text-gray-500">{tx.amount.displayDenom}</p>
+          </>
+        ) : (
+          <p className="text-sm text-gray-500">-</p>
+        )}
       </div>
 
       {/* Arrow */}

@@ -126,18 +126,24 @@ class AxiomeClient {
     try {
       // Query smart contract for token info
       const query = Buffer.from(JSON.stringify({ token_info: {} })).toString('base64')
-      const data = await this.fetch<{ data: string }>(
+      const data = await this.fetch<{ data: string | Record<string, unknown> }>(
         `/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`
       )
 
       if (data.data) {
-        const tokenInfo = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        // data.data can be either a base64 string OR already parsed object
+        let tokenInfo: { name?: string; symbol?: string; decimals?: number; total_supply?: string }
+        if (typeof data.data === 'string') {
+          tokenInfo = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          tokenInfo = data.data as typeof tokenInfo
+        }
         return {
           address: contractAddress,
-          name: tokenInfo.name,
-          symbol: tokenInfo.symbol,
-          decimals: tokenInfo.decimals,
-          totalSupply: tokenInfo.total_supply
+          name: tokenInfo.name || 'Unknown',
+          symbol: tokenInfo.symbol || 'TOKEN',
+          decimals: tokenInfo.decimals || 6,
+          totalSupply: tokenInfo.total_supply || '0'
         }
       }
       return null
@@ -151,12 +157,18 @@ class AxiomeClient {
   async getCW20Balance(contractAddress: string, walletAddress: string): Promise<string> {
     try {
       const query = Buffer.from(JSON.stringify({ balance: { address: walletAddress } })).toString('base64')
-      const data = await this.fetch<{ data: string }>(
+      const data = await this.fetch<{ data: string | Record<string, unknown> }>(
         `/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`
       )
 
       if (data.data) {
-        const result = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        // data.data can be either a base64 string OR already parsed object
+        let result: { balance?: string }
+        if (typeof data.data === 'string') {
+          result = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          result = data.data as typeof result
+        }
         return result.balance || '0'
       }
       return '0'
@@ -173,12 +185,18 @@ class AxiomeClient {
     try {
       // Try to get from contract state if available
       const query = Buffer.from(JSON.stringify({ all_accounts: { limit: 1 } })).toString('base64')
-      const data = await this.fetch<{ data: string }>(
+      const data = await this.fetch<{ data: string | Record<string, unknown> }>(
         `/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`
       )
 
       if (data.data) {
-        const result = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        // data.data can be either a base64 string OR already parsed object
+        let result: { accounts?: string[] }
+        if (typeof data.data === 'string') {
+          result = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          result = data.data as typeof result
+        }
         return result.accounts?.length || 0
       }
       return 0

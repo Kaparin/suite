@@ -18,6 +18,7 @@ interface SignTransactionFlowProps {
   checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
 }
 
+
 export function SignTransactionFlow({
   isOpen,
   onClose,
@@ -150,7 +151,7 @@ export function SignTransactionFlow({
                 {!isMobile && (
                   <div className="flex justify-center">
                     <div className="bg-white p-4 rounded-xl">
-                      <QRCodeSVG value={deepLink} size={200} level="M" />
+                      <QRCodeSVG value={deepLink} size={280} level="L" />
                     </div>
                   </div>
                 )}
@@ -162,7 +163,7 @@ export function SignTransactionFlow({
                   <p className="text-sm text-gray-400">
                     {isMobile
                       ? 'The wallet app should open. Confirm the transaction there.'
-                      : 'Open Axiome Wallet on your phone and scan this QR code.'}
+                      : 'Open Axiome Wallet app and scan this QR code'}
                   </p>
                 </div>
 

@@ -3,16 +3,23 @@
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useWallet, truncateAddress } from '@/lib/wallet'
+import { useAuth } from '@/lib/auth/useAuth'
+import { TokenStatusBadge } from '@/components/token'
 
 interface UserProject {
   id: string
   name: string
   ticker: string
+  logo: string | null
   status: string
   tokenAddress: string | null
   createdAt: string
-  logoUrl: string | null
+  _count?: {
+    comments: number
+    reactions: number
+  }
 }
 
 interface DashboardData {
@@ -21,31 +28,44 @@ interface DashboardData {
     totalProjects: number
     publishedProjects: number
     draftProjects: number
+    upcomingProjects: number
   }
 }
 
 export default function DashboardPage() {
   const { isConnected, address, balance, refreshBalance } = useWallet()
+  const { user, isAuthenticated, token } = useAuth()
   const [data, setData] = useState<DashboardData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function fetchDashboard() {
-      if (!address) {
+      if (!user?.id) {
         setIsLoading(false)
         return
       }
 
       try {
-        const response = await fetch(`/api/dashboard?address=${address}`)
+        const response = await fetch(`/api/projects?ownerId=${user.id}&status=ALL`, {
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+        })
         const result = await response.json()
 
         if (!response.ok) {
           throw new Error(result.error || 'Failed to fetch dashboard')
         }
 
-        setData(result)
+        // Calculate stats
+        const projects = result.projects || []
+        const stats = {
+          totalProjects: projects.length,
+          publishedProjects: projects.filter((p: UserProject) => p.status === 'PUBLISHED' || p.status === 'LAUNCHED').length,
+          draftProjects: projects.filter((p: UserProject) => p.status === 'DRAFT').length,
+          upcomingProjects: projects.filter((p: UserProject) => p.status === 'UPCOMING' || p.status === 'PRESALE').length
+        }
+
+        setData({ projects, stats })
       } catch (err) {
         console.error('Dashboard error:', err)
         setError(err instanceof Error ? err.message : 'Failed to load dashboard')
@@ -55,9 +75,9 @@ export default function DashboardPage() {
     }
 
     fetchDashboard()
-  }, [address])
+  }, [user?.id, token])
 
-  if (!isConnected) {
+  if (!isAuthenticated) {
     return (
       <div className="min-h-[80vh] flex items-center justify-center">
         <motion.div
@@ -70,8 +90,17 @@ export default function DashboardPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h1>
-          <p className="text-gray-400 mb-6">Connect your Axiome wallet to view your dashboard</p>
+          <h1 className="text-2xl font-bold text-white mb-2">Login Required</h1>
+          <p className="text-gray-400 mb-6">Login with Telegram to view your dashboard</p>
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all"
+          >
+            <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+            </svg>
+            Log in with Telegram
+          </Link>
         </motion.div>
       </div>
     )
@@ -86,53 +115,96 @@ export default function DashboardPage() {
       >
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold text-white">My Dashboard</h1>
-            <p className="text-gray-400 mt-1">Manage your tokens and view analytics</p>
+          <div className="flex items-center gap-4">
+            {user?.telegramPhotoUrl ? (
+              <Image
+                src={user.telegramPhotoUrl}
+                alt={user.telegramFirstName || 'User'}
+                width={56}
+                height={56}
+                className="w-14 h-14 rounded-xl"
+              />
+            ) : (
+              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+                <span className="text-white text-xl font-bold">
+                  {(user?.telegramFirstName || 'U').charAt(0)}
+                </span>
+              </div>
+            )}
+            <div>
+              <h1 className="text-2xl font-bold text-white">
+                Welcome, {user?.telegramFirstName || 'User'}!
+              </h1>
+              <p className="text-gray-400">
+                {user?.telegramUsername ? `@${user.telegramUsername}` : 'Manage your tokens and projects'}
+              </p>
+            </div>
           </div>
           <Link
-            href="/studio"
+            href="/create"
             className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Create New Token
+            Create Token
           </Link>
         </div>
 
-        {/* Wallet Card */}
+        {/* User Status Card */}
         <div className="bg-gradient-to-br from-purple-500/10 via-gray-900 to-blue-500/10 border border-gray-800 rounded-2xl p-6">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <p className="text-sm text-gray-400 mb-1">Wallet Balance</p>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold text-white">
-                  {balance.isLoading ? '...' : balance.axm}
-                </span>
-                <span className="text-xl text-purple-400 font-medium">AXM</span>
+            <div className="flex items-center gap-6">
+              {/* Verification Status */}
+              <div>
+                <p className="text-sm text-gray-400 mb-1">Status</p>
+                <div className="flex items-center gap-2">
+                  {user?.isVerified ? (
+                    <>
+                      <div className="w-2 h-2 bg-green-400 rounded-full" />
+                      <span className="text-green-400 font-medium">Verified</span>
+                    </>
+                  ) : (
+                    <>
+                      <div className="w-2 h-2 bg-yellow-400 rounded-full" />
+                      <span className="text-yellow-400 font-medium">Unverified</span>
+                    </>
+                  )}
+                </div>
               </div>
+              {/* Wallet */}
+              {user?.walletAddress && (
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Wallet</p>
+                  <p className="text-sm font-mono text-white">{truncateAddress(user.walletAddress)}</p>
+                </div>
+              )}
+              {/* Balance */}
+              {isConnected && (
+                <div>
+                  <p className="text-sm text-gray-400 mb-1">Balance</p>
+                  <div className="flex items-center gap-1">
+                    <span className="text-white font-medium">
+                      {balance.isLoading ? '...' : balance.axm}
+                    </span>
+                    <span className="text-purple-400 text-sm">AXM</span>
+                  </div>
+                </div>
+              )}
             </div>
-            <div className="flex items-center gap-4">
-              <div className="text-right">
-                <p className="text-sm text-gray-400">Address</p>
-                <p className="text-sm font-mono text-white">{address ? truncateAddress(address) : ''}</p>
-              </div>
-              <button
-                onClick={refreshBalance}
-                disabled={balance.isLoading}
-                className="p-3 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors disabled:opacity-50"
+            {!user?.isVerified && (
+              <Link
+                href="/login?verify=true"
+                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-medium rounded-lg"
               >
-                <svg className={`w-5 h-5 text-gray-400 ${balance.isLoading ? 'animate-spin' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                </svg>
-              </button>
-            </div>
+                Verify Wallet
+              </Link>
+            )}
           </div>
         </div>
 
         {/* Stats Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-500/20 rounded-lg">
@@ -142,7 +214,21 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">{data?.stats.totalProjects ?? 0}</p>
-                <p className="text-sm text-gray-400">Total Projects</p>
+                <p className="text-sm text-gray-400">Total</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-5">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-500/20 rounded-lg">
+                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-2xl font-bold text-white">{data?.stats.upcomingProjects ?? 0}</p>
+                <p className="text-sm text-gray-400">Upcoming</p>
               </div>
             </div>
           </div>
@@ -156,7 +242,7 @@ export default function DashboardPage() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-white">{data?.stats.publishedProjects ?? 0}</p>
-                <p className="text-sm text-gray-400">Published</p>
+                <p className="text-sm text-gray-400">Launched</p>
               </div>
             </div>
           </div>
@@ -228,32 +314,41 @@ export default function DashboardPage() {
                 >
                   <div className="flex items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">
-                        {project.ticker?.[0] || project.name[0]}
-                      </div>
+                      {project.logo ? (
+                        <Image
+                          src={project.logo}
+                          alt={project.name}
+                          width={48}
+                          height={48}
+                          className="w-12 h-12 rounded-xl object-cover"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                          {project.ticker?.[0] || project.name[0]}
+                        </div>
+                      )}
                       <div>
                         <div className="flex items-center gap-2">
                           <h3 className="font-medium text-white">{project.name}</h3>
                           <span className="text-sm text-gray-400">${project.ticker}</span>
                         </div>
                         <div className="flex items-center gap-3 mt-1">
-                          <span className={`text-xs px-2 py-0.5 rounded-full ${
-                            project.status === 'PUBLISHED'
-                              ? 'bg-green-500/20 text-green-400'
-                              : 'bg-yellow-500/20 text-yellow-400'
-                          }`}>
-                            {project.status}
-                          </span>
+                          <TokenStatusBadge status={project.status as 'DRAFT' | 'UPCOMING' | 'PRESALE' | 'PUBLISHED' | 'LAUNCHED' | 'ARCHIVED'} size="sm" />
                           {project.tokenAddress && (
                             <span className="text-xs text-gray-500 font-mono">
                               {truncateAddress(project.tokenAddress)}
+                            </span>
+                          )}
+                          {project._count && (
+                            <span className="text-xs text-gray-500">
+                              {project._count.reactions} reactions, {project._count.comments} comments
                             </span>
                           )}
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {project.status === 'PUBLISHED' && project.tokenAddress && (
+                      {(project.status === 'PUBLISHED' || project.status === 'LAUNCHED') && project.tokenAddress && (
                         <Link
                           href={`/t/${project.tokenAddress}`}
                           className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
@@ -265,15 +360,29 @@ export default function DashboardPage() {
                           </svg>
                         </Link>
                       )}
-                      <Link
-                        href={`/studio?edit=${project.id}`}
-                        className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
-                        title="Edit Project"
-                      >
-                        <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                        </svg>
-                      </Link>
+                      {(project.status === 'UPCOMING' || project.status === 'PRESALE') && (
+                        <Link
+                          href={`/t/${project.id}`}
+                          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                          title="View Project Page"
+                        >
+                          <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                          </svg>
+                        </Link>
+                      )}
+                      {project.status === 'DRAFT' && (
+                        <Link
+                          href={`/studio?edit=${project.id}`}
+                          className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                          title="Edit Project"
+                        >
+                          <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                          </svg>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </motion.div>

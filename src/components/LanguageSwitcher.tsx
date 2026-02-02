@@ -6,8 +6,14 @@ import { locales, localeNames, localeFlags, type Locale } from '@/i18n/config'
 
 export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
   const [isOpen, setIsOpen] = useState(false)
+  const [mounted, setMounted] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
   const router = useRouter()
+
+  // Wait for client-side hydration to complete
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -23,6 +29,15 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
     document.cookie = `locale=${locale};path=/;max-age=31536000`
     setIsOpen(false)
     router.refresh()
+  }
+
+  // Show a neutral placeholder during SSR to avoid hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50 h-10 w-[52px] sm:w-[120px]">
+        <div className="w-5 h-5 bg-gray-700 rounded animate-pulse" />
+      </div>
+    )
   }
 
   return (

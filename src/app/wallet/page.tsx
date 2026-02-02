@@ -2,14 +2,13 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { useWallet } from '@/lib/wallet'
+import { useWallet, truncateAddress } from '@/lib/wallet'
 import { Button, Tabs } from '@/components/ui'
-import { OverviewTab, HistoryTab, SendTab, ReceiveTab } from '@/components/wallet/wallet-page'
-import type { Tab } from '@/components/ui'
+import { OverviewTab, HistoryTab, SendTab, ReceiveTab, SwapTab } from '@/components/wallet/wallet-page'
 
-type TabId = 'overview' | 'history' | 'send' | 'receive'
+type TabId = 'overview' | 'history' | 'send' | 'receive' | 'swap'
 
-const tabs: Tab[] = [
+const tabs = [
   {
     id: 'overview',
     label: 'Overview',
@@ -45,12 +44,25 @@ const tabs: Tab[] = [
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
       </svg>
     )
+  },
+  {
+    id: 'swap',
+    label: 'Swap',
+    icon: (
+      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      </svg>
+    )
   }
 ]
 
 export default function WalletPage() {
-  const { isConnected, connect } = useWallet()
+  const { isConnected, connect, address } = useWallet()
   const [activeTab, setActiveTab] = useState<TabId>('overview')
+
+  const handleNavigate = (tab: TabId) => {
+    setActiveTab(tab)
+  }
 
   // Require wallet connection
   if (!isConnected) {
@@ -66,9 +78,9 @@ export default function WalletPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Your Wallet</h1>
+          <h1 className="text-2xl font-bold text-white mb-2">Connect Wallet</h1>
           <p className="text-gray-400 mb-6">
-            Connect your Axiome wallet to view your balance, send tokens, and manage your assets.
+            Connect your Axiome Wallet to view and manage your tokens
           </p>
           <Button
             onClick={connect}
@@ -95,8 +107,23 @@ export default function WalletPage() {
           animate={{ opacity: 1, y: 0 }}
           className="mb-6"
         >
-          <h1 className="text-3xl font-bold text-white mb-2">Wallet</h1>
-          <p className="text-gray-400">Manage your Axiome assets</p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Wallet</h1>
+              <p className="text-sm text-gray-400 font-mono">
+                {truncateAddress(address || '', 8, 6)}
+              </p>
+            </div>
+            <button
+              onClick={() => navigator.clipboard.writeText(address || '')}
+              className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white"
+              title="Copy address"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+            </button>
+          </div>
         </motion.div>
 
         {/* Tabs */}
@@ -115,10 +142,11 @@ export default function WalletPage() {
 
         {/* Tab Content */}
         <div className="min-h-[400px]">
-          {activeTab === 'overview' && <OverviewTab onNavigate={setActiveTab} />}
+          {activeTab === 'overview' && <OverviewTab onNavigate={handleNavigate} />}
           {activeTab === 'history' && <HistoryTab />}
           {activeTab === 'send' && <SendTab />}
           {activeTab === 'receive' && <ReceiveTab />}
+          {activeTab === 'swap' && <SwapTab />}
         </div>
       </div>
     </div>

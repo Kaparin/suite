@@ -10,25 +10,24 @@ import type { SelectOption } from '@/components/ui'
 type SendStep = 'input' | 'preview' | 'success'
 
 interface SendFormData {
-  tokenType: 'native' | 'cw20'
   tokenAddress: string
   recipient: string
   amount: string
 }
 
 interface FormErrors {
+  token?: string
   recipient?: string
   amount?: string
 }
 
 export function SendTab() {
-  const { address, balance, refreshBalance } = useWallet()
-  const { tokens } = useTokenBalances(address)
-  const { transactionState, closeTransaction, sendAxm, transferToken } = useTransaction()
+  const { address, refreshBalance } = useWallet()
+  const { tokens, isLoading: tokensLoading } = useTokenBalances(address)
+  const { transactionState, closeTransaction, transferToken } = useTransaction()
 
   const [step, setStep] = useState<SendStep>('input')
   const [formData, setFormData] = useState<SendFormData>({
-    tokenType: 'native',
     tokenAddress: '',
     recipient: '',
     amount: ''
@@ -36,26 +35,28 @@ export function SendTab() {
   const [errors, setErrors] = useState<FormErrors>({})
   const [txHash, setTxHash] = useState<string | null>(null)
 
-  // Build token options for select
-  const tokenOptions: SelectOption[] = [
-    {
-      value: 'native',
-      label: `AXM (${balance.axm})`,
-      description: 'Native token'
-    },
-    ...tokens.map((token) => ({
-      value: token.contractAddress,
-      label: `${token.symbol} (${token.displayBalance})`,
-      description: token.name
-    }))
-  ]
+  // Auto-select first token when loaded
+  useEffect(() => {
+    if (tokens.length > 0 && !formData.tokenAddress) {
+      setFormData(prev => ({ ...prev, tokenAddress: tokens[0].contractAddress }))
+    }
+  }, [tokens, formData.tokenAddress])
 
-  const selectedToken = formData.tokenType === 'native'
-    ? { symbol: 'AXM', displayBalance: balance.axm, decimals: 6 }
-    : tokens.find(t => t.contractAddress === formData.tokenAddress)
+  // Build token options for select (CW20 only)
+  const tokenOptions: SelectOption[] = tokens.map((token) => ({
+    value: token.contractAddress,
+    label: `${token.symbol} (${token.displayBalance})`,
+    description: token.name
+  }))
+
+  const selectedToken = tokens.find(t => t.contractAddress === formData.tokenAddress)
 
   const validate = (): boolean => {
     const newErrors: FormErrors = {}
+
+    if (!formData.tokenAddress) {
+      newErrors.token = 'Please select a token'
+    }
 
     if (!formData.recipient) {
       newErrors.recipient = 'Recipient address is required'
@@ -91,11 +92,7 @@ export function SendTab() {
   }
 
   const handleTokenChange = (value: string) => {
-    if (value === 'native') {
-      setFormData({ ...formData, tokenType: 'native', tokenAddress: '' })
-    } else {
-      setFormData({ ...formData, tokenType: 'cw20', tokenAddress: value })
-    }
+    setFormData({ ...formData, tokenAddress: value, amount: '' })
   }
 
   const handlePreview = () => {
@@ -105,9 +102,11 @@ export function SendTab() {
   }
 
   const handleSend = () => {
+    if (!selectedToken) return
+
     // Convert to micro units
     const amount = parseFloat(formData.amount)
-    const decimals = selectedToken?.decimals || 6
+    const decimals = selectedToken.decimals || 6
     const amountInMicro = Math.floor(amount * Math.pow(10, decimals)).toString()
 
     const onSuccess = (hash: string) => {
@@ -116,33 +115,48 @@ export function SendTab() {
       refreshBalance()
     }
 
-    if (formData.tokenType === 'native') {
-      sendAxm({
-        recipient: formData.recipient,
-        amount: amountInMicro,
-        onSuccess
-      })
-    } else {
-      transferToken({
-        contractAddress: formData.tokenAddress,
-        recipient: formData.recipient,
-        amount: amountInMicro,
-        tokenSymbol: selectedToken?.symbol || 'CW20',
-        onSuccess
-      })
-    }
+    transferToken({
+      contractAddress: formData.tokenAddress,
+      recipient: formData.recipient,
+      amount: amountInMicro,
+      tokenSymbol: selectedToken.symbol,
+      onSuccess
+    })
   }
 
   const handleReset = () => {
     setStep('input')
     setFormData({
-      tokenType: 'native',
-      tokenAddress: '',
+      tokenAddress: tokens[0]?.contractAddress || '',
       recipient: '',
       amount: ''
     })
     setErrors({})
     setTxHash(null)
+  }
+
+  // No tokens message
+  if (!tokensLoading && tokens.length === 0) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <Card className="bg-gray-900/50 border-gray-800">
+          <CardContent className="py-12 text-center">
+            <div className="w-16 h-16 mx-auto bg-gray-800 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 12H4M12 4v16" />
+              </svg>
+            </div>
+            <h3 className="text-xl font-bold text-white mb-2">No Tokens</h3>
+            <p className="text-gray-400 mb-6">
+              You don't have any tokens to send. Create or receive tokens first.
+            </p>
+          </CardContent>
+        </Card>
+      </motion.div>
+    )
   }
 
   // Success screen
@@ -265,13 +279,18 @@ export function SendTab() {
       <Card className="bg-gray-900/50 border-gray-800">
         <CardContent className="p-6 space-y-6">
           {/* Token Select */}
-          <Select
-            label="Token"
-            options={tokenOptions}
-            value={formData.tokenType === 'native' ? 'native' : formData.tokenAddress}
-            onChange={handleTokenChange}
-            placeholder="Select token"
-          />
+          <div>
+            <Select
+              label="Token"
+              options={tokenOptions}
+              value={formData.tokenAddress}
+              onChange={handleTokenChange}
+              placeholder="Select token"
+            />
+            {errors.token && (
+              <p className="mt-1 text-sm text-red-500">{errors.token}</p>
+            )}
+          </div>
 
           {/* Recipient */}
           <Input
@@ -324,8 +343,9 @@ export function SendTab() {
             onClick={handlePreview}
             className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
             size="lg"
+            disabled={tokensLoading}
           >
-            Continue
+            {tokensLoading ? 'Loading...' : 'Continue'}
           </Button>
         </CardContent>
       </Card>

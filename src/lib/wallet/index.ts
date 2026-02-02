@@ -31,5 +31,9 @@ export type {
   TransactionPayload,
   CW20InstantiateMsg,
   AxiomeConnectFunds,
-  CosmosMsg,
+  CosmosMessage,
+  CosmWasmExecutePayload,
+  CosmWasmInstantiatePayload,
+  BankSendPayload,
+  AxiomeConnectType,
 } from './transaction-builder'

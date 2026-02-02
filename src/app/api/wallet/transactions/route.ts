@@ -25,22 +25,55 @@ interface Transaction {
   memo?: string
   contractAddress?: string
   contractAction?: string
+  tokenSymbol?: string
 }
 
-function formatAmount(amount: string, denom: string): { displayValue: string; displayDenom: string } {
-  const value = parseInt(amount || '0')
+// Cache for token info to avoid repeated queries
+const tokenInfoCache = new Map<string, { name: string; symbol: string; decimals: number } | null>()
 
-  if (denom === 'uaxm') {
-    return {
-      displayValue: (value / 1_000_000).toFixed(6),
-      displayDenom: 'AXM'
+async function getTokenInfo(contractAddress: string): Promise<{ name: string; symbol: string; decimals: number } | null> {
+  if (tokenInfoCache.has(contractAddress)) {
+    return tokenInfoCache.get(contractAddress) || null
+  }
+
+  try {
+    const query = Buffer.from(JSON.stringify({ token_info: {} })).toString('base64')
+    const response = await fetch(
+      `${REST_URL}/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`,
+      { next: { revalidate: 300 } } // Cache for 5 minutes
+    )
+
+    if (response.ok) {
+      const data = await response.json()
+      if (data.data) {
+        // data.data can be either a base64 string OR already parsed object
+        let tokenInfo: { name?: string; symbol?: string; decimals?: number }
+        if (typeof data.data === 'string') {
+          tokenInfo = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          tokenInfo = data.data
+        }
+        const result = {
+          name: tokenInfo.name || 'Unknown',
+          symbol: tokenInfo.symbol || 'TOKEN',
+          decimals: tokenInfo.decimals || 6
+        }
+        tokenInfoCache.set(contractAddress, result)
+        return result
+      }
     }
+  } catch {
+    // Ignore errors
   }
 
-  return {
-    displayValue: amount,
-    displayDenom: denom
-  }
+  tokenInfoCache.set(contractAddress, null)
+  return null
+}
+
+function formatAmount(amount: string, decimals: number = 6): string {
+  const value = parseInt(amount || '0')
+  const divisor = Math.pow(10, decimals)
+  return (value / divisor).toFixed(Math.min(decimals, 6))
 }
 
 interface TxResponse {
@@ -60,6 +93,9 @@ interface TxResponse {
         msg?: unknown
         delegator_address?: string
         validator_address?: string
+        code_id?: string
+        label?: string
+        admin?: string
       }>
       memo?: string
     }
@@ -77,7 +113,7 @@ interface TxResponse {
   }>
 }
 
-function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction | null {
+async function parseTransaction(rawTx: TxResponse, userAddress: string): Promise<Transaction | null> {
   try {
     const messages = rawTx.tx?.body?.messages || []
     const firstMsg = messages[0]
@@ -89,6 +125,9 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
     let from = ''
     let to = ''
     let amount = { value: '0', denom: 'uaxm', displayValue: '0', displayDenom: 'AXM' }
+    let contractAction: string | undefined
+    let tokenSymbol: string | undefined
+    let contractAddress: string | undefined
 
     // Bank Send
     if (msgType === '/cosmos.bank.v1beta1.MsgSend') {
@@ -98,11 +137,11 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
       const amountData = Array.isArray(amountField) ? amountField[0] : amountField
 
       if (amountData) {
-        const formatted = formatAmount(amountData.amount, amountData.denom)
         amount = {
           value: amountData.amount,
           denom: amountData.denom,
-          ...formatted
+          displayValue: formatAmount(amountData.amount, 6),
+          displayDenom: amountData.denom === 'uaxm' ? 'AXM' : amountData.denom
         }
       }
 
@@ -111,20 +150,90 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
     // CosmWasm Execute
     else if (msgType === '/cosmwasm.wasm.v1.MsgExecuteContract') {
       from = firstMsg.sender || ''
-      to = firstMsg.contract || ''
+      contractAddress = firstMsg.contract || ''
+      to = contractAddress
       type = 'contract'
 
-      // Try to parse CW20 transfer
       const msg = firstMsg.msg as Record<string, unknown> | undefined
-      if (msg && 'transfer' in msg) {
-        const transfer = msg.transfer as { recipient?: string; amount?: string }
-        to = transfer.recipient || to
-        if (transfer.amount) {
-          amount = {
-            value: transfer.amount,
-            denom: 'cw20',
-            displayValue: (parseInt(transfer.amount) / 1_000_000).toFixed(6),
-            displayDenom: 'CW20'
+
+      if (msg) {
+        // Detect the action type
+        const actionKeys = Object.keys(msg)
+        contractAction = actionKeys[0] || 'execute'
+
+        // Handle CW20 transfer actions
+        if ('transfer' in msg) {
+          const transfer = msg.transfer as { recipient?: string; amount?: string }
+          contractAction = 'transfer'
+          to = transfer.recipient || contractAddress
+
+          // Get token info
+          const tokenInfo = await getTokenInfo(contractAddress)
+          if (tokenInfo && transfer.amount) {
+            tokenSymbol = tokenInfo.symbol
+            amount = {
+              value: transfer.amount,
+              denom: contractAddress,
+              displayValue: formatAmount(transfer.amount, tokenInfo.decimals),
+              displayDenom: tokenInfo.symbol
+            }
+          }
+        }
+        // Handle CW20 send (transfer with callback)
+        else if ('send' in msg) {
+          const send = msg.send as { contract?: string; amount?: string }
+          contractAction = 'send'
+          to = send.contract || contractAddress
+
+          const tokenInfo = await getTokenInfo(contractAddress)
+          if (tokenInfo && send.amount) {
+            tokenSymbol = tokenInfo.symbol
+            amount = {
+              value: send.amount,
+              denom: contractAddress,
+              displayValue: formatAmount(send.amount, tokenInfo.decimals),
+              displayDenom: tokenInfo.symbol
+            }
+          }
+        }
+        // Handle mint
+        else if ('mint' in msg) {
+          const mint = msg.mint as { recipient?: string; amount?: string }
+          contractAction = 'mint'
+          to = mint.recipient || from
+
+          const tokenInfo = await getTokenInfo(contractAddress)
+          if (tokenInfo && mint.amount) {
+            tokenSymbol = tokenInfo.symbol
+            amount = {
+              value: mint.amount,
+              denom: contractAddress,
+              displayValue: formatAmount(mint.amount, tokenInfo.decimals),
+              displayDenom: tokenInfo.symbol
+            }
+          }
+        }
+        // Handle burn
+        else if ('burn' in msg) {
+          const burn = msg.burn as { amount?: string }
+          contractAction = 'burn'
+
+          const tokenInfo = await getTokenInfo(contractAddress)
+          if (tokenInfo && burn.amount) {
+            tokenSymbol = tokenInfo.symbol
+            amount = {
+              value: burn.amount,
+              denom: contractAddress,
+              displayValue: formatAmount(burn.amount, tokenInfo.decimals),
+              displayDenom: tokenInfo.symbol
+            }
+          }
+        }
+        // Other contract actions - try to get token info anyway
+        else {
+          const tokenInfo = await getTokenInfo(contractAddress)
+          if (tokenInfo) {
+            tokenSymbol = tokenInfo.symbol
           }
         }
       }
@@ -133,12 +242,26 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
     else if (msgType === '/cosmwasm.wasm.v1.MsgInstantiateContract') {
       from = firstMsg.sender || ''
       type = 'instantiate'
+      contractAction = 'create'
 
       // Get contract address from logs
       const events = rawTx.logs?.[0]?.events || []
       const instantiateEvent = events.find(e => e.type === 'instantiate')
       const contractAttr = instantiateEvent?.attributes?.find(a => a.key === '_contract_address')
-      to = contractAttr?.value || ''
+      contractAddress = contractAttr?.value || ''
+      to = contractAddress
+
+      // Try to get token info from instantiate msg
+      const instantiateMsg = firstMsg.msg as { name?: string; symbol?: string } | undefined
+      if (instantiateMsg?.symbol) {
+        tokenSymbol = instantiateMsg.symbol
+        amount = {
+          value: '0',
+          denom: contractAddress,
+          displayValue: instantiateMsg.symbol,
+          displayDenom: 'Token Created'
+        }
+      }
     }
     // Delegate (Staking)
     else if (msgType.includes('MsgDelegate') && !msgType.includes('Undelegate')) {
@@ -148,11 +271,11 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
 
       const amountData = firstMsg.amount as { denom: string; amount: string } | undefined
       if (amountData) {
-        const formatted = formatAmount(amountData.amount, amountData.denom)
         amount = {
           value: amountData.amount,
           denom: amountData.denom,
-          ...formatted
+          displayValue: formatAmount(amountData.amount, 6),
+          displayDenom: amountData.denom === 'uaxm' ? 'AXM' : amountData.denom
         }
       }
     }
@@ -164,11 +287,11 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
 
       const amountData = firstMsg.amount as { denom: string; amount: string } | undefined
       if (amountData) {
-        const formatted = formatAmount(amountData.amount, amountData.denom)
         amount = {
           value: amountData.amount,
           denom: amountData.denom,
-          ...formatted
+          displayValue: formatAmount(amountData.amount, 6),
+          displayDenom: amountData.denom === 'uaxm' ? 'AXM' : amountData.denom
         }
       }
     }
@@ -186,10 +309,12 @@ function parseTransaction(rawTx: TxResponse, userAddress: string): Transaction |
       amount,
       fee: {
         value: feeAmount,
-        displayValue: (parseInt(feeAmount) / 1_000_000).toFixed(6)
+        displayValue: formatAmount(feeAmount, 6)
       },
       memo: rawTx.tx?.body?.memo,
-      contractAddress: type === 'contract' || type === 'instantiate' ? to : undefined
+      contractAddress,
+      contractAction,
+      tokenSymbol
     }
   } catch {
     return null
@@ -221,7 +346,6 @@ export async function GET(request: NextRequest) {
 
   try {
     // Fetch transactions where address is sender
-    // Using 'query' parameter for Cosmos SDK v0.50+
     const senderQuery = encodeURIComponent(`message.sender='${address}'`)
     const sentResponse = await fetch(
       `${REST_URL}/cosmos/tx/v1beta1/txs?query=${senderQuery}&pagination.limit=50&order_by=ORDER_BY_DESC`,
@@ -235,12 +359,21 @@ export async function GET(request: NextRequest) {
       { next: { revalidate: 30 } }
     )
 
+    // Also fetch wasm execute transactions involving this address
+    const wasmQuery = encodeURIComponent(`wasm._contract_address EXISTS AND message.sender='${address}'`)
+    const wasmResponse = await fetch(
+      `${REST_URL}/cosmos/tx/v1beta1/txs?query=${wasmQuery}&pagination.limit=50&order_by=ORDER_BY_DESC`,
+      { next: { revalidate: 30 } }
+    ).catch(() => null)
+
     const sentData = sentResponse.ok ? await sentResponse.json() : { tx_responses: [] }
     const receivedData = receivedResponse.ok ? await receivedResponse.json() : { tx_responses: [] }
+    const wasmData = wasmResponse?.ok ? await wasmResponse.json() : { tx_responses: [] }
 
     const allRawTxs: TxResponse[] = [
       ...(sentData.tx_responses || []),
-      ...(receivedData.tx_responses || [])
+      ...(receivedData.tx_responses || []),
+      ...(wasmData.tx_responses || [])
     ]
 
     // Deduplicate by hash
@@ -248,18 +381,20 @@ export async function GET(request: NextRequest) {
       index === self.findIndex(t => t.txhash === tx.txhash)
     )
 
-    // Parse transactions
-    const parsed = uniqueTxs
-      .map(tx => parseTransaction(tx, address))
-      .filter((tx): tx is Transaction => tx !== null)
+    // Parse transactions (with async token info fetching)
+    const parsed = await Promise.all(
+      uniqueTxs.map(tx => parseTransaction(tx, address))
+    )
+
+    const validTxs = parsed.filter((tx): tx is Transaction => tx !== null)
 
     // Sort by height descending
-    parsed.sort((a, b) => b.height - a.height)
+    validTxs.sort((a, b) => b.height - a.height)
 
     // Filter by type if specified
     const filtered = typeFilter === 'all'
-      ? parsed
-      : parsed.filter(tx => tx.type === typeFilter)
+      ? validTxs
+      : validTxs.filter(tx => tx.type === typeFilter)
 
     // Paginate
     const startIndex = (page - 1) * limit

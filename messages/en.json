@@ -103,7 +103,8 @@
       "overview": "Overview",
       "history": "History",
       "send": "Send",
-      "receive": "Receive"
+      "receive": "Receive",
+      "swap": "Swap"
     },
     "balance": {
       "total": "Total Balance",
@@ -153,6 +154,19 @@
     "connect": {
       "title": "Connect Your Wallet",
       "description": "Connect your Axiome wallet to view your balance, send tokens, and manage your assets."
+    },
+    "swap": {
+      "title": "Swap Tokens",
+      "comingSoon": "Coming Soon",
+      "comingSoonDesc": "Token swapping will be available soon. You'll be able to exchange AXM for any token directly in your wallet.",
+      "availableTokens": "Available tokens for swap:",
+      "verified": "Verified",
+      "youPay": "You Pay",
+      "youReceive": "You Receive",
+      "rate": "Rate",
+      "slippage": "Slippage Tolerance",
+      "networkFee": "Network Fee",
+      "swap": "Swap"
     }
   },
   "createToken": {
@@ -194,9 +208,121 @@
     "links": "Links",
     "contract": "Contract",
     "createdOn": "Created on",
-    "disclaimer": "This is not financial advice. Always do your own research before investing."
+    "disclaimer": "This is not financial advice. Always do your own research before investing.",
+    "owner": "Owner",
+    "youAreOwner": "You are the owner of this token"
+  },
+  "ownerPanel": {
+    "title": "Token Management",
+    "subtitle": "You are the owner of this token",
+    "edit": "Edit",
+    "save": "Save",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "saved": "Changes saved!",
+    "basicInfo": "Basic Information",
+    "projectName": "Project Name",
+    "logo": "Logo (URL)",
+    "logoPreview": "Preview",
+    "shortDescription": "Short Description",
+    "fullDescription": "Full Description",
+    "socialLinks": "Social Links",
+    "telegram": "Telegram",
+    "twitter": "Twitter / X",
+    "website": "Website",
+    "discord": "Discord",
+    "stats": {
+      "description": "Description",
+      "logo": "Logo",
+      "socials": "Socials",
+      "status": "Status",
+      "active": "Active",
+      "yes": "Yes",
+      "no": "No"
+    }
   },
   "footer": {
     "disclaimer": "Not financial advice. DYOR before investing in any token."
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "loginWithTelegram": "Log in with Telegram",
+    "verifyWallet": "Verify Wallet",
+    "walletVerified": "Wallet Verified",
+    "createToLogin": "Log in to create tokens",
+    "welcome": "Welcome to Axiome Launch Suite",
+    "whyLogin": "Why log in?",
+    "benefits": {
+      "createTokens": "Create and manage your own tokens",
+      "commentReact": "Comment and react to token projects",
+      "aiGeneration": "Get AI-powered token generation",
+      "dashboard": "Access your personal dashboard"
+    }
+  },
+  "launchpad": {
+    "title": "Launchpad",
+    "subtitle": "Discover all tokens on Axiome. Find new projects, verified tokens, and track trends.",
+    "tabs": {
+      "live": "Live",
+      "upcoming": "Upcoming"
+    },
+    "liveTokens": "Live Tokens",
+    "upcomingTokens": "Upcoming Tokens",
+    "comingSoon": "Coming Soon",
+    "inPresale": "In Presale",
+    "noUpcoming": "No Upcoming Tokens",
+    "beFirst": "Be the first to create a token project!"
+  },
+  "create": {
+    "title": "Create Token",
+    "subtitle": "Define your token parameters and launch on Axiome blockchain",
+    "steps": {
+      "basicInfo": "Basic Info",
+      "details": "Details",
+      "links": "Links"
+    },
+    "fields": {
+      "tokenName": "Token Name",
+      "symbol": "Symbol",
+      "initialSupply": "Initial Supply",
+      "decimals": "Decimals",
+      "logoUrl": "Logo URL",
+      "shortDescription": "Short Description",
+      "fullDescription": "Full Description",
+      "estimatedLaunchDate": "Estimated Launch Date"
+    },
+    "saveAsDraft": "Save as Draft",
+    "publishToUpcoming": "Publish to Upcoming",
+    "success": "Token Created!",
+    "savedAsDraft": "Your token has been saved as a draft. You can edit it anytime from your dashboard."
+  },
+  "social": {
+    "comments": "Comments",
+    "writeComment": "Write a comment...",
+    "post": "Post",
+    "noComments": "No comments yet. Be the first to share your thoughts!",
+    "loadMore": "Load More Comments",
+    "loginToComment": "Log in to join the conversation",
+    "react": "React",
+    "loginToReact": "Log in to react",
+    "reactions": {
+      "rocket": "To the moon!",
+      "fire": "Hot!",
+      "heart": "Love it",
+      "eyes": "Watching",
+      "warning": "Be careful"
+    }
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "myTokens": "My Tokens",
+    "noTokens": "You haven't created any tokens yet",
+    "createFirst": "Create your first token",
+    "stats": {
+      "totalTokens": "Total Tokens",
+      "totalReactions": "Total Reactions",
+      "totalComments": "Total Comments"
+    }
   }
 }

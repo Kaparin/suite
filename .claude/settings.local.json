@@ -25,7 +25,21 @@
       "Bash(curl -s \"http://49.13.3.227:1317/cosmwasm/wasm/v1/code/1/contracts\")",
       "Bash(curl -s http://49.13.3.227:1317/cosmos/bank/v1beta1/balances/cosmos1q2k6u5f0n9y1g5q1z2k3l4m5n6o7p8q9r0s1t2)",
       "Bash(curl:*)",
-      "Bash(npx tsc:*)"
+      "Bash(npx tsc:*)",
+      "Bash(timeout /t 8)",
+      "Bash(powershell -Command \"Stop-Process -Id 51156 -Force\")",
+      "Bash(npm run dev)",
+      "Bash(for contract in axm14hj2tavq8fpesdwxxcu44rty3hh90vhujrvcmstl4zr3txmfvw9sletw5k axm1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsqv8mul axm1yyca08xqdgvjz0psg56z67ejh9xms6l436u8y58m82npdqqhmmtqdgn779 axm1yw4xvtc43me9scqfr2jr2gzvcxd3a9y4eq7gaukreugw2yd2f8tsvfscuk axm1cnuw3f076wgdyahssdkd0g3nr96ckq8cwa2mh029fn5mgf2fmcms496fwy)",
+      "Bash(do)",
+      "Bash(echo:*)",
+      "Bash(for code_id in 2 3 4 5 6 7 8 9 10 11 12 13)",
+      "Bash(done)",
+      "Bash(npm ls:*)",
+      "Bash(findstr:*)",
+      "Bash(powershell -Command \"Get-Content -Path ''E:/Work/suite-app/suite/messages/de.json'' -Raw\")",
+      "Bash(node:*)",
+      "Bash(dir:*)",
+      "Bash(git reset:*)"
     ]
   }
 }

@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Badge, Button, Card, CardContent } from '@/components/ui'
+import { OwnerPanel } from '@/components/token'
+import { useWallet, truncateAddress } from '@/lib/wallet'
 import { useTranslations } from 'next-intl'
 
 type RiskFlag = {
@@ -13,26 +15,33 @@ type RiskFlag = {
   severity: string
 }
 
+type ProjectLinks = {
+  telegram?: string
+  twitter?: string
+  website?: string
+  discord?: string
+}
+
 type TokenData = {
   project: {
-    id: string
+    id: string | null
     name: string
     ticker: string
     tokenAddress: string | null
     descriptionShort: string | null
     descriptionLong: string | null
+    logo?: string | null
     tokenomics: {
       supply?: string
       distribution?: Record<string, number>
     } | null
-    links: {
-      telegram?: string
-      twitter?: string
-      website?: string
-    } | null
+    links: ProjectLinks | null
     isVerified: boolean
     createdAt: string
     riskFlags: RiskFlag[]
+    owner?: {
+      walletAddress?: string
+    }
   }
   score: number
   metrics: {
@@ -40,40 +49,43 @@ type TokenData = {
     txCount: number
     volume24h: number
   }
+  chainMinter?: string | null
 }
 
 export default function TokenPage() {
   const params = useParams()
   const address = params.address as string
   const t = useTranslations('token')
+  const { isConnected, address: walletAddress } = useWallet()
 
   const [data, setData] = useState<TokenData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState('')
 
-  useEffect(() => {
-    async function fetchToken() {
-      try {
-        const response = await fetch(`/api/tokens/${address}`)
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('Token not found')
-          } else {
-            throw new Error('Failed to fetch token')
-          }
-          return
+  const fetchToken = useCallback(async () => {
+    try {
+      const response = await fetch(`/api/tokens/${address}`)
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError('Token not found')
+        } else {
+          throw new Error('Failed to fetch token')
         }
-        const tokenData = await response.json()
-        setData(tokenData)
-      } catch (err) {
-        console.error('Error fetching token:', err)
-        setError('Failed to load token')
-      } finally {
-        setIsLoading(false)
+        return
       }
+      const tokenData = await response.json()
+      setData(tokenData)
+    } catch (err) {
+      console.error('Error fetching token:', err)
+      setError('Failed to load token')
+    } finally {
+      setIsLoading(false)
     }
-    fetchToken()
   }, [address])
+
+  useEffect(() => {
+    fetchToken()
+  }, [fetchToken])
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return 'text-green-400'
@@ -82,12 +94,18 @@ export default function TokenPage() {
   }
 
   const formatDate = (dateStr: string) => {
-    return new Date(dateStr).toLocaleDateString('en-US', {
+    return new Date(dateStr).toLocaleDateString('ru-RU', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
     })
   }
+
+  // Check if current user is owner
+  const isOwner = walletAddress && data && (
+    data.project.owner?.walletAddress?.toLowerCase() === walletAddress.toLowerCase() ||
+    data.chainMinter?.toLowerCase() === walletAddress.toLowerCase()
+  )
 
   // Loading state
   if (isLoading) {
@@ -99,7 +117,7 @@ export default function TokenPage() {
           className="flex flex-col items-center gap-4"
         >
           <div className="w-16 h-16 border-4 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-          <p className="text-gray-400">Loading token...</p>
+          <p className="text-gray-400">Загрузка токена...</p>
         </motion.div>
       </div>
     )
@@ -119,13 +137,13 @@ export default function TokenPage() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
             </svg>
           </div>
-          <h2 className="text-2xl font-bold mb-2">{error || 'Token not found'}</h2>
-          <p className="text-gray-400 mb-6">The token you&apos;re looking for doesn&apos;t exist or has been removed.</p>
+          <h2 className="text-2xl font-bold mb-2">{error || 'Токен не найден'}</h2>
+          <p className="text-gray-400 mb-6">Токен, который вы ищете, не существует или был удалён.</p>
           <Link
             href="/explorer"
             className="inline-flex px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 rounded-lg font-medium transition-all"
           >
-            Browse Tokens
+            Все токены
           </Link>
         </motion.div>
       </div>
@@ -135,7 +153,7 @@ export default function TokenPage() {
   const { project, score, metrics } = data
   const tokenAddress = project.tokenAddress || address
   const tokenomics = project.tokenomics as { supply?: string; distribution?: Record<string, number> } | null
-  const links = project.links as { telegram?: string; twitter?: string; website?: string } | null
+  const links = project.links as ProjectLinks | null
 
   return (
     <div className="min-h-screen relative">
@@ -148,17 +166,35 @@ export default function TokenPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
+        {/* Owner Panel */}
+        {isConnected && isOwner && walletAddress && (
+          <OwnerPanel
+            tokenAddress={tokenAddress}
+            walletAddress={walletAddress}
+            currentName={project.name}
+            currentDescriptionShort={project.descriptionShort}
+            currentDescriptionLong={project.descriptionLong}
+            currentLinks={links}
+            currentLogo={project.logo || null}
+            onUpdate={fetchToken}
+          />
+        )}
+
         {/* Hero */}
         <div className="text-center mb-12">
           <motion.div
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             transition={{ delay: 0.1 }}
-            className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-purple-500/30"
+            className="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-2xl shadow-purple-500/30 overflow-hidden"
           >
-            <span className="text-white font-bold text-3xl">
-              {project.ticker.slice(0, 2)}
-            </span>
+            {project.logo ? (
+              <img src={project.logo} alt={project.name} className="w-full h-full object-cover" />
+            ) : (
+              <span className="text-white font-bold text-3xl">
+                {project.ticker.slice(0, 2)}
+              </span>
+            )}
           </motion.div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
@@ -175,9 +211,23 @@ export default function TokenPage() {
             </div>
             <p className="text-xl text-gray-400 mb-4">${project.ticker}</p>
             <p className="text-gray-300 max-w-2xl mx-auto mb-6">
-              {project.descriptionShort || 'No description available'}
+              {project.descriptionShort || 'Описание отсутствует'}
             </p>
           </motion.div>
+
+          {/* Owner Badge */}
+          {isOwner && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="inline-flex items-center gap-2 px-4 py-2 bg-purple-500/20 border border-purple-500/30 rounded-full text-purple-300 text-sm mb-6"
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+              </svg>
+              Вы владелец этого токена
+            </motion.div>
+          )}
 
           {/* CTA Buttons */}
           <motion.div
@@ -187,20 +237,20 @@ export default function TokenPage() {
             className="flex flex-wrap items-center justify-center gap-4"
           >
             <a
-              href={`https://app.axiometrade.pro/swap?token=${tokenAddress}`}
+              href={`https://axiometrade.pro/swap?token=${tokenAddress}`}
               target="_blank"
               rel="noopener noreferrer"
             >
               <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
-                Buy ${project.ticker}
+                {t('buy')} ${project.ticker}
               </Button>
             </a>
             <a
-              href={`https://app.axiometrade.pro/swap?token=${tokenAddress}&sell=true`}
+              href={`https://axiometrade.pro/swap?token=${tokenAddress}&sell=true`}
               target="_blank"
               rel="noopener noreferrer"
             >
-              <Button variant="outline" size="lg">Sell ${project.ticker}</Button>
+              <Button variant="outline" size="lg">{t('sell')} ${project.ticker}</Button>
             </a>
           </motion.div>
         </div>
@@ -215,25 +265,25 @@ export default function TokenPage() {
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent className="text-center">
               <p className="text-2xl font-bold text-white">{metrics.holders.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">Holders</p>
+              <p className="text-sm text-gray-400">{t('holders')}</p>
             </CardContent>
           </Card>
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent className="text-center">
               <p className="text-2xl font-bold text-white">${metrics.volume24h.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">Volume 24h</p>
+              <p className="text-sm text-gray-400">{t('volume24h')}</p>
             </CardContent>
           </Card>
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent className="text-center">
               <p className="text-2xl font-bold text-white">{metrics.txCount.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">Transactions</p>
+              <p className="text-sm text-gray-400">{t('transactions')}</p>
             </CardContent>
           </Card>
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent className="text-center">
               <p className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}</p>
-              <p className="text-sm text-gray-400">Trust Score</p>
+              <p className="text-sm text-gray-400">{t('trustScore')}</p>
             </CardContent>
           </Card>
         </motion.div>
@@ -246,13 +296,13 @@ export default function TokenPage() {
         >
           <Card className="mb-8 bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent>
-              <h2 className="text-xl font-semibold mb-4">Risk Assessment</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('riskAssessment')}</h2>
               {project.riskFlags.length === 0 ? (
                 <div className="flex items-center gap-3 text-green-400">
                   <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <span>No risk flags detected. This token appears safe.</span>
+                  <span>{t('noRiskFlags')}</span>
                 </div>
               ) : (
                 <div className="flex flex-wrap gap-2">
@@ -276,7 +326,7 @@ export default function TokenPage() {
           >
             <Card className="mb-8 bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
               <CardContent>
-                <h2 className="text-xl font-semibold mb-4">About {project.name}</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('about')} {project.name}</h2>
                 <p className="text-gray-300 whitespace-pre-line">{project.descriptionLong}</p>
               </CardContent>
             </Card>
@@ -292,10 +342,10 @@ export default function TokenPage() {
           >
             <Card className="mb-8 bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
               <CardContent>
-                <h2 className="text-xl font-semibold mb-6">Tokenomics</h2>
+                <h2 className="text-xl font-semibold mb-6">{t('tokenomics')}</h2>
                 {tokenomics.supply && (
                   <div className="mb-6">
-                    <p className="text-sm text-gray-400 mb-1">Total Supply</p>
+                    <p className="text-sm text-gray-400 mb-1">{t('totalSupply')}</p>
                     <p className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
                       {tokenomics.supply}
                     </p>
@@ -317,7 +367,7 @@ export default function TokenPage() {
         )}
 
         {/* Links */}
-        {links && (links.telegram || links.twitter || links.website) && (
+        {links && (links.telegram || links.twitter || links.website || links.discord) && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -325,7 +375,7 @@ export default function TokenPage() {
           >
             <Card className="mb-8 bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
               <CardContent>
-                <h2 className="text-xl font-semibold mb-4">Links</h2>
+                <h2 className="text-xl font-semibold mb-4">{t('links')}</h2>
                 <div className="flex flex-wrap gap-3">
                   {links.telegram && (
                     <a
@@ -366,6 +416,19 @@ export default function TokenPage() {
                       Website
                     </a>
                   )}
+                  {links.discord && (
+                    <a
+                      href={links.discord}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 px-4 py-2 bg-gray-800/50 hover:bg-gray-700/50 rounded-lg transition-colors border border-gray-700/50"
+                    >
+                      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+                      </svg>
+                      Discord
+                    </a>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -380,7 +443,7 @@ export default function TokenPage() {
         >
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
             <CardContent>
-              <h2 className="text-xl font-semibold mb-4">Contract</h2>
+              <h2 className="text-xl font-semibold mb-4">{t('contract')}</h2>
               <div className="bg-gray-800/50 p-4 rounded-lg flex items-center justify-between border border-gray-700/50">
                 <code className="text-sm text-gray-300 break-all">{tokenAddress}</code>
                 <button
@@ -393,8 +456,20 @@ export default function TokenPage() {
                   </svg>
                 </button>
               </div>
+
+              {/* Owner info */}
+              {(data.chainMinter || project.owner?.walletAddress) && (
+                <div className="mt-4 flex items-center gap-2 text-sm text-gray-400">
+                  <span>Владелец:</span>
+                  <code className="text-gray-300">
+                    {truncateAddress(data.chainMinter || project.owner?.walletAddress || '', 8, 6)}
+                  </code>
+                  {isOwner && <span className="text-purple-400">(это вы)</span>}
+                </div>
+              )}
+
               <p className="text-sm text-gray-500 mt-2">
-                Created on {formatDate(project.createdAt)}
+                {t('createdOn')} {formatDate(project.createdAt)}
               </p>
             </CardContent>
           </Card>
@@ -402,7 +477,7 @@ export default function TokenPage() {
 
         {/* Disclaimer */}
         <p className="text-center text-gray-500 text-sm mt-8">
-          This is not financial advice. Always do your own research before investing.
+          {t('disclaimer')}
         </p>
       </motion.div>
     </div>

@@ -1,6 +1,6 @@
 // Transaction builder for Axiome blockchain
 // Creates transaction payloads for signing via Axiome Connect
-// Uses Cosmos SDK proto format with typeUrl
+// Uses Axiome Connect native format (not Cosmos SDK proto)
 
 export interface AxiomeConnectFunds {
   denom: string
@@ -30,43 +30,90 @@ export interface CW20InstantiateMsg {
   }
 }
 
-// Cosmos SDK proto message format
-export interface CosmosMsg {
+// Axiome Connect payload types
+export type AxiomeConnectType =
+  | 'cosmwasm_execute'
+  | 'cosmwasm_instantiate'
+  | 'bank_send'
+
+// Base payload structure for Axiome Connect
+export interface AxiomeConnectPayload {
+  type: AxiomeConnectType
+  network: string
+  memo?: string
+}
+
+// CosmWasm Execute payload
+export interface CosmWasmExecutePayload extends AxiomeConnectPayload {
+  type: 'cosmwasm_execute'
+  contract_addr: string
+  msg: Record<string, unknown>
+  funds?: AxiomeConnectFunds[]
+}
+
+// CosmWasm Instantiate payload
+export interface CosmWasmInstantiatePayload extends AxiomeConnectPayload {
+  type: 'cosmwasm_instantiate'
+  code_id: string
+  label: string
+  msg: CW20InstantiateMsg | Record<string, unknown>
+  funds?: AxiomeConnectFunds[]
+  admin?: string
+}
+
+// Bank Send payload
+export interface BankSendPayload extends AxiomeConnectPayload {
+  type: 'bank_send'
+  to_address: string
+  amount: AxiomeConnectFunds[]
+}
+
+// Union type for all payloads
+export type TransactionPayload = CosmWasmExecutePayload | CosmWasmInstantiatePayload | BankSendPayload
+
+// Legacy types for compatibility
+export interface CosmosMessage {
   typeUrl: string
   value: Record<string, unknown>
 }
 
-// Full transaction payload for Axiome Connect
-export interface TransactionPayload {
-  chainId: string
-  msgs: CosmosMsg[]
-  memo?: string
-  fee?: {
-    amount: AxiomeConnectFunds[]
-    gas: string
-  }
+// Get network name
+function getNetwork(): string {
+  return process.env.NEXT_PUBLIC_AXIOME_NETWORK || 'axiome-1'
 }
 
-// Default fee for transactions
-const DEFAULT_FEE = {
-  amount: [{ denom: 'uaxm', amount: '5000' }],
-  gas: '200000'
+// Encode payload to base64
+// For non-ASCII characters, uses encodeURIComponent trick
+function encodePayloadToBase64(payload: TransactionPayload): string {
+  const jsonPayload = JSON.stringify(payload)
+  if (typeof window !== 'undefined') {
+    // Check if string contains non-ASCII characters
+    const hasNonAscii = /[^\x00-\x7F]/.test(jsonPayload)
+    if (hasNonAscii) {
+      // UTF-8 encode for non-ASCII
+      return btoa(unescape(encodeURIComponent(jsonPayload)))
+    }
+    // Standard btoa for ASCII-only
+    return btoa(jsonPayload)
+  } else {
+    return Buffer.from(jsonPayload, 'utf-8').toString('base64')
+  }
 }
 
 // Build deep link for Axiome Connect
 // Format: axiomesign://<base64-encoded-json>
 export function buildAxiomeSignLink(payload: TransactionPayload): string {
-  const jsonPayload = JSON.stringify(payload)
-  // Use btoa for browser compatibility, Buffer for Node
-  const base64Payload = typeof window !== 'undefined'
-    ? btoa(jsonPayload)
-    : Buffer.from(jsonPayload).toString('base64')
+  const base64Payload = encodePayloadToBase64(payload)
   return `axiomesign://${base64Payload}`
 }
 
-// Get chain ID
-function getChainId(): string {
-  return process.env.NEXT_PUBLIC_AXIOME_NETWORK || 'axiome-1'
+// Build web link that redirects to wallet
+// Format: https://yourdomain.com/sign/<base64-encoded-json>
+export function buildAxiomeSignWebLink(payload: TransactionPayload): string {
+  const base64Payload = encodePayloadToBase64(payload)
+  // Use current origin or fallback
+  const origin = typeof window !== 'undefined' ? window.location.origin : ''
+  return `${origin}/sign/${base64Payload}`
 }
 
 // Build CW20 token instantiation transaction
@@ -82,7 +129,7 @@ export function buildCW20InstantiatePayload(params: {
   logoUrl?: string
   projectUrl?: string
   description?: string
-}): TransactionPayload {
+}): CosmWasmInstantiatePayload {
   const {
     codeId,
     sender,
@@ -91,10 +138,7 @@ export function buildCW20InstantiatePayload(params: {
     decimals = 6,
     initialSupply,
     enableMint = false,
-    label,
-    logoUrl,
-    projectUrl,
-    description
+    label
   } = params
 
   const instantiateMsg: CW20InstantiateMsg = {
@@ -115,157 +159,158 @@ export function buildCW20InstantiatePayload(params: {
     }
   }
 
-  // Add marketing info if provided
-  if (logoUrl || projectUrl || description) {
-    instantiateMsg.marketing = {}
-    if (projectUrl) instantiateMsg.marketing.project = projectUrl
-    if (description) instantiateMsg.marketing.description = description
-    if (sender) instantiateMsg.marketing.marketing = sender
-    if (logoUrl) instantiateMsg.marketing.logo = { url: logoUrl }
+  // Minimal payload for QR code
+  const payload: CosmWasmInstantiatePayload = {
+    type: 'cosmwasm_instantiate',
+    network: getNetwork(),
+    code_id: codeId.toString(),
+    label: label || symbol,
+    msg: instantiateMsg,
+    admin: sender
   }
 
+  return payload
+}
+
+// Alternative: Build using Cosmos SDK message format (if wallet requires it)
+export function buildCW20InstantiateCosmosPayload(params: {
+  codeId: number
+  sender: string
+  name: string
+  symbol: string
+  decimals?: number
+  initialSupply: string
+  enableMint?: boolean
+  label?: string
+}): Record<string, unknown> {
+  const {
+    codeId,
+    sender,
+    name,
+    symbol,
+    decimals = 6,
+    initialSupply,
+    enableMint = false,
+    label
+  } = params
+
+  const instantiateMsg = {
+    name,
+    symbol,
+    decimals,
+    initial_balances: [{ address: sender, amount: initialSupply }],
+    ...(enableMint ? { mint: { minter: sender } } : {})
+  }
+
+  // Cosmos SDK format with typeUrl
   return {
-    chainId: getChainId(),
-    msgs: [
+    messages: [
       {
         typeUrl: '/cosmwasm.wasm.v1.MsgInstantiateContract',
         value: {
           sender,
           codeId: codeId.toString(),
-          label: label || `${symbol} Token`,
+          label: label || symbol,
           msg: instantiateMsg,
           funds: [],
           admin: sender
         }
       }
     ],
-    memo: `Create ${symbol} token via Axiome Launch Suite`,
-    fee: DEFAULT_FEE
+    memo: ''
   }
 }
 
 // Build CW20 transfer transaction
 export function buildCW20TransferPayload(params: {
   contractAddress: string
-  sender: string
+  sender: string  // Not used in payload
   recipient: string
   amount: string
   memo?: string
-}): TransactionPayload {
-  const { contractAddress, sender, recipient, amount, memo } = params
+}): CosmWasmExecutePayload {
+  const { contractAddress, recipient, amount, memo } = params
 
   return {
-    chainId: getChainId(),
-    msgs: [
-      {
-        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-        value: {
-          sender,
-          contract: contractAddress,
-          msg: {
-            transfer: {
-              recipient,
-              amount
-            }
-          },
-          funds: []
-        }
+    type: 'cosmwasm_execute',
+    network: getNetwork(),
+    contract_addr: contractAddress,
+    msg: {
+      transfer: {
+        recipient,
+        amount
       }
-    ],
-    memo,
-    fee: DEFAULT_FEE
+    },
+    funds: [],
+    memo
   }
 }
 
 // Build native token send transaction
 export function buildSendPayload(params: {
-  sender: string
+  sender: string  // Not used in payload, wallet adds it
   recipient: string
   amount: string
   denom?: string
   memo?: string
-}): TransactionPayload {
-  const { sender, recipient, amount, denom = 'uaxm', memo } = params
+}): BankSendPayload {
+  const { recipient, amount, denom = 'uaxm', memo } = params
 
   return {
-    chainId: getChainId(),
-    msgs: [
+    type: 'bank_send',
+    network: getNetwork(),
+    to_address: recipient,
+    amount: [
       {
-        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
-        value: {
-          fromAddress: sender,
-          toAddress: recipient,
-          amount: [
-            {
-              denom,
-              amount
-            }
-          ]
-        }
+        denom,
+        amount
       }
     ],
-    memo,
-    fee: DEFAULT_FEE
+    memo
   }
 }
 
 // Build CW20 update marketing info transaction
 export function buildUpdateMarketingPayload(params: {
   contractAddress: string
-  sender: string
+  sender: string  // Not used in payload
   project?: string
   description?: string
   marketing?: string
-}): TransactionPayload {
-  const { contractAddress, sender, project, description, marketing } = params
+}): CosmWasmExecutePayload {
+  const { contractAddress, project, description, marketing } = params
 
   return {
-    chainId: getChainId(),
-    msgs: [
-      {
-        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-        value: {
-          sender,
-          contract: contractAddress,
-          msg: {
-            update_marketing: {
-              project,
-              description,
-              marketing
-            }
-          },
-          funds: []
-        }
+    type: 'cosmwasm_execute',
+    network: getNetwork(),
+    contract_addr: contractAddress,
+    msg: {
+      update_marketing: {
+        project,
+        description,
+        marketing
       }
-    ],
-    fee: DEFAULT_FEE
+    },
+    funds: []
   }
 }
 
 // Build generic CosmWasm execute transaction
 export function buildExecutePayload(params: {
   contractAddress: string
-  sender: string
+  sender: string  // Not used in payload
   msg: Record<string, unknown>
   funds?: AxiomeConnectFunds[]
   memo?: string
-}): TransactionPayload {
-  const { contractAddress, sender, msg, funds, memo } = params
+}): CosmWasmExecutePayload {
+  const { contractAddress, msg, funds, memo } = params
 
   return {
-    chainId: getChainId(),
-    msgs: [
-      {
-        typeUrl: '/cosmwasm.wasm.v1.MsgExecuteContract',
-        value: {
-          sender,
-          contract: contractAddress,
-          msg,
-          funds: funds || []
-        }
-      }
-    ],
-    memo,
-    fee: DEFAULT_FEE
+    type: 'cosmwasm_execute',
+    network: getNetwork(),
+    contract_addr: contractAddress,
+    msg,
+    funds: funds || [],
+    memo
   }
 }

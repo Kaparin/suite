@@ -8,16 +8,24 @@ datasource db {
 
 // Пользователи (Telegram + кошелёк)
 model User {
-  id            String    @id @default(cuid())
-  telegramId    String?   @unique
-  walletAddress String?   @unique
-  username      String?
-  plan          Plan      @default(FREE)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                String    @id @default(cuid())
+  telegramId        String?   @unique
+  telegramUsername  String?
+  telegramPhotoUrl  String?
+  telegramFirstName String?
+  telegramAuthDate  DateTime?
+  walletAddress     String?   @unique
+  walletVerifiedAt  DateTime?
+  isVerified        Boolean   @default(false) // true = Telegram + Wallet linked
+  username          String?
+  plan              Plan      @default(FREE)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
 
   projects      Project[]
   aiGenerations AiGeneration[]
+  comments      Comment[]
+  reactions     Reaction[]
 
   @@map("users")
 }
@@ -48,22 +56,36 @@ model Project {
   faq              Json?         // вопросы-ответы
   promoTexts       Json?         // тексты для постов
 
-  status           ProjectStatus @default(DRAFT)
-  isFeatured       Boolean       @default(false)
-  isVerified       Boolean       @default(false)
+  // CW20 Token Parameters
+  decimals            Int           @default(6)
+  initialSupply       String?
+
+  status              ProjectStatus @default(DRAFT)
+  isFeatured          Boolean       @default(false)
+  isVerified          Boolean       @default(false)
+
+  // Launch dates
+  presaleStartDate    DateTime?
+  presaleEndDate      DateTime?
+  estimatedLaunchDate DateTime?
 
   createdAt        DateTime      @default(now())
   updatedAt        DateTime      @updatedAt
 
   metrics          TokenMetric[]
   riskFlags        RiskFlag[]
+  comments         Comment[]
+  reactions        Reaction[]
 
   @@map("projects")
 }
 
 enum ProjectStatus {
-  DRAFT
-  PUBLISHED
+  DRAFT      // Черновик, виден только автору
+  UPCOMING   // Скоро запуск, виден всем в Upcoming
+  PRESALE    // Пресейл активен
+  PUBLISHED  // Опубликован (legacy)
+  LAUNCHED   // Токен создан в блокчейне
   ARCHIVED
 }
 
@@ -167,4 +189,43 @@ enum AlertType {
   PRICE_CHANGE
   RISK_FLAG
   TOKEN_UPDATE
+}
+
+// Комментарии к проектам
+model Comment {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  content   String   @db.Text
+  isEdited  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([projectId, createdAt])
+  @@map("comments")
+}
+
+// Реакции на проекты
+model Reaction {
+  id        String       @id @default(cuid())
+  projectId String
+  project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User         @relation(fields: [userId], references: [id])
+  type      ReactionType
+  createdAt DateTime     @default(now())
+
+  @@unique([projectId, userId, type])
+  @@index([projectId])
+  @@map("reactions")
+}
+
+enum ReactionType {
+  ROCKET   // 🚀
+  FIRE     // 🔥
+  HEART    // ❤️
+  EYES     // 👀
+  WARNING  // ⚠️
 }
