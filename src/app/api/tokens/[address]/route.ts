@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifySessionToken } from '@/lib/auth'
+import { KNOWN_TOKENS } from '@/lib/axiome/token-registry'
 
 const REST_URL = process.env.AXIOME_REST_URL
 
@@ -29,6 +30,72 @@ async function getChainMinter(contractAddress: string): Promise<string | null> {
     }
   } catch {
     // No minter
+  }
+  return null
+}
+
+// Get token info from chain
+async function getChainTokenInfo(contractAddress: string): Promise<{
+  name: string
+  symbol: string
+  decimals: number
+  total_supply: string
+} | null> {
+  if (!REST_URL) return null
+
+  try {
+    const query = Buffer.from(JSON.stringify({ token_info: {} })).toString('base64')
+    const response = await fetch(
+      `${REST_URL}/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`,
+      { next: { revalidate: 300 } }
+    )
+
+    if (response.ok) {
+      const data = await response.json()
+      if (data.data) {
+        let tokenInfo
+        if (typeof data.data === 'string') {
+          tokenInfo = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          tokenInfo = data.data
+        }
+        return tokenInfo
+      }
+    }
+  } catch {
+    // Not a valid CW20
+  }
+  return null
+}
+
+// Get marketing info from chain
+async function getChainMarketingInfo(contractAddress: string): Promise<{
+  description?: string
+  logo?: { url?: string }
+} | null> {
+  if (!REST_URL) return null
+
+  try {
+    const query = Buffer.from(JSON.stringify({ marketing_info: {} })).toString('base64')
+    const response = await fetch(
+      `${REST_URL}/cosmwasm/wasm/v1/contract/${contractAddress}/smart/${query}`,
+      { next: { revalidate: 300 } }
+    )
+
+    if (response.ok) {
+      const data = await response.json()
+      if (data.data) {
+        let info
+        if (typeof data.data === 'string') {
+          info = JSON.parse(Buffer.from(data.data, 'base64').toString())
+        } else {
+          info = data.data
+        }
+        return info
+      }
+    }
+  } catch {
+    // No marketing info
   }
   return null
 }
@@ -92,24 +159,37 @@ export async function GET(
     }
 
     if (!project) {
-      // If project not in DB but we have chain minter, return minimal data
-      if (chainMinter) {
+      // Try to get token info from chain
+      const chainTokenInfo = await getChainTokenInfo(address)
+      const chainMarketingInfo = await getChainMarketingInfo(address)
+
+      // Check if it's a known token
+      const knownToken = KNOWN_TOKENS.find(
+        t => t.contractAddress.toLowerCase() === address.toLowerCase()
+      )
+
+      if (chainTokenInfo || knownToken) {
+        // Token exists on chain, return chain data
         return NextResponse.json({
           project: {
             id: null,
-            name: 'Unknown Token',
-            ticker: 'TOKEN',
+            name: knownToken?.name || chainTokenInfo?.name || 'Unknown Token',
+            ticker: knownToken?.symbol || chainTokenInfo?.symbol || 'TOKEN',
             tokenAddress: address,
-            descriptionShort: null,
+            descriptionShort: chainMarketingInfo?.description || null,
             descriptionLong: null,
+            logo: knownToken?.logoUrl || chainMarketingInfo?.logo?.url || null,
             links: null,
-            tokenomics: null,
-            isVerified: false,
+            tokenomics: chainTokenInfo ? {
+              supply: chainTokenInfo.total_supply,
+              decimals: chainTokenInfo.decimals
+            } : null,
+            isVerified: knownToken?.verified || false,
             createdAt: new Date().toISOString(),
             riskFlags: [],
-            owner: { walletAddress: chainMinter },
+            owner: chainMinter ? { walletAddress: chainMinter } : null,
           },
-          score: 50,
+          score: knownToken?.verified ? 80 : 50,
           metrics: { holders: 0, txCount: 0, volume24h: 0 },
           chainMinter,
         })

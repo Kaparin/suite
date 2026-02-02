@@ -17,6 +17,18 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showWalletModal, setShowWalletModal] = useState(false)
+  const [widgetError, setWidgetError] = useState(false)
+
+  // Check if Telegram widget failed to load after timeout
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const widget = document.querySelector('.telegram-login-button iframe')
+      if (!widget) {
+        setWidgetError(true)
+      }
+    }, 3000)
+    return () => clearTimeout(timer)
+  }, [])
 
   // Check for verify parameter
   const shouldVerify = searchParams.get('verify') === 'true'
@@ -136,17 +148,36 @@ function LoginContent() {
             {!isAuthenticated ? (
               <div className="space-y-4">
                 {/* Telegram Login Widget */}
-                <div className="flex justify-center">
-                  <TelegramLoginButton
-                    botName={TELEGRAM_BOT_USERNAME}
-                    onAuth={handleTelegramAuth}
-                    buttonSize="large"
-                    cornerRadius={14}
-                    lang="en"
-                  />
-                </div>
+                {!widgetError ? (
+                  <div className="flex justify-center min-h-[40px]">
+                    <TelegramLoginButton
+                      botName={TELEGRAM_BOT_USERNAME}
+                      onAuth={handleTelegramAuth}
+                      buttonSize="large"
+                      cornerRadius={14}
+                      lang="en"
+                    />
+                  </div>
+                ) : (
+                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <svg className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <div>
+                        <p className="text-amber-300 font-medium mb-1">Telegram Bot Not Configured</p>
+                        <p className="text-sm text-gray-400 mb-2">
+                          To enable Telegram login, set <code className="bg-gray-800 px-1 rounded">NEXT_PUBLIC_TELEGRAM_BOT_USERNAME</code> in your environment variables.
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          Current bot: <code className="bg-gray-800 px-1 rounded">{TELEGRAM_BOT_USERNAME}</code>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
-                {/* Fallback button */}
+                {/* Loading state */}
                 {isLoading && (
                   <TelegramLoginFallback
                     onClick={() => {}}
