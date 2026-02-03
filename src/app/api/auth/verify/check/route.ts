@@ -50,14 +50,12 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Search for transactions from this wallet to verification address
-    // Using the Cosmos SDK tx search endpoint
-    const query = encodeURIComponent(
-      `message.sender='${walletAddress}' AND transfer.recipient='${VERIFICATION_ADDRESS}'`
-    )
+    // Search for transactions from this wallet
+    // Using query= parameter with URL encoding (correct format for Axiome REST API)
+    const query = encodeURIComponent(`message.sender='${walletAddress}'`)
 
     const response = await fetch(
-      `${REST_URL}/cosmos/tx/v1beta1/txs?events=${query}&order_by=ORDER_BY_DESC&pagination.limit=10`,
+      `${REST_URL}/cosmos/tx/v1beta1/txs?query=${query}&order_by=ORDER_BY_DESC&pagination.limit=20`,
       { cache: 'no-store' }
     )
 
@@ -143,10 +141,10 @@ async function checkTransactionsAlternative(walletAddress: string, code: string)
   }
 
   try {
-    // Get account transactions using bank module query
-    // This queries transactions where the account sent funds
+    // Get account transactions using query= parameter (correct format for Axiome REST API)
+    const query = encodeURIComponent(`message.sender='${walletAddress}'`)
     const response = await fetch(
-      `${REST_URL}/cosmos/tx/v1beta1/txs?events=message.sender='${walletAddress}'&order_by=ORDER_BY_DESC&pagination.limit=20`,
+      `${REST_URL}/cosmos/tx/v1beta1/txs?query=${query}&order_by=ORDER_BY_DESC&pagination.limit=20`,
       { cache: 'no-store' }
     )
 

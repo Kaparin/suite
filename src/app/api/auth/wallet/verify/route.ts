@@ -137,7 +137,7 @@ export async function GET(request: NextRequest) {
 
 /**
  * Search for verification transaction on the blockchain
- * Uses the same format as /api/auth/verify/check which is known to work
+ * Uses query= parameter with URL encoding (tested and works with Axiome REST API)
  */
 async function searchVerificationTransaction(
   senderAddress: string,
@@ -146,9 +146,10 @@ async function searchVerificationTransaction(
   try {
     console.log(`[Verify] Searching for sender: ${senderAddress}, memo: ${expectedMemo}`)
 
-    // Query format matching the working /api/auth/verify/check endpoint
-    // Note: events parameter is NOT URL encoded for simple queries
-    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=message.sender='${senderAddress}'&order_by=ORDER_BY_DESC&pagination.limit=20`
+    // Correct format for Axiome REST API:
+    // query=message.sender='address' (URL encoded)
+    const query = encodeURIComponent(`message.sender='${senderAddress}'`)
+    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?query=${query}&order_by=ORDER_BY_DESC&pagination.limit=50`
 
     console.log(`[Verify] Fetching: ${url}`)
 
