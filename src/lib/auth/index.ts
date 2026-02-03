@@ -1,3 +1,5 @@
+import 'server-only'
+
 export {
   VERIFICATION_ADDRESS,
   VERIFICATION_AMOUNT,
@@ -16,23 +18,9 @@ export {
 } from './verification'
 
 export {
-  useWalletAuth,
-  getAuthToken,
-  getAuthHeaders
-} from './useWalletAuth'
-
-export {
   validateTelegramAuth,
   parseTelegramAuthData,
   createTelegramSessionToken,
   verifyTelegramSessionToken,
   type TelegramAuthData
 } from './telegram'
-
-export {
-  AuthProvider,
-  useAuth,
-  useAuthenticatedFetch,
-  getAuthHeaders as getAuthHeadersFromSession,
-  type AuthUser
-} from './useAuth'
