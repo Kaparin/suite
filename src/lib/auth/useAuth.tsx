@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect, useCallback, createContext, useContext, ReactNode } from 'react'
-import { verifyTelegramSessionToken } from './telegram'
 
 // Storage keys
 const AUTH_TOKEN_KEY = 'axiome_auth_token'
@@ -39,21 +38,41 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // Load session from storage on mount
   useEffect(() => {
-    const loadSession = () => {
+    const loadSession = async () => {
       try {
         const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
         const storedUser = localStorage.getItem(AUTH_USER_KEY)
 
         if (storedToken && storedUser) {
-          // Verify token is still valid
-          const decoded = verifyTelegramSessionToken(storedToken)
-          if (decoded) {
-            setToken(storedToken)
-            setUser(JSON.parse(storedUser))
-          } else {
-            // Token expired, clear storage
-            localStorage.removeItem(AUTH_TOKEN_KEY)
-            localStorage.removeItem(AUTH_USER_KEY)
+          // Temporarily set user from storage for fast UI render
+          setToken(storedToken)
+          setUser(JSON.parse(storedUser))
+
+          // Verify token with server
+          try {
+            const res = await fetch('/api/auth/session', {
+              headers: {
+                'Authorization': `Bearer ${storedToken}`
+              }
+            })
+
+            if (res.ok) {
+              const data = await res.json()
+              if (data.user) {
+                setUser(data.user)
+                localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user))
+              }
+            } else {
+              // Token invalid, clear session
+              console.log('Session invalid, clearing...')
+              setToken(null)
+              setUser(null)
+              localStorage.removeItem(AUTH_TOKEN_KEY)
+              localStorage.removeItem(AUTH_USER_KEY)
+            }
+          } catch (fetchError) {
+            // Network error - keep local session for now
+            console.warn('Could not verify session with server:', fetchError)
           }
         }
       } catch (error) {

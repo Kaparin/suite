@@ -39,7 +39,12 @@
       "Bash(powershell -Command \"Get-Content -Path ''E:/Work/suite-app/suite/messages/de.json'' -Raw\")",
       "Bash(node:*)",
       "Bash(dir:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(tasklist:*)",
+      "Bash(netstat:*)",
+      "Bash(timeout /t 10 /nobreak)",
+      "Bash(npm run lint)",
+      "Bash(wc:*)"
     ]
   }
 }
