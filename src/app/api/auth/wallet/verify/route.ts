@@ -170,6 +170,16 @@ async function searchVerificationTransaction(
         const txs = data.tx_responses || []
         console.log(`[Verify] Recipient query found ${txs.length} transactions`)
 
+        // Log first few transactions for debugging
+        if (txs.length > 0) {
+          console.log(`[Verify] Recent txs to verification address:`)
+          txs.slice(0, 3).forEach((tx: { txhash?: string; tx?: { body?: { memo?: string; messages?: Array<{ from_address?: string; to_address?: string }> } } }, i: number) => {
+            const memo = tx.tx?.body?.memo || '(no memo)'
+            const from = tx.tx?.body?.messages?.[0]?.from_address || '?'
+            console.log(`[Verify]   ${i + 1}. TX ${tx.txhash?.substring(0, 10)}... | memo: "${memo}" | from: ${from.substring(0, 15)}...`)
+          })
+        }
+
         // Check each transaction
         for (const tx of txs) {
           if (tx.code !== 0) continue
@@ -226,6 +236,16 @@ async function searchVerificationTransaction(
       const data = await response.json()
       const txs = data.tx_responses || []
       console.log(`[Verify] Sender query found ${txs.length} transactions`)
+
+      // Log transactions for debugging
+      if (txs.length > 0) {
+        console.log(`[Verify] Recent txs from sender:`)
+        txs.slice(0, 5).forEach((tx: { txhash?: string; tx?: { body?: { memo?: string; messages?: Array<{ from_address?: string; to_address?: string }> } } }, i: number) => {
+          const memo = tx.tx?.body?.memo || '(no memo)'
+          const to = tx.tx?.body?.messages?.[0]?.to_address || '?'
+          console.log(`[Verify]   ${i + 1}. TX ${tx.txhash?.substring(0, 10)}... | memo: "${memo}" | to: ${to.substring(0, 15)}...`)
+        })
+      }
 
       for (const tx of txs) {
         if (tx.code !== 0) continue
