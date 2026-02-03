@@ -18,6 +18,7 @@ interface VerificationChallenge {
   verificationAddress: string
   amount: string
   deepLink: string
+  challengeToken: string
 }
 
 type CopyState = 'idle' | 'copied'
@@ -73,7 +74,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null
 
-    if (isPolling && address) {
+    if (isPolling && address && challenge?.challengeToken) {
       const checkVerification = async () => {
         try {
           const token = getToken()
@@ -84,7 +85,12 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
             headers['Authorization'] = `Bearer ${token}`
           }
 
-          const res = await fetch(`/api/auth/wallet/verify?walletAddress=${encodeURIComponent(address)}`, {
+          const params = new URLSearchParams({
+            walletAddress: address,
+            challengeToken: challenge.challengeToken
+          })
+
+          const res = await fetch(`/api/auth/wallet/verify?${params.toString()}`, {
             headers,
             cache: 'no-store'
           })
@@ -137,7 +143,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isPolling, address, onSuccess, onClose, getToken, updateUser])
+  }, [isPolling, address, challenge?.challengeToken, onSuccess, onClose, getToken, updateUser])
 
   // Cleanup on close
   useEffect(() => {
