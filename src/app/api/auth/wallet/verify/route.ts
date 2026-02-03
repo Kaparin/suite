@@ -137,27 +137,22 @@ export async function GET(request: NextRequest) {
 
 /**
  * Search for verification transaction on the blockchain
+ * Uses the same format as /api/auth/verify/check which is known to work
  */
 async function searchVerificationTransaction(
   senderAddress: string,
   expectedMemo: string
 ): Promise<boolean> {
   try {
-    // Build query - search by sender
-    const query = `message.sender='${senderAddress}'`
-    const encodedQuery = encodeURIComponent(query)
-    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=${encodedQuery}&order_by=2&pagination.limit=20`
+    console.log(`[Verify] Searching for sender: ${senderAddress}, memo: ${expectedMemo}`)
 
-    console.log(`[Verify] Searching: ${url}`)
+    // Query format matching the working /api/auth/verify/check endpoint
+    // Note: events parameter is NOT URL encoded for simple queries
+    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=message.sender='${senderAddress}'&order_by=ORDER_BY_DESC&pagination.limit=20`
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      cache: 'no-store'
-    })
+    console.log(`[Verify] Fetching: ${url}`)
+
+    const response = await fetch(url, { cache: 'no-store' })
 
     if (!response.ok) {
       const text = await response.text().catch(() => '')
@@ -166,35 +161,34 @@ async function searchVerificationTransaction(
     }
 
     const data = await response.json()
-    const txs = data.tx_responses || data.txs || []
+    const txs = data.tx_responses || []
 
     console.log(`[Verify] Found ${txs.length} transactions`)
 
     // Check each transaction
     for (const tx of txs) {
-      // Skip failed transactions
-      if (tx.code !== 0 && tx.code !== undefined) {
-        continue
-      }
+      // Only check successful transactions
+      if (tx.code !== 0) continue
 
+      // Get memo
       const memo = tx.tx?.body?.memo || ''
 
-      // Check memo match (case insensitive)
+      // Check if memo matches our code (case insensitive)
       if (memo.trim().toUpperCase() !== expectedMemo.trim().toUpperCase()) {
         continue
       }
 
       console.log(`[Verify] Memo match found! TX: ${tx.txhash?.substring(0, 16)}...`)
 
-      // Check messages
+      // Find the bank send message to verify recipient
       const messages = tx.tx?.body?.messages || []
-      for (const msg of messages) {
-        const toAddress = msg.to_address || msg.toAddress || ''
+      const bankSend = messages.find(
+        (msg: { '@type': string }) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend'
+      )
 
-        if (toAddress.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()) {
-          console.log(`[Verify] Recipient match! Verification complete.`)
-          return true
-        }
+      if (bankSend && bankSend.to_address?.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()) {
+        console.log(`[Verify] Recipient match! Verification complete. TX: ${tx.txhash}`)
+        return true
       }
     }
 
@@ -205,3 +199,4 @@ async function searchVerificationTransaction(
     return false
   }
 }
+
