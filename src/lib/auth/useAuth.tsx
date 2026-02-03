@@ -27,6 +27,7 @@ interface AuthContextType {
   logout: () => void
   updateUser: (updates: Partial<AuthUser>) => void
   refreshSession: () => Promise<boolean>
+  getToken: () => string | null
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -120,6 +121,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [token, logout, updateUser])
 
+  const getToken = useCallback((): string | null => {
+    return token || localStorage.getItem(AUTH_TOKEN_KEY)
+  }, [token])
+
   return (
     <AuthContext.Provider
       value={{
@@ -130,7 +135,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         login,
         logout,
         updateUser,
-        refreshSession
+        refreshSession,
+        getToken
       }}
     >
       {children}

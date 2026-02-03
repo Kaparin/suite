@@ -25,6 +25,12 @@ export async function POST(request: NextRequest) {
     // Create verification challenge
     const challenge = createVerificationChallenge(walletAddress)
 
+    console.log(`[WalletBind] Created challenge for ${walletAddress}:`, {
+      code: challenge.code,
+      verificationAddress: VERIFICATION_ADDRESS,
+      expiresAt: new Date(challenge.expiresAt).toISOString()
+    })
+
     // Create deep link for Axiome Wallet
     const deepLink = createAxiomeDeepLink(
       VERIFICATION_ADDRESS,
@@ -35,7 +41,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       code: challenge.code,
       expiresAt: challenge.expiresAt,
-      verificationAddress: challenge.verificationAddress,
+      verificationAddress: VERIFICATION_ADDRESS, // Explicitly use the constant
       amount: VERIFICATION_AMOUNT_DISPLAY, // Human readable (0.001 AXM)
       amountRaw: challenge.amount, // Raw (1000 uaxm)
       deepLink

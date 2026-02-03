@@ -5,7 +5,7 @@
  *
  * Flow:
  * 1. User requests verification code
- * 2. Server generates unique code and stores it with expiry
+ * 2. Server generates unique code and stores it in DB with expiry
  * 3. User sends 0.001 AXM to verification address with memo = code
  * 4. Server monitors blockchain for the transaction
  * 5. Upon finding matching tx, marks wallet as verified
@@ -14,10 +14,11 @@
 
 import { randomBytes } from 'crypto'
 import jwt from 'jsonwebtoken'
+import { prisma } from '@/lib/prisma'
 
 // Verification wallet address (should be controlled by the app)
 // IMPORTANT: Set VERIFICATION_WALLET_ADDRESS in .env to your own wallet
-export const VERIFICATION_ADDRESS = process.env.VERIFICATION_WALLET_ADDRESS || 'axm1weskc3hd8d5u0d5s0wprys0sqljqkcak6twd24' // Default for testing
+export const VERIFICATION_ADDRESS = process.env.VERIFICATION_WALLET_ADDRESS || 'axm1weskc3hd8d5u0d5s0wprys0sqljqkcak6twd24'
 export const VERIFICATION_AMOUNT = '1000' // 0.001 AXM = 1000 uaxm
 export const VERIFICATION_AMOUNT_DISPLAY = '0.001' // Human readable
 
@@ -25,8 +26,8 @@ export const VERIFICATION_AMOUNT_DISPLAY = '0.001' // Human readable
 const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
 const JWT_EXPIRY = '7d' // Session lasts 7 days
 
-// In-memory store for pending verifications (use Redis in production)
-const pendingVerifications = new Map<string, {
+// Fallback in-memory store (for edge cases when DB is unavailable)
+const pendingVerificationsCache = new Map<string, {
   walletAddress: string
   code: string
   expiresAt: number
@@ -42,6 +43,60 @@ export function generateVerificationCode(): string {
 
 /**
  * Create a new verification challenge for a wallet
+ * Uses database for persistence with in-memory fallback
+ */
+export async function createVerificationChallengeAsync(
+  walletAddress: string,
+  userId?: string
+): Promise<{
+  code: string
+  expiresAt: number
+  verificationAddress: string
+  amount: string
+}> {
+  const code = generateVerificationCode()
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
+
+  try {
+    // Upsert to handle existing challenges
+    await prisma.walletVerification.upsert({
+      where: { walletAddress: walletAddress.toLowerCase() },
+      update: {
+        code,
+        expiresAt,
+        userId
+      },
+      create: {
+        walletAddress: walletAddress.toLowerCase(),
+        code,
+        expiresAt,
+        userId
+      }
+    })
+
+    console.log(`[Verification] Created challenge for ${walletAddress}: code=${code}`)
+  } catch (error) {
+    console.error('[Verification] DB error, using in-memory fallback:', error)
+    // Fallback to in-memory
+    pendingVerificationsCache.set(walletAddress.toLowerCase(), {
+      walletAddress: walletAddress.toLowerCase(),
+      code,
+      expiresAt: expiresAt.getTime(),
+      createdAt: Date.now()
+    })
+  }
+
+  return {
+    code,
+    expiresAt: expiresAt.getTime(),
+    verificationAddress: VERIFICATION_ADDRESS,
+    amount: VERIFICATION_AMOUNT
+  }
+}
+
+/**
+ * Synchronous version for backwards compatibility
+ * Uses only in-memory storage
  */
 export function createVerificationChallenge(walletAddress: string): {
   code: string
@@ -52,12 +107,25 @@ export function createVerificationChallenge(walletAddress: string): {
   const code = generateVerificationCode()
   const expiresAt = Date.now() + 15 * 60 * 1000 // 15 minutes
 
-  // Store pending verification
-  pendingVerifications.set(walletAddress.toLowerCase(), {
+  // Store in memory cache
+  pendingVerificationsCache.set(walletAddress.toLowerCase(), {
     walletAddress: walletAddress.toLowerCase(),
     code,
     expiresAt,
     createdAt: Date.now()
+  })
+
+  // Also try to save to DB asynchronously (fire and forget)
+  prisma.walletVerification.upsert({
+    where: { walletAddress: walletAddress.toLowerCase() },
+    update: { code, expiresAt: new Date(expiresAt) },
+    create: {
+      walletAddress: walletAddress.toLowerCase(),
+      code,
+      expiresAt: new Date(expiresAt)
+    }
+  }).catch(err => {
+    console.warn('[Verification] Failed to persist to DB:', err.message)
   })
 
   return {
@@ -70,19 +138,97 @@ export function createVerificationChallenge(walletAddress: string): {
 
 /**
  * Get pending verification for a wallet
+ * Checks both DB and in-memory cache
  */
-export function getPendingVerification(walletAddress: string) {
-  const verification = pendingVerifications.get(walletAddress.toLowerCase())
+export async function getPendingVerificationAsync(walletAddress: string): Promise<{
+  walletAddress: string
+  code: string
+  expiresAt: number
+  createdAt: number
+} | null> {
+  const normalizedAddress = walletAddress.toLowerCase()
+
+  try {
+    // First check DB
+    const dbVerification = await prisma.walletVerification.findUnique({
+      where: { walletAddress: normalizedAddress }
+    })
+
+    if (dbVerification) {
+      // Check if expired
+      if (new Date() > dbVerification.expiresAt) {
+        await prisma.walletVerification.delete({
+          where: { walletAddress: normalizedAddress }
+        }).catch(() => {})
+        return null
+      }
+
+      return {
+        walletAddress: dbVerification.walletAddress,
+        code: dbVerification.code,
+        expiresAt: dbVerification.expiresAt.getTime(),
+        createdAt: dbVerification.createdAt.getTime()
+      }
+    }
+  } catch (error) {
+    console.warn('[Verification] DB lookup failed, checking cache:', error)
+  }
+
+  // Fallback to in-memory cache
+  const cacheVerification = pendingVerificationsCache.get(normalizedAddress)
+  if (cacheVerification) {
+    if (Date.now() > cacheVerification.expiresAt) {
+      pendingVerificationsCache.delete(normalizedAddress)
+      return null
+    }
+    return cacheVerification
+  }
+
+  return null
+}
+
+/**
+ * Synchronous version - only checks in-memory cache
+ */
+export function getPendingVerification(walletAddress: string): {
+  walletAddress: string
+  code: string
+  expiresAt: number
+  createdAt: number
+} | null {
+  const normalizedAddress = walletAddress.toLowerCase()
+  const verification = pendingVerificationsCache.get(normalizedAddress)
 
   if (!verification) return null
 
   // Check if expired
   if (Date.now() > verification.expiresAt) {
-    pendingVerifications.delete(walletAddress.toLowerCase())
+    pendingVerificationsCache.delete(normalizedAddress)
     return null
   }
 
   return verification
+}
+
+/**
+ * Delete verification after successful verification
+ */
+export async function deleteVerification(walletAddress: string): Promise<void> {
+  const normalizedAddress = walletAddress.toLowerCase()
+
+  // Delete from cache
+  pendingVerificationsCache.delete(normalizedAddress)
+
+  // Delete from DB
+  try {
+    await prisma.walletVerification.delete({
+      where: { walletAddress: normalizedAddress }
+    })
+    console.log(`[Verification] Deleted challenge for ${walletAddress}`)
+  } catch (error) {
+    // Ignore if not found
+    console.warn('[Verification] Delete failed (may not exist):', error)
+  }
 }
 
 /**
@@ -97,6 +243,7 @@ export function verifyTransaction(
   const verification = getPendingVerification(walletAddress)
 
   if (!verification) {
+    console.log(`[Verification] No pending verification for ${walletAddress}`)
     return false
   }
 
@@ -105,9 +252,19 @@ export function verifyTransaction(
   const isCorrectRecipient = toAddress.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()
   const isCorrectCode = memo.trim().toUpperCase() === verification.code
 
+  console.log(`[Verification] Checking tx:`, {
+    sender: isCorrectSender,
+    recipient: isCorrectRecipient,
+    code: isCorrectCode,
+    expectedCode: verification.code,
+    receivedMemo: memo
+  })
+
   if (isCorrectSender && isCorrectRecipient && isCorrectCode) {
     // Clear pending verification
-    pendingVerifications.delete(walletAddress.toLowerCase())
+    pendingVerificationsCache.delete(walletAddress.toLowerCase())
+    // Also delete from DB asynchronously
+    deleteVerification(walletAddress).catch(() => {})
     return true
   }
 
@@ -148,18 +305,47 @@ export function verifySessionToken(token: string): {
 }
 
 /**
- * Clean up expired verifications (call periodically)
+ * Clean up expired verifications in memory cache
  */
 export function cleanupExpiredVerifications(): void {
   const now = Date.now()
-  for (const [key, verification] of pendingVerifications.entries()) {
+  for (const [key, verification] of pendingVerificationsCache.entries()) {
     if (now > verification.expiresAt) {
-      pendingVerifications.delete(key)
+      pendingVerificationsCache.delete(key)
     }
   }
 }
 
-// Clean up every 5 minutes
+/**
+ * Clean up expired verifications in database
+ */
+export async function cleanupExpiredVerificationsInDB(): Promise<number> {
+  try {
+    const result = await prisma.walletVerification.deleteMany({
+      where: {
+        expiresAt: {
+          lt: new Date()
+        }
+      }
+    })
+    if (result.count > 0) {
+      console.log(`[Verification] Cleaned up ${result.count} expired verifications`)
+    }
+    return result.count
+  } catch (error) {
+    console.error('[Verification] DB cleanup failed:', error)
+    return 0
+  }
+}
+
+// Clean up in-memory cache every 5 minutes
 if (typeof setInterval !== 'undefined') {
   setInterval(cleanupExpiredVerifications, 5 * 60 * 1000)
+}
+
+// Clean up DB every 15 minutes (less frequent to reduce DB load)
+if (typeof setInterval !== 'undefined') {
+  setInterval(() => {
+    cleanupExpiredVerificationsInDB().catch(() => {})
+  }, 15 * 60 * 1000)
 }

@@ -4,11 +4,15 @@ export {
   VERIFICATION_AMOUNT_DISPLAY,
   generateVerificationCode,
   createVerificationChallenge,
+  createVerificationChallengeAsync,
   getPendingVerification,
+  getPendingVerificationAsync,
+  deleteVerification,
   verifyTransaction,
   createSessionToken,
   verifySessionToken,
-  cleanupExpiredVerifications
+  cleanupExpiredVerifications,
+  cleanupExpiredVerificationsInDB
 } from './verification'
 
 export {

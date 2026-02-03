@@ -229,3 +229,19 @@ enum ReactionType {
   EYES     // 👀
   WARNING  // ⚠️
 }
+
+// Верификационные challenge для кошельков
+model WalletVerification {
+  id              String   @id @default(cuid())
+  walletAddress   String   @unique
+  code            String   // Уникальный код верификации
+  expiresAt       DateTime
+  createdAt       DateTime @default(now())
+
+  // Связь с пользователем (если уже авторизован через Telegram)
+  userId          String?
+
+  @@index([walletAddress])
+  @@index([code])
+  @@map("wallet_verifications")
+}
