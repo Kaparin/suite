@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createVerificationChallenge, VERIFICATION_ADDRESS, VERIFICATION_AMOUNT } from '@/lib/auth/verification'
+import { createVerificationChallenge, VERIFICATION_ADDRESS, VERIFICATION_AMOUNT, VERIFICATION_AMOUNT_DISPLAY } from '@/lib/auth/verification'
 
 // POST /api/auth/wallet/bind - Start wallet binding, return challenge
 export async function POST(request: NextRequest) {
@@ -36,7 +36,8 @@ export async function POST(request: NextRequest) {
       code: challenge.code,
       expiresAt: challenge.expiresAt,
       verificationAddress: challenge.verificationAddress,
-      amount: challenge.amount,
+      amount: VERIFICATION_AMOUNT_DISPLAY, // Human readable (0.001 AXM)
+      amountRaw: challenge.amount, // Raw (1000 uaxm)
       deepLink
     })
   } catch (error) {

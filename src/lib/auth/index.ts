@@ -1,6 +1,7 @@
 export {
   VERIFICATION_ADDRESS,
   VERIFICATION_AMOUNT,
+  VERIFICATION_AMOUNT_DISPLAY,
   generateVerificationCode,
   createVerificationChallenge,
   getPendingVerification,

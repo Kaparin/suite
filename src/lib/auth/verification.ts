@@ -16,8 +16,10 @@ import { randomBytes } from 'crypto'
 import jwt from 'jsonwebtoken'
 
 // Verification wallet address (should be controlled by the app)
-export const VERIFICATION_ADDRESS = process.env.VERIFICATION_WALLET_ADDRESS || 'axm1verification' // TODO: Set real address
+// IMPORTANT: Set VERIFICATION_WALLET_ADDRESS in .env to your own wallet
+export const VERIFICATION_ADDRESS = process.env.VERIFICATION_WALLET_ADDRESS || 'axm1weskc3hd8d5u0d5s0wprys0sqljqkcak6twd24' // Default for testing
 export const VERIFICATION_AMOUNT = '1000' // 0.001 AXM = 1000 uaxm
+export const VERIFICATION_AMOUNT_DISPLAY = '0.001' // Human readable
 
 // JWT settings
 const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'

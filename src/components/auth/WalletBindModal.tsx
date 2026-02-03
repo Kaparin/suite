@@ -261,14 +261,33 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                   {/* Instructions */}
                   <div className="text-center">
                     <p className="text-gray-300">
-                      Send <span className="text-purple-400 font-semibold">0.001 AXM</span> with memo:
+                      Send <span className="text-purple-400 font-semibold">{challenge.amount} AXM</span> to verify your wallet
                     </p>
                   </div>
 
-                  {/* Code display */}
+                  {/* Verification Address */}
                   <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-gray-500">VERIFICATION CODE</span>
+                      <span className="text-xs text-gray-500">SEND TO ADDRESS</span>
+                      <button
+                        onClick={() => navigator.clipboard.writeText(challenge.verificationAddress)}
+                        className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1"
+                      >
+                        <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                        </svg>
+                        Copy
+                      </button>
+                    </div>
+                    <p className="text-sm font-mono text-green-400 break-all select-all">
+                      {challenge.verificationAddress}
+                    </p>
+                  </div>
+
+                  {/* Memo Code */}
+                  <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-xs text-gray-500">MEMO (REQUIRED)</span>
                       <button
                         onClick={() => navigator.clipboard.writeText(challenge.code)}
                         className="text-xs text-purple-400 hover:text-purple-300 flex items-center gap-1"
@@ -282,6 +301,18 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                     <p className="text-sm font-mono text-white break-all select-all">
                       {challenge.code}
                     </p>
+                  </div>
+
+                  {/* Amount reminder */}
+                  <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <svg className="w-4 h-4 text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
+                      <span className="text-amber-300">
+                        Amount: <span className="font-mono font-bold">{challenge.amount} AXM</span> - Don&apos;t forget the memo!
+                      </span>
+                    </div>
                   </div>
 
                   {/* Timer */}
