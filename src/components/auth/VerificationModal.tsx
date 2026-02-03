@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import { Button } from '@/components/ui'
-import { useWalletAuth } from '@/lib/auth'
+import { useWalletAuth } from '@/lib/auth/useWalletAuth'
 import { isMobileDevice } from '@/lib/wallet'
 
 interface VerificationModalProps {

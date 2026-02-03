@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Card, CardContent } from '@/components/ui'
 import { VerificationModal } from '@/components/auth'
-import { useWalletAuth, getAuthToken } from '@/lib/auth'
+import { useWalletAuth, getAuthToken } from '@/lib/auth/useWalletAuth'
 
 interface ProjectLinks {
   telegram?: string
