@@ -4,10 +4,10 @@ import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { TelegramLoginButton, TelegramLoginFallback, WalletBindModal, type TelegramUser } from '@/components/auth'
+import { WalletBindModal } from '@/components/auth'
 import { useAuth } from '@/lib/auth/useAuth'
 
-const TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'AxiomeLaunchBot'
+const TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'axiome_launch_suite_bot'
 
 function LoginContent() {
   const router = useRouter()
@@ -17,28 +17,55 @@ function LoginContent() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showWalletModal, setShowWalletModal] = useState(false)
-  const [widgetError, setWidgetError] = useState(false)
 
-  // Check if Telegram widget failed to load after timeout
+  // Check for callback parameters from Telegram OAuth
   useEffect(() => {
-    const timer = setTimeout(() => {
-      const widget = document.querySelector('.telegram-login-button iframe')
-      if (!widget) {
-        setWidgetError(true)
+    const token = searchParams.get('token')
+    const userParam = searchParams.get('user')
+    const errorParam = searchParams.get('error')
+
+    if (errorParam) {
+      setError(
+        errorParam === 'missing_params' ? 'Missing authentication data' :
+        errorParam === 'invalid_auth' ? 'Invalid Telegram authentication' :
+        errorParam === 'auth_failed' ? 'Authentication failed' :
+        'An error occurred'
+      )
+      // Clean URL
+      window.history.replaceState({}, '', '/login')
+      return
+    }
+
+    if (token && userParam) {
+      try {
+        const userData = JSON.parse(decodeURIComponent(userParam))
+        login(userData, token)
+
+        // Clean URL and redirect
+        window.history.replaceState({}, '', '/login')
+
+        if (userData.isVerified) {
+          router.push('/dashboard')
+        } else {
+          setShowWalletModal(true)
+        }
+      } catch (e) {
+        console.error('Failed to parse user data:', e)
+        setError('Failed to process authentication')
+        window.history.replaceState({}, '', '/login')
       }
-    }, 3000)
-    return () => clearTimeout(timer)
-  }, [])
+    }
+  }, [searchParams, login, router])
 
   // Check for verify parameter
   const shouldVerify = searchParams.get('verify') === 'true'
 
   // Redirect if already authenticated
   useEffect(() => {
-    if (isAuthenticated && !shouldVerify) {
+    if (isAuthenticated && !shouldVerify && !searchParams.get('token')) {
       router.push('/dashboard')
     }
-  }, [isAuthenticated, shouldVerify, router])
+  }, [isAuthenticated, shouldVerify, router, searchParams])
 
   // Show wallet modal if user needs to verify
   useEffect(() => {
@@ -47,43 +74,19 @@ function LoginContent() {
     }
   }, [isAuthenticated, shouldVerify, user])
 
-  const handleTelegramAuth = async (telegramUser: TelegramUser) => {
+  // Handle Telegram login via redirect
+  const handleTelegramLogin = () => {
     setIsLoading(true)
     setError(null)
 
-    try {
-      const response = await fetch('/api/auth/telegram', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(telegramUser)
-      })
+    const origin = window.location.origin
+    const callbackUrl = `${origin}/api/auth/telegram/callback`
 
-      const data = await response.json()
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Authentication failed')
-      }
-
-      // Login with the user data and token
-      login(data.user, data.token)
-
-      // Redirect to dashboard or show wallet modal
-      if (data.user.isVerified) {
-        router.push('/dashboard')
-      } else {
-        setShowWalletModal(true)
-      }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Authentication failed')
-    } finally {
-      setIsLoading(false)
-    }
+    // Redirect to Telegram OAuth
+    window.location.href = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_USERNAME}&origin=${encodeURIComponent(origin)}&request_access=write&return_to=${encodeURIComponent(callbackUrl)}`
   }
 
   const handleWalletVerified = (walletAddress: string) => {
-    // Update user with verified wallet
     if (user) {
       login(
         { ...user, walletAddress, isVerified: true },
@@ -147,43 +150,17 @@ function LoginContent() {
             {/* Login options */}
             {!isAuthenticated ? (
               <div className="space-y-4">
-                {/* Telegram Login Widget */}
-                {!widgetError ? (
-                  <div className="flex justify-center min-h-[40px]">
-                    <TelegramLoginButton
-                      botName={TELEGRAM_BOT_USERNAME}
-                      onAuth={handleTelegramAuth}
-                      buttonSize="large"
-                      cornerRadius={14}
-                      lang="en"
-                    />
-                  </div>
-                ) : (
-                  <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
-                    <div className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-amber-400 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                      </svg>
-                      <div>
-                        <p className="text-amber-300 font-medium mb-1">Telegram Bot Not Configured</p>
-                        <p className="text-sm text-gray-400 mb-2">
-                          To enable Telegram login, set <code className="bg-gray-800 px-1 rounded">NEXT_PUBLIC_TELEGRAM_BOT_USERNAME</code> in your environment variables.
-                        </p>
-                        <p className="text-xs text-gray-500">
-                          Current bot: <code className="bg-gray-800 px-1 rounded">{TELEGRAM_BOT_USERNAME}</code>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {/* Loading state */}
-                {isLoading && (
-                  <TelegramLoginFallback
-                    onClick={() => {}}
-                    isLoading={true}
-                  />
-                )}
+                {/* Telegram Login Button */}
+                <button
+                  onClick={handleTelegramLogin}
+                  disabled={isLoading}
+                  className="flex items-center justify-center gap-3 w-full px-6 py-3.5 bg-[#54A9EB] hover:bg-[#4A96D2] disabled:opacity-50 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-colors"
+                >
+                  <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+                  </svg>
+                  {isLoading ? 'Connecting...' : 'Log in with Telegram'}
+                </button>
 
                 {/* Divider */}
                 <div className="relative my-6">
