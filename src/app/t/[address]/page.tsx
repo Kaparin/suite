@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import { Badge, Button, Card, CardContent } from '@/components/ui'
 import { OwnerPanel } from '@/components/token'
+import { ReactionBar, CommentSection } from '@/components/social'
 import { useWallet, truncateAddress } from '@/lib/wallet'
 import { useTranslations } from 'next-intl'
 
@@ -474,6 +475,31 @@ export default function TokenPage() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Social Features - Reactions & Comments */}
+        {project.id && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.0 }}
+            className="space-y-6"
+          >
+            {/* Reactions */}
+            <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
+              <CardContent>
+                <h2 className="text-xl font-semibold mb-4">Community Reactions</h2>
+                <ReactionBar projectId={project.id} />
+              </CardContent>
+            </Card>
+
+            {/* Comments */}
+            <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
+              <CardContent>
+                <CommentSection projectId={project.id} />
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
 
         {/* Disclaimer */}
         <p className="text-center text-gray-500 text-sm mt-8">
