@@ -11,6 +11,8 @@ export {
   getPendingVerificationAsync,
   deleteVerification,
   verifyTransaction,
+  createChallengeToken,
+  verifyChallengeToken,
   createSessionToken,
   verifySessionToken,
   cleanupExpiredVerifications,

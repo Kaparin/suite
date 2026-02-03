@@ -4,14 +4,15 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 
 const AUTH_TOKEN_KEY = 'axiome_auth_token'
 const AUTH_WALLET_KEY = 'axiome_auth_wallet'
+const CHALLENGE_TOKEN_KEY = 'axiome_challenge_token'
 
 interface VerificationChallenge {
   code: string
   expiresAt: number
   verificationAddress: string
   amount: string
-  displayAmount: string
   deepLink: string
+  challengeToken: string // Signed JWT containing challenge data
 }
 
 interface UseWalletAuthReturn {
@@ -45,6 +46,7 @@ export function useWalletAuth(): UseWalletAuthReturn {
 
   const pollingIntervalRef = useRef<NodeJS.Timeout | null>(null)
   const pollingAddressRef = useRef<string | null>(null)
+  const challengeTokenRef = useRef<string | null>(null)
 
   // Load saved auth on mount
   useEffect(() => {
@@ -55,6 +57,12 @@ export function useWalletAuth(): UseWalletAuthReturn {
       setAuthToken(savedToken)
       setVerifiedWallet(savedWallet)
       setIsVerified(true)
+    }
+
+    // Also restore challenge token if exists
+    const savedChallengeToken = localStorage.getItem(CHALLENGE_TOKEN_KEY)
+    if (savedChallengeToken) {
+      challengeTokenRef.current = savedChallengeToken
     }
   }, [])
 
@@ -104,13 +112,13 @@ export function useWalletAuth(): UseWalletAuthReturn {
     }
   }, [])
 
-  // Request verification challenge
+  // Request verification challenge (calls /api/auth/wallet/bind)
   const requestVerification = useCallback(async (walletAddress: string): Promise<VerificationChallenge | null> => {
     setIsRequestingChallenge(true)
     setError(null)
 
     try {
-      const response = await fetch('/api/auth/verify', {
+      const response = await fetch('/api/auth/wallet/bind', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ walletAddress })
@@ -127,9 +135,13 @@ export function useWalletAuth(): UseWalletAuthReturn {
         expiresAt: data.expiresAt,
         verificationAddress: data.verificationAddress,
         amount: data.amount,
-        displayAmount: data.displayAmount,
-        deepLink: data.deepLink
+        deepLink: data.deepLink,
+        challengeToken: data.challengeToken
       }
+
+      // Save challenge token for polling
+      challengeTokenRef.current = data.challengeToken
+      localStorage.setItem(CHALLENGE_TOKEN_KEY, data.challengeToken)
 
       setVerificationChallenge(challenge)
       return challenge
@@ -142,19 +154,48 @@ export function useWalletAuth(): UseWalletAuthReturn {
     }
   }, [])
 
-  // Poll for verification status
+  // Poll for verification status (calls /api/auth/wallet/verify with challengeToken)
   const pollVerificationStatus = useCallback(async (walletAddress: string): Promise<boolean> => {
+    const challengeToken = challengeTokenRef.current || localStorage.getItem(CHALLENGE_TOKEN_KEY)
+
+    if (!challengeToken) {
+      console.error('[WalletAuth] No challenge token available for polling')
+      setError('Challenge token missing. Please restart verification.')
+      setIsPolling(false)
+      return false
+    }
+
     try {
-      const response = await fetch(`/api/auth/verify/check?address=${encodeURIComponent(walletAddress)}`)
+      const params = new URLSearchParams({
+        walletAddress,
+        challengeToken
+      })
+
+      // Get Telegram auth token for user update
+      const telegramToken = localStorage.getItem(AUTH_TOKEN_KEY)
+      const headers: HeadersInit = {}
+      if (telegramToken) {
+        headers['Authorization'] = `Bearer ${telegramToken}`
+      }
+
+      const response = await fetch(`/api/auth/wallet/verify?${params.toString()}`, {
+        headers
+      })
       const data = await response.json()
 
-      if (data.verified && data.token) {
-        // Success! Save to local storage
-        localStorage.setItem(AUTH_TOKEN_KEY, data.token)
+      console.log('[WalletAuth] Poll response:', data)
+
+      if (data.verified) {
+        // Success! Update token if new one was issued
+        if (data.token) {
+          localStorage.setItem(AUTH_TOKEN_KEY, data.token)
+        }
         localStorage.setItem(AUTH_WALLET_KEY, walletAddress.toLowerCase())
+        localStorage.removeItem(CHALLENGE_TOKEN_KEY)
+        challengeTokenRef.current = null
 
         // Update state
-        setAuthToken(data.token)
+        setAuthToken(data.token || telegramToken)
         setVerifiedWallet(walletAddress.toLowerCase())
         setIsVerified(true)
         setVerificationChallenge(null)
@@ -165,14 +206,17 @@ export function useWalletAuth(): UseWalletAuthReturn {
 
       if (!data.pending) {
         // Verification expired or failed
-        setError(data.error || 'Verification expired')
+        setError(data.error || 'Verification expired or failed')
         setIsPolling(false)
+        localStorage.removeItem(CHALLENGE_TOKEN_KEY)
+        challengeTokenRef.current = null
         return false
       }
 
       // Still pending, continue polling
       return false
-    } catch {
+    } catch (err) {
+      console.error('[WalletAuth] Poll error:', err)
       // Network error, continue polling
       return false
     }
@@ -230,11 +274,13 @@ export function useWalletAuth(): UseWalletAuthReturn {
   const logout = useCallback(() => {
     localStorage.removeItem(AUTH_TOKEN_KEY)
     localStorage.removeItem(AUTH_WALLET_KEY)
+    localStorage.removeItem(CHALLENGE_TOKEN_KEY)
     setAuthToken(null)
     setVerifiedWallet(null)
     setIsVerified(false)
     setVerificationChallenge(null)
     setError(null)
+    challengeTokenRef.current = null
     stopPolling()
   }, [stopPolling])
 

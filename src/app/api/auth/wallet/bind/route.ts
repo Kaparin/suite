@@ -1,5 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createVerificationChallenge, VERIFICATION_ADDRESS, VERIFICATION_AMOUNT, VERIFICATION_AMOUNT_DISPLAY } from '@/lib/auth/verification'
+import {
+  generateVerificationCode,
+  createChallengeToken,
+  VERIFICATION_ADDRESS,
+  VERIFICATION_AMOUNT,
+  VERIFICATION_AMOUNT_DISPLAY
+} from '@/lib/auth/verification'
 
 // POST /api/auth/wallet/bind - Start wallet binding, return challenge
 export async function POST(request: NextRequest) {
@@ -22,28 +28,33 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Create verification challenge
-    const challenge = createVerificationChallenge(walletAddress)
+    // Generate verification code and expiry
+    const code = generateVerificationCode()
+    const expiresAt = Date.now() + 15 * 60 * 1000 // 15 minutes
 
-    console.log(`[WalletBind] Created challenge for ${walletAddress}:`, {
-      code: challenge.code,
+    // Create signed challenge token (stateless - contains all data needed)
+    const challengeToken = createChallengeToken(walletAddress, code, expiresAt)
+
+    console.log(`[WalletBind] Created stateless challenge for ${walletAddress}:`, {
+      code,
       verificationAddress: VERIFICATION_ADDRESS,
-      expiresAt: new Date(challenge.expiresAt).toISOString()
+      expiresAt: new Date(expiresAt).toISOString()
     })
 
     // Create deep link for Axiome Wallet
     const deepLink = createAxiomeDeepLink(
       VERIFICATION_ADDRESS,
       VERIFICATION_AMOUNT,
-      challenge.code
+      code
     )
 
     return NextResponse.json({
-      code: challenge.code,
-      expiresAt: challenge.expiresAt,
-      verificationAddress: VERIFICATION_ADDRESS, // Explicitly use the constant
+      code,
+      expiresAt,
+      challengeToken, // Client must send this back when verifying
+      verificationAddress: VERIFICATION_ADDRESS,
       amount: VERIFICATION_AMOUNT_DISPLAY, // Human readable (0.001 AXM)
-      amountRaw: challenge.amount, // Raw (1000 uaxm)
+      amountRaw: VERIFICATION_AMOUNT, // Raw (1000 uaxm)
       deepLink
     })
   } catch (error) {

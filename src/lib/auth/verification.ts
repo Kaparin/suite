@@ -271,6 +271,76 @@ export function verifyTransaction(
   return false
 }
 
+// ============================================================
+// STATELESS CHALLENGE TOKEN (for serverless environments)
+// ============================================================
+
+/**
+ * Create a signed challenge token that contains all verification data
+ * This eliminates the need for server-side state storage
+ */
+export function createChallengeToken(
+  walletAddress: string,
+  code: string,
+  expiresAt: number
+): string {
+  return jwt.sign(
+    {
+      type: 'verification_challenge',
+      walletAddress: walletAddress.toLowerCase(),
+      code,
+      expiresAt,
+      verificationAddress: VERIFICATION_ADDRESS
+    },
+    JWT_SECRET,
+    { expiresIn: '20m' } // Slightly longer than challenge expiry
+  )
+}
+
+/**
+ * Verify and decode a challenge token
+ * Returns the challenge data if valid, null if invalid/expired
+ */
+export function verifyChallengeToken(token: string): {
+  walletAddress: string
+  code: string
+  expiresAt: number
+  verificationAddress: string
+} | null {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET) as {
+      type: string
+      walletAddress: string
+      code: string
+      expiresAt: number
+      verificationAddress: string
+    }
+
+    // Verify it's a challenge token
+    if (decoded.type !== 'verification_challenge') {
+      return null
+    }
+
+    // Check if the challenge itself has expired
+    if (Date.now() > decoded.expiresAt) {
+      return null
+    }
+
+    return {
+      walletAddress: decoded.walletAddress,
+      code: decoded.code,
+      expiresAt: decoded.expiresAt,
+      verificationAddress: decoded.verificationAddress
+    }
+  } catch {
+    return null
+  }
+}
+
+// ============================================================
+// SESSION TOKENS
+// ============================================================
+
 /**
  * Create a JWT session token for verified wallet
  */

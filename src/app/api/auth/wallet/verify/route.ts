@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { getPendingVerificationAsync, deleteVerification, VERIFICATION_ADDRESS } from '@/lib/auth/verification'
+import { verifyChallengeToken, VERIFICATION_ADDRESS } from '@/lib/auth/verification'
 import { createTelegramSessionToken, verifyTelegramSessionToken } from '@/lib/auth/telegram'
 
 const AXIOME_REST_URL = process.env.AXIOME_REST_URL || 'https://axiome-api.quantnode.tech'
 
-// GET /api/auth/wallet/verify - Check verification status
+// GET /api/auth/wallet/verify - Check verification status (stateless)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
     const walletAddress = searchParams.get('walletAddress')
-
-    console.log(`[Verify] Checking verification for wallet: ${walletAddress}`)
+    const challengeToken = searchParams.get('challengeToken')
 
     if (!walletAddress) {
       return NextResponse.json(
@@ -20,25 +19,47 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    // Check if there's a pending verification (using async DB lookup)
-    const pending = await getPendingVerificationAsync(walletAddress)
-    console.log(`[Verify] Pending verification:`, pending ? `code=${pending.code}` : 'none')
-
-    if (!pending) {
-      return NextResponse.json({ verified: false, pending: false })
+    if (!challengeToken) {
+      return NextResponse.json(
+        { error: 'Challenge token is required' },
+        { status: 400 }
+      )
     }
+
+    console.log(`[Verify] Checking wallet: ${walletAddress}`)
+
+    // Decode the challenge token (stateless - no server state needed)
+    const challenge = verifyChallengeToken(challengeToken)
+
+    if (!challenge) {
+      console.log(`[Verify] Invalid or expired challenge token`)
+      return NextResponse.json({
+        verified: false,
+        pending: false,
+        error: 'Challenge expired or invalid'
+      })
+    }
+
+    // Verify the token is for this wallet
+    if (challenge.walletAddress.toLowerCase() !== walletAddress.toLowerCase()) {
+      console.log(`[Verify] Wallet mismatch: token=${challenge.walletAddress}, request=${walletAddress}`)
+      return NextResponse.json({
+        verified: false,
+        pending: false,
+        error: 'Wallet address mismatch'
+      })
+    }
+
+    console.log(`[Verify] Challenge decoded: code=${challenge.code}`)
 
     // Search for verification transaction on chain
     const verified = await searchVerificationTransaction(
       walletAddress,
-      pending.code
+      challenge.code
     )
 
     if (verified) {
-      console.log(`[Verify] Transaction verified! Cleaning up and updating user...`)
-
-      // Delete the verification challenge from DB and cache
-      await deleteVerification(walletAddress)
+      console.log(`[Verify] SUCCESS! Transaction verified`)
 
       // Get auth token from header to update user
       const authHeader = request.headers.get('authorization')
@@ -49,7 +70,6 @@ export async function GET(request: NextRequest) {
         const decoded = verifyTelegramSessionToken(token)
         if (decoded) {
           userId = decoded.userId
-          console.log(`[Verify] Found user ID from token: ${userId}`)
         }
       }
 
@@ -64,8 +84,6 @@ export async function GET(request: NextRequest) {
               isVerified: true
             }
           })
-
-          console.log(`[Verify] User updated: ${user.id}, wallet: ${user.walletAddress}`)
 
           // Create new token with wallet address
           const newToken = createTelegramSessionToken(
@@ -87,13 +105,11 @@ export async function GET(request: NextRequest) {
             }
           })
         } catch (dbError) {
-          console.error('[Verify] Failed to update user:', dbError)
-          // Still return success, just without updating user
+          console.error('[Verify] DB error:', dbError)
           return NextResponse.json({
             verified: true,
             pending: false,
-            walletAddress,
-            error: 'Failed to update user profile'
+            walletAddress
           })
         }
       }
@@ -108,10 +124,10 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       verified: false,
       pending: true,
-      expiresAt: pending.expiresAt
+      expiresAt: challenge.expiresAt
     })
   } catch (error) {
-    console.error('Wallet verify error:', error)
+    console.error('[Verify] Error:', error)
     return NextResponse.json(
       { error: 'Verification check failed' },
       { status: 500 }
@@ -121,145 +137,71 @@ export async function GET(request: NextRequest) {
 
 /**
  * Search for verification transaction on the blockchain
- * Tries multiple approaches to find the matching transaction
  */
 async function searchVerificationTransaction(
   senderAddress: string,
   expectedMemo: string
 ): Promise<boolean> {
-  console.log(`[Verify] ========== Starting transaction search ==========`)
-  console.log(`[Verify] Sender: ${senderAddress}`)
-  console.log(`[Verify] Expected memo: ${expectedMemo}`)
-  console.log(`[Verify] Expected recipient: ${VERIFICATION_ADDRESS}`)
-
-  // Try approach 1: Search by sender
-  const result1 = await searchBySender(senderAddress, expectedMemo)
-  if (result1) return true
-
-  // Try approach 2: Search by recipient (transfer.recipient event)
-  const result2 = await searchByRecipient(senderAddress, expectedMemo)
-  if (result2) return true
-
-  console.log(`[Verify] No matching transaction found with any approach`)
-  return false
-}
-
-/**
- * Search transactions by sender address
- */
-async function searchBySender(
-  senderAddress: string,
-  expectedMemo: string
-): Promise<boolean> {
   try {
-    const query = encodeURIComponent(`message.sender='${senderAddress}'`)
-    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=${query}&order_by=2&pagination.limit=30`
+    // Build query - search by sender
+    const query = `message.sender='${senderAddress}'`
+    const encodedQuery = encodeURIComponent(query)
+    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=${encodedQuery}&order_by=2&pagination.limit=20`
 
-    console.log(`[Verify] Approach 1: Search by sender`)
-    console.log(`[Verify] URL: ${url}`)
+    console.log(`[Verify] Searching: ${url}`)
 
     const response = await fetch(url, {
-      cache: 'no-store',
-      headers: { 'Accept': 'application/json' }
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+      cache: 'no-store'
     })
 
     if (!response.ok) {
-      console.error(`[Verify] Sender search failed: ${response.status}`)
+      const text = await response.text().catch(() => '')
+      console.error(`[Verify] API error ${response.status}: ${text.substring(0, 200)}`)
       return false
     }
 
     const data = await response.json()
-    return checkTransactionsForMatch(data.tx_responses || [], senderAddress, expectedMemo)
-  } catch (error) {
-    console.error('[Verify] Sender search error:', error)
-    return false
-  }
-}
+    const txs = data.tx_responses || data.txs || []
 
-/**
- * Search transactions by recipient address (for bank transfers)
- */
-async function searchByRecipient(
-  senderAddress: string,
-  expectedMemo: string
-): Promise<boolean> {
-  try {
-    const query = encodeURIComponent(`transfer.recipient='${VERIFICATION_ADDRESS}'`)
-    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?events=${query}&order_by=2&pagination.limit=30`
+    console.log(`[Verify] Found ${txs.length} transactions`)
 
-    console.log(`[Verify] Approach 2: Search by recipient`)
-    console.log(`[Verify] URL: ${url}`)
+    // Check each transaction
+    for (const tx of txs) {
+      // Skip failed transactions
+      if (tx.code !== 0 && tx.code !== undefined) {
+        continue
+      }
 
-    const response = await fetch(url, {
-      cache: 'no-store',
-      headers: { 'Accept': 'application/json' }
-    })
+      const memo = tx.tx?.body?.memo || ''
 
-    if (!response.ok) {
-      console.error(`[Verify] Recipient search failed: ${response.status}`)
-      return false
-    }
+      // Check memo match (case insensitive)
+      if (memo.trim().toUpperCase() !== expectedMemo.trim().toUpperCase()) {
+        continue
+      }
 
-    const data = await response.json()
-    return checkTransactionsForMatch(data.tx_responses || [], senderAddress, expectedMemo)
-  } catch (error) {
-    console.error('[Verify] Recipient search error:', error)
-    return false
-  }
-}
+      console.log(`[Verify] Memo match found! TX: ${tx.txhash?.substring(0, 16)}...`)
 
-/**
- * Check array of transactions for a matching verification tx
- */
-function checkTransactionsForMatch(
-  txs: any[],
-  expectedSender: string,
-  expectedMemo: string
-): boolean {
-  console.log(`[Verify] Checking ${txs.length} transactions...`)
+      // Check messages
+      const messages = tx.tx?.body?.messages || []
+      for (const msg of messages) {
+        const toAddress = msg.to_address || msg.toAddress || ''
 
-  for (const tx of txs) {
-    // Skip failed transactions
-    if (tx.code !== 0) {
-      continue
-    }
-
-    const memo = tx.tx?.body?.memo || ''
-    const messages = tx.tx?.body?.messages || []
-    const height = tx.height
-    const txHash = tx.txhash?.substring(0, 16)
-
-    // Check memo match (case insensitive)
-    const memoMatches = memo.trim().toUpperCase() === expectedMemo.trim().toUpperCase()
-
-    if (!memoMatches) {
-      continue
-    }
-
-    console.log(`[Verify] TX ${txHash}... (height ${height}): Memo matches!`)
-
-    // Check messages for matching sender and recipient
-    for (const msg of messages) {
-      const msgType = msg['@type'] || msg.type || ''
-      const fromAddress = msg.from_address || msg.fromAddress || ''
-      const toAddress = msg.to_address || msg.toAddress || ''
-
-      // Check if this is a bank send message
-      if (msgType.includes('MsgSend') || msgType.includes('bank')) {
-        const senderMatches = fromAddress.toLowerCase() === expectedSender.toLowerCase()
-        const recipientMatches = toAddress.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()
-
-        console.log(`[Verify]   Message: ${msgType}`)
-        console.log(`[Verify]   From: ${fromAddress} (matches: ${senderMatches})`)
-        console.log(`[Verify]   To: ${toAddress} (matches: ${recipientMatches})`)
-
-        if (senderMatches && recipientMatches) {
-          console.log(`[Verify] SUCCESS! Verified transaction: ${tx.txhash}`)
+        if (toAddress.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()) {
+          console.log(`[Verify] Recipient match! Verification complete.`)
           return true
         }
       }
     }
-  }
 
-  return false
+    console.log(`[Verify] No matching transaction found`)
+    return false
+  } catch (error) {
+    console.error('[Verify] Search error:', error)
+    return false
+  }
 }
