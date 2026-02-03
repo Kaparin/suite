@@ -38,8 +38,81 @@ bot.use(session({
 
 // === Commands ===
 
-// /start - Welcome message
+// /start - Welcome message or auth callback
 bot.command('start', async (ctx) => {
+  const payload = ctx.match?.trim()
+
+  // Check if this is an auth request
+  if (payload?.startsWith('auth_')) {
+    const authCode = payload.replace('auth_', '')
+
+    // Get user data
+    const telegramId = ctx.from?.id.toString()
+    const username = ctx.from?.username
+    const firstName = ctx.from?.first_name
+    const photoUrl = ctx.from?.id ? `https://t.me/i/userpic/320/${ctx.from.username || ctx.from.id}.jpg` : undefined
+
+    if (!telegramId) {
+      await ctx.reply('❌ Could not get your Telegram data. Please try again.')
+      return
+    }
+
+    // Save/update user in database
+    const user = await prisma.user.upsert({
+      where: { telegramId },
+      update: {
+        telegramUsername: username,
+        telegramFirstName: firstName,
+        telegramAuthDate: new Date()
+      },
+      create: {
+        telegramId,
+        telegramUsername: username,
+        telegramFirstName: firstName,
+        telegramAuthDate: new Date(),
+        username: username || firstName
+      }
+    })
+
+    // Generate auth URL with user data
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://suite-1.vercel.app'
+    const userData = encodeURIComponent(JSON.stringify({
+      id: user.id,
+      telegramId: user.telegramId,
+      telegramUsername: user.telegramUsername,
+      telegramFirstName: user.telegramFirstName,
+      walletAddress: user.walletAddress,
+      isVerified: user.isVerified,
+      plan: user.plan
+    }))
+
+    // Create temporary token (in production, sign this properly)
+    const token = Buffer.from(JSON.stringify({
+      telegramId,
+      userId: user.id,
+      exp: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
+    })).toString('base64')
+
+    const authUrl = `${siteUrl}/login?auth_code=${authCode}&token=${token}&user=${userData}`
+
+    const keyboard = new InlineKeyboard()
+      .url('✅ Complete Login', authUrl)
+
+    await ctx.reply(
+      `🔐 *Login Request*
+
+Click the button below to complete your login to Axiome Launch Suite.
+
+This will authorize your Telegram account: *${firstName}* ${username ? `(@${username})` : ''}`,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: keyboard
+      }
+    )
+    return
+  }
+
+  // Regular /start command
   const keyboard = new InlineKeyboard()
     .text('🚀 Create Token', 'create')
     .text('🔍 Explorer', 'explorer')
@@ -73,10 +146,16 @@ Let's build something amazing! 🚀`,
   if (telegramId) {
     await prisma.user.upsert({
       where: { telegramId },
-      update: { username: ctx.from?.username },
+      update: {
+        username: ctx.from?.username,
+        telegramUsername: ctx.from?.username,
+        telegramFirstName: ctx.from?.first_name
+      },
       create: {
         telegramId,
         username: ctx.from?.username,
+        telegramUsername: ctx.from?.username,
+        telegramFirstName: ctx.from?.first_name
       }
     })
   }
