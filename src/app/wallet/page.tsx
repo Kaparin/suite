@@ -2,7 +2,9 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import Link from 'next/link'
 import { useWallet, truncateAddress } from '@/lib/wallet'
+import { useAuth } from '@/lib/auth/useAuth'
 import { Button, Tabs } from '@/components/ui'
 import { OverviewTab, HistoryTab, SendTab, ReceiveTab, SwapTab } from '@/components/wallet/wallet-page'
 
@@ -58,10 +60,51 @@ const tabs = [
 
 export default function WalletPage() {
   const { isConnected, connect, address } = useWallet()
+  const { isAuthenticated, isLoading: authLoading } = useAuth()
   const [activeTab, setActiveTab] = useState<TabId>('overview')
 
   const handleNavigate = (tab: TabId) => {
     setActiveTab(tab)
+  }
+
+  // Show loading while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+      </div>
+    )
+  }
+
+  // Require Telegram auth first
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center max-w-md"
+        >
+          <div className="w-20 h-20 mx-auto bg-blue-500/20 rounded-full flex items-center justify-center mb-6">
+            <svg className="w-10 h-10 text-blue-400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
+            </svg>
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">Login Required</h1>
+          <p className="text-gray-400 mb-6">
+            Please log in with Telegram to access wallet features
+          </p>
+          <Link href="/login">
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-purple-600"
+              size="lg"
+            >
+              Log in with Telegram
+            </Button>
+          </Link>
+        </motion.div>
+      </div>
+    )
   }
 
   // Require wallet connection
