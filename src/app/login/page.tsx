@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import { WalletBindModal } from '@/components/auth'
 import { useAuth } from '@/lib/auth/useAuth'
 
+const TELEGRAM_BOT_ID = process.env.NEXT_PUBLIC_TELEGRAM_BOT_ID || '8351520553'
 const TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || 'axiome_launch_suite_bot'
 
 function LoginContent() {
@@ -82,8 +83,8 @@ function LoginContent() {
     const origin = window.location.origin
     const callbackUrl = `${origin}/api/auth/telegram/callback`
 
-    // Redirect to Telegram OAuth
-    window.location.href = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_USERNAME}&origin=${encodeURIComponent(origin)}&request_access=write&return_to=${encodeURIComponent(callbackUrl)}`
+    // Redirect to Telegram OAuth (bot_id must be numeric)
+    window.location.href = `https://oauth.telegram.org/auth?bot_id=${TELEGRAM_BOT_ID}&origin=${encodeURIComponent(origin)}&request_access=write&return_to=${encodeURIComponent(callbackUrl)}`
   }
 
   const handleWalletVerified = (walletAddress: string) => {
