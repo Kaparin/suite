@@ -137,7 +137,8 @@ export async function GET(request: NextRequest) {
 
 /**
  * Search for verification transaction on the blockchain
- * Uses query= parameter with URL encoding (tested and works with Axiome REST API)
+ * Uses recipient-based query (faster - smaller result set)
+ * Falls back to sender-based query if needed
  */
 async function searchVerificationTransaction(
   senderAddress: string,
@@ -145,52 +146,108 @@ async function searchVerificationTransaction(
 ): Promise<boolean> {
   try {
     console.log(`[Verify] Searching for sender: ${senderAddress}, memo: ${expectedMemo}`)
+    console.log(`[Verify] Verification address: ${VERIFICATION_ADDRESS}`)
 
-    // Correct format for Axiome REST API:
-    // query=message.sender='address' (URL encoded)
-    const query = encodeURIComponent(`message.sender='${senderAddress}'`)
-    const url = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?query=${query}&order_by=ORDER_BY_DESC&pagination.limit=50`
+    // Strategy 1: Query by recipient (faster - less transactions to the verification address)
+    const recipientQuery = encodeURIComponent(`transfer.recipient='${VERIFICATION_ADDRESS}'`)
+    const recipientUrl = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?query=${recipientQuery}&order_by=ORDER_BY_DESC&pagination.limit=20`
 
-    console.log(`[Verify] Fetching: ${url}`)
+    console.log(`[Verify] Trying recipient query: ${recipientUrl}`)
 
-    const response = await fetch(url, { cache: 'no-store' })
+    // Use AbortController for timeout
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), 10000) // 10 second timeout
 
-    if (!response.ok) {
-      const text = await response.text().catch(() => '')
-      console.error(`[Verify] API error ${response.status}: ${text.substring(0, 200)}`)
-      return false
+    try {
+      const response = await fetch(recipientUrl, {
+        cache: 'no-store',
+        signal: controller.signal
+      })
+      clearTimeout(timeoutId)
+
+      if (response.ok) {
+        const data = await response.json()
+        const txs = data.tx_responses || []
+        console.log(`[Verify] Recipient query found ${txs.length} transactions`)
+
+        // Check each transaction
+        for (const tx of txs) {
+          if (tx.code !== 0) continue
+
+          const memo = tx.tx?.body?.memo || ''
+          if (memo.trim().toUpperCase() !== expectedMemo.trim().toUpperCase()) {
+            continue
+          }
+
+          console.log(`[Verify] Memo match! Checking sender...`)
+
+          // Verify sender matches
+          const messages = tx.tx?.body?.messages || []
+          const bankSend = messages.find(
+            (msg: { '@type': string }) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend'
+          )
+
+          if (bankSend && bankSend.from_address?.toLowerCase() === senderAddress.toLowerCase()) {
+            console.log(`[Verify] SUCCESS! TX: ${tx.txhash}`)
+            return true
+          }
+        }
+      }
+    } catch (fetchError) {
+      clearTimeout(timeoutId)
+      if ((fetchError as Error).name === 'AbortError') {
+        console.log(`[Verify] Recipient query timed out, trying sender query...`)
+      } else {
+        console.error(`[Verify] Recipient query error:`, fetchError)
+      }
     }
 
-    const data = await response.json()
-    const txs = data.tx_responses || []
+    // Strategy 2: Query by sender (fallback)
+    const senderQuery = encodeURIComponent(`message.sender='${senderAddress}'`)
+    const senderUrl = `${AXIOME_REST_URL}/cosmos/tx/v1beta1/txs?query=${senderQuery}&order_by=ORDER_BY_DESC&pagination.limit=10`
 
-    console.log(`[Verify] Found ${txs.length} transactions`)
+    console.log(`[Verify] Trying sender query: ${senderUrl}`)
 
-    // Check each transaction
-    for (const tx of txs) {
-      // Only check successful transactions
-      if (tx.code !== 0) continue
+    const controller2 = new AbortController()
+    const timeoutId2 = setTimeout(() => controller2.abort(), 10000)
 
-      // Get memo
-      const memo = tx.tx?.body?.memo || ''
+    try {
+      const response = await fetch(senderUrl, {
+        cache: 'no-store',
+        signal: controller2.signal
+      })
+      clearTimeout(timeoutId2)
 
-      // Check if memo matches our code (case insensitive)
-      if (memo.trim().toUpperCase() !== expectedMemo.trim().toUpperCase()) {
-        continue
+      if (!response.ok) {
+        console.error(`[Verify] Sender query failed: ${response.status}`)
+        return false
       }
 
-      console.log(`[Verify] Memo match found! TX: ${tx.txhash?.substring(0, 16)}...`)
+      const data = await response.json()
+      const txs = data.tx_responses || []
+      console.log(`[Verify] Sender query found ${txs.length} transactions`)
 
-      // Find the bank send message to verify recipient
-      const messages = tx.tx?.body?.messages || []
-      const bankSend = messages.find(
-        (msg: { '@type': string }) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend'
-      )
+      for (const tx of txs) {
+        if (tx.code !== 0) continue
 
-      if (bankSend && bankSend.to_address?.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()) {
-        console.log(`[Verify] Recipient match! Verification complete. TX: ${tx.txhash}`)
-        return true
+        const memo = tx.tx?.body?.memo || ''
+        if (memo.trim().toUpperCase() !== expectedMemo.trim().toUpperCase()) {
+          continue
+        }
+
+        const messages = tx.tx?.body?.messages || []
+        const bankSend = messages.find(
+          (msg: { '@type': string }) => msg['@type'] === '/cosmos.bank.v1beta1.MsgSend'
+        )
+
+        if (bankSend && bankSend.to_address?.toLowerCase() === VERIFICATION_ADDRESS.toLowerCase()) {
+          console.log(`[Verify] SUCCESS via sender query! TX: ${tx.txhash}`)
+          return true
+        }
       }
+    } catch (fetchError) {
+      clearTimeout(timeoutId2)
+      console.error(`[Verify] Sender query error:`, fetchError)
     }
 
     console.log(`[Verify] No matching transaction found`)

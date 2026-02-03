@@ -44,12 +44,6 @@ type TokenData = {
       walletAddress?: string
     }
   }
-  score: number
-  metrics: {
-    holders: number
-    txCount: number
-    volume24h: number
-  }
   chainMinter?: string | null
 }
 
@@ -88,11 +82,6 @@ export default function TokenPage() {
     fetchToken()
   }, [fetchToken])
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return 'text-green-400'
-    if (score >= 50) return 'text-yellow-400'
-    return 'text-red-400'
-  }
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleDateString('ru-RU', {
@@ -151,7 +140,7 @@ export default function TokenPage() {
     )
   }
 
-  const { project, score, metrics } = data
+  const { project } = data
   const tokenAddress = project.tokenAddress || address
   const tokenomics = project.tokenomics as { supply?: string; distribution?: Record<string, number> } | null
   const links = project.links as ProjectLinks | null
@@ -256,35 +245,31 @@ export default function TokenPage() {
           </motion.div>
         </div>
 
-        {/* Stats */}
+        {/* Stats - Coming Soon */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          className="mb-8"
         >
           <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-            <CardContent className="text-center">
-              <p className="text-2xl font-bold text-white">{metrics.holders.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">{t('holders')}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-            <CardContent className="text-center">
-              <p className="text-2xl font-bold text-white">${metrics.volume24h.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">{t('volume24h')}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-            <CardContent className="text-center">
-              <p className="text-2xl font-bold text-white">{metrics.txCount.toLocaleString()}</p>
-              <p className="text-sm text-gray-400">{t('transactions')}</p>
-            </CardContent>
-          </Card>
-          <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-            <CardContent className="text-center">
-              <p className={`text-2xl font-bold ${getScoreColor(score)}`}>{score}</p>
-              <p className="text-sm text-gray-400">{t('trustScore')}</p>
+            <CardContent>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-500/20 rounded-full flex items-center justify-center">
+                    <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="text-white font-medium">Token Analytics</p>
+                    <p className="text-sm text-gray-400">Holders, volume, transactions</p>
+                  </div>
+                </div>
+                <Badge variant="secondary" className="bg-purple-500/20 text-purple-300 border-purple-500/30">
+                  Coming Soon
+                </Badge>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
