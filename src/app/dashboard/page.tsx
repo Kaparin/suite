@@ -292,16 +292,27 @@ export default function DashboardPage() {
                 </svg>
               </div>
               <h3 className="text-lg font-medium text-white mb-2">No projects yet</h3>
-              <p className="text-gray-400 mb-4">Create your first token to get started</p>
-              <Link
-                href="/studio"
-                className="inline-flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-lg transition-colors"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Create Token
-              </Link>
+              <p className="text-gray-400 mb-6">Create your first token to get started</p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3">
+                <Link
+                  href="/create"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gray-800 hover:bg-gray-700 border border-gray-700 text-white text-sm font-medium rounded-xl transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                  </svg>
+                  Create Manually
+                </Link>
+                <Link
+                  href="/studio"
+                  className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 text-white text-sm font-medium rounded-xl transition-colors"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  Create with AI
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="space-y-4">
@@ -372,9 +383,9 @@ export default function DashboardPage() {
                           </svg>
                         </Link>
                       )}
-                      {project.status === 'DRAFT' && (
+                      {(project.status === 'DRAFT' || project.status === 'UPCOMING') && (
                         <Link
-                          href={`/studio?edit=${project.id}`}
+                          href={`/edit/${project.id}`}
                           className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
                           title="Edit Project"
                         >

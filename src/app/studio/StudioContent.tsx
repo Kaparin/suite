@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useSearchParams } from 'next/navigation'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Button, Card, CardHeader, CardTitle, CardDescription, CardContent, Input, Textarea } from '@/components/ui'
-import { CreateTokenModal } from '@/components/wallet'
 import { useTranslations } from 'next-intl'
+import { useAuth } from '@/lib/auth/useAuth'
 
 type GenerationResult = {
   description: {
@@ -35,6 +35,8 @@ type TabId = 'description' | 'tokenomics' | 'launchPlan' | 'faq' | 'promo'
 export function StudioContent() {
   const t = useTranslations('studio')
   const searchParams = useSearchParams()
+  const router = useRouter()
+  const { user, getToken, isAuthenticated } = useAuth()
 
   const [formData, setFormData] = useState({
     projectName: '',
@@ -45,10 +47,11 @@ export function StudioContent() {
     language: 'en' as 'en' | 'ru',
   })
   const [isLoading, setIsLoading] = useState(false)
+  const [isSaving, setIsSaving] = useState(false)
   const [result, setResult] = useState<GenerationResult | null>(null)
   const [activeTab, setActiveTab] = useState<TabId>('description')
   const [error, setError] = useState('')
-  const [showCreateTokenModal, setShowCreateTokenModal] = useState(false)
+  const [saveSuccess, setSaveSuccess] = useState(false)
 
   // Prefill from URL params (from Telegram bot)
   useEffect(() => {
@@ -94,6 +97,73 @@ export function StudioContent() {
       setError('Failed to generate. Please try again.')
     } finally {
       setIsLoading(false)
+    }
+  }
+
+  const handleSaveToDatabase = async (publish: boolean = false) => {
+    if (!isAuthenticated) {
+      router.push('/login')
+      return
+    }
+
+    if (!user?.isVerified) {
+      router.push('/login?verify=true')
+      return
+    }
+
+    setIsSaving(true)
+    setError('')
+
+    try {
+      const authToken = getToken()
+      if (!authToken) {
+        throw new Error('Authentication required')
+      }
+
+      // Generate ticker from project name
+      const ticker = formData.projectName
+        .replace(/[^a-zA-Z0-9]/g, '')
+        .toUpperCase()
+        .slice(0, 6)
+
+      const projectData = {
+        name: formData.projectName,
+        ticker: ticker,
+        descriptionShort: result?.description.short || '',
+        descriptionLong: result?.description.long || '',
+        initialSupply: result?.tokenomics.supply?.replace(/[^0-9]/g, '') || '1000000000',
+        decimals: 6,
+        tokenomics: result?.tokenomics ? {
+          supply: result.tokenomics.supply,
+          distribution: result.tokenomics.distribution,
+          vesting: result.tokenomics.vesting
+        } : null,
+        status: publish ? 'UPCOMING' : 'DRAFT'
+      }
+
+      const response = await fetch('/api/projects', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${authToken}`
+        },
+        body: JSON.stringify(projectData)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to save project')
+      }
+
+      setSaveSuccess(true)
+      setTimeout(() => {
+        router.push('/dashboard')
+      }, 1500)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to save')
+    } finally {
+      setIsSaving(false)
     }
   }
 
@@ -373,18 +443,31 @@ export function StudioContent() {
                     {t('createToken.subtitle')}
                   </p>
                 </div>
+                {error && (
+                  <p className="text-red-400 text-sm">{error}</p>
+                )}
                 <div className="flex gap-3">
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Button variant="outline" onClick={() => setResult(null)}>
+                    <Button variant="outline" onClick={() => setResult(null)} disabled={isSaving}>
                       {t('createToken.edit')}
                     </Button>
                   </motion.div>
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                     <Button
-                      onClick={() => setShowCreateTokenModal(true)}
+                      onClick={() => handleSaveToDatabase(false)}
+                      variant="outline"
+                      disabled={isSaving}
+                    >
+                      {isSaving ? 'Saving...' : 'Save as Draft'}
+                    </Button>
+                  </motion.div>
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Button
+                      onClick={() => handleSaveToDatabase(true)}
+                      disabled={isSaving}
                       className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500 border-0"
                     >
-                      {t('createToken.createNow')}
+                      {isSaving ? 'Publishing...' : 'Publish to Upcoming'}
                     </Button>
                   </motion.div>
                 </div>
@@ -393,16 +476,24 @@ export function StudioContent() {
           </motion.div>
         )}
 
-        {/* Create Token Modal */}
-        <CreateTokenModal
-          isOpen={showCreateTokenModal}
-          onClose={() => setShowCreateTokenModal(false)}
-          initialData={{
-            name: formData.projectName,
-            supply: result?.tokenomics.supply,
-            description: result?.description.short
-          }}
-        />
+        {/* Success Message */}
+        {saveSuccess && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+          >
+            <div className="bg-gray-900 border border-gray-700 rounded-2xl p-8 text-center">
+              <div className="w-16 h-16 mx-auto mb-4 bg-green-500/20 rounded-full flex items-center justify-center">
+                <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-white mb-2">Token Saved!</h3>
+              <p className="text-gray-400">Redirecting to dashboard...</p>
+            </div>
+          </motion.div>
+        )}
       </div>
     </div>
   )

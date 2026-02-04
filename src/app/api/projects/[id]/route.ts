@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
 
 // GET /api/projects/[id] - получить проект по ID
 export async function GET(
@@ -9,13 +10,24 @@ export async function GET(
   try {
     const { id } = await params
 
+    // Check if user is authenticated (optional - for edit permissions)
+    let userId: string | null = null
+    const authHeader = request.headers.get('authorization')
+    if (authHeader?.startsWith('Bearer ')) {
+      const token = authHeader.substring(7)
+      const decoded = verifyTelegramSessionToken(token)
+      if (decoded?.userId) {
+        userId = decoded.userId
+      }
+    }
+
     const project = await prisma.project.findUnique({
       where: { id },
       include: {
         owner: {
           select: {
             id: true,
-            username: true,
+            telegramUsername: true,
             walletAddress: true,
           },
         },
@@ -36,7 +48,18 @@ export async function GET(
       )
     }
 
-    return NextResponse.json({ project })
+    // If project is DRAFT, only owner can view it
+    if (project.status === 'DRAFT' && project.ownerId !== userId) {
+      return NextResponse.json(
+        { error: 'Access denied' },
+        { status: 403 }
+      )
+    }
+
+    // Add canEdit flag
+    const canEdit = project.ownerId === userId
+
+    return NextResponse.json({ project, canEdit })
   } catch (error) {
     console.error('Error fetching project:', error)
     return NextResponse.json(
@@ -53,11 +76,78 @@ export async function PATCH(
 ) {
   try {
     const { id } = await params
+
+    // Check authentication
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const token = authHeader.substring(7)
+    const decoded = verifyTelegramSessionToken(token)
+    if (!decoded?.userId) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
+    // Check project exists and user owns it
+    const existingProject = await prisma.project.findUnique({
+      where: { id },
+      select: { ownerId: true, status: true }
+    })
+
+    if (!existingProject) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+    }
+
+    if (existingProject.ownerId !== decoded.userId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
+
+    // Parse body and filter allowed fields
     const body = await request.json()
+    const {
+      name,
+      ticker,
+      logo,
+      descriptionShort,
+      descriptionLong,
+      decimals,
+      initialSupply,
+      links,
+      tokenomics,
+      estimatedLaunchDate,
+      status
+    } = body
+
+    // Only allow status changes: DRAFT -> UPCOMING
+    let newStatus = existingProject.status
+    if (status && status !== existingProject.status) {
+      if (existingProject.status === 'DRAFT' && status === 'UPCOMING') {
+        newStatus = 'UPCOMING'
+      } else if (existingProject.status === 'UPCOMING' && status === 'DRAFT') {
+        // Allow unpublishing
+        newStatus = 'DRAFT'
+      }
+      // Other status changes are not allowed via this endpoint
+    }
 
     const project = await prisma.project.update({
       where: { id },
-      data: body,
+      data: {
+        ...(name !== undefined && { name }),
+        ...(ticker !== undefined && { ticker }),
+        ...(logo !== undefined && { logo }),
+        ...(descriptionShort !== undefined && { descriptionShort }),
+        ...(descriptionLong !== undefined && { descriptionLong }),
+        ...(decimals !== undefined && { decimals: typeof decimals === 'number' ? decimals : parseInt(decimals) }),
+        ...(initialSupply !== undefined && { initialSupply }),
+        ...(links !== undefined && { links }),
+        ...(tokenomics !== undefined && { tokenomics }),
+        ...(estimatedLaunchDate !== undefined && {
+          estimatedLaunchDate: estimatedLaunchDate ? new Date(estimatedLaunchDate) : null
+        }),
+        status: newStatus,
+      },
     })
 
     return NextResponse.json({ project })
@@ -77,6 +167,32 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
+
+    // Check authentication
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const token = authHeader.substring(7)
+    const decoded = verifyTelegramSessionToken(token)
+    if (!decoded?.userId) {
+      return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
+    }
+
+    // Check project exists and user owns it
+    const existingProject = await prisma.project.findUnique({
+      where: { id },
+      select: { ownerId: true }
+    })
+
+    if (!existingProject) {
+      return NextResponse.json({ error: 'Project not found' }, { status: 404 })
+    }
+
+    if (existingProject.ownerId !== decoded.userId) {
+      return NextResponse.json({ error: 'Access denied' }, { status: 403 })
+    }
 
     await prisma.project.delete({
       where: { id },
