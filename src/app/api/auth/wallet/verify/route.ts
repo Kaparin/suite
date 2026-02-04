@@ -76,24 +76,29 @@ export async function GET(request: NextRequest) {
         }
       }
 
-      // If no userId from token, try to find user by existing records or wallet
+      // If no userId from token, try to find user by wallet address only
+      // Do NOT search by "any unverified user" as that's dangerous
       if (!userId) {
-        console.log(`[Verify] No userId from token, searching by wallet address...`)
-        // Try to find a user who might have this wallet or find by telegram session
+        console.log(`[Verify] No userId from token, searching by wallet address only...`)
+        // Only find user who already has this exact wallet address (re-verification case)
         const existingUser = await prisma.user.findFirst({
           where: {
-            OR: [
-              { walletAddress: walletAddress.toLowerCase() },
-              // Find any user without wallet who recently started verification
-              { walletAddress: null, isVerified: false }
-            ]
-          },
-          orderBy: { updatedAt: 'desc' }
+            walletAddress: walletAddress.toLowerCase()
+          }
         })
 
         if (existingUser) {
           userId = existingUser.id
-          console.log(`[Verify] Found existing user: ${userId}`)
+          console.log(`[Verify] Found existing user by wallet: ${userId}`)
+        } else {
+          console.log(`[Verify] WARNING: No userId from token and no existing user with this wallet!`)
+          console.log(`[Verify] User must be logged in to verify wallet. Returning error.`)
+          return NextResponse.json({
+            verified: true,
+            pending: false,
+            error: 'Please log in first before verifying your wallet',
+            walletAddress
+          })
         }
       }
 
