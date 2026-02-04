@@ -26,7 +26,14 @@ type CopyState = 'idle' | 'copied'
 export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalProps) {
   const { isConnected, address, connect, isConnecting } = useWallet()
   const { getToken, updateUser } = useAuth()
-  const [step, setStep] = useState<'connect' | 'verify' | 'success'>('connect')
+
+  // Compute initial step based on wallet state
+  const getInitialStep = (): 'connect' | 'verify' | 'success' => {
+    if (isConnected && address) return 'verify'
+    return 'connect'
+  }
+
+  const [step, setStep] = useState<'connect' | 'verify' | 'success'>(getInitialStep)
   const [challenge, setChallenge] = useState<VerificationChallenge | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const [isPolling, setIsPolling] = useState(false)
@@ -145,9 +152,24 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
     }
   }, [isPolling, address, challenge?.challengeToken, onSuccess, onClose, getToken, updateUser])
 
-  // Cleanup on close
+  // Track previous isOpen state to detect open/close transitions
+  const [wasOpen, setWasOpen] = useState(false)
+
+  // Reset state when modal opens/closes
   useEffect(() => {
-    if (!isOpen) {
+    if (isOpen && !wasOpen) {
+      // Modal just opened - set correct initial step based on wallet state
+      if (isConnected && address) {
+        setStep('verify')
+      } else {
+        setStep('connect')
+      }
+      setChallenge(null)
+      setError(null)
+      setCopyAddressState('idle')
+      setCopyMemoState('idle')
+    } else if (!isOpen && wasOpen) {
+      // Modal just closed - reset everything
       setIsPolling(false)
       setChallenge(null)
       setError(null)
@@ -155,7 +177,8 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
       setCopyAddressState('idle')
       setCopyMemoState('idle')
     }
-  }, [isOpen])
+    setWasOpen(isOpen)
+  }, [isOpen, wasOpen, isConnected, address])
 
   const requestChallenge = async () => {
     if (!address) return
