@@ -64,11 +64,17 @@ export default function EditProjectPage() {
   const fetchProject = useCallback(async () => {
     try {
       const token = getToken()
+      console.log('[Edit Page] Fetching project:', projectId)
+      console.log('[Edit Page] Token present:', !!token, token ? `length: ${token.length}` : '')
+      console.log('[Edit Page] Current user from context:', user ? { id: user.id, isVerified: user.isVerified } : null)
+
       const res = await fetch(`/api/projects/${projectId}`, {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       })
 
       if (!res.ok) {
+        const errorData = await res.json().catch(() => ({}))
+        console.log('[Edit Page] Error response:', res.status, errorData)
         if (res.status === 404) {
           setError('Project not found')
         } else if (res.status === 403) {
@@ -80,6 +86,9 @@ export default function EditProjectPage() {
       }
 
       const data = await res.json()
+      console.log('[Edit Page] Response status:', res.status)
+      console.log('[Edit Page] Response canEdit:', data.canEdit)
+      console.log('[Edit Page] Project ownerId:', data.project?.ownerId)
       setProject(data.project)
 
       // Populate form

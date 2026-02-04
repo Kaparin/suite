@@ -18,10 +18,17 @@ export async function GET(
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
       const decoded = verifyTelegramSessionToken(token)
-      console.log('[Project GET] Token decoded:', !!decoded, decoded ? { userId: decoded.userId } : null)
+      console.log('[Project GET] Token decoded:', !!decoded, decoded ? {
+        userId: decoded.userId,
+        telegramId: decoded.telegramId,
+        walletAddress: decoded.walletAddress,
+        verified: decoded.verified
+      } : null)
       if (decoded?.userId) {
         userId = decoded.userId
       }
+    } else {
+      console.log('[Project GET] No Bearer token provided')
     }
 
     const project = await prisma.project.findUnique({
