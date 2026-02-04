@@ -44,7 +44,9 @@
       "Bash(netstat:*)",
       "Bash(timeout /t 10 /nobreak)",
       "Bash(npm run lint)",
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "WebFetch(domain:ibb.co)",
+      "Bash(git diff:*)"
     ]
   }
 }

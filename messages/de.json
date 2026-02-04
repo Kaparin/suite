@@ -16,23 +16,35 @@
   "home": {
     "hero": {
       "title": "Starte deinen Token auf Axiome",
-      "subtitle": "KI-gestütztes Token-Studio, automatische Landing Pages, Echtzeit-Analysen und Risikobewertung — alles in einer kosmischen Plattform.",
+      "subtitle": "Die All-in-One-Plattform für Erstellung, Ankündigung und Promotion von Token auf Axiome. Von der Idee zum Launch — mit KI-Unterstützung.",
       "cta": "Reise beginnen"
     },
     "features": {
       "title": "Alles was du zum Launch brauchst",
       "studio": {
         "title": "KI Token Studio",
-        "description": "Beschreibe deine Idee und erhalte komplette Tokenomics, Beschreibungen, FAQ und Launch-Plan von der KI."
+        "description": "Beschreibe deine Idee und erhalte komplette Tokenomics, Beschreibungen, FAQ und Launch-Plan von der KI in Sekunden."
       },
-      "landing": {
-        "title": "Auto Landing Pages",
-        "description": "Erhalte sofort eine schöne Projektseite. Zeige Tokenomics, Links und On-Chain-Metriken — ohne Code."
+      "community": {
+        "title": "Community Launchpad",
+        "description": "Kündige deinen Token vor dem Launch an. Baue Hype auf, sammle Reaktionen und Kommentare."
       },
       "explorer": {
-        "title": "Explorer & Bewertungen",
-        "description": "Entdecke neue Token mit Risikobewertung. Sieh Aktivität, Holder-Verteilung und Warnflags."
+        "title": "Explorer & Trust Scores",
+        "description": "Entdecke Token mit Risikobewertung. Sieh Aktivität, Holder-Verteilung und Warnflags vor dem Investment."
       }
+    },
+    "token": {
+      "title": "$LAUNCH Token",
+      "subtitle": "Bald verfügbar",
+      "description": "Der native Token von Axiome Launch Suite. Halte $LAUNCH für Premium-Features, reduzierte Gebühren und exklusiven Presale-Zugang.",
+      "features": {
+        "premium": "Premium KI-Generierungen",
+        "fees": "Reduzierte Gebühren",
+        "presale": "Früher Presale-Zugang",
+        "governance": "Abstimmung über Features"
+      },
+      "notify": "Benachrichtigt werden"
     },
     "cta": {
       "title": "Bereit zum Launch?",

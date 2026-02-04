@@ -298,7 +298,7 @@ export default function HomePage() {
               </div>
             </motion.div>
 
-            {/* Feature 2 - Landing Pages */}
+            {/* Feature 2 - Community Launchpad */}
             <motion.div
               variants={featureCardVariants}
               initial="hidden"
@@ -315,14 +315,14 @@ export default function HomePage() {
                   className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30"
                 >
                   <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
                 </motion.div>
                 <h3 className="text-2xl font-semibold mb-3 text-white group-hover:text-purple-300 transition-colors">
-                  {t('features.landing.title')}
+                  {t('features.community.title')}
                 </h3>
                 <p className="text-gray-400 leading-relaxed">
-                  {t('features.landing.description')}
+                  {t('features.community.description')}
                 </p>
               </div>
             </motion.div>
@@ -356,6 +356,103 @@ export default function HomePage() {
               </div>
             </motion.div>
           </div>
+        </div>
+      </section>
+
+      {/* $LAUNCH Token Section */}
+      <section className="relative z-20 py-12 border-t border-gray-800/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="relative"
+          >
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 via-orange-600/10 to-red-600/10 rounded-3xl blur-3xl" />
+
+            <div className="relative bg-gray-900/30 backdrop-blur-sm border border-yellow-500/20 rounded-3xl p-8 md:p-12">
+              <div className="grid md:grid-cols-2 gap-8 items-center">
+                {/* Left - Info */}
+                <div>
+                  <div className="flex items-center gap-3 mb-4">
+                    <motion.div
+                      animate={{ rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 2, repeat: Infinity }}
+                      className="w-12 h-12 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/30"
+                    >
+                      <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </motion.div>
+                    <div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-white">{t('token.title')}</h3>
+                      <span className="text-sm text-yellow-400 font-medium">{t('token.subtitle')}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-gray-400 mb-6 leading-relaxed">
+                    {t('token.description')}
+                  </p>
+
+                  <ul className="space-y-3 mb-6">
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {t('token.features.premium')}
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {t('token.features.fees')}
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {t('token.features.presale')}
+                    </li>
+                    <li className="flex items-center gap-3 text-gray-300">
+                      <svg className="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      </svg>
+                      {t('token.features.governance')}
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Right - Visual */}
+                <div className="flex justify-center">
+                  <motion.div
+                    animate={{
+                      y: [0, -10, 0],
+                      rotateY: [0, 5, 0, -5, 0]
+                    }}
+                    transition={{ duration: 4, repeat: Infinity }}
+                    className="relative"
+                  >
+                    <div className="w-48 h-48 md:w-56 md:h-56 bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-2xl shadow-yellow-500/30">
+                      <div className="w-40 h-40 md:w-48 md:h-48 bg-gray-900/90 rounded-full flex items-center justify-center">
+                        <div className="text-center">
+                          <span className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">$LAUNCH</span>
+                        </div>
+                      </div>
+                    </div>
+                    {/* Orbiting particles */}
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+                      className="absolute inset-0"
+                    >
+                      <div className="absolute top-0 left-1/2 w-3 h-3 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50" />
+                      <div className="absolute bottom-0 left-1/2 w-2 h-2 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
+                    </motion.div>
+                  </motion.div>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
 
