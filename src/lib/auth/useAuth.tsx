@@ -141,7 +141,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token, logout, updateUser])
 
   const getToken = useCallback((): string | null => {
-    return token || localStorage.getItem(AUTH_TOKEN_KEY)
+    // Always prefer localStorage as it's the source of truth after wallet verification
+    // The React state might be stale due to async updates
+    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
+    return storedToken || token
   }, [token])
 
   return (

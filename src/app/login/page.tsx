@@ -121,10 +121,14 @@ function LoginContent() {
   }
 
   const handleWalletVerified = (walletAddress: string) => {
-    if (user) {
+    // WalletBindModal already saves the new token and calls updateUser
+    // Just need to refresh the auth state from localStorage
+    const newToken = localStorage.getItem('axiome_auth_token')
+    if (user && newToken) {
+      // Re-login with the new token to sync React state
       login(
         { ...user, walletAddress, isVerified: true },
-        localStorage.getItem('axiome_auth_token') || ''
+        newToken
       )
     }
     setShowWalletModal(false)
