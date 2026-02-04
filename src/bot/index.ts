@@ -301,13 +301,14 @@ bot.command('myprojects', async (ctx) => {
 
     const list = user.projects
       .map((p, i) => {
-        const statusEmoji = {
+        const statusEmojiMap: Record<string, string> = {
           DRAFT: '📝',
           UPCOMING: '⏳',
           PRESALE: '🔥',
           LAUNCHED: '✅',
           ARCHIVED: '📦'
-        }[p.status] || '❓'
+        }
+        const statusEmoji = statusEmojiMap[p.status] || '❓'
         const stats = `💬 ${p._count.comments} | ❤️ ${p._count.reactions}`
         return `${i + 1}. ${statusEmoji} *${p.name}* ($${p.ticker})\n   Status: ${p.status} | ${stats}`
       })
