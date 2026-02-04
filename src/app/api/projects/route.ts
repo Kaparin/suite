@@ -70,11 +70,17 @@ export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization')
+    console.log('[Projects POST] Auth header present:', !!authHeader)
+
     let userId: string | null = null
 
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
+      console.log('[Projects POST] Token length:', token.length)
+
       const decoded = verifyTelegramSessionToken(token)
+      console.log('[Projects POST] Token decoded:', !!decoded, decoded ? { userId: decoded.userId, hasWallet: !!decoded.walletAddress } : null)
+
       if (decoded) {
         userId = decoded.userId
 
@@ -83,16 +89,24 @@ export async function POST(request: NextRequest) {
           where: { id: userId }
         })
 
+        console.log('[Projects POST] User found:', !!user, user ? { isVerified: user.isVerified, hasWallet: !!user.walletAddress } : null)
+
         if (!user?.isVerified) {
+          console.log('[Projects POST] User not verified, returning 403')
           return NextResponse.json(
             { error: 'Wallet verification required to create tokens' },
             { status: 403 }
           )
         }
+      } else {
+        console.log('[Projects POST] Token verification failed')
       }
+    } else {
+      console.log('[Projects POST] No Bearer token in header')
     }
 
     if (!userId) {
+      console.log('[Projects POST] No userId, returning 401')
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }

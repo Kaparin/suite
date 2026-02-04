@@ -93,10 +93,13 @@ export function TokenCreateForm({ initialData, onSuccess }: TokenCreateFormProps
       }
 
       const authToken = getToken()
+      console.log('[TokenCreate] Token retrieved:', !!authToken, authToken ? `length: ${authToken.length}` : 'null')
+
       if (!authToken) {
         throw new Error('Authentication required. Please log in again.')
       }
 
+      console.log('[TokenCreate] Sending request with token')
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
