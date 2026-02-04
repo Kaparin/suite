@@ -180,6 +180,102 @@ export default function TokenPage() {
           />
         )}
 
+        {/* Claim Ownership Block - show for non-owners */}
+        {!isOwner && (data.chainMinter || project.owner?.walletAddress) && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="mb-8"
+          >
+            <Card className="bg-gradient-to-br from-blue-500/5 via-gray-900 to-purple-500/5 border-gray-700/50">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                    </svg>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold text-white mb-2">{t('claimOwnership.title')}</h3>
+                    <p className="text-gray-400 text-sm mb-4">
+                      {t('claimOwnership.description')}
+                    </p>
+
+                    <div className="space-y-3 mb-5">
+                      <div className="flex items-start gap-3">
+                        <div className={`w-6 h-6 ${user ? 'bg-green-500/20' : 'bg-purple-500/20'} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                          {user ? (
+                            <svg className="w-3.5 h-3.5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <span className="text-purple-400 text-xs font-bold">1</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className={`text-sm font-medium ${user ? 'text-green-400' : 'text-white'}`}>{t('claimOwnership.step1Title')}</p>
+                          <p className="text-gray-500 text-xs">{t('claimOwnership.step1Desc')}</p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className={`w-6 h-6 ${user?.isVerified ? 'bg-green-500/20' : 'bg-purple-500/20'} rounded-full flex items-center justify-center flex-shrink-0 mt-0.5`}>
+                          {user?.isVerified ? (
+                            <svg className="w-3.5 h-3.5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          ) : (
+                            <span className="text-purple-400 text-xs font-bold">2</span>
+                          )}
+                        </div>
+                        <div>
+                          <p className={`text-sm font-medium ${user?.isVerified ? 'text-green-400' : 'text-white'}`}>{t('claimOwnership.step2Title')}</p>
+                          <p className="text-gray-500 text-xs">
+                            {t('claimOwnership.step2Desc')}{' '}
+                            <code className="text-gray-400 bg-gray-800 px-1 rounded">
+                              {truncateAddress(data.chainMinter || project.owner?.walletAddress || '', 6, 4)}
+                            </code>
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                          <span className="text-purple-400 text-xs font-bold">3</span>
+                        </div>
+                        <div>
+                          <p className="text-white text-sm font-medium">{t('claimOwnership.step3Title')}</p>
+                          <p className="text-gray-500 text-xs">{t('claimOwnership.step3Desc')}</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {!user ? (
+                      <Link href="/login">
+                        <Button className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500">
+                          <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                          </svg>
+                          {t('claimOwnership.loginButton')}
+                        </Button>
+                      </Link>
+                    ) : !user.isVerified ? (
+                      <Link href="/login?bind=true">
+                        <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-500 hover:to-pink-500">
+                          <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                          </svg>
+                          {t('claimOwnership.bindWalletButton')}
+                        </Button>
+                      </Link>
+                    ) : null}
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+        )}
+
         {/* Hero */}
         <div className="text-center mb-12">
           <motion.div

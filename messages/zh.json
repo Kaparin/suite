@@ -15,23 +15,69 @@
   },
   "home": {
     "hero": {
-      "title": "在 Axiome 上启动您的代币",
-      "subtitle": "一站式平台，用于在Axiome区块链上创建、发布和推广代币。从想法到启动——借助AI。",
+      "title": "代币发行平台",
+      "subtitle": "在Axiome区块链上创建、讨论和启动代币。从想法到启动——借助AI助手和社区支持。",
       "cta": "开始旅程"
     },
+    "about": {
+      "title": "什么是 Launch Suite？",
+      "description": "Launch Suite是一个在Axiome上准备和启动代币的平台。我们创建了一个独特的系统，代币首先作为平台内的项目存在，只有在准备好后才会在区块链上启动。",
+      "highlight": "这使社区能够在代币出现在网络上之前进行讨论、评估和提供反馈。"
+    },
+    "howItWorks": {
+      "title": "如何运作",
+      "steps": {
+        "create": {
+          "title": "创建项目",
+          "description": "描述您的想法或使用AI助手生成代币经济学、描述和启动计划。代币作为平台内的项目创建。"
+        },
+        "community": {
+          "title": "收集反馈",
+          "description": "社区在浏览器中看到您的项目。在启动前获取评论、反应和建议。"
+        },
+        "launch": {
+          "title": "在区块链上启动",
+          "description": "准备好后——通过Token Lab在Axiome区块链上启动您的代币。所有信息自动导入。"
+        }
+      }
+    },
     "features": {
-      "title": "启动所需的一切",
+      "title": "平台功能",
       "studio": {
         "title": "AI 代币工作室",
-        "description": "描述您的想法，几秒钟内获得由AI生成的完整代币经济学、描述、常见问题和启动计划。"
-      },
-      "community": {
-        "title": "社区启动平台",
-        "description": "在启动前发布您的代币。建立热度，收集社区的反应和评论。"
+        "description": "AI助手帮助创建所需的一切：名称、描述、代币经济学、常见问题甚至社交媒体帖子。不知道从哪里开始？只需描述您的想法。",
+        "bullets": {
+          "generate": "生成代币经济学和描述",
+          "edit": "AI编辑现有项目",
+          "promo": "现成的推广材料"
+        }
       },
       "explorer": {
-        "title": "浏览器与信任评分",
-        "description": "通过风险评估发现代币。投资前查看活动、持有者分布和警告标志。"
+        "title": "代币浏览器",
+        "description": "探索Axiome上的所有代币。检查信任评分、风险标志、社区活动。在它们起飞前找到有前途的项目。",
+        "bullets": {
+          "risk": "风险评估和警告标志",
+          "stats": "持有者和交易统计",
+          "upcoming": "即将推出的项目部分"
+        }
+      },
+      "ownership": {
+        "title": "所有权和编辑",
+        "description": "创建了代币？通过链接钱包验证所有权，获得对项目页面的完全控制。添加徽标、链接，更新描述。",
+        "bullets": {
+          "claim": "通过钱包验证所有权",
+          "edit": "编辑所有信息",
+          "ai": "AI助手改进内容"
+        }
+      },
+      "community": {
+        "title": "社区",
+        "description": "评论项目，添加反应，关注更新。社区帮助筛选优质项目，过滤骗局。",
+        "bullets": {
+          "comments": "评论和讨论",
+          "reactions": "反应：火箭、火焰、警告",
+          "alerts": "Telegram通知（即将推出）"
+        }
       }
     },
     "token": {
@@ -48,7 +94,7 @@
     },
     "cta": {
       "title": "准备启动？",
-      "subtitle": "加入 Axiome 生态系统。借助AI在几分钟内创建您的代币项目。"
+      "subtitle": "几分钟内创建代币项目。AI帮助内容，社区帮助反馈。"
     }
   },
   "explorer": {
@@ -222,7 +268,19 @@
     "createdOn": "创建于",
     "disclaimer": "这不是财务建议。投资前请务必自行研究。",
     "owner": "所有者",
-    "youAreOwner": "您是此代币的所有者"
+    "youAreOwner": "您是此代币的所有者",
+    "claimOwnership": {
+      "title": "这是您的代币吗？",
+      "description": "如果您是此代币的创建者，您可以获得编辑权限，添加徽标、社交链接等。",
+      "step1Title": "通过Telegram登录",
+      "step1Desc": "授权访问平台功能",
+      "step2Title": "链接创建者钱包",
+      "step2Desc": "通过钱包微交易验证所有权",
+      "step3Title": "管理您的代币",
+      "step3Desc": "编辑描述，添加徽标和链接",
+      "loginButton": "登录并验证所有权",
+      "bindWalletButton": "链接钱包"
+    }
   },
   "ownerPanel": {
     "title": "代币管理",

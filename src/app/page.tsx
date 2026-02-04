@@ -89,7 +89,7 @@ export default function HomePage() {
                   style={{ background: 'transparent', boxShadow: 'none' }}
                 />
               </motion.div>
-              
+
               {/* Soft blue glow - breathing effect */}
               <motion.div
                 className="absolute left-1/2 -translate-x-1/2 top-full w-[700px] sm:w-[950px] md:w-[1150px] flame-glow-outer"
@@ -111,7 +111,7 @@ export default function HomePage() {
                   ease: 'easeInOut',
                 }}
               />
-              
+
               {/* Additional soft layer for depth */}
               <motion.div
                 className="absolute left-1/2 -translate-x-1/2 top-full w-[680px] sm:w-[920px] md:w-[1100px] flame-glow-outer"
@@ -133,8 +133,8 @@ export default function HomePage() {
                   delay: 0.5,
                 }}
               />
-              
-              {/* Cyan-blue glow layer - different shade */}
+
+              {/* Cyan-blue glow layer */}
               <motion.div
                 className="absolute left-1/2 -translate-x-1/2 top-full w-[720px] sm:w-[980px] md:w-[1200px] flame-glow-outer"
                 style={{
@@ -156,8 +156,8 @@ export default function HomePage() {
                   delay: 1,
                 }}
               />
-              
-              {/* Inner soft core - bright white glow */}
+
+              {/* Inner soft core */}
               <motion.div
                 className="absolute left-1/2 -translate-x-1/2 top-full w-[625px] sm:w-[833px] md:w-[1000px] flame-glow-inner"
                 style={{
@@ -253,106 +253,353 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* About Section */}
+      <section className="relative z-20 py-16 border-t border-gray-800/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                {t('about.title')}
+              </span>
+            </h2>
+            <p className="text-lg text-gray-400 mb-6 leading-relaxed">
+              {t('about.description')}
+            </p>
+            <div className="inline-block px-6 py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl">
+              <p className="text-blue-300 font-medium">
+                {t('about.highlight')}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section className="relative z-20 py-16 border-t border-gray-800/30">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
+          >
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+              {t('howItWorks.title')}
+            </span>
+          </motion.h2>
+
+          <div className="grid md:grid-cols-3 gap-8 relative">
+            {/* Connection line */}
+            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50" />
+
+            {/* Step 1 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="relative text-center"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center border-2 border-blue-500/30 relative z-10 backdrop-blur-sm"
+              >
+                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30">
+                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                  1
+                </div>
+              </motion.div>
+              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.create.title')}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.create.description')}</p>
+            </motion.div>
+
+            {/* Step 2 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="relative text-center"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-full flex items-center justify-center border-2 border-purple-500/30 relative z-10 backdrop-blur-sm"
+              >
+                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30">
+                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                  2
+                </div>
+              </motion.div>
+              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.community.title')}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.community.description')}</p>
+            </motion.div>
+
+            {/* Step 3 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.3 }}
+              className="relative text-center"
+            >
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-pink-500/20 to-pink-600/20 rounded-full flex items-center justify-center border-2 border-pink-500/30 relative z-10 backdrop-blur-sm"
+              >
+                <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg shadow-pink-500/30">
+                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="absolute -top-2 -right-2 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+                  3
+                </div>
+              </motion.div>
+              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.launch.title')}</h3>
+              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.launch.description')}</p>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
       {/* Features Section */}
-      <section className="relative z-20 py-12 border-t border-gray-800/30">
+      <section className="relative z-20 py-16 border-t border-gray-800/30">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl font-bold text-center mb-8"
+            className="text-3xl md:text-4xl font-bold text-center mb-12"
           >
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
               {t('features.title')}
             </span>
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 gap-8">
             {/* Feature 1 - AI Studio */}
             <motion.div
               variants={featureCardVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
               className="group relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-500">
-                <motion.div
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
-                  className="w-16 h-16 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-blue-500/30"
-                >
-                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-2xl font-semibold mb-3 text-white group-hover:text-blue-300 transition-colors">
-                  {t('features.studio.title')}
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
+              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-500 h-full">
+                <div className="flex items-start gap-4 mb-4">
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0"
+                  >
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                    </svg>
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-blue-300 transition-colors">
+                      {t('features.studio.title')}
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-gray-400 mb-4 leading-relaxed">
                   {t('features.studio.description')}
                 </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.studio.bullets.generate')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.studio.bullets.edit')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.studio.bullets.promo')}
+                  </li>
+                </ul>
               </div>
             </motion.div>
 
-            {/* Feature 2 - Community Launchpad */}
+            {/* Feature 2 - Explorer */}
             <motion.div
               variants={featureCardVariants}
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
-              className="group relative md:mt-12"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-purple-500/50 transition-all duration-500">
-                <motion.div
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
-                  className="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-purple-500/30"
-                >
-                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-2xl font-semibold mb-3 text-white group-hover:text-purple-300 transition-colors">
-                  {t('features.community.title')}
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
-                  {t('features.community.description')}
-                </p>
-              </div>
-            </motion.div>
-
-            {/* Feature 3 - Explorer */}
-            <motion.div
-              variants={featureCardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -10, transition: { duration: 0.3 } }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
               className="group relative"
             >
               <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-green-500/50 transition-all duration-500">
-                <motion.div
-                  whileHover={{ rotate: 360, scale: 1.1 }}
-                  transition={{ duration: 0.6 }}
-                  className="w-16 h-16 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center mb-6 shadow-lg shadow-green-500/30"
-                >
-                  <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                  </svg>
-                </motion.div>
-                <h3 className="text-2xl font-semibold mb-3 text-white group-hover:text-green-300 transition-colors">
-                  {t('features.explorer.title')}
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
+              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-green-500/50 transition-all duration-500 h-full">
+                <div className="flex items-start gap-4 mb-4">
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 flex-shrink-0"
+                  >
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    </svg>
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-green-300 transition-colors">
+                      {t('features.explorer.title')}
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-gray-400 mb-4 leading-relaxed">
                   {t('features.explorer.description')}
                 </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.explorer.bullets.risk')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.explorer.bullets.stats')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.explorer.bullets.upcoming')}
+                  </li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Feature 3 - Ownership */}
+            <motion.div
+              variants={featureCardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
+              className="group relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-purple-500/50 transition-all duration-500 h-full">
+                <div className="flex items-start gap-4 mb-4">
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 flex-shrink-0"
+                  >
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
+                    </svg>
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
+                      {t('features.ownership.title')}
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  {t('features.ownership.description')}
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.ownership.bullets.claim')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.ownership.bullets.edit')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.ownership.bullets.ai')}
+                  </li>
+                </ul>
+              </div>
+            </motion.div>
+
+            {/* Feature 4 - Community */}
+            <motion.div
+              variants={featureCardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              whileHover={{ y: -5, transition: { duration: 0.3 } }}
+              className="group relative"
+            >
+              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-yellow-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-orange-500/50 transition-all duration-500 h-full">
+                <div className="flex items-start gap-4 mb-4">
+                  <motion.div
+                    whileHover={{ rotate: 360, scale: 1.1 }}
+                    transition={{ duration: 0.6 }}
+                    className="w-14 h-14 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 flex-shrink-0"
+                  >
+                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                  </motion.div>
+                  <div>
+                    <h3 className="text-xl font-semibold text-white group-hover:text-orange-300 transition-colors">
+                      {t('features.community.title')}
+                    </h3>
+                  </div>
+                </div>
+                <p className="text-gray-400 mb-4 leading-relaxed">
+                  {t('features.community.description')}
+                </p>
+                <ul className="space-y-2">
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.community.bullets.comments')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.community.bullets.reactions')}
+                  </li>
+                  <li className="flex items-center gap-2 text-sm text-gray-300">
+                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                    </svg>
+                    {t('features.community.bullets.alerts')}
+                  </li>
+                </ul>
               </div>
             </motion.div>
           </div>
@@ -494,6 +741,7 @@ export default function HomePage() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: 0.4 }}
+                className="flex flex-col sm:flex-row items-center justify-center gap-4"
               >
                 <Link href="/studio">
                   <motion.div
@@ -502,7 +750,18 @@ export default function HomePage() {
                     className="inline-block"
                   >
                     <Button size="lg" className="px-10 py-5 text-xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 border-0 shadow-2xl shadow-purple-500/30">
-                      {tCommon('startBuilding')}
+                      {tCommon('createToken')}
+                    </Button>
+                  </motion.div>
+                </Link>
+                <Link href="/explorer">
+                  <motion.div
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    className="inline-block"
+                  >
+                    <Button variant="outline" size="lg" className="px-10 py-5 text-xl border-gray-600 hover:border-purple-500 hover:bg-purple-500/10">
+                      {tCommon('exploreTokens')}
                     </Button>
                   </motion.div>
                 </Link>

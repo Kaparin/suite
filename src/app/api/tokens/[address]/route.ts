@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifySessionToken } from '@/lib/auth'
+import { verifySessionToken, verifyTelegramSessionToken } from '@/lib/auth'
 import { KNOWN_TOKENS } from '@/lib/axiome/token-registry'
 
 const REST_URL = process.env.AXIOME_REST_URL
@@ -244,7 +244,7 @@ export async function PATCH(
   try {
     const { address } = await params
 
-    // Verify JWT token from Authorization header
+    // Verify JWT token from Authorization header (supports both old wallet auth and new Telegram auth)
     const authHeader = request.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
@@ -254,16 +254,27 @@ export async function PATCH(
     }
 
     const token = authHeader.substring(7)
-    const session = verifySessionToken(token)
 
-    if (!session || !session.verified) {
+    // Try new Telegram auth first, then fall back to old wallet auth
+    let walletAddress: string | null = null
+
+    const telegramSession = verifyTelegramSessionToken(token)
+    if (telegramSession?.walletAddress && telegramSession.verified) {
+      walletAddress = telegramSession.walletAddress
+    } else {
+      // Try old wallet-based session
+      const walletSession = verifySessionToken(token)
+      if (walletSession?.verified && walletSession.walletAddress) {
+        walletAddress = walletSession.walletAddress
+      }
+    }
+
+    if (!walletAddress) {
       return NextResponse.json(
         { error: 'Invalid or expired session. Please verify your wallet again.' },
         { status: 401 }
       )
     }
-
-    const walletAddress = session.walletAddress
 
     const body = await request.json()
     const {
@@ -327,7 +338,7 @@ export async function PATCH(
           descriptionLong,
           links,
           logo,
-          status: 'PUBLISHED',
+          status: 'LAUNCHED',
         },
         include: { owner: true },
       })

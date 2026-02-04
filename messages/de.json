@@ -15,23 +15,69 @@
   },
   "home": {
     "hero": {
-      "title": "Starte deinen Token auf Axiome",
-      "subtitle": "Die All-in-One-Plattform für Erstellung, Ankündigung und Promotion von Token auf Axiome. Von der Idee zum Launch — mit KI-Unterstützung.",
+      "title": "Token Launch Plattform",
+      "subtitle": "Erstelle, diskutiere und starte Token auf Axiome. Von der Idee zum Launch — mit KI-Assistent und Community-Support.",
       "cta": "Reise beginnen"
     },
+    "about": {
+      "title": "Was ist Launch Suite?",
+      "description": "Launch Suite ist eine Plattform zur Vorbereitung und zum Starten von Token auf Axiome. Wir haben ein einzigartiges System geschaffen, bei dem Token zunächst als Projekte innerhalb der Plattform existieren und erst nach der Vorbereitung auf der Blockchain gestartet werden.",
+      "highlight": "Dies ermöglicht der Community, zu diskutieren, zu bewerten und Feedback zu geben, bevor der Token überhaupt im Netzwerk erscheint."
+    },
+    "howItWorks": {
+      "title": "Wie es funktioniert",
+      "steps": {
+        "create": {
+          "title": "Projekt erstellen",
+          "description": "Beschreibe deine Idee oder nutze den KI-Assistenten für Tokenomics, Beschreibungen und Launch-Plan. Der Token wird als Projekt innerhalb der Plattform erstellt."
+        },
+        "community": {
+          "title": "Feedback sammeln",
+          "description": "Die Community sieht dein Projekt im Explorer. Erhalte Kommentare, Reaktionen und Ratschläge vor dem Launch."
+        },
+        "launch": {
+          "title": "Auf Blockchain starten",
+          "description": "Wenn bereit — starte deinen Token auf Axiome Blockchain über Token Lab. Alle Informationen werden automatisch importiert."
+        }
+      }
+    },
     "features": {
-      "title": "Alles was du zum Launch brauchst",
+      "title": "Plattform-Features",
       "studio": {
         "title": "KI Token Studio",
-        "description": "Beschreibe deine Idee und erhalte komplette Tokenomics, Beschreibungen, FAQ und Launch-Plan von der KI in Sekunden."
-      },
-      "community": {
-        "title": "Community Launchpad",
-        "description": "Kündige deinen Token vor dem Launch an. Baue Hype auf, sammle Reaktionen und Kommentare."
+        "description": "KI-Assistent hilft bei allem: Name, Beschreibung, Tokenomics, FAQ und sogar Social-Media-Posts. Weißt nicht wo anfangen? Beschreibe einfach deine Idee.",
+        "bullets": {
+          "generate": "Tokenomics und Beschreibungen generieren",
+          "edit": "KI-Bearbeitung bestehender Projekte",
+          "promo": "Fertige Promo-Materialien"
+        }
       },
       "explorer": {
-        "title": "Explorer & Trust Scores",
-        "description": "Entdecke Token mit Risikobewertung. Sieh Aktivität, Holder-Verteilung und Warnflags vor dem Investment."
+        "title": "Token Explorer",
+        "description": "Entdecke alle Token auf Axiome. Prüfe Trust Scores, Risikoflags, Community-Aktivität. Finde vielversprechende Projekte bevor sie abheben.",
+        "bullets": {
+          "risk": "Risikobewertung und Warnflags",
+          "stats": "Holder- und Transaktionsstatistiken",
+          "upcoming": "Upcoming Projekte Sektion"
+        }
+      },
+      "ownership": {
+        "title": "Ownership & Bearbeitung",
+        "description": "Token erstellt? Verifiziere Ownership durch Wallet-Verknüpfung und erhalte volle Kontrolle über die Projektseite. Füge Logo, Links hinzu, aktualisiere Beschreibung.",
+        "bullets": {
+          "claim": "Ownership-Verifizierung via Wallet",
+          "edit": "Alle Informationen bearbeiten",
+          "ai": "KI-Assistent für Content-Verbesserung"
+        }
+      },
+      "community": {
+        "title": "Community",
+        "description": "Kommentiere Projekte, füge Reaktionen hinzu, folge Updates. Die Community hilft, Qualitätsprojekte von Scams zu filtern.",
+        "bullets": {
+          "comments": "Kommentare und Diskussionen",
+          "reactions": "Reaktionen: Rakete, Feuer, Warnung",
+          "alerts": "Telegram-Benachrichtigungen (bald)"
+        }
       }
     },
     "token": {
@@ -48,7 +94,7 @@
     },
     "cta": {
       "title": "Bereit zum Launch?",
-      "subtitle": "Tritt dem Axiome-Ökosystem bei. Erstelle dein Token-Projekt in Minuten mit KI-Unterstützung."
+      "subtitle": "Erstelle ein Token-Projekt in Minuten. KI hilft mit Content, Community — mit Feedback."
     }
   },
   "explorer": {
@@ -222,7 +268,19 @@
     "createdOn": "Erstellt am",
     "disclaimer": "Dies ist keine Finanzberatung. Recherchiere immer selbst vor einer Investition.",
     "owner": "Eigentümer",
-    "youAreOwner": "Du bist der Eigentümer dieses Tokens"
+    "youAreOwner": "Du bist der Eigentümer dieses Tokens",
+    "claimOwnership": {
+      "title": "Ist das dein Token?",
+      "description": "Wenn du der Ersteller dieses Tokens bist, kannst du Zugang zur Bearbeitung erhalten, Logo, Social Links und mehr hinzufügen.",
+      "step1Title": "Mit Telegram anmelden",
+      "step1Desc": "Autorisiere dich für Plattform-Features",
+      "step2Title": "Ersteller-Wallet verknüpfen",
+      "step2Desc": "Verifiziere Ownership via Mikro-Transaktion vom Wallet",
+      "step3Title": "Token verwalten",
+      "step3Desc": "Beschreibung bearbeiten, Logo und Links hinzufügen",
+      "loginButton": "Anmelden und Ownership verifizieren",
+      "bindWalletButton": "Wallet verknüpfen"
+    }
   },
   "ownerPanel": {
     "title": "Token-Verwaltung",
