@@ -8,6 +8,7 @@ import { Badge, Button, Card, CardContent } from '@/components/ui'
 import { OwnerPanel } from '@/components/token'
 import { ReactionBar, CommentSection } from '@/components/social'
 import { useWallet, truncateAddress } from '@/lib/wallet'
+import { useAuth } from '@/lib/auth/useAuth'
 import { useTranslations } from 'next-intl'
 
 type RiskFlag = {
@@ -52,6 +53,7 @@ export default function TokenPage() {
   const address = params.address as string
   const t = useTranslations('token')
   const { isConnected, address: walletAddress } = useWallet()
+  const { user } = useAuth()
 
   const [data, setData] = useState<TokenData | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -91,10 +93,15 @@ export default function TokenPage() {
     })
   }
 
-  // Check if current user is owner
-  const isOwner = walletAddress && data && (
-    data.project.owner?.walletAddress?.toLowerCase() === walletAddress.toLowerCase() ||
-    data.chainMinter?.toLowerCase() === walletAddress.toLowerCase()
+  // Check if current user is owner (from connected wallet OR verified auth wallet)
+  const ownerWallet = data?.project.owner?.walletAddress?.toLowerCase()
+  const minterWallet = data?.chainMinter?.toLowerCase()
+  const connectedWallet = walletAddress?.toLowerCase()
+  const authWallet = user?.walletAddress?.toLowerCase()
+
+  const isOwner = data && (
+    (connectedWallet && (ownerWallet === connectedWallet || minterWallet === connectedWallet)) ||
+    (authWallet && (ownerWallet === authWallet || minterWallet === authWallet))
   )
 
   // Loading state
@@ -156,11 +163,11 @@ export default function TokenPage() {
         animate={{ opacity: 1, y: 0 }}
         className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
       >
-        {/* Owner Panel */}
-        {isConnected && isOwner && walletAddress && (
+        {/* Owner Panel - show for verified owners (via wallet or auth) */}
+        {isOwner && (connectedWallet || authWallet) && (
           <OwnerPanel
             tokenAddress={tokenAddress}
-            walletAddress={walletAddress}
+            walletAddress={(connectedWallet || authWallet) as string}
             currentName={project.name}
             currentDescriptionShort={project.descriptionShort}
             currentDescriptionLong={project.descriptionLong}
