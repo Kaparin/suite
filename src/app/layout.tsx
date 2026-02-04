@@ -18,6 +18,33 @@ export const metadata: Metadata = {
   title: "Axiome Launch Suite",
   description: "Create, launch and discover tokens on Axiome blockchain. AI-powered token studio with auto-generated landing pages and risk scoring.",
   keywords: ["Axiome", "blockchain", "token", "crypto", "launch", "AI"],
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+    ],
+    apple: '/axiome-launch-suite-logo.png',
+  },
+  openGraph: {
+    title: 'Axiome Launch Suite',
+    description: 'AI-powered launchpad for tokens on Axiome blockchain',
+    siteName: 'Axiome Launch Suite',
+    images: [
+      {
+        url: '/axiome-launch-suite-logo.png',
+        width: 1200,
+        height: 630,
+        alt: 'Axiome Launch Suite',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Axiome Launch Suite',
+    description: 'AI-powered launchpad for tokens on Axiome blockchain',
+    images: ['/axiome-launch-suite-logo.png'],
+  },
 };
 
 export default async function RootLayout({
