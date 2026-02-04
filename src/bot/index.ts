@@ -50,11 +50,24 @@ bot.command('start', async (ctx) => {
     const telegramId = ctx.from?.id.toString()
     const username = ctx.from?.username
     const firstName = ctx.from?.first_name
-    const photoUrl = ctx.from?.id ? `https://t.me/i/userpic/320/${ctx.from.username || ctx.from.id}.jpg` : undefined
 
     if (!telegramId) {
       await ctx.reply('❌ Could not get your Telegram data. Please try again.')
       return
+    }
+
+    // Try to get user's profile photo
+    let photoUrl: string | undefined
+    try {
+      const photos = await ctx.api.getUserProfilePhotos(ctx.from!.id, { limit: 1 })
+      if (photos.total_count > 0 && photos.photos[0]?.[0]) {
+        const file = await ctx.api.getFile(photos.photos[0][0].file_id)
+        if (file.file_path) {
+          photoUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${file.file_path}`
+        }
+      }
+    } catch (photoError) {
+      console.error('Could not fetch profile photo:', photoError)
     }
 
     // Save/update user in database
@@ -63,12 +76,14 @@ bot.command('start', async (ctx) => {
       update: {
         telegramUsername: username,
         telegramFirstName: firstName,
+        telegramPhotoUrl: photoUrl,
         telegramAuthDate: new Date()
       },
       create: {
         telegramId,
         telegramUsername: username,
         telegramFirstName: firstName,
+        telegramPhotoUrl: photoUrl,
         telegramAuthDate: new Date(),
         username: username || firstName
       }
@@ -81,6 +96,7 @@ bot.command('start', async (ctx) => {
       telegramId: user.telegramId,
       telegramUsername: user.telegramUsername,
       telegramFirstName: user.telegramFirstName,
+      telegramPhotoUrl: user.telegramPhotoUrl,
       walletAddress: user.walletAddress,
       isVerified: user.isVerified,
       plan: user.plan

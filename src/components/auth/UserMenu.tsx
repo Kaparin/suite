@@ -21,6 +21,36 @@ interface UserMenuProps {
   onVerifyWallet: () => void
 }
 
+// Avatar component with error handling
+function UserAvatar({ src, name, size = 32 }: { src?: string | null, name: string, size?: number }) {
+  const [hasError, setHasError] = useState(false)
+
+  if (!src || hasError) {
+    return (
+      <div
+        className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center"
+        style={{ width: size, height: size }}
+      >
+        <span className="text-white font-medium" style={{ fontSize: size * 0.4 }}>
+          {name.charAt(0).toUpperCase()}
+        </span>
+      </div>
+    )
+  }
+
+  return (
+    <Image
+      src={src}
+      alt={name}
+      width={size}
+      height={size}
+      className="rounded-full"
+      style={{ width: size, height: size }}
+      onError={() => setHasError(true)}
+    />
+  )
+}
+
 export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
   const [isOpen, setIsOpen] = useState(false)
   const menuRef = useRef<HTMLDivElement>(null)
@@ -51,21 +81,11 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
       >
         {/* Avatar */}
         <div className="relative">
-          {user.telegramPhotoUrl ? (
-            <Image
-              src={user.telegramPhotoUrl}
-              alt={displayName}
-              width={32}
-              height={32}
-              className="w-8 h-8 rounded-full"
-            />
-          ) : (
-            <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-              <span className="text-white text-sm font-medium">
-                {(user.telegramFirstName || 'U').charAt(0)}
-              </span>
-            </div>
-          )}
+          <UserAvatar
+            src={user.telegramPhotoUrl}
+            name={user.telegramFirstName || 'U'}
+            size={32}
+          />
           {user.isVerified && (
             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-800 flex items-center justify-center">
               <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
@@ -104,21 +124,11 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
             {/* User info */}
             <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-b border-gray-800">
               <div className="flex items-center gap-3">
-                {user.telegramPhotoUrl ? (
-                  <Image
-                    src={user.telegramPhotoUrl}
-                    alt={displayName}
-                    width={48}
-                    height={48}
-                    className="w-12 h-12 rounded-full"
-                  />
-                ) : (
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-lg font-medium">
-                      {(user.telegramFirstName || 'U').charAt(0)}
-                    </span>
-                  </div>
-                )}
+                <UserAvatar
+                  src={user.telegramPhotoUrl}
+                  name={user.telegramFirstName || 'U'}
+                  size={48}
+                />
                 <div>
                   <p className="font-medium text-white">{user.telegramFirstName || 'User'}</p>
                   {user.telegramUsername && (

@@ -152,6 +152,9 @@ export default function TokenPage() {
   const tokenomics = project.tokenomics as { supply?: string; distribution?: Record<string, number> } | null
   const links = project.links as ProjectLinks | null
 
+  // Check if token is actually on-chain (has real token address starting with 'axm')
+  const isOnChain = project.tokenAddress?.startsWith('axm') || address.startsWith('axm')
+
   return (
     <div className="min-h-screen relative">
       {/* Background */}
@@ -226,30 +229,28 @@ export default function TokenPage() {
             </motion.div>
           )}
 
-          {/* CTA Buttons */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="flex flex-wrap items-center justify-center gap-4"
-          >
-            <a
-              href={`https://axiometrade.pro/swap?token=${tokenAddress}`}
-              target="_blank"
-              rel="noopener noreferrer"
+          {/* Trade Button - only for on-chain tokens */}
+          {isOnChain && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.3 }}
+              className="flex flex-wrap items-center justify-center gap-4"
             >
-              <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
-                {t('buy')} ${project.ticker}
-              </Button>
-            </a>
-            <a
-              href={`https://axiometrade.pro/swap?token=${tokenAddress}&sell=true`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Button variant="outline" size="lg">{t('sell')} ${project.ticker}</Button>
-            </a>
-          </motion.div>
+              <a
+                href={`https://axiometrade.pro/swap?token=${tokenAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
+                  <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                  </svg>
+                  Торговать ${project.ticker}
+                </Button>
+              </a>
+            </motion.div>
+          )}
         </div>
 
         {/* Stats - Coming Soon */}
