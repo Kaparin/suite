@@ -115,13 +115,17 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
             // If new token provided, update it
             if (data.token) {
               localStorage.setItem('axiome_auth_token', data.token)
+              console.log('[WalletBind] New token saved to localStorage')
             }
 
-            // Update user state if user data returned
+            // Update user state if user data returned - IMPORTANT: update ALL fields including id
             if (data.user) {
+              console.log('[WalletBind] Updating user with data:', data.user)
               updateUser({
+                id: data.user.id, // Critical: update id to match the new token
                 walletAddress: data.user.walletAddress,
-                isVerified: data.user.isVerified
+                isVerified: data.user.isVerified,
+                telegramUsername: data.user.telegramUsername
               })
             } else if (data.walletAddress) {
               updateUser({
