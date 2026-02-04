@@ -13,9 +13,12 @@ export async function GET(
     // Check if user is authenticated (optional - for edit permissions)
     let userId: string | null = null
     const authHeader = request.headers.get('authorization')
+    console.log('[Project GET] Auth header present:', !!authHeader)
+
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
       const decoded = verifyTelegramSessionToken(token)
+      console.log('[Project GET] Token decoded:', !!decoded, decoded ? { userId: decoded.userId } : null)
       if (decoded?.userId) {
         userId = decoded.userId
       }
@@ -48,10 +51,13 @@ export async function GET(
       )
     }
 
+    console.log('[Project GET] Project ownerId:', project.ownerId, 'User ID from token:', userId, 'Match:', project.ownerId === userId)
+
     // If project is DRAFT, only owner can view it
     if (project.status === 'DRAFT' && project.ownerId !== userId) {
+      console.log('[Project GET] Access denied - DRAFT project, user is not owner')
       return NextResponse.json(
-        { error: 'Access denied' },
+        { error: 'Access denied. This is a draft project and you are not the owner.' },
         { status: 403 }
       )
     }
