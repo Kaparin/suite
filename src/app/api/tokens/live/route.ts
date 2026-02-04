@@ -181,8 +181,11 @@ export async function GET(request: NextRequest) {
             const marketingInfo = await getMarketingInfo(contractAddress)
             const decimals = tokenInfo.decimals || 6
             const now = new Date()
-            const createdAt = dbProject?.createdAt || new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000)
-            const ageInDays = Math.floor((now.getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24))
+            // Only use real createdAt from database, don't fake it
+            const createdAt = dbProject?.createdAt || null
+            const ageInDays = createdAt
+              ? Math.floor((now.getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24))
+              : null
 
             const token: TokenData = {
               contractAddress,
@@ -194,10 +197,10 @@ export async function GET(request: NextRequest) {
               logoUrl: knownToken?.logoUrl || dbProject?.logo || marketingInfo?.logo?.url,
               description: dbProject?.descriptionShort || marketingInfo?.description,
               verified: knownToken?.verified || dbProject?.isVerified || false,
-              createdAt: createdAt.toISOString(),
+              createdAt: createdAt?.toISOString(),
               holderCount: 0,
               owner: dbProject?.owner?.walletAddress || undefined,
-              isNew: ageInDays <= 7,
+              isNew: ageInDays !== null && ageInDays <= 7,
               isTrending: false,
               isVerified: knownToken?.verified || dbProject?.isVerified || false
             }
