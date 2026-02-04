@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Button, Card, CardContent } from '@/components/ui'
-import { VerificationModal } from '@/components/auth'
-import { useWalletAuth, getAuthToken } from '@/lib/auth/useWalletAuth'
+import { WalletBindModal } from '@/components/auth'
+import { useAuth } from '@/lib/auth/useAuth'
 
 interface ProjectLinks {
   telegram?: string
@@ -34,7 +34,7 @@ export function OwnerPanel({
   currentLogo,
   onUpdate,
 }: OwnerPanelProps) {
-  const { isVerified, verifiedWallet, checkSession } = useWalletAuth()
+  const { user, getToken, updateUser, isAuthenticated } = useAuth()
   const [showVerificationModal, setShowVerificationModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -51,23 +51,25 @@ export function OwnerPanel({
   const [website, setWebsite] = useState(currentLinks?.website || '')
   const [discord, setDiscord] = useState(currentLinks?.discord || '')
 
-  // Check session on mount
-  useEffect(() => {
-    checkSession()
-  }, [checkSession])
-
-  // Check if this wallet is verified
-  const isWalletVerified = isVerified && verifiedWallet?.toLowerCase() === walletAddress.toLowerCase()
+  // Check if user is verified (through Telegram + wallet binding)
+  const isWalletVerified = isAuthenticated && user?.isVerified &&
+    user?.walletAddress?.toLowerCase() === walletAddress.toLowerCase()
 
   const handleEditClick = () => {
     if (isWalletVerified) {
       setIsEditing(true)
+    } else if (!isAuthenticated) {
+      // Redirect to login
+      window.location.href = '/login'
     } else {
+      // User is logged in but needs wallet verification
       setShowVerificationModal(true)
     }
   }
 
-  const handleVerified = () => {
+  const handleVerified = (newWalletAddress: string) => {
+    // Update user context with new wallet
+    updateUser({ walletAddress: newWalletAddress, isVerified: true })
     setShowVerificationModal(false)
     setIsEditing(true)
   }
@@ -77,9 +79,9 @@ export function OwnerPanel({
     setError('')
     setSuccess(false)
 
-    const authToken = getAuthToken()
+    const authToken = getToken()
     if (!authToken) {
-      setError('Требуется верификация кошелька')
+      setError('Требуется авторизация. Пожалуйста, войдите через Telegram.')
       setIsSaving(false)
       return
     }
@@ -160,7 +162,12 @@ export function OwnerPanel({
                 <div>
                   <h3 className="font-semibold text-white">Управление токеном</h3>
                   <p className="text-sm text-gray-400">
-                    {isWalletVerified ? 'Кошелёк верифицирован' : 'Требуется верификация'}
+                    {isWalletVerified
+                      ? 'Кошелёк верифицирован'
+                      : !isAuthenticated
+                        ? 'Требуется авторизация'
+                        : 'Требуется привязка кошелька'
+                    }
                   </p>
                 </div>
               </div>
@@ -177,19 +184,26 @@ export function OwnerPanel({
                       </svg>
                       Редактировать
                     </>
+                  ) : !isAuthenticated ? (
+                    <>
+                      <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+                      </svg>
+                      Войти
+                    </>
                   ) : (
                     <>
                       <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
                       </svg>
-                      Верифицировать
+                      Привязать кошелёк
                     </>
                   )}
                 </Button>
               )}
             </div>
 
-            {/* Verification required notice */}
+            {/* Auth/Verification required notice */}
             {!isWalletVerified && !isEditing && (
               <div className="mb-4 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
                 <div className="flex items-start gap-2">
@@ -197,9 +211,14 @@ export function OwnerPanel({
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                   <div className="text-sm">
-                    <p className="text-yellow-300 font-medium">Требуется верификация</p>
+                    <p className="text-yellow-300 font-medium">
+                      {!isAuthenticated ? 'Требуется авторизация' : 'Требуется верификация кошелька'}
+                    </p>
                     <p className="text-gray-400">
-                      Чтобы редактировать информацию о токене, подтвердите владение кошельком через микро-транзакцию.
+                      {!isAuthenticated
+                        ? 'Войдите через Telegram и привяжите кошелёк, чтобы редактировать информацию о токене.'
+                        : 'Привяжите кошелёк через микро-транзакцию, чтобы редактировать информацию о токене.'
+                      }
                     </p>
                   </div>
                 </div>
@@ -447,12 +466,11 @@ export function OwnerPanel({
         </Card>
       </motion.div>
 
-      {/* Verification Modal */}
-      <VerificationModal
+      {/* Wallet Verification Modal */}
+      <WalletBindModal
         isOpen={showVerificationModal}
-        walletAddress={walletAddress}
         onClose={() => setShowVerificationModal(false)}
-        onVerified={handleVerified}
+        onSuccess={handleVerified}
       />
     </>
   )
