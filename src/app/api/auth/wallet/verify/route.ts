@@ -59,17 +59,41 @@ export async function GET(request: NextRequest) {
     )
 
     if (verified) {
-      console.log(`[Verify] SUCCESS! Transaction verified`)
+      console.log(`[Verify] SUCCESS! Transaction verified for wallet: ${walletAddress}`)
 
       // Get auth token from header to update user
       const authHeader = request.headers.get('authorization')
+      console.log(`[Verify] Auth header present: ${!!authHeader}`)
+
       let userId: string | null = null
 
       if (authHeader?.startsWith('Bearer ')) {
         const token = authHeader.substring(7)
         const decoded = verifyTelegramSessionToken(token)
+        console.log(`[Verify] Token decoded: ${!!decoded}, userId: ${decoded?.userId || 'null'}`)
         if (decoded) {
           userId = decoded.userId
+        }
+      }
+
+      // If no userId from token, try to find user by existing records or wallet
+      if (!userId) {
+        console.log(`[Verify] No userId from token, searching by wallet address...`)
+        // Try to find a user who might have this wallet or find by telegram session
+        const existingUser = await prisma.user.findFirst({
+          where: {
+            OR: [
+              { walletAddress: walletAddress.toLowerCase() },
+              // Find any user without wallet who recently started verification
+              { walletAddress: null, isVerified: false }
+            ]
+          },
+          orderBy: { updatedAt: 'desc' }
+        })
+
+        if (existingUser) {
+          userId = existingUser.id
+          console.log(`[Verify] Found existing user: ${userId}`)
         }
       }
 
@@ -84,6 +108,8 @@ export async function GET(request: NextRequest) {
               isVerified: true
             }
           })
+
+          console.log(`[Verify] User updated in DB: ${user.id}, isVerified: ${user.isVerified}`)
 
           // Create new token with wallet address
           const newToken = createTelegramSessionToken(
@@ -109,14 +135,17 @@ export async function GET(request: NextRequest) {
           return NextResponse.json({
             verified: true,
             pending: false,
+            error: 'Failed to update user in database',
             walletAddress
           })
         }
       }
 
+      console.log(`[Verify] WARNING: No user found to update! Verification passed but user not linked.`)
       return NextResponse.json({
         verified: true,
         pending: false,
+        warning: 'Verification passed but could not link to user account. Please try logging in again.',
         walletAddress
       })
     }

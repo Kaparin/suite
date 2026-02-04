@@ -85,11 +85,15 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
       const checkVerification = async () => {
         try {
           const token = getToken()
+          console.log('[WalletBind] Token for verify request:', token ? `present (${token.length} chars)` : 'MISSING!')
+
           const headers: HeadersInit = {
             'Cache-Control': 'no-cache'
           }
           if (token) {
             headers['Authorization'] = `Bearer ${token}`
+          } else {
+            console.warn('[WalletBind] No auth token available for verification request!')
           }
 
           const params = new URLSearchParams({
@@ -103,7 +107,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
           })
           const data = await res.json()
 
-          console.log('[WalletBind] Verification check:', data)
+          console.log('[WalletBind] Verification response:', data)
 
           if (data.verified) {
             setIsPolling(false)
