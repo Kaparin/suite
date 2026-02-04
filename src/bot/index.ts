@@ -30,6 +30,7 @@ type ProjectWithScore = ProjectWithMetricsAndFlags & {
 }
 
 const bot = new Bot<MyContext>(process.env.TELEGRAM_BOT_TOKEN!)
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://suite-1.vercel.app'
 
 // Session middleware
 bot.use(session({
@@ -136,7 +137,8 @@ This will authorize your Telegram account: *${firstName}* ${username ? `(@${user
     .text('📊 Top Tokens', 'top')
     .text('🆕 New Tokens', 'new')
     .row()
-    .url('🌐 Open Website', 'https://suite-1.vercel.app')
+    .text('⏳ Upcoming', 'upcoming')
+    .url('🌐 Website', SITE_URL)
 
   await ctx.reply(
     `🌌 *Welcome to Axiome Launch Suite!*
@@ -148,6 +150,7 @@ Your AI-powered launchpad for tokens on Axiome blockchain.
 • /token <address> - View token details
 • /top - Show top tokens by score
 • /new - Show newest tokens
+• /upcoming - Show upcoming token launches
 • /watch <address> - Subscribe to token alerts
 
 Let's build something amazing! 🚀`,
@@ -177,6 +180,156 @@ Let's build something amazing! 🚀`,
   }
 })
 
+// /login - Get login link
+bot.command('login', async (ctx) => {
+  const telegramId = ctx.from?.id.toString()
+  const username = ctx.from?.username
+  const firstName = ctx.from?.first_name
+
+  if (!telegramId) {
+    await ctx.reply('❌ Could not get your Telegram data.')
+    return
+  }
+
+  // Generate auth code
+  const authCode = Math.random().toString(36).substring(2) + Date.now().toString(36)
+
+  // Try to get user's profile photo
+  let photoUrl: string | undefined
+  try {
+    const photos = await ctx.api.getUserProfilePhotos(ctx.from!.id, { limit: 1 })
+    if (photos.total_count > 0 && photos.photos[0]?.[0]) {
+      const file = await ctx.api.getFile(photos.photos[0][0].file_id)
+      if (file.file_path) {
+        photoUrl = `https://api.telegram.org/file/bot${process.env.TELEGRAM_BOT_TOKEN}/${file.file_path}`
+      }
+    }
+  } catch (photoError) {
+    console.error('Could not fetch profile photo:', photoError)
+  }
+
+  // Save/update user in database
+  const user = await prisma.user.upsert({
+    where: { telegramId },
+    update: {
+      telegramUsername: username,
+      telegramFirstName: firstName,
+      telegramPhotoUrl: photoUrl,
+      telegramAuthDate: new Date()
+    },
+    create: {
+      telegramId,
+      telegramUsername: username,
+      telegramFirstName: firstName,
+      telegramPhotoUrl: photoUrl,
+      telegramAuthDate: new Date(),
+      username: username || firstName
+    }
+  })
+
+  // Generate token
+  const token = Buffer.from(JSON.stringify({
+    telegramId,
+    userId: user.id,
+    exp: Date.now() + 7 * 24 * 60 * 60 * 1000
+  })).toString('base64')
+
+  const userData = encodeURIComponent(JSON.stringify({
+    id: user.id,
+    telegramId: user.telegramId,
+    telegramUsername: user.telegramUsername,
+    telegramFirstName: user.telegramFirstName,
+    telegramPhotoUrl: user.telegramPhotoUrl,
+    walletAddress: user.walletAddress,
+    isVerified: user.isVerified,
+    plan: user.plan
+  }))
+
+  const authUrl = `${SITE_URL}/login?auth_code=${authCode}&token=${token}&user=${userData}`
+
+  const keyboard = new InlineKeyboard()
+    .url('🔐 Login to Website', authUrl)
+
+  await ctx.reply(
+    `🔐 *Login to Axiome Launch Suite*
+
+Click the button below to log in with your Telegram account.
+
+${user.isVerified ? '✅ Your wallet is verified' : '⚠️ Verify your wallet on the website to create tokens'}`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: keyboard
+    }
+  )
+})
+
+// /myprojects - Show user's projects
+bot.command('myprojects', async (ctx) => {
+  const telegramId = ctx.from?.id.toString()
+
+  if (!telegramId) {
+    await ctx.reply('❌ Could not identify you.')
+    return
+  }
+
+  try {
+    const user = await prisma.user.findUnique({
+      where: { telegramId },
+      include: {
+        projects: {
+          orderBy: { createdAt: 'desc' },
+          take: 10,
+          include: {
+            _count: {
+              select: { reactions: true, comments: true }
+            }
+          }
+        }
+      }
+    })
+
+    if (!user || user.projects.length === 0) {
+      const keyboard = new InlineKeyboard()
+        .url('🚀 Create Token', `${SITE_URL}/create`)
+
+      await ctx.reply(
+        'You haven\'t created any tokens yet. Start now!',
+        { reply_markup: keyboard }
+      )
+      return
+    }
+
+    const list = user.projects
+      .map((p, i) => {
+        const statusEmoji = {
+          DRAFT: '📝',
+          UPCOMING: '⏳',
+          PRESALE: '🔥',
+          LAUNCHED: '✅',
+          ARCHIVED: '📦'
+        }[p.status] || '❓'
+        const stats = `💬 ${p._count.comments} | ❤️ ${p._count.reactions}`
+        return `${i + 1}. ${statusEmoji} *${p.name}* ($${p.ticker})\n   Status: ${p.status} | ${stats}`
+      })
+      .join('\n\n')
+
+    const keyboard = new InlineKeyboard()
+      .url('📊 Dashboard', `${SITE_URL}/dashboard`)
+      .url('➕ Create New', `${SITE_URL}/create`)
+
+    await ctx.reply(
+      `📁 *Your Projects*\n\n${list}`,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: keyboard
+      }
+    )
+  } catch (error) {
+    console.error('Error fetching user projects:', error)
+    await ctx.reply('❌ Error fetching your projects. Please try again.')
+  }
+})
+
 // /create - Start token creation wizard
 bot.command('create', async (ctx) => {
   ctx.session.step = 'name'
@@ -195,45 +348,81 @@ Example: _Moon Finance_, _Axiome Meme_, _SafeYield_`,
   )
 })
 
-// /token <address> - View token details
+// /token <address or id> - View token details
 bot.command('token', async (ctx) => {
-  const address = ctx.match?.trim()
+  const query = ctx.match?.trim()
 
-  if (!address) {
-    await ctx.reply('Please provide a token address:\n`/token axm1abc123...`', { parse_mode: 'Markdown' })
+  if (!query) {
+    await ctx.reply('Please provide a token address or ID:\n`/token axm1abc123...`\nor\n`/token <project_id>`', { parse_mode: 'Markdown' })
     return
   }
 
   try {
-    const project = await prisma.project.findUnique({
-      where: { tokenAddress: address },
+    // Try to find by tokenAddress first, then by project ID
+    let project = await prisma.project.findUnique({
+      where: { tokenAddress: query },
       include: {
         metrics: { orderBy: { date: 'desc' }, take: 1 },
-        riskFlags: { where: { isActive: true } }
+        riskFlags: { where: { isActive: true } },
+        owner: {
+          select: {
+            telegramUsername: true,
+            telegramFirstName: true
+          }
+        },
+        _count: {
+          select: { reactions: true, comments: true }
+        }
       }
     })
 
+    // If not found by tokenAddress, try by ID
     if (!project) {
-      await ctx.reply(`❌ Token not found: \`${address}\``, { parse_mode: 'Markdown' })
+      project = await prisma.project.findUnique({
+        where: { id: query },
+        include: {
+          metrics: { orderBy: { date: 'desc' }, take: 1 },
+          riskFlags: { where: { isActive: true } },
+          owner: {
+            select: {
+              telegramUsername: true,
+              telegramFirstName: true
+            }
+          },
+          _count: {
+            select: { reactions: true, comments: true }
+          }
+        }
+      })
+    }
+
+    if (!project) {
+      await ctx.reply(`❌ Token not found: \`${query}\``, { parse_mode: 'Markdown' })
       return
     }
 
     const metric = project.metrics[0]
     const riskCount = project.riskFlags.length
-    const score = Math.max(0, Math.min(100, 100 - riskCount * 15))
+    const isOnChain = project.status === 'LAUNCHED' && project.tokenAddress
 
-    const scoreEmoji = score >= 80 ? '🟢' : score >= 50 ? '🟡' : '🔴'
-    const riskText = riskCount === 0
-      ? '✅ No risk flags'
-      : `⚠️ ${riskCount} risk flag(s)`
-
+    // Build keyboard based on token status
     const keyboard = new InlineKeyboard()
-      .url('📄 View Landing', `https://suite-1.vercel.app/t/${address}`)
-      .row()
-      .url('💱 Buy/Sell', `https://app.axiometrade.pro/swap?token=${address}`)
+      .url('📄 View Page', `${SITE_URL}/t/${project.tokenAddress || project.id}`)
 
-    await ctx.reply(
-      `🪙 *${project.name}* ($${project.ticker})
+    if (isOnChain && project.tokenAddress) {
+      keyboard.row().url('💱 Trade', `https://axiometrade.pro/swap?token=${project.tokenAddress}`)
+    }
+
+    if (isOnChain) {
+      // On-chain token - show full stats
+      const score = Math.max(0, Math.min(100, 100 - riskCount * 15))
+      const scoreEmoji = score >= 80 ? '🟢' : score >= 50 ? '🟡' : '🔴'
+      const riskText = riskCount === 0
+        ? '✅ No risk flags'
+        : `⚠️ ${riskCount} risk flag(s)`
+
+      await ctx.reply(
+        `🪙 *${project.name}* ($${project.ticker})
 
 ${project.descriptionShort || 'No description'}
 
@@ -245,23 +434,47 @@ ${project.descriptionShort || 'No description'}
 ${scoreEmoji} *Trust Score:* ${score}/100
 ${riskText}
 
-📝 Contract: \`${address}\``,
-      {
-        parse_mode: 'Markdown',
-        reply_markup: keyboard
-      }
-    )
+📝 Contract: \`${project.tokenAddress}\``,
+        {
+          parse_mode: 'Markdown',
+          reply_markup: keyboard
+        }
+      )
+    } else {
+      // Upcoming token - show different info
+      const creator = project.owner?.telegramUsername
+        ? `@${project.owner.telegramUsername}`
+        : project.owner?.telegramFirstName || 'Anonymous'
+      const statusText = project.status === 'PRESALE' ? '🔥 Presale Active' : '⏳ Coming Soon'
+
+      await ctx.reply(
+        `🪙 *${project.name}* ($${project.ticker})
+${statusText}
+
+${project.descriptionShort || 'No description'}
+
+👤 *Creator:* ${creator}
+💬 *Comments:* ${project._count.comments}
+❤️ *Reactions:* ${project._count.reactions}
+
+_Token not yet launched on-chain_`,
+        {
+          parse_mode: 'Markdown',
+          reply_markup: keyboard
+        }
+      )
+    }
   } catch (error) {
     console.error('Error fetching token:', error)
     await ctx.reply('❌ Error fetching token data. Please try again.')
   }
 })
 
-// /top - Show top tokens
+// /top - Show top tokens (on-chain launched tokens)
 bot.command('top', async (ctx) => {
   try {
     const projects: ProjectWithMetricsAndFlags[] = await prisma.project.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'LAUNCHED' },
       include: {
         metrics: { orderBy: { date: 'desc' }, take: 1 },
         riskFlags: { where: { isActive: true } }
@@ -270,7 +483,7 @@ bot.command('top', async (ctx) => {
     })
 
     if (projects.length === 0) {
-      await ctx.reply('No tokens found yet. Be the first to create one! /create')
+      await ctx.reply('No launched tokens yet. Check /upcoming for tokens coming soon!')
       return
     }
 
@@ -301,11 +514,11 @@ bot.command('top', async (ctx) => {
   }
 })
 
-// /new - Show newest tokens
+// /new - Show newest tokens (on-chain launched tokens)
 bot.command('new', async (ctx) => {
   try {
     const projects: ProjectWithFlags[] = await prisma.project.findMany({
-      where: { status: 'PUBLISHED' },
+      where: { status: 'LAUNCHED' },
       orderBy: { createdAt: 'desc' },
       take: 10,
       include: {
@@ -314,7 +527,7 @@ bot.command('new', async (ctx) => {
     })
 
     if (projects.length === 0) {
-      await ctx.reply('No tokens found yet. Be the first to create one! /create')
+      await ctx.reply('No launched tokens yet. Check /upcoming for tokens coming soon!')
       return
     }
 
@@ -373,6 +586,66 @@ bot.command('watch', async (ctx) => {
   }
 })
 
+// /upcoming - Show upcoming token launches
+bot.command('upcoming', async (ctx) => {
+  try {
+    const projects = await prisma.project.findMany({
+      where: {
+        status: { in: ['UPCOMING', 'PRESALE'] }
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 10,
+      include: {
+        owner: {
+          select: {
+            telegramUsername: true,
+            telegramFirstName: true
+          }
+        },
+        _count: {
+          select: { reactions: true, comments: true }
+        }
+      }
+    })
+
+    if (projects.length === 0) {
+      const keyboard = new InlineKeyboard()
+        .url('🚀 Create Token', `${SITE_URL}/create`)
+
+      await ctx.reply(
+        'No upcoming tokens yet. Be the first to announce your project!',
+        { reply_markup: keyboard }
+      )
+      return
+    }
+
+    const list = projects
+      .map((p, i) => {
+        const creator = p.owner?.telegramUsername
+          ? `@${p.owner.telegramUsername}`
+          : p.owner?.telegramFirstName || 'Anonymous'
+        const stats = `💬 ${p._count.comments} | ❤️ ${p._count.reactions}`
+        const statusEmoji = p.status === 'PRESALE' ? '🔥' : '⏳'
+        return `${i + 1}. ${statusEmoji} *${p.name}* ($${p.ticker})\n   by ${creator} | ${stats}`
+      })
+      .join('\n\n')
+
+    const keyboard = new InlineKeyboard()
+      .url('🔍 View All', `${SITE_URL}/explorer?tab=upcoming`)
+
+    await ctx.reply(
+      `⏳ *Upcoming Token Launches*\n\n${list}\n\nVisit the Explorer for more details!`,
+      {
+        parse_mode: 'Markdown',
+        reply_markup: keyboard
+      }
+    )
+  } catch (error) {
+    console.error('Error fetching upcoming tokens:', error)
+    await ctx.reply('❌ Error fetching upcoming tokens. Please try again.')
+  }
+})
+
 // === Callback Queries ===
 
 bot.callbackQuery('create', async (ctx) => {
@@ -392,7 +665,7 @@ What's the name of your token project?`,
 bot.callbackQuery('explorer', async (ctx) => {
   await ctx.answerCallbackQuery()
   const keyboard = new InlineKeyboard()
-    .url('🔍 Open Explorer', 'https://suite-1.vercel.app/explorer')
+    .url('🔍 Open Explorer', `${SITE_URL}/explorer`)
 
   await ctx.reply('Open the Explorer to browse all tokens:', { reply_markup: keyboard })
 })
@@ -405,6 +678,11 @@ bot.callbackQuery('top', async (ctx) => {
 bot.callbackQuery('new', async (ctx) => {
   await ctx.answerCallbackQuery()
   await ctx.api.sendMessage(ctx.chat!.id, '/new')
+})
+
+bot.callbackQuery('upcoming', async (ctx) => {
+  await ctx.answerCallbackQuery()
+  await ctx.api.sendMessage(ctx.chat!.id, '/upcoming')
 })
 
 // === Message Handler for Wizard ===
@@ -469,7 +747,7 @@ Send "skip" to skip this step.`,
       })
 
       const keyboard = new InlineKeyboard()
-        .url('🚀 Generate with AI', `https://suite-1.vercel.app/studio?${params}`)
+        .url('🚀 Generate with AI', `${SITE_URL}/studio?${params}`)
 
       await ctx.reply(
         `🎉 *All set!*
