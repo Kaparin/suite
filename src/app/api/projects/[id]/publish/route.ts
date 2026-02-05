@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 import { ProjectStatus } from '@prisma/client'
 
 // POST /api/projects/[id]/publish - Publish token from DRAFT to UPCOMING
@@ -19,7 +19,7 @@ export async function POST(
   }
 
   // Verify token
-  const payload = await verifyTelegramSessionToken(token)
+  const payload = await verifySessionTokenV2(token)
   if (!payload || !payload.userId) {
     return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 type ProjectStatus = 'DRAFT' | 'UPCOMING' | 'PRESALE' | 'PUBLISHED' | 'LAUNCHED' | 'ARCHIVED'
 
@@ -65,51 +65,46 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// POST /api/projects - создать проект (requires verified user)
+// POST /api/projects - создать проект (requires verified user = has wallet)
 export async function POST(request: NextRequest) {
   try {
     // Check authentication
     const authHeader = request.headers.get('authorization')
-    console.log('[Projects POST] Auth header present:', !!authHeader)
-
-    let userId: string | null = null
-
-    if (authHeader?.startsWith('Bearer ')) {
-      const token = authHeader.substring(7)
-      console.log('[Projects POST] Token length:', token.length)
-
-      const decoded = verifyTelegramSessionToken(token)
-      console.log('[Projects POST] Token decoded:', !!decoded, decoded ? { userId: decoded.userId, hasWallet: !!decoded.walletAddress } : null)
-
-      if (decoded) {
-        userId = decoded.userId
-
-        // Check if user is verified (has wallet)
-        const user = await prisma.user.findUnique({
-          where: { id: userId }
-        })
-
-        console.log('[Projects POST] User found:', !!user, user ? { isVerified: user.isVerified, hasWallet: !!user.walletAddress } : null)
-
-        if (!user?.isVerified) {
-          console.log('[Projects POST] User not verified, returning 403')
-          return NextResponse.json(
-            { error: 'Wallet verification required to create tokens' },
-            { status: 403 }
-          )
-        }
-      } else {
-        console.log('[Projects POST] Token verification failed')
-      }
-    } else {
-      console.log('[Projects POST] No Bearer token in header')
-    }
-
-    if (!userId) {
-      console.log('[Projects POST] No userId, returning 401')
+    if (!authHeader?.startsWith('Bearer ')) {
       return NextResponse.json(
         { error: 'Authentication required' },
         { status: 401 }
+      )
+    }
+
+    const token = authHeader.substring(7)
+    const decoded = verifySessionTokenV2(token)
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Invalid token' },
+        { status: 401 }
+      )
+    }
+
+    const userId = decoded.userId
+
+    // Check if user has at least one verified wallet
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: { wallets: true }
+    })
+
+    if (!user) {
+      return NextResponse.json(
+        { error: 'User not found' },
+        { status: 401 }
+      )
+    }
+
+    if (user.wallets.length === 0) {
+      return NextResponse.json(
+        { error: 'Wallet verification required to create tokens' },
+        { status: 403 }
       )
     }
 
@@ -147,6 +142,9 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Use primary wallet as creatorWallet
+    const primaryWallet = user.wallets.find(w => w.isPrimary) || user.wallets[0]
+
     const project = await prisma.project.create({
       data: {
         name,
@@ -163,6 +161,7 @@ export async function POST(request: NextRequest) {
         promoTexts,
         estimatedLaunchDate: estimatedLaunchDate ? new Date(estimatedLaunchDate) : null,
         ownerId: userId,
+        creatorWallet: primaryWallet?.address || null,
         status: status as ProjectStatus,
       },
       include: {

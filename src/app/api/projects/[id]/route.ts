@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 // GET /api/projects/[id] - получить проект по ID
 export async function GET(
@@ -13,22 +13,13 @@ export async function GET(
     // Check if user is authenticated (optional - for edit permissions)
     let userId: string | null = null
     const authHeader = request.headers.get('authorization')
-    console.log('[Project GET] Auth header present:', !!authHeader)
 
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
-      const decoded = verifyTelegramSessionToken(token)
-      console.log('[Project GET] Token decoded:', !!decoded, decoded ? {
-        userId: decoded.userId,
-        telegramId: decoded.telegramId,
-        walletAddress: decoded.walletAddress,
-        verified: decoded.verified
-      } : null)
+      const decoded = verifySessionTokenV2(token)
       if (decoded?.userId) {
         userId = decoded.userId
       }
-    } else {
-      console.log('[Project GET] No Bearer token provided')
     }
 
     const project = await prisma.project.findUnique({
@@ -38,7 +29,11 @@ export async function GET(
           select: {
             id: true,
             telegramUsername: true,
-            walletAddress: true,
+            wallets: {
+              where: { isPrimary: true },
+              select: { address: true },
+              take: 1
+            }
           },
         },
         metrics: {
@@ -58,21 +53,29 @@ export async function GET(
       )
     }
 
-    console.log('[Project GET] Project ownerId:', project.ownerId, 'User ID from token:', userId, 'Match:', project.ownerId === userId)
-
     // If project is DRAFT, only owner can view it
     if (project.status === 'DRAFT' && project.ownerId !== userId) {
-      console.log('[Project GET] Access denied - DRAFT project, user is not owner')
       return NextResponse.json(
         { error: 'Access denied. This is a draft project and you are not the owner.' },
         { status: 403 }
       )
     }
 
-    // Add canEdit flag
+    // Add canEdit flag — ownership check uses immutable userId
     const canEdit = project.ownerId === userId
 
-    return NextResponse.json({ project, canEdit })
+    // Flatten owner walletAddress for backward compatibility
+    const ownerWalletAddress = project.owner.wallets[0]?.address || null
+    const projectResponse = {
+      ...project,
+      owner: {
+        id: project.owner.id,
+        telegramUsername: project.owner.telegramUsername,
+        walletAddress: ownerWalletAddress
+      }
+    }
+
+    return NextResponse.json({ project: projectResponse, canEdit })
   } catch (error) {
     console.error('Error fetching project:', error)
     return NextResponse.json(
@@ -97,7 +100,7 @@ export async function PATCH(
     }
 
     const token = authHeader.substring(7)
-    const decoded = verifyTelegramSessionToken(token)
+    const decoded = verifySessionTokenV2(token)
     if (!decoded?.userId) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }
@@ -188,7 +191,7 @@ export async function DELETE(
     }
 
     const token = authHeader.substring(7)
-    const decoded = verifyTelegramSessionToken(token)
+    const decoded = verifySessionTokenV2(token)
     if (!decoded?.userId) {
       return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
     }

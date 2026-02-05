@@ -136,7 +136,13 @@ export async function GET(request: NextRequest) {
         createdAt: true,
         isVerified: true,
         owner: {
-          select: { walletAddress: true }
+          select: {
+            wallets: {
+              where: { isPrimary: true },
+              select: { address: true },
+              take: 1
+            }
+          }
         }
       }
     })
@@ -199,7 +205,7 @@ export async function GET(request: NextRequest) {
               verified: knownToken?.verified || dbProject?.isVerified || false,
               createdAt: createdAt?.toISOString(),
               holderCount: 0,
-              owner: dbProject?.owner?.walletAddress || undefined,
+              owner: dbProject?.owner?.wallets?.[0]?.address || undefined,
               isNew: ageInDays !== null && ageInDays <= 7,
               isTrending: false,
               isVerified: knownToken?.verified || dbProject?.isVerified || false

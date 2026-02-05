@@ -97,7 +97,7 @@ export default function TokenPage() {
   const ownerWallet = data?.project.owner?.walletAddress?.toLowerCase()
   const minterWallet = data?.chainMinter?.toLowerCase()
   const connectedWallet = walletAddress?.toLowerCase()
-  const authWallet = user?.walletAddress?.toLowerCase()
+  const authWallet = user?.primaryWallet?.toLowerCase()
 
   const isOwner = data && (
     (connectedWallet && (ownerWallet === connectedWallet || minterWallet === connectedWallet)) ||

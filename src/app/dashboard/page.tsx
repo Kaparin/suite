@@ -159,7 +159,7 @@ export default function DashboardPage() {
               <div>
                 <p className="text-sm text-gray-400 mb-1">Status</p>
                 <div className="flex items-center gap-2">
-                  {user?.isVerified ? (
+                  {user?.wallets && user.wallets.length > 0 ? (
                     <>
                       <div className="w-2 h-2 bg-green-400 rounded-full" />
                       <span className="text-green-400 font-medium">Verified</span>
@@ -172,11 +172,15 @@ export default function DashboardPage() {
                   )}
                 </div>
               </div>
-              {/* Wallet */}
-              {user?.walletAddress && (
+              {/* Wallets */}
+              {user?.wallets && user.wallets.length > 0 && (
                 <div>
-                  <p className="text-sm text-gray-400 mb-1">Wallet</p>
-                  <p className="text-sm font-mono text-white">{truncateAddress(user.walletAddress)}</p>
+                  <p className="text-sm text-gray-400 mb-1">
+                    {user.wallets.length === 1 ? 'Wallet' : `Wallets (${user.wallets.length})`}
+                  </p>
+                  <p className="text-sm font-mono text-white">
+                    {truncateAddress(user.primaryWallet || user.wallets[0].address)}
+                  </p>
                 </div>
               )}
               {/* Balance */}
@@ -192,7 +196,7 @@ export default function DashboardPage() {
                 </div>
               )}
             </div>
-            {!user?.isVerified && (
+            {!(user?.wallets && user.wallets.length > 0) && (
               <Link
                 href="/login?verify=true"
                 className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-medium rounded-lg"

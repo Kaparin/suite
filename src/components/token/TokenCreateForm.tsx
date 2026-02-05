@@ -32,7 +32,7 @@ interface TokenCreateFormProps {
 }
 
 export function TokenCreateForm({ initialData, onSuccess }: TokenCreateFormProps) {
-  const { getToken } = useAuth()
+  const { token } = useAuth()
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
@@ -92,19 +92,15 @@ export function TokenCreateForm({ initialData, onSuccess }: TokenCreateFormProps
         throw new Error('Symbol must be 10 characters or less')
       }
 
-      const authToken = getToken()
-      console.log('[TokenCreate] Token retrieved:', !!authToken, authToken ? `length: ${authToken.length}` : 'null')
-
-      if (!authToken) {
+      if (!token) {
         throw new Error('Authentication required. Please log in again.')
       }
 
-      console.log('[TokenCreate] Sending request with token')
       const response = await fetch('/api/projects', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({
           name: formData.name,

@@ -1,5 +1,6 @@
 import { Bot, Context, session, SessionFlavor, InlineKeyboard } from 'grammy'
 import { prisma } from '@/lib/prisma'
+import { createSessionTokenV2 } from '@/lib/auth/telegram'
 import type { Project, TokenMetric, RiskFlag } from '@prisma/client'
 
 // Session data
@@ -92,23 +93,34 @@ bot.command('start', async (ctx) => {
 
     // Generate auth URL with user data
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://suite-1.vercel.app'
+
+    // Fetch user wallets for response
+    const wallets = await prisma.wallet.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'asc' }
+    })
+    const primaryWallet = wallets.find(w => w.isPrimary)?.address || (wallets[0]?.address ?? null)
+
     const userData = encodeURIComponent(JSON.stringify({
       id: user.id,
       telegramId: user.telegramId,
       telegramUsername: user.telegramUsername,
       telegramFirstName: user.telegramFirstName,
       telegramPhotoUrl: user.telegramPhotoUrl,
-      walletAddress: user.walletAddress,
-      isVerified: user.isVerified,
+      wallets: wallets.map(w => ({
+        id: w.id,
+        address: w.address,
+        label: w.label,
+        isPrimary: w.isPrimary,
+        verifiedAt: w.verifiedAt.toISOString()
+      })),
+      primaryWallet,
+      isVerified: wallets.length > 0,
       plan: user.plan
     }))
 
-    // Create temporary token (in production, sign this properly)
-    const token = Buffer.from(JSON.stringify({
-      telegramId,
-      userId: user.id,
-      exp: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
-    })).toString('base64')
+    // Create V2 session token
+    const token = createSessionTokenV2(user.id, telegramId)
 
     const authUrl = `${siteUrl}/login?auth_code=${authCode}&token=${token}&user=${userData}`
 
@@ -227,12 +239,15 @@ bot.command('login', async (ctx) => {
     }
   })
 
-  // Generate token
-  const token = Buffer.from(JSON.stringify({
-    telegramId,
-    userId: user.id,
-    exp: Date.now() + 7 * 24 * 60 * 60 * 1000
-  })).toString('base64')
+  // Generate V2 session token
+  const token = createSessionTokenV2(user.id, telegramId)
+
+  // Fetch user wallets for response
+  const userWallets = await prisma.wallet.findMany({
+    where: { userId: user.id },
+    orderBy: { createdAt: 'asc' }
+  })
+  const userPrimaryWallet = userWallets.find(w => w.isPrimary)?.address || (userWallets[0]?.address ?? null)
 
   const userData = encodeURIComponent(JSON.stringify({
     id: user.id,
@@ -240,8 +255,15 @@ bot.command('login', async (ctx) => {
     telegramUsername: user.telegramUsername,
     telegramFirstName: user.telegramFirstName,
     telegramPhotoUrl: user.telegramPhotoUrl,
-    walletAddress: user.walletAddress,
-    isVerified: user.isVerified,
+    wallets: userWallets.map(w => ({
+      id: w.id,
+      address: w.address,
+      label: w.label,
+      isPrimary: w.isPrimary,
+      verifiedAt: w.verifiedAt.toISOString()
+    })),
+    primaryWallet: userPrimaryWallet,
+    isVerified: userWallets.length > 0,
     plan: user.plan
   }))
 
@@ -255,7 +277,7 @@ bot.command('login', async (ctx) => {
 
 Click the button below to log in with your Telegram account.
 
-${user.isVerified ? '✅ Your wallet is verified' : '⚠️ Verify your wallet on the website to create tokens'}`,
+${userWallets.length > 0 ? '✅ Your wallet is verified' : '⚠️ Verify your wallet on the website to create tokens'}`,
     {
       parse_mode: 'Markdown',
       reply_markup: keyboard

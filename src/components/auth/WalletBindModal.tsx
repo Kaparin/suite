@@ -25,7 +25,7 @@ type CopyState = 'idle' | 'copied'
 
 export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalProps) {
   const { isConnected, address, connect, isConnecting } = useWallet()
-  const { getToken, updateUser } = useAuth()
+  const { token, addWallet } = useAuth()
 
   // Compute initial step based on wallet state
   const getInitialStep = (): 'connect' | 'verify' | 'success' => {
@@ -84,16 +84,11 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
     if (isPolling && address && challenge?.challengeToken) {
       const checkVerification = async () => {
         try {
-          const token = getToken()
-          console.log('[WalletBind] Token for verify request:', token ? `present (${token.length} chars)` : 'MISSING!')
-
           const headers: HeadersInit = {
             'Cache-Control': 'no-cache'
           }
           if (token) {
             headers['Authorization'] = `Bearer ${token}`
-          } else {
-            console.warn('[WalletBind] No auth token available for verification request!')
           }
 
           const params = new URLSearchParams({
@@ -107,39 +102,18 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
           })
           const data = await res.json()
 
-          console.log('[WalletBind] Verification response:', data)
-
-          if (data.verified) {
+          if (data.verified && data.wallet) {
             setIsPolling(false)
 
-            // If new token provided, update it
-            if (data.token) {
-              localStorage.setItem('axiome_auth_token', data.token)
-              console.log('[WalletBind] New token saved to localStorage')
-            }
-
-            // Update user state if user data returned - IMPORTANT: update ALL fields including id
-            if (data.user) {
-              console.log('[WalletBind] Updating user with data:', data.user)
-              updateUser({
-                id: data.user.id, // Critical: update id to match the new token
-                walletAddress: data.user.walletAddress,
-                isVerified: data.user.isVerified,
-                telegramUsername: data.user.telegramUsername
-              })
-            } else if (data.walletAddress) {
-              updateUser({
-                walletAddress: data.walletAddress,
-                isVerified: true
-              })
-            }
+            // Add wallet to auth context (no token update needed — V2 token has no wallet data)
+            addWallet(data.wallet)
 
             // Show success state briefly
             setStep('success')
 
             // Call success callback and close after delay
             setTimeout(() => {
-              onSuccess(data.walletAddress || address)
+              onSuccess(data.wallet.address || address)
               onClose()
             }, 1500)
           }
@@ -158,7 +132,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [isPolling, address, challenge?.challengeToken, onSuccess, onClose, getToken, updateUser])
+  }, [isPolling, address, challenge?.challengeToken, onSuccess, onClose, token, addWallet])
 
   // Track previous isOpen state to detect open/close transitions
   const [wasOpen, setWasOpen] = useState(false)
@@ -195,7 +169,6 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
     setError(null)
 
     try {
-      const token = getToken()
       const headers: HeadersInit = {
         'Content-Type': 'application/json'
       }
@@ -216,7 +189,6 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
       }
 
       setChallenge(data)
-      console.log('[WalletBind] Challenge received:', data.code)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to start verification')
     } finally {

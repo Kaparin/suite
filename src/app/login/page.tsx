@@ -12,7 +12,7 @@ const TELEGRAM_BOT_USERNAME = process.env.NEXT_PUBLIC_TELEGRAM_BOT_USERNAME || '
 function LoginContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { login, isAuthenticated, user } = useAuth()
+  const { login, isAuthenticated, user, refreshSession } = useAuth()
 
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -50,7 +50,7 @@ function LoginContent() {
         sessionStorage.removeItem('telegram_auth_code')
         window.history.replaceState({}, '', '/login')
 
-        if (userData.isVerified) {
+        if (userData.wallets && userData.wallets.length > 0) {
           router.push('/dashboard')
         } else {
           setShowWalletModal(true)
@@ -70,7 +70,7 @@ function LoginContent() {
         login(userData, token)
         window.history.replaceState({}, '', '/login')
 
-        if (userData.isVerified) {
+        if (userData.wallets && userData.wallets.length > 0) {
           router.push('/dashboard')
         } else {
           setShowWalletModal(true)
@@ -95,7 +95,7 @@ function LoginContent() {
 
   // Show wallet modal if user needs to verify
   useEffect(() => {
-    if (isAuthenticated && shouldVerify && !user?.isVerified) {
+    if (isAuthenticated && shouldVerify && !(user?.wallets && user.wallets.length > 0)) {
       setShowWalletModal(true)
     }
   }, [isAuthenticated, shouldVerify, user])
@@ -120,17 +120,10 @@ function LoginContent() {
     setShowTelegramInstructions(true)
   }
 
-  const handleWalletVerified = (walletAddress: string) => {
-    // WalletBindModal already saves the new token and calls updateUser
-    // Just need to refresh the auth state from localStorage
-    const newToken = localStorage.getItem('axiome_auth_token')
-    if (user && newToken) {
-      // Re-login with the new token to sync React state
-      login(
-        { ...user, walletAddress, isVerified: true },
-        newToken
-      )
-    }
+  const handleWalletVerified = () => {
+    // WalletBindModal already called addWallet() which updates context
+    // Just refresh session to ensure we have latest data from server
+    refreshSession()
     setShowWalletModal(false)
     router.push('/dashboard')
   }
@@ -172,7 +165,7 @@ function LoginContent() {
               </div>
               <h1 className="text-2xl font-bold text-white mb-2">Welcome to Axiome Launch Suite</h1>
               <p className="text-gray-400">
-                {isAuthenticated && !user?.isVerified
+                {isAuthenticated && !(user?.wallets && user.wallets.length > 0)
                   ? 'Verify your wallet to start creating tokens'
                   : 'Log in with Telegram to continue'}
               </p>
@@ -293,7 +286,7 @@ function LoginContent() {
                   </div>
                 </div>
 
-                {!user?.isVerified && (
+                {!(user?.wallets && user.wallets.length > 0) && (
                   <button
                     onClick={() => setShowWalletModal(true)}
                     className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-colors"

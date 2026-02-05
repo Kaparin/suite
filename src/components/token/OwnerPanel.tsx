@@ -34,7 +34,7 @@ export function OwnerPanel({
   currentLogo,
   onUpdate,
 }: OwnerPanelProps) {
-  const { user, getToken, updateUser, isAuthenticated } = useAuth()
+  const { user, token: authToken, isAuthenticated } = useAuth()
   const [showVerificationModal, setShowVerificationModal] = useState(false)
   const [isEditing, setIsEditing] = useState(false)
   const [isSaving, setIsSaving] = useState(false)
@@ -51,9 +51,9 @@ export function OwnerPanel({
   const [website, setWebsite] = useState(currentLinks?.website || '')
   const [discord, setDiscord] = useState(currentLinks?.discord || '')
 
-  // Check if user is verified (through Telegram + wallet binding)
-  const isWalletVerified = isAuthenticated && user?.isVerified &&
-    user?.walletAddress?.toLowerCase() === walletAddress.toLowerCase()
+  // Check if user is verified and owns this wallet address
+  const isWalletVerified = isAuthenticated && user?.wallets &&
+    user.wallets.some(w => w.address.toLowerCase() === walletAddress.toLowerCase())
 
   const handleEditClick = () => {
     if (isWalletVerified) {
@@ -67,9 +67,8 @@ export function OwnerPanel({
     }
   }
 
-  const handleVerified = (newWalletAddress: string) => {
-    // Update user context with new wallet
-    updateUser({ walletAddress: newWalletAddress, isVerified: true })
+  const handleVerified = () => {
+    // WalletBindModal already called addWallet() which updates context
     setShowVerificationModal(false)
     setIsEditing(true)
   }
@@ -79,7 +78,6 @@ export function OwnerPanel({
     setError('')
     setSuccess(false)
 
-    const authToken = getToken()
     if (!authToken) {
       setError('Требуется авторизация. Пожалуйста, войдите через Telegram.')
       setIsSaving(false)

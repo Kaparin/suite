@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyChallengeToken, VERIFICATION_ADDRESS } from '@/lib/auth/verification'
-import { createTelegramSessionToken, verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 const AXIOME_REST_URL = process.env.AXIOME_REST_URL || 'https://axiome-api.quantnode.tech'
 
-// GET /api/auth/wallet/verify - Check verification status (stateless)
+// GET /api/auth/wallet/verify - Check verification status (requires auth)
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url)
@@ -26,7 +26,27 @@ export async function GET(request: NextRequest) {
       )
     }
 
-    console.log(`[Verify] Checking wallet: ${walletAddress}`)
+    // Require authentication
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Authentication required. Please log in first.' },
+        { status: 401 }
+      )
+    }
+
+    const token = authHeader.substring(7)
+    const decoded = verifySessionTokenV2(token)
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Invalid or expired token. Please log in again.' },
+        { status: 401 }
+      )
+    }
+
+    const userId = decoded.userId
+
+    console.log(`[Verify] Checking wallet: ${walletAddress} for user: ${userId}`)
 
     // Decode the challenge token (stateless - no server state needed)
     const challenge = verifyChallengeToken(challengeToken)
@@ -61,97 +81,86 @@ export async function GET(request: NextRequest) {
     if (verified) {
       console.log(`[Verify] SUCCESS! Transaction verified for wallet: ${walletAddress}`)
 
-      // Get auth token from header to update user
-      const authHeader = request.headers.get('authorization')
-      console.log(`[Verify] Auth header present: ${!!authHeader}`)
+      const normalizedAddress = walletAddress.toLowerCase()
 
-      let userId: string | null = null
+      // Check if wallet already exists (re-verification or race condition)
+      const existingWallet = await prisma.wallet.findUnique({
+        where: { address: normalizedAddress }
+      })
 
-      if (authHeader?.startsWith('Bearer ')) {
-        const token = authHeader.substring(7)
-        const decoded = verifyTelegramSessionToken(token)
-        console.log(`[Verify] Token decoded: ${!!decoded}, userId: ${decoded?.userId || 'null'}`)
-        if (decoded) {
-          userId = decoded.userId
-        }
-      }
-
-      // If no userId from token, try to find user by wallet address only
-      // Do NOT search by "any unverified user" as that's dangerous
-      if (!userId) {
-        console.log(`[Verify] No userId from token, searching by wallet address only...`)
-        // Only find user who already has this exact wallet address (re-verification case)
-        const existingUser = await prisma.user.findFirst({
-          where: {
-            walletAddress: walletAddress.toLowerCase()
-          }
+      if (existingWallet) {
+        // Wallet already exists - return it
+        const allWallets = await prisma.wallet.findMany({
+          where: { userId }
         })
 
-        if (existingUser) {
-          userId = existingUser.id
-          console.log(`[Verify] Found existing user by wallet: ${userId}`)
-        } else {
-          console.log(`[Verify] WARNING: No userId from token and no existing user with this wallet!`)
-          console.log(`[Verify] User must be logged in to verify wallet. Returning error.`)
-          return NextResponse.json({
-            verified: true,
-            pending: false,
-            error: 'Please log in first before verifying your wallet',
-            walletAddress
-          })
-        }
+        return NextResponse.json({
+          verified: true,
+          pending: false,
+          wallet: {
+            id: existingWallet.id,
+            address: existingWallet.address,
+            label: existingWallet.label,
+            isPrimary: existingWallet.isPrimary,
+            verifiedAt: existingWallet.verifiedAt.toISOString()
+          },
+          wallets: allWallets.map(w => ({
+            id: w.id,
+            address: w.address,
+            label: w.label,
+            isPrimary: w.isPrimary,
+            verifiedAt: w.verifiedAt.toISOString()
+          }))
+        })
       }
 
-      // Update user with verified wallet
-      if (userId) {
-        try {
-          const user = await prisma.user.update({
-            where: { id: userId },
-            data: {
-              walletAddress: walletAddress.toLowerCase(),
-              walletVerifiedAt: new Date(),
-              isVerified: true
-            }
-          })
+      // Check if user already has wallets (to determine isPrimary)
+      const existingWallets = await prisma.wallet.findMany({
+        where: { userId }
+      })
 
-          console.log(`[Verify] User updated in DB: ${user.id}, isVerified: ${user.isVerified}`)
+      const isPrimary = existingWallets.length === 0
 
-          // Create new token with wallet address
-          const newToken = createTelegramSessionToken(
-            user.telegramId || '',
-            user.id,
-            user.walletAddress
-          )
-
-          return NextResponse.json({
-            verified: true,
-            pending: false,
-            token: newToken,
-            walletAddress: user.walletAddress,
-            user: {
-              id: user.id,
-              telegramUsername: user.telegramUsername,
-              walletAddress: user.walletAddress,
-              isVerified: user.isVerified
-            }
-          })
-        } catch (dbError) {
-          console.error('[Verify] DB error:', dbError)
-          return NextResponse.json({
-            verified: true,
-            pending: false,
-            error: 'Failed to update user in database',
-            walletAddress
-          })
+      // Create new Wallet record
+      const newWallet = await prisma.wallet.create({
+        data: {
+          userId,
+          address: normalizedAddress,
+          isPrimary,
+          verifiedAt: new Date()
         }
-      }
+      })
 
-      console.log(`[Verify] WARNING: No user found to update! Verification passed but user not linked.`)
+      // Clean up verification record
+      await prisma.walletVerification.delete({
+        where: { walletAddress: normalizedAddress }
+      }).catch(() => {})
+
+      // Fetch all wallets for the response
+      const allWallets = await prisma.wallet.findMany({
+        where: { userId }
+      })
+
+      console.log(`[Verify] Wallet ${normalizedAddress} linked to user ${userId}, isPrimary: ${isPrimary}`)
+
+      // No new token issued — V2 token has no wallet data, stays valid
       return NextResponse.json({
         verified: true,
         pending: false,
-        warning: 'Verification passed but could not link to user account. Please try logging in again.',
-        walletAddress
+        wallet: {
+          id: newWallet.id,
+          address: newWallet.address,
+          label: newWallet.label,
+          isPrimary: newWallet.isPrimary,
+          verifiedAt: newWallet.verifiedAt.toISOString()
+        },
+        wallets: allWallets.map(w => ({
+          id: w.id,
+          address: w.address,
+          label: w.label,
+          isPrimary: w.isPrimary,
+          verifiedAt: w.verifiedAt.toISOString()
+        }))
       })
     }
 
@@ -203,16 +212,6 @@ async function searchVerificationTransaction(
         const data = await response.json()
         const txs = data.tx_responses || []
         console.log(`[Verify] Recipient query found ${txs.length} transactions`)
-
-        // Log first few transactions for debugging
-        if (txs.length > 0) {
-          console.log(`[Verify] Recent txs to verification address:`)
-          txs.slice(0, 3).forEach((tx: { txhash?: string; tx?: { body?: { memo?: string; messages?: Array<{ from_address?: string; to_address?: string }> } } }, i: number) => {
-            const memo = tx.tx?.body?.memo || '(no memo)'
-            const from = tx.tx?.body?.messages?.[0]?.from_address || '?'
-            console.log(`[Verify]   ${i + 1}. TX ${tx.txhash?.substring(0, 10)}... | memo: "${memo}" | from: ${from.substring(0, 15)}...`)
-          })
-        }
 
         // Check each transaction
         for (const tx of txs) {
@@ -271,16 +270,6 @@ async function searchVerificationTransaction(
       const txs = data.tx_responses || []
       console.log(`[Verify] Sender query found ${txs.length} transactions`)
 
-      // Log transactions for debugging
-      if (txs.length > 0) {
-        console.log(`[Verify] Recent txs from sender:`)
-        txs.slice(0, 5).forEach((tx: { txhash?: string; tx?: { body?: { memo?: string; messages?: Array<{ from_address?: string; to_address?: string }> } } }, i: number) => {
-          const memo = tx.tx?.body?.memo || '(no memo)'
-          const to = tx.tx?.body?.messages?.[0]?.to_address || '?'
-          console.log(`[Verify]   ${i + 1}. TX ${tx.txhash?.substring(0, 10)}... | memo: "${memo}" | to: ${to.substring(0, 15)}...`)
-        })
-      }
-
       for (const tx of txs) {
         if (tx.code !== 0) continue
 
@@ -311,4 +300,3 @@ async function searchVerificationTransaction(
     return false
   }
 }
-

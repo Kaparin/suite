@@ -6,14 +6,23 @@ import { useState, useEffect, useCallback, createContext, useContext, ReactNode 
 const AUTH_TOKEN_KEY = 'axiome_auth_token'
 const AUTH_USER_KEY = 'axiome_auth_user'
 
+export interface AuthWallet {
+  id: string
+  address: string
+  label: string | null
+  isPrimary: boolean
+  verifiedAt: string
+}
+
 export interface AuthUser {
   id: string
   telegramId: string | null
   telegramUsername: string | null
   telegramPhotoUrl: string | null
   telegramFirstName: string | null
-  walletAddress: string | null
-  isVerified: boolean
+  wallets: AuthWallet[]
+  primaryWallet: string | null    // convenience: primary wallet address
+  isVerified: boolean             // computed: wallets.length > 0
   plan: string
 }
 
@@ -26,7 +35,9 @@ interface AuthContextType {
   logout: () => void
   updateUser: (updates: Partial<AuthUser>) => void
   refreshSession: () => Promise<boolean>
-  getToken: () => string | null
+  addWallet: (wallet: AuthWallet) => void
+  removeWallet: (walletId: string) => void
+  setPrimaryWallet: (walletId: string) => void
 }
 
 const AuthContext = createContext<AuthContextType | null>(null)
@@ -131,21 +142,70 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = await res.json()
       if (data.user) {
-        updateUser(data.user)
+        setUser(data.user)
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(data.user))
       }
       return true
     } catch (error) {
       console.error('Session refresh error:', error)
       return false
     }
-  }, [token, logout, updateUser])
+  }, [token, logout])
 
-  const getToken = useCallback((): string | null => {
-    // Always prefer localStorage as it's the source of truth after wallet verification
-    // The React state might be stale due to async updates
-    const storedToken = localStorage.getItem(AUTH_TOKEN_KEY)
-    return storedToken || token
-  }, [token])
+  const addWallet = useCallback((wallet: AuthWallet) => {
+    setUser(prev => {
+      if (!prev) return null
+      const wallets = [...prev.wallets, wallet]
+      const primaryWallet = wallet.isPrimary ? wallet.address : prev.primaryWallet || wallet.address
+      const updated = {
+        ...prev,
+        wallets,
+        primaryWallet,
+        isVerified: true
+      }
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updated))
+      return updated
+    })
+  }, [])
+
+  const removeWallet = useCallback((walletId: string) => {
+    setUser(prev => {
+      if (!prev) return null
+      const wallets = prev.wallets.filter(w => w.id !== walletId)
+      const removedWallet = prev.wallets.find(w => w.id === walletId)
+      let primaryWallet = prev.primaryWallet
+      // If we removed the primary wallet, pick the first remaining one
+      if (removedWallet && removedWallet.address === prev.primaryWallet) {
+        primaryWallet = wallets.length > 0 ? wallets[0].address : null
+      }
+      const updated = {
+        ...prev,
+        wallets,
+        primaryWallet,
+        isVerified: wallets.length > 0
+      }
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updated))
+      return updated
+    })
+  }, [])
+
+  const setPrimaryWallet = useCallback((walletId: string) => {
+    setUser(prev => {
+      if (!prev) return null
+      const wallets = prev.wallets.map(w => ({
+        ...w,
+        isPrimary: w.id === walletId
+      }))
+      const primary = wallets.find(w => w.id === walletId)
+      const updated = {
+        ...prev,
+        wallets,
+        primaryWallet: primary?.address || prev.primaryWallet
+      }
+      localStorage.setItem(AUTH_USER_KEY, JSON.stringify(updated))
+      return updated
+    })
+  }, [])
 
   return (
     <AuthContext.Provider
@@ -158,7 +218,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         logout,
         updateUser,
         refreshSession,
-        getToken
+        addWallet,
+        removeWallet,
+        setPrimaryWallet
       }}
     >
       {children}

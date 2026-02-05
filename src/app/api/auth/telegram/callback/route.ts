@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { validateTelegramAuth, createTelegramSessionToken, type TelegramAuthData } from '@/lib/auth/telegram'
+import { validateTelegramAuth, createSessionTokenV2, type TelegramAuthData } from '@/lib/auth/telegram'
+import { buildAuthUserResponse } from '@/lib/auth/userResponse'
 
 // GET /api/auth/telegram/callback - Handle Telegram OAuth redirect
 export async function GET(request: NextRequest) {
@@ -41,7 +42,8 @@ export async function GET(request: NextRequest) {
   try {
     // Find or create user
     let user = await prisma.user.findUnique({
-      where: { telegramId }
+      where: { telegramId },
+      include: { wallets: true }
     })
 
     if (!user) {
@@ -54,7 +56,8 @@ export async function GET(request: NextRequest) {
           telegramFirstName: telegramData.first_name,
           telegramAuthDate: new Date(telegramData.auth_date * 1000),
           username: telegramData.username || telegramData.first_name
-        }
+        },
+        include: { wallets: true }
       })
     } else {
       // Update existing user's Telegram info
@@ -65,30 +68,20 @@ export async function GET(request: NextRequest) {
           telegramPhotoUrl: telegramData.photo_url,
           telegramFirstName: telegramData.first_name,
           telegramAuthDate: new Date(telegramData.auth_date * 1000)
-        }
+        },
+        include: { wallets: true }
       })
     }
 
-    // Create session token
-    const token = createTelegramSessionToken(
-      telegramId,
-      user.id,
-      user.walletAddress
-    )
+    // Create V2 session token (no wallet data in token)
+    const token = createSessionTokenV2(user.id, telegramId)
 
     // Redirect to login page with token in URL (will be handled by client)
     const redirectUrl = new URL('/login', request.url)
     redirectUrl.searchParams.set('token', token)
-    redirectUrl.searchParams.set('user', encodeURIComponent(JSON.stringify({
-      id: user.id,
-      telegramId: user.telegramId,
-      telegramUsername: user.telegramUsername,
-      telegramPhotoUrl: user.telegramPhotoUrl,
-      telegramFirstName: user.telegramFirstName,
-      walletAddress: user.walletAddress,
-      isVerified: user.isVerified,
-      plan: user.plan
-    })))
+    redirectUrl.searchParams.set('user', encodeURIComponent(JSON.stringify(
+      buildAuthUserResponse(user)
+    )))
 
     return NextResponse.redirect(redirectUrl)
   } catch (error) {

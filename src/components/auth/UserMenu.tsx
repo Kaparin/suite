@@ -6,6 +6,14 @@ import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
 import { truncateAddress } from '@/lib/wallet'
 
+interface UserMenuWallet {
+  id: string
+  address: string
+  label: string | null
+  isPrimary: boolean
+  verifiedAt: string
+}
+
 interface UserMenuProps {
   user: {
     id: string
@@ -13,7 +21,8 @@ interface UserMenuProps {
     telegramUsername?: string | null
     telegramPhotoUrl?: string | null
     telegramFirstName?: string | null
-    walletAddress?: string | null
+    wallets?: UserMenuWallet[]
+    primaryWallet?: string | null
     isVerified?: boolean
     plan?: string
   }
@@ -86,7 +95,7 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
             name={user.telegramFirstName || 'U'}
             size={32}
           />
-          {user.isVerified && (
+          {user.wallets && user.wallets.length > 0 && (
             <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-800 flex items-center justify-center">
               <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -140,10 +149,12 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
 
             {/* Wallet status */}
             <div className="p-4 border-b border-gray-800">
-              {user.walletAddress ? (
+              {user.wallets && user.wallets.length > 0 ? (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500 uppercase">Wallet</span>
+                    <span className="text-xs text-gray-500 uppercase">
+                      {user.wallets.length === 1 ? 'Wallet' : `Wallets (${user.wallets.length})`}
+                    </span>
                     <span className="text-xs text-green-400 flex items-center gap-1">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -151,7 +162,14 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
                       Verified
                     </span>
                   </div>
-                  <p className="text-sm font-mono text-white">{truncateAddress(user.walletAddress)}</p>
+                  {user.wallets.map(w => (
+                    <div key={w.id} className="flex items-center gap-2 mb-1">
+                      <p className="text-sm font-mono text-white">{truncateAddress(w.address)}</p>
+                      {w.isPrimary && (
+                        <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-400 rounded">Primary</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
               ) : (
                 <div>

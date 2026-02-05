@@ -10,10 +10,14 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    // Find user by wallet address
-    const user = await prisma.user.findFirst({
-      where: { walletAddress: address }
+    // Find user by wallet address (through Wallet relation)
+    const wallet = await prisma.wallet.findUnique({
+      where: { address },
+      select: { userId: true }
     })
+    const user = wallet ? await prisma.user.findUnique({
+      where: { id: wallet.userId }
+    }) : null
 
     if (!user) {
       // Return empty dashboard for new users

@@ -80,8 +80,71 @@ export function parseTelegramAuthData(data: Record<string, string>): TelegramAut
   }
 }
 
+// ============================================================
+// V2 Session Tokens (simplified — only identity, no wallet data)
+// ============================================================
+
+const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
+
 /**
- * Create JWT token for Telegram-authenticated user
+ * Create V2 session token — contains only userId and telegramId.
+ * Wallet data is NEVER stored in the token, so the token stays valid
+ * regardless of wallet changes.
+ */
+export function createSessionTokenV2(userId: string, telegramId: string): string {
+  const jwt = require('jsonwebtoken')
+  return jwt.sign(
+    {
+      sub: userId,
+      tid: telegramId,
+      v: 2,
+      iat: Math.floor(Date.now() / 1000)
+    },
+    JWT_SECRET,
+    { expiresIn: '7d' }
+  )
+}
+
+/**
+ * Verify and decode a session token (supports both V1 and V2).
+ * Returns normalized { userId, telegramId } regardless of version.
+ */
+export function verifySessionTokenV2(token: string): {
+  userId: string
+  telegramId: string
+} | null {
+  try {
+    const jwt = require('jsonwebtoken')
+    const decoded = jwt.verify(token, JWT_SECRET) as Record<string, unknown>
+
+    // V2 token
+    if (decoded.v === 2) {
+      return {
+        userId: decoded.sub as string,
+        telegramId: decoded.tid as string
+      }
+    }
+
+    // V1 token (backward compatibility)
+    if (decoded.userId && decoded.telegramId) {
+      return {
+        userId: decoded.userId as string,
+        telegramId: decoded.telegramId as string
+      }
+    }
+
+    return null
+  } catch {
+    return null
+  }
+}
+
+// ============================================================
+// V1 Session Tokens (deprecated — kept for backward compat during migration)
+// ============================================================
+
+/**
+ * @deprecated Use createSessionTokenV2 instead
  */
 export function createTelegramSessionToken(
   telegramId: string,
@@ -89,8 +152,6 @@ export function createTelegramSessionToken(
   walletAddress?: string | null
 ): string {
   const jwt = require('jsonwebtoken')
-  const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
-
   return jwt.sign(
     {
       telegramId,
@@ -105,7 +166,7 @@ export function createTelegramSessionToken(
 }
 
 /**
- * Verify and decode Telegram session token
+ * @deprecated Use verifySessionTokenV2 instead
  */
 export function verifyTelegramSessionToken(token: string): {
   telegramId: string
@@ -115,15 +176,24 @@ export function verifyTelegramSessionToken(token: string): {
 } | null {
   try {
     const jwt = require('jsonwebtoken')
-    const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
+    const decoded = jwt.verify(token, JWT_SECRET) as Record<string, unknown>
 
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      telegramId: string
-      userId: string
-      walletAddress: string | null
-      verified: boolean
+    // Handle V2 tokens transparently
+    if (decoded.v === 2) {
+      return {
+        telegramId: decoded.tid as string,
+        userId: decoded.sub as string,
+        walletAddress: null,
+        verified: false
+      }
     }
-    return decoded
+
+    return {
+      telegramId: decoded.telegramId as string,
+      userId: decoded.userId as string,
+      walletAddress: (decoded.walletAddress as string) || null,
+      verified: !!decoded.verified
+    }
   } catch {
     return null
   }

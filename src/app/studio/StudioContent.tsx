@@ -36,7 +36,7 @@ export function StudioContent() {
   const t = useTranslations('studio')
   const searchParams = useSearchParams()
   const router = useRouter()
-  const { user, getToken, isAuthenticated } = useAuth()
+  const { user, token: authTokenFromContext, isAuthenticated } = useAuth()
 
   const [formData, setFormData] = useState({
     projectName: '',
@@ -106,7 +106,7 @@ export function StudioContent() {
       return
     }
 
-    if (!user?.isVerified) {
+    if (!(user?.wallets && user.wallets.length > 0)) {
       router.push('/login?verify=true')
       return
     }
@@ -115,8 +115,7 @@ export function StudioContent() {
     setError('')
 
     try {
-      const authToken = getToken()
-      if (!authToken) {
+      if (!authTokenFromContext) {
         throw new Error('Authentication required')
       }
 
@@ -145,7 +144,7 @@ export function StudioContent() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${authToken}`
+          'Authorization': `Bearer ${authTokenFromContext}`
         },
         body: JSON.stringify(projectData)
       })

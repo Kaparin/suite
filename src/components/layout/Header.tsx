@@ -449,8 +449,7 @@ export function Header() {
       <WalletBindModal
         isOpen={showWalletBindModal}
         onClose={() => setShowWalletBindModal(false)}
-        onSuccess={(walletAddress) => {
-          updateUser({ walletAddress, isVerified: true })
+        onSuccess={() => {
           setShowWalletBindModal(false)
         }}
       />

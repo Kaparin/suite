@@ -24,5 +24,7 @@ export {
   parseTelegramAuthData,
   createTelegramSessionToken,
   verifyTelegramSessionToken,
+  createSessionTokenV2,
+  verifySessionTokenV2,
   type TelegramAuthData
 } from './telegram'

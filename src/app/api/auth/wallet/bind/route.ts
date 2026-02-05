@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
+import { prisma } from '@/lib/prisma'
 import {
   generateVerificationCode,
   createChallengeToken,
@@ -7,9 +9,27 @@ import {
   VERIFICATION_AMOUNT_DISPLAY
 } from '@/lib/auth/verification'
 
-// POST /api/auth/wallet/bind - Start wallet binding, return challenge
+// POST /api/auth/wallet/bind - Start wallet binding (requires auth)
 export async function POST(request: NextRequest) {
   try {
+    // Require authentication
+    const authHeader = request.headers.get('authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json(
+        { error: 'Authentication required' },
+        { status: 401 }
+      )
+    }
+
+    const token = authHeader.substring(7)
+    const decoded = verifySessionTokenV2(token)
+    if (!decoded) {
+      return NextResponse.json(
+        { error: 'Invalid or expired token' },
+        { status: 401 }
+      )
+    }
+
     const body = await request.json()
     const { walletAddress } = body
 
@@ -28,14 +48,51 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    const normalizedAddress = walletAddress.toLowerCase()
+
+    // Check if wallet is already linked to another user
+    const existingWallet = await prisma.wallet.findUnique({
+      where: { address: normalizedAddress }
+    })
+
+    if (existingWallet && existingWallet.userId !== decoded.userId) {
+      return NextResponse.json(
+        { error: 'This wallet is already linked to another account' },
+        { status: 409 }
+      )
+    }
+
+    if (existingWallet && existingWallet.userId === decoded.userId) {
+      return NextResponse.json(
+        { error: 'This wallet is already linked to your account' },
+        { status: 409 }
+      )
+    }
+
     // Generate verification code and expiry
     const code = generateVerificationCode()
     const expiresAt = Date.now() + 15 * 60 * 1000 // 15 minutes
 
     // Create signed challenge token (stateless - contains all data needed)
-    const challengeToken = createChallengeToken(walletAddress, code, expiresAt)
+    const challengeToken = createChallengeToken(normalizedAddress, code, expiresAt)
 
-    console.log(`[WalletBind] Created stateless challenge for ${walletAddress}:`, {
+    // Save to DB for tracking
+    await prisma.walletVerification.upsert({
+      where: { walletAddress: normalizedAddress },
+      update: {
+        code,
+        expiresAt: new Date(expiresAt),
+        userId: decoded.userId
+      },
+      create: {
+        walletAddress: normalizedAddress,
+        code,
+        expiresAt: new Date(expiresAt),
+        userId: decoded.userId
+      }
+    })
+
+    console.log(`[WalletBind] Created challenge for ${normalizedAddress} (user: ${decoded.userId}):`, {
       code,
       verificationAddress: VERIFICATION_ADDRESS,
       expiresAt: new Date(expiresAt).toISOString()

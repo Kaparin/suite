@@ -27,7 +27,7 @@ export function AuthGuard({
   }, [isLoading, isAuthenticated, router, redirectTo])
 
   useEffect(() => {
-    if (!isLoading && isAuthenticated && requireVerified && !user?.isVerified) {
+    if (!isLoading && isAuthenticated && requireVerified && !(user?.wallets && user.wallets.length > 0)) {
       // User needs to verify wallet
       router.push('/login?verify=true')
     }
@@ -51,7 +51,7 @@ export function AuthGuard({
   }
 
   // Requires verification but not verified
-  if (requireVerified && !user?.isVerified) {
+  if (requireVerified && !(user?.wallets && user.wallets.length > 0)) {
     return fallback || null
   }
 

@@ -6,7 +6,7 @@ datasource db {
   provider = "postgresql"
 }
 
-// Пользователи (Telegram + кошелёк)
+// Пользователи (Telegram + кошельки)
 model User {
   id                String    @id @default(cuid())
   telegramId        String?   @unique
@@ -14,20 +14,34 @@ model User {
   telegramPhotoUrl  String?
   telegramFirstName String?
   telegramAuthDate  DateTime?
-  walletAddress     String?   @unique
-  walletVerifiedAt  DateTime?
-  isVerified        Boolean   @default(false) // true = Telegram + Wallet linked
   username          String?
   plan              Plan      @default(FREE)
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  wallets       Wallet[]
   projects      Project[]
   aiGenerations AiGeneration[]
   comments      Comment[]
   reactions     Reaction[]
 
   @@map("users")
+}
+
+// Кошельки пользователей (один User -> много Wallet)
+model Wallet {
+  id              String    @id @default(cuid())
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  address         String    @unique  // axm1... lowercase
+  label           String?
+  isPrimary       Boolean   @default(false)
+  verifiedAt      DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([userId])
+  @@map("wallets")
 }
 
 enum Plan {
@@ -40,6 +54,7 @@ model Project {
   id               String        @id @default(cuid())
   ownerId          String
   owner            User          @relation(fields: [ownerId], references: [id])
+  creatorWallet    String?       // Which wallet was used to create this project
 
   tokenAddress     String?       @unique
   name             String
@@ -238,8 +253,8 @@ model WalletVerification {
   expiresAt       DateTime
   createdAt       DateTime @default(now())
 
-  // Связь с пользователем (если уже авторизован через Telegram)
-  userId          String?
+  // Связь с пользователем (обязательна — кошелёк привязывается к пользователю)
+  userId          String
 
   @@index([walletAddress])
   @@index([code])

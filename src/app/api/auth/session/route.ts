@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifySessionToken } from '@/lib/auth/verification'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 import { prisma } from '@/lib/prisma'
+import { buildAuthUserResponse } from '@/lib/auth/userResponse'
 
 /**
  * GET /api/auth/session
- * Verify current session token (supports both wallet and Telegram tokens)
+ * Verify current session token and return fresh user data with wallets.
  *
  * Headers: Authorization: Bearer <token>
  * Returns: { verified: true, user } or { verified: false }
@@ -22,57 +22,35 @@ export async function GET(request: NextRequest) {
 
   const token = authHeader.substring(7) // Remove 'Bearer '
 
-  // Try Telegram session token first (most common)
-  const telegramSession = verifyTelegramSessionToken(token)
-  if (telegramSession) {
-    try {
-      // Fetch fresh user data from database
-      const user = await prisma.user.findUnique({
-        where: { id: telegramSession.userId }
+  // Verify token (supports both V1 and V2)
+  const decoded = verifySessionTokenV2(token)
+  if (!decoded) {
+    return NextResponse.json({
+      verified: false,
+      error: 'Invalid or expired token'
+    })
+  }
+
+  try {
+    // Fetch fresh user data from database with wallets
+    const user = await prisma.user.findUnique({
+      where: { id: decoded.userId },
+      include: { wallets: true }
+    })
+
+    if (user) {
+      return NextResponse.json({
+        verified: true,
+        user: buildAuthUserResponse(user)
       })
-
-      if (user) {
-        return NextResponse.json({
-          verified: true,
-          user: {
-            id: user.id,
-            telegramId: user.telegramId,
-            telegramUsername: user.telegramUsername,
-            telegramPhotoUrl: user.telegramPhotoUrl,
-            telegramFirstName: user.telegramFirstName,
-            walletAddress: user.walletAddress,
-            isVerified: user.isVerified,
-            plan: user.plan
-          }
-        })
-      }
-    } catch (error) {
-      console.error('[Session] DB error:', error)
     }
-
-    // Fallback to token data if DB fails
-    return NextResponse.json({
-      verified: true,
-      user: {
-        id: telegramSession.userId,
-        telegramId: telegramSession.telegramId,
-        walletAddress: telegramSession.walletAddress,
-        isVerified: telegramSession.verified
-      }
-    })
+  } catch (error) {
+    console.error('[Session] DB error:', error)
   }
 
-  // Try wallet session token as fallback
-  const walletSession = verifySessionToken(token)
-  if (walletSession) {
-    return NextResponse.json({
-      verified: true,
-      walletAddress: walletSession.walletAddress
-    })
-  }
-
+  // Fallback: user not found in DB
   return NextResponse.json({
     verified: false,
-    error: 'Invalid or expired token'
+    error: 'User not found'
   })
 }

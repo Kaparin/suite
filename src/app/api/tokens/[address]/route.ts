@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifySessionToken, verifyTelegramSessionToken } from '@/lib/auth'
+import { verifySessionTokenV2 } from '@/lib/auth'
 import { KNOWN_TOKENS } from '@/lib/axiome/token-registry'
 
 const REST_URL = process.env.AXIOME_REST_URL
@@ -116,7 +116,11 @@ export async function GET(
           select: {
             id: true,
             username: true,
-            walletAddress: true,
+            wallets: {
+              where: { isPrimary: true },
+              select: { address: true },
+              take: 1
+            },
           },
         },
         metrics: {
@@ -138,7 +142,11 @@ export async function GET(
             select: {
               id: true,
               username: true,
-              walletAddress: true,
+              wallets: {
+                where: { isPrimary: true },
+                select: { address: true },
+                take: 1
+              },
             },
           },
           metrics: {
@@ -187,7 +195,7 @@ export async function GET(
             isVerified: knownToken?.verified || false,
             createdAt: new Date().toISOString(),
             riskFlags: [],
-            owner: chainMinter ? { walletAddress: chainMinter } : null,
+            owner: chainMinter ? { wallets: [{ address: chainMinter }] } : null,
           },
           score: knownToken?.verified ? 80 : 50,
           metrics: { holders: 0, txCount: 0, volume24h: 0 },
@@ -255,26 +263,21 @@ export async function PATCH(
 
     const token = authHeader.substring(7)
 
-    // Try new Telegram auth first, then fall back to old wallet auth
-    let walletAddress: string | null = null
-
-    const telegramSession = verifyTelegramSessionToken(token)
-    if (telegramSession?.walletAddress && telegramSession.verified) {
-      walletAddress = telegramSession.walletAddress
-    } else {
-      // Try old wallet-based session
-      const walletSession = verifySessionToken(token)
-      if (walletSession?.verified && walletSession.walletAddress) {
-        walletAddress = walletSession.walletAddress
-      }
-    }
-
-    if (!walletAddress) {
+    // Verify V2 session token
+    const decoded = verifySessionTokenV2(token)
+    if (!decoded) {
       return NextResponse.json(
-        { error: 'Invalid or expired session. Please verify your wallet again.' },
+        { error: 'Invalid or expired session. Please log in again.' },
         { status: 401 }
       )
     }
+
+    // Get user's wallets for ownership check
+    const userWallets = await prisma.wallet.findMany({
+      where: { userId: decoded.userId },
+      select: { address: true }
+    })
+    const userWalletAddresses = userWallets.map(w => w.address.toLowerCase())
 
     const body = await request.json()
     const {
@@ -288,24 +291,48 @@ export async function PATCH(
     // Find project by token address
     let project = await prisma.project.findUnique({
       where: { tokenAddress: address },
-      include: { owner: true },
+      include: {
+        owner: {
+          select: {
+            id: true,
+            wallets: {
+              where: { isPrimary: true },
+              select: { address: true },
+              take: 1
+            }
+          }
+        }
+      },
     })
 
     // Also try by ID
     if (!project) {
       project = await prisma.project.findUnique({
         where: { id: address },
-        include: { owner: true },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              wallets: {
+                where: { isPrimary: true },
+                select: { address: true },
+                take: 1
+              }
+            }
+          }
+        },
       })
     }
 
     // Get chain minter for verification
     const chainMinter = await getChainMinter(project?.tokenAddress || address)
 
-    // Check ownership: either DB owner or chain minter
+    // Check ownership: either DB owner or user owns a wallet that is the chain minter
+    const ownerWalletAddress = project?.owner?.wallets?.[0]?.address?.toLowerCase()
     const isOwner =
-      project?.owner?.walletAddress?.toLowerCase() === walletAddress.toLowerCase() ||
-      chainMinter?.toLowerCase() === walletAddress.toLowerCase()
+      project?.ownerId === decoded.userId ||
+      (ownerWalletAddress && userWalletAddresses.includes(ownerWalletAddress)) ||
+      (chainMinter && userWalletAddresses.includes(chainMinter.toLowerCase()))
 
     if (!isOwner) {
       return NextResponse.json(
@@ -315,16 +342,14 @@ export async function PATCH(
     }
 
     // If project doesn't exist but caller is chain minter, create it
-    if (!project && chainMinter?.toLowerCase() === walletAddress.toLowerCase()) {
-      // First, find or create user
-      let user = await prisma.user.findUnique({
-        where: { walletAddress: walletAddress.toLowerCase() },
+    const minterWallet = chainMinter ? userWalletAddresses.find(w => w === chainMinter.toLowerCase()) : null
+    if (!project && minterWallet) {
+      const user = await prisma.user.findUnique({
+        where: { id: decoded.userId },
       })
 
       if (!user) {
-        user = await prisma.user.create({
-          data: { walletAddress: walletAddress.toLowerCase() },
-        })
+        return NextResponse.json({ error: 'User not found' }, { status: 404 })
       }
 
       // Create project
@@ -340,7 +365,18 @@ export async function PATCH(
           logo,
           status: 'LAUNCHED',
         },
-        include: { owner: true },
+        include: {
+          owner: {
+            select: {
+              id: true,
+              wallets: {
+                where: { isPrimary: true },
+                select: { address: true },
+                take: 1
+              }
+            }
+          }
+        },
       })
 
       return NextResponse.json({ project, created: true })
@@ -368,7 +404,11 @@ export async function PATCH(
           select: {
             id: true,
             username: true,
-            walletAddress: true,
+            wallets: {
+              where: { isPrimary: true },
+              select: { address: true },
+              take: 1
+            },
           },
         },
       },

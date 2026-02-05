@@ -47,7 +47,7 @@ export function generateVerificationCode(): string {
  */
 export async function createVerificationChallengeAsync(
   walletAddress: string,
-  userId?: string
+  userId: string
 ): Promise<{
   code: string
   expiresAt: number
@@ -115,18 +115,8 @@ export function createVerificationChallenge(walletAddress: string): {
     createdAt: Date.now()
   })
 
-  // Also try to save to DB asynchronously (fire and forget)
-  prisma.walletVerification.upsert({
-    where: { walletAddress: walletAddress.toLowerCase() },
-    update: { code, expiresAt: new Date(expiresAt) },
-    create: {
-      walletAddress: walletAddress.toLowerCase(),
-      code,
-      expiresAt: new Date(expiresAt)
-    }
-  }).catch(err => {
-    console.warn('[Verification] Failed to persist to DB:', err.message)
-  })
+  // Note: DB persistence requires userId, so sync version only uses in-memory cache.
+  // Use createVerificationChallengeAsync() with userId for DB persistence.
 
   return {
     code,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 // GET /api/projects/[id]/comments - Get comments for a project
 export async function GET(
@@ -25,8 +25,7 @@ export async function GET(
               id: true,
               telegramUsername: true,
               telegramFirstName: true,
-              telegramPhotoUrl: true,
-              isVerified: true
+              telegramPhotoUrl: true
             }
           }
         }
@@ -70,7 +69,7 @@ export async function POST(
     }
 
     const token = authHeader.substring(7)
-    const decoded = verifyTelegramSessionToken(token)
+    const decoded = verifySessionTokenV2(token)
     if (!decoded) {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
@@ -120,8 +119,7 @@ export async function POST(
             id: true,
             telegramUsername: true,
             telegramFirstName: true,
-            telegramPhotoUrl: true,
-            isVerified: true
+            telegramPhotoUrl: true
           }
         }
       }

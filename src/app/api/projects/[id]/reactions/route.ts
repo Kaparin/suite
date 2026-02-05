@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import { verifyTelegramSessionToken } from '@/lib/auth/telegram'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 type ReactionType = 'ROCKET' | 'FIRE' | 'HEART' | 'EYES' | 'WARNING'
 
@@ -24,7 +24,7 @@ export async function GET(
     const authHeader = request.headers.get('authorization')
     if (authHeader?.startsWith('Bearer ')) {
       const token = authHeader.substring(7)
-      const decoded = verifyTelegramSessionToken(token)
+      const decoded = verifySessionTokenV2(token)
       if (decoded) {
         const reactions = await prisma.reaction.findMany({
           where: {
@@ -82,7 +82,7 @@ export async function POST(
     }
 
     const token = authHeader.substring(7)
-    const decoded = verifyTelegramSessionToken(token)
+    const decoded = verifySessionTokenV2(token)
     if (!decoded) {
       return NextResponse.json(
         { error: 'Invalid or expired token' },
