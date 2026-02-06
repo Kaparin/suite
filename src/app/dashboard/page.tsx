@@ -48,13 +48,18 @@ export default function DashboardPage() {
 
       try {
         const response = await fetch(`/api/projects?ownerId=${user.id}&status=ALL`, {
-          headers: token ? { 'Authorization': `Bearer ${token}` } : {}
+          headers: token ? { 'Authorization': `Bearer ${token}` } : {},
+          // Add cache control for mobile
+          cache: 'no-store'
         })
-        const result = await response.json()
 
         if (!response.ok) {
-          throw new Error(result.error || 'Failed to fetch dashboard')
+          const errorText = await response.text()
+          console.error('API error:', response.status, errorText)
+          throw new Error(`Server error: ${response.status}`)
         }
+
+        const result = await response.json()
 
         // Calculate stats
         const projects = result.projects || []
@@ -66,9 +71,15 @@ export default function DashboardPage() {
         }
 
         setData({ projects, stats })
+        setError(null)
       } catch (err) {
-        console.error('Dashboard error:', err)
-        setError(err instanceof Error ? err.message : 'Failed to load dashboard')
+        console.error('Dashboard fetch error:', err)
+        // More helpful error message
+        if (err instanceof TypeError && err.message.includes('fetch')) {
+          setError('Network error. Please check your connection and try again.')
+        } else {
+          setError(err instanceof Error ? err.message : 'Failed to load projects')
+        }
       } finally {
         setIsLoading(false)
       }
@@ -286,7 +297,17 @@ export default function DashboardPage() {
             </div>
           ) : error ? (
             <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6 text-center">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-400 mb-4">{error}</p>
+              <button
+                onClick={() => {
+                  setError(null)
+                  setIsLoading(true)
+                  window.location.reload()
+                }}
+                className="px-4 py-2 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded-lg transition-colors"
+              >
+                Try Again
+              </button>
             </div>
           ) : data?.projects.length === 0 ? (
             <div className="bg-gray-900/50 border border-gray-800 rounded-xl p-8 text-center">
