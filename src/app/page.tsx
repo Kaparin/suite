@@ -3,6 +3,7 @@
 import { FloatingParticles } from '@/components/animations/FloatingParticles'
 import { GlowingOrb } from '@/components/animations/GlowingOrb'
 import { StarField } from '@/components/animations/StarField'
+import { AXMPriceTicker } from '@/components/price/AXMPriceTicker'
 import { Button } from '@/components/ui'
 import { motion } from 'framer-motion'
 import { useTranslations } from 'next-intl'
@@ -230,6 +231,16 @@ export default function HomePage() {
                   </Button>
                 </motion.div>
               </Link>
+            </motion.div>
+
+            {/* AXM Price Ticker */}
+            <motion.div
+              variants={itemVariants}
+              className="mt-8 flex justify-center relative z-30"
+            >
+              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3">
+                <AXMPriceTicker showVolume showHighLow />
+              </div>
             </motion.div>
 
             {/* Scroll indicator */}
