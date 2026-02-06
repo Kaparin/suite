@@ -17,6 +17,7 @@ interface ProjectData {
   descriptionLong: string | null
   decimals: number
   initialSupply: string | null
+  tokenAddress: string | null
   links: {
     telegram?: string
     twitter?: string
@@ -59,6 +60,10 @@ export default function EditProjectPage() {
     },
     estimatedLaunchDate: ''
   })
+  const [generatingField, setGeneratingField] = useState<string | null>(null)
+
+  // Check if token is deployed on-chain (contract fields become read-only)
+  const isDeployed = !!project?.tokenAddress
 
   // Fetch project
   const fetchProject = useCallback(async () => {
@@ -121,6 +126,44 @@ export default function EditProjectPage() {
       ...prev,
       links: { ...prev.links, [field]: value }
     }))
+  }
+
+  const handleAIGenerate = async (field: 'descriptionShort' | 'descriptionLong') => {
+    if (!token || generatingField) return
+
+    setGeneratingField(field)
+    try {
+      const res = await fetch('/api/ai/generate-field', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          field,
+          context: {
+            name: formData.name,
+            ticker: formData.ticker,
+            currentDescription: field === 'descriptionShort' ? formData.descriptionShort : formData.descriptionLong,
+            links: formData.links
+          }
+        })
+      })
+
+      if (!res.ok) {
+        throw new Error('Failed to generate')
+      }
+
+      const data = await res.json()
+      if (data.content) {
+        setFormData(prev => ({ ...prev, [field]: data.content }))
+      }
+    } catch (err) {
+      console.error('AI generation error:', err)
+      setError('Failed to generate content with AI')
+    } finally {
+      setGeneratingField(null)
+    }
   }
 
   const handleSave = async (publish: boolean = false) => {
@@ -261,25 +304,55 @@ export default function EditProjectPage() {
             transition={{ delay: 0.1 }}
             className="bg-gray-900/80 backdrop-blur-xl border border-gray-800 rounded-2xl p-6 md:p-8 space-y-6"
           >
+            {/* Deployed warning */}
+            {isDeployed && (
+              <div className="p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl">
+                <div className="flex items-start gap-3">
+                  <svg className="w-5 h-5 text-amber-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div>
+                    <p className="text-amber-400 font-medium">Token is deployed on-chain</p>
+                    <p className="text-amber-400/70 text-sm mt-1">
+                      Contract fields (name, symbol, logo, supply, decimals) cannot be changed.
+                      You can still edit descriptions and links.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {/* Basic Info */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Token Name</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Token Name
+                  {isDeployed && <span className="ml-2 text-xs text-gray-500">(locked)</span>}
+                </label>
                 <input
                   type="text"
                   value={formData.name}
                   onChange={(e) => handleChange('name', e.target.value)}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none"
+                  disabled={isDeployed}
+                  className={`w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none ${
+                    isDeployed ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Symbol</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Symbol
+                  {isDeployed && <span className="ml-2 text-xs text-gray-500">(locked)</span>}
+                </label>
                 <input
                   type="text"
                   value={formData.ticker}
                   onChange={(e) => handleChange('ticker', e.target.value.toUpperCase())}
                   maxLength={10}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white uppercase focus:border-purple-500 outline-none"
+                  disabled={isDeployed}
+                  className={`w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white uppercase focus:border-purple-500 outline-none ${
+                    isDeployed ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 />
               </div>
             </div>
@@ -287,20 +360,32 @@ export default function EditProjectPage() {
             {/* Supply & Decimals */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Initial Supply</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Initial Supply
+                  {isDeployed && <span className="ml-2 text-xs text-gray-500">(locked)</span>}
+                </label>
                 <input
                   type="text"
                   value={formData.initialSupply}
                   onChange={(e) => handleChange('initialSupply', e.target.value.replace(/[^0-9]/g, ''))}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none"
+                  disabled={isDeployed}
+                  className={`w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none ${
+                    isDeployed ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">Decimals</label>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Decimals
+                  {isDeployed && <span className="ml-2 text-xs text-gray-500">(locked)</span>}
+                </label>
                 <select
                   value={formData.decimals}
                   onChange={(e) => handleChange('decimals', parseInt(e.target.value))}
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none"
+                  disabled={isDeployed}
+                  className={`w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none ${
+                    isDeployed ? 'opacity-50 cursor-not-allowed' : ''
+                  }`}
                 >
                   <option value={6}>6 (Standard)</option>
                   <option value={8}>8</option>
@@ -311,35 +396,79 @@ export default function EditProjectPage() {
 
             {/* Logo URL */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Logo URL</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">
+                Logo URL
+                {isDeployed && <span className="ml-2 text-xs text-gray-500">(locked)</span>}
+              </label>
               <input
                 type="url"
                 value={formData.logo}
                 onChange={(e) => handleChange('logo', e.target.value)}
                 placeholder="https://example.com/logo.png"
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none"
+                disabled={isDeployed}
+                className={`w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none ${
+                  isDeployed ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
               />
             </div>
 
             {/* Descriptions */}
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Short Description</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-300">Short Description</label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('descriptionShort')}
+                  disabled={generatingField === 'descriptionShort' || !formData.name}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!formData.name ? 'Enter token name first' : 'Generate with AI'}
+                >
+                  {generatingField === 'descriptionShort' ? (
+                    <div className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                  AI Generate
+                </button>
+              </div>
               <input
                 type="text"
                 value={formData.descriptionShort}
                 onChange={(e) => handleChange('descriptionShort', e.target.value)}
                 maxLength={160}
+                placeholder="A brief, catchy description of your token..."
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none"
               />
               <p className="text-xs text-gray-500 mt-1">{formData.descriptionShort.length}/160</p>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Full Description</label>
+              <div className="flex items-center justify-between mb-2">
+                <label className="block text-sm font-medium text-gray-300">Full Description</label>
+                <button
+                  type="button"
+                  onClick={() => handleAIGenerate('descriptionLong')}
+                  disabled={generatingField === 'descriptionLong' || !formData.name}
+                  className="flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 border border-purple-500/30 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={!formData.name ? 'Enter token name first' : 'Generate with AI'}
+                >
+                  {generatingField === 'descriptionLong' ? (
+                    <div className="w-3 h-3 border-2 border-purple-400/30 border-t-purple-400 rounded-full animate-spin" />
+                  ) : (
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                    </svg>
+                  )}
+                  AI Generate
+                </button>
+              </div>
               <textarea
                 value={formData.descriptionLong}
                 onChange={(e) => handleChange('descriptionLong', e.target.value)}
                 rows={5}
+                placeholder="Tell the full story of your token - its purpose, utility, vision..."
                 className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-xl text-white focus:border-purple-500 outline-none resize-none"
               />
             </div>
@@ -402,7 +531,16 @@ export default function EditProjectPage() {
 
             {/* Actions */}
             <div className="flex flex-col sm:flex-row gap-4 pt-4">
-              {project?.status === 'UPCOMING' ? (
+              {isDeployed ? (
+                /* Deployed tokens - only save button, no status changes */
+                <Button
+                  onClick={() => handleSave(true)}
+                  disabled={isSaving}
+                  className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600"
+                >
+                  {isSaving ? 'Saving...' : 'Save Changes'}
+                </Button>
+              ) : project?.status === 'UPCOMING' ? (
                 <>
                   <Button
                     onClick={() => handleSave(false)}

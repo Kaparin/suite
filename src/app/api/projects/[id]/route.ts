@@ -108,7 +108,7 @@ export async function PATCH(
     // Check project exists and user owns it
     const existingProject = await prisma.project.findUnique({
       where: { id },
-      select: { ownerId: true, status: true }
+      select: { ownerId: true, status: true, tokenAddress: true }
     })
 
     if (!existingProject) {
@@ -135,9 +135,12 @@ export async function PATCH(
       status
     } = body
 
-    // Only allow status changes: DRAFT -> UPCOMING
+    // Check if token is deployed on-chain
+    const isDeployed = !!existingProject.tokenAddress
+
+    // Only allow status changes: DRAFT -> UPCOMING (not for deployed tokens)
     let newStatus = existingProject.status
-    if (status && status !== existingProject.status) {
+    if (status && status !== existingProject.status && !isDeployed) {
       if (existingProject.status === 'DRAFT' && status === 'UPCOMING') {
         newStatus = 'UPCOMING'
       } else if (existingProject.status === 'UPCOMING' && status === 'DRAFT') {
@@ -147,23 +150,31 @@ export async function PATCH(
       // Other status changes are not allowed via this endpoint
     }
 
+    // Build update data - contract fields are locked if token is deployed
+    const updateData: Record<string, unknown> = {}
+
+    // Contract fields - only editable if NOT deployed
+    if (!isDeployed) {
+      if (name !== undefined) updateData.name = name
+      if (ticker !== undefined) updateData.ticker = ticker
+      if (logo !== undefined) updateData.logo = logo
+      if (decimals !== undefined) updateData.decimals = typeof decimals === 'number' ? decimals : parseInt(decimals)
+      if (initialSupply !== undefined) updateData.initialSupply = initialSupply
+      updateData.status = newStatus
+    }
+
+    // Database-only fields - always editable
+    if (descriptionShort !== undefined) updateData.descriptionShort = descriptionShort
+    if (descriptionLong !== undefined) updateData.descriptionLong = descriptionLong
+    if (links !== undefined) updateData.links = links
+    if (tokenomics !== undefined) updateData.tokenomics = tokenomics
+    if (estimatedLaunchDate !== undefined) {
+      updateData.estimatedLaunchDate = estimatedLaunchDate ? new Date(estimatedLaunchDate) : null
+    }
+
     const project = await prisma.project.update({
       where: { id },
-      data: {
-        ...(name !== undefined && { name }),
-        ...(ticker !== undefined && { ticker }),
-        ...(logo !== undefined && { logo }),
-        ...(descriptionShort !== undefined && { descriptionShort }),
-        ...(descriptionLong !== undefined && { descriptionLong }),
-        ...(decimals !== undefined && { decimals: typeof decimals === 'number' ? decimals : parseInt(decimals) }),
-        ...(initialSupply !== undefined && { initialSupply }),
-        ...(links !== undefined && { links }),
-        ...(tokenomics !== undefined && { tokenomics }),
-        ...(estimatedLaunchDate !== undefined && {
-          estimatedLaunchDate: estimatedLaunchDate ? new Date(estimatedLaunchDate) : null
-        }),
-        status: newStatus,
-      },
+      data: updateData,
     })
 
     return NextResponse.json({ project })
