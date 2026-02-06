@@ -6,6 +6,7 @@
  */
 
 import crypto from 'crypto'
+import jwt from 'jsonwebtoken'
 
 export interface TelegramAuthData {
   id: number
@@ -18,6 +19,7 @@ export interface TelegramAuthData {
 }
 
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || ''
+const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
 
 /**
  * Validate Telegram Login Widget data
@@ -81,18 +83,15 @@ export function parseTelegramAuthData(data: Record<string, string>): TelegramAut
 }
 
 // ============================================================
-// V2 Session Tokens (simplified — only identity, no wallet data)
+// Session Tokens (V2 — identity only, no wallet data)
 // ============================================================
 
-const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
-
 /**
- * Create V2 session token — contains only userId and telegramId.
+ * Create session token — contains only userId and telegramId.
  * Wallet data is NEVER stored in the token, so the token stays valid
  * regardless of wallet changes.
  */
 export function createSessionTokenV2(userId: string, telegramId: string): string {
-  const jwt = require('jsonwebtoken')
   return jwt.sign(
     {
       sub: userId,
@@ -106,15 +105,14 @@ export function createSessionTokenV2(userId: string, telegramId: string): string
 }
 
 /**
- * Verify and decode a session token (supports both V1 and V2).
- * Returns normalized { userId, telegramId } regardless of version.
+ * Verify and decode a session token.
+ * Returns { userId, telegramId } if valid, null otherwise.
  */
 export function verifySessionTokenV2(token: string): {
   userId: string
   telegramId: string
 } | null {
   try {
-    const jwt = require('jsonwebtoken')
     const decoded = jwt.verify(token, JWT_SECRET) as Record<string, unknown>
 
     // V2 token
@@ -125,7 +123,7 @@ export function verifySessionTokenV2(token: string): {
       }
     }
 
-    // V1 token (backward compatibility)
+    // Legacy V1 token (backward compatibility for existing sessions)
     if (decoded.userId && decoded.telegramId) {
       return {
         userId: decoded.userId as string,
@@ -134,66 +132,6 @@ export function verifySessionTokenV2(token: string): {
     }
 
     return null
-  } catch {
-    return null
-  }
-}
-
-// ============================================================
-// V1 Session Tokens (deprecated — kept for backward compat during migration)
-// ============================================================
-
-/**
- * @deprecated Use createSessionTokenV2 instead
- */
-export function createTelegramSessionToken(
-  telegramId: string,
-  userId: string,
-  walletAddress?: string | null
-): string {
-  const jwt = require('jsonwebtoken')
-  return jwt.sign(
-    {
-      telegramId,
-      userId,
-      walletAddress: walletAddress || null,
-      verified: !!walletAddress,
-      iat: Math.floor(Date.now() / 1000)
-    },
-    JWT_SECRET,
-    { expiresIn: '7d' }
-  )
-}
-
-/**
- * @deprecated Use verifySessionTokenV2 instead
- */
-export function verifyTelegramSessionToken(token: string): {
-  telegramId: string
-  userId: string
-  walletAddress: string | null
-  verified: boolean
-} | null {
-  try {
-    const jwt = require('jsonwebtoken')
-    const decoded = jwt.verify(token, JWT_SECRET) as Record<string, unknown>
-
-    // Handle V2 tokens transparently
-    if (decoded.v === 2) {
-      return {
-        telegramId: decoded.tid as string,
-        userId: decoded.sub as string,
-        walletAddress: null,
-        verified: false
-      }
-    }
-
-    return {
-      telegramId: decoded.telegramId as string,
-      userId: decoded.userId as string,
-      walletAddress: (decoded.walletAddress as string) || null,
-      verified: !!decoded.verified
-    }
   } catch {
     return null
   }

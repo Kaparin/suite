@@ -1,39 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 export async function GET(request: NextRequest) {
-  const { searchParams } = new URL(request.url)
-  const address = searchParams.get('address')
+  // Verify authentication
+  const authHeader = request.headers.get('authorization')
+  if (!authHeader?.startsWith('Bearer ')) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
-  if (!address) {
-    return NextResponse.json({ error: 'Address is required' }, { status: 400 })
+  const token = authHeader.substring(7)
+  const decoded = verifySessionTokenV2(token)
+  if (!decoded) {
+    return NextResponse.json({ error: 'Invalid token' }, { status: 401 })
   }
 
   try {
-    // Find user by wallet address (through Wallet relation)
-    const wallet = await prisma.wallet.findUnique({
-      where: { address },
-      select: { userId: true }
-    })
-    const user = wallet ? await prisma.user.findUnique({
-      where: { id: wallet.userId }
-    }) : null
-
-    if (!user) {
-      // Return empty dashboard for new users
-      return NextResponse.json({
-        projects: [],
-        stats: {
-          totalProjects: 0,
-          publishedProjects: 0,
-          draftProjects: 0
-        }
-      })
-    }
-
-    // Get user's projects
+    // Get user's projects directly via userId
     const projects = await prisma.project.findMany({
-      where: { ownerId: user.id },
+      where: { ownerId: decoded.userId },
       orderBy: { createdAt: 'desc' },
       select: {
         id: true,
@@ -48,7 +33,7 @@ export async function GET(request: NextRequest) {
 
     // Calculate stats
     const totalProjects = projects.length
-    const publishedProjects = projects.filter(p => p.status === 'PUBLISHED').length
+    const launchedProjects = projects.filter(p => p.status === 'LAUNCHED').length
     const draftProjects = projects.filter(p => p.status === 'DRAFT').length
 
     return NextResponse.json({
@@ -58,7 +43,7 @@ export async function GET(request: NextRequest) {
       })),
       stats: {
         totalProjects,
-        publishedProjects,
+        launchedProjects,
         draftProjects
       }
     })

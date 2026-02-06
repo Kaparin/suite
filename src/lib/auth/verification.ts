@@ -4,12 +4,11 @@
  * Proves wallet ownership via micro-transaction with unique code.
  *
  * Flow:
- * 1. User requests verification code
+ * 1. Authenticated user requests verification code via /api/auth/wallet/bind
  * 2. Server generates unique code and stores it in DB with expiry
  * 3. User sends 0.001 AXM to verification address with memo = code
- * 4. Server monitors blockchain for the transaction
- * 5. Upon finding matching tx, marks wallet as verified
- * 6. Issues session token (JWT) for authenticated requests
+ * 4. Server monitors blockchain for the transaction via /api/auth/wallet/verify
+ * 5. Upon finding matching tx, creates Wallet record linked to user
  */
 
 import { randomBytes } from 'crypto'
@@ -22,17 +21,8 @@ export const VERIFICATION_ADDRESS = process.env.VERIFICATION_WALLET_ADDRESS || '
 export const VERIFICATION_AMOUNT = '1000' // 0.001 AXM = 1000 uaxm
 export const VERIFICATION_AMOUNT_DISPLAY = '0.001' // Human readable
 
-// JWT settings
+// JWT settings for challenge tokens
 const JWT_SECRET = process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production'
-const JWT_EXPIRY = '7d' // Session lasts 7 days
-
-// Fallback in-memory store (for edge cases when DB is unavailable)
-const pendingVerificationsCache = new Map<string, {
-  walletAddress: string
-  code: string
-  expiresAt: number
-  createdAt: number
-}>()
 
 /**
  * Generate a unique verification code
@@ -42,8 +32,8 @@ export function generateVerificationCode(): string {
 }
 
 /**
- * Create a new verification challenge for a wallet
- * Uses database for persistence with in-memory fallback
+ * Create a new verification challenge for a wallet.
+ * Requires userId — anonymous verification is not supported.
  */
 export async function createVerificationChallengeAsync(
   walletAddress: string,
@@ -57,34 +47,23 @@ export async function createVerificationChallengeAsync(
   const code = generateVerificationCode()
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
 
-  try {
-    // Upsert to handle existing challenges
-    await prisma.walletVerification.upsert({
-      where: { walletAddress: walletAddress.toLowerCase() },
-      update: {
-        code,
-        expiresAt,
-        userId
-      },
-      create: {
-        walletAddress: walletAddress.toLowerCase(),
-        code,
-        expiresAt,
-        userId
-      }
-    })
-
-    console.log(`[Verification] Created challenge for ${walletAddress}: code=${code}`)
-  } catch (error) {
-    console.error('[Verification] DB error, using in-memory fallback:', error)
-    // Fallback to in-memory
-    pendingVerificationsCache.set(walletAddress.toLowerCase(), {
+  // Upsert to handle existing challenges
+  await prisma.walletVerification.upsert({
+    where: { walletAddress: walletAddress.toLowerCase() },
+    update: {
+      code,
+      expiresAt,
+      userId
+    },
+    create: {
       walletAddress: walletAddress.toLowerCase(),
       code,
-      expiresAt: expiresAt.getTime(),
-      createdAt: Date.now()
-    })
-  }
+      expiresAt,
+      userId
+    }
+  })
+
+  console.log(`[Verification] Created challenge for ${walletAddress}: code=${code}`)
 
   return {
     code,
@@ -95,109 +74,40 @@ export async function createVerificationChallengeAsync(
 }
 
 /**
- * Synchronous version for backwards compatibility
- * Uses only in-memory storage
- */
-export function createVerificationChallenge(walletAddress: string): {
-  code: string
-  expiresAt: number
-  verificationAddress: string
-  amount: string
-} {
-  const code = generateVerificationCode()
-  const expiresAt = Date.now() + 15 * 60 * 1000 // 15 minutes
-
-  // Store in memory cache
-  pendingVerificationsCache.set(walletAddress.toLowerCase(), {
-    walletAddress: walletAddress.toLowerCase(),
-    code,
-    expiresAt,
-    createdAt: Date.now()
-  })
-
-  // Note: DB persistence requires userId, so sync version only uses in-memory cache.
-  // Use createVerificationChallengeAsync() with userId for DB persistence.
-
-  return {
-    code,
-    expiresAt,
-    verificationAddress: VERIFICATION_ADDRESS,
-    amount: VERIFICATION_AMOUNT
-  }
-}
-
-/**
- * Get pending verification for a wallet
- * Checks both DB and in-memory cache
+ * Get pending verification for a wallet from DB
  */
 export async function getPendingVerificationAsync(walletAddress: string): Promise<{
   walletAddress: string
   code: string
   expiresAt: number
   createdAt: number
+  userId: string
 } | null> {
   const normalizedAddress = walletAddress.toLowerCase()
 
-  try {
-    // First check DB
-    const dbVerification = await prisma.walletVerification.findUnique({
-      where: { walletAddress: normalizedAddress }
-    })
+  const dbVerification = await prisma.walletVerification.findUnique({
+    where: { walletAddress: normalizedAddress }
+  })
 
-    if (dbVerification) {
-      // Check if expired
-      if (new Date() > dbVerification.expiresAt) {
-        await prisma.walletVerification.delete({
-          where: { walletAddress: normalizedAddress }
-        }).catch(() => {})
-        return null
-      }
-
-      return {
-        walletAddress: dbVerification.walletAddress,
-        code: dbVerification.code,
-        expiresAt: dbVerification.expiresAt.getTime(),
-        createdAt: dbVerification.createdAt.getTime()
-      }
-    }
-  } catch (error) {
-    console.warn('[Verification] DB lookup failed, checking cache:', error)
-  }
-
-  // Fallback to in-memory cache
-  const cacheVerification = pendingVerificationsCache.get(normalizedAddress)
-  if (cacheVerification) {
-    if (Date.now() > cacheVerification.expiresAt) {
-      pendingVerificationsCache.delete(normalizedAddress)
-      return null
-    }
-    return cacheVerification
-  }
-
-  return null
-}
-
-/**
- * Synchronous version - only checks in-memory cache
- */
-export function getPendingVerification(walletAddress: string): {
-  walletAddress: string
-  code: string
-  expiresAt: number
-  createdAt: number
-} | null {
-  const normalizedAddress = walletAddress.toLowerCase()
-  const verification = pendingVerificationsCache.get(normalizedAddress)
-
-  if (!verification) return null
-
-  // Check if expired
-  if (Date.now() > verification.expiresAt) {
-    pendingVerificationsCache.delete(normalizedAddress)
+  if (!dbVerification) {
     return null
   }
 
-  return verification
+  // Check if expired
+  if (new Date() > dbVerification.expiresAt) {
+    await prisma.walletVerification.delete({
+      where: { walletAddress: normalizedAddress }
+    }).catch(() => {})
+    return null
+  }
+
+  return {
+    walletAddress: dbVerification.walletAddress,
+    code: dbVerification.code,
+    expiresAt: dbVerification.expiresAt.getTime(),
+    createdAt: dbVerification.createdAt.getTime(),
+    userId: dbVerification.userId
+  }
 }
 
 /**
@@ -206,31 +116,27 @@ export function getPendingVerification(walletAddress: string): {
 export async function deleteVerification(walletAddress: string): Promise<void> {
   const normalizedAddress = walletAddress.toLowerCase()
 
-  // Delete from cache
-  pendingVerificationsCache.delete(normalizedAddress)
-
-  // Delete from DB
   try {
     await prisma.walletVerification.delete({
       where: { walletAddress: normalizedAddress }
     })
     console.log(`[Verification] Deleted challenge for ${walletAddress}`)
-  } catch (error) {
+  } catch {
     // Ignore if not found
-    console.warn('[Verification] Delete failed (may not exist):', error)
   }
 }
 
 /**
- * Verify a transaction matches the pending verification
+ * Verify a transaction matches the pending verification.
+ * Returns true if valid, false otherwise.
  */
-export function verifyTransaction(
+export async function verifyTransactionAsync(
   walletAddress: string,
   fromAddress: string,
   toAddress: string,
   memo: string
-): boolean {
-  const verification = getPendingVerification(walletAddress)
+): Promise<boolean> {
+  const verification = await getPendingVerificationAsync(walletAddress)
 
   if (!verification) {
     console.log(`[Verification] No pending verification for ${walletAddress}`)
@@ -251,10 +157,7 @@ export function verifyTransaction(
   })
 
   if (isCorrectSender && isCorrectRecipient && isCorrectCode) {
-    // Clear pending verification
-    pendingVerificationsCache.delete(walletAddress.toLowerCase())
-    // Also delete from DB asynchronously
-    deleteVerification(walletAddress).catch(() => {})
+    await deleteVerification(walletAddress)
     return true
   }
 
@@ -266,8 +169,8 @@ export function verifyTransaction(
 // ============================================================
 
 /**
- * Create a signed challenge token that contains all verification data
- * This eliminates the need for server-side state storage
+ * Create a signed challenge token that contains all verification data.
+ * Used by WalletBindModal to maintain state across polling.
  */
 export function createChallengeToken(
   walletAddress: string,
@@ -288,8 +191,8 @@ export function createChallengeToken(
 }
 
 /**
- * Verify and decode a challenge token
- * Returns the challenge data if valid, null if invalid/expired
+ * Verify and decode a challenge token.
+ * Returns the challenge data if valid, null if invalid/expired.
  */
 export function verifyChallengeToken(token: string): {
   walletAddress: string
@@ -327,55 +230,6 @@ export function verifyChallengeToken(token: string): {
   }
 }
 
-// ============================================================
-// SESSION TOKENS
-// ============================================================
-
-/**
- * Create a JWT session token for verified wallet
- */
-export function createSessionToken(walletAddress: string): string {
-  return jwt.sign(
-    {
-      walletAddress: walletAddress.toLowerCase(),
-      verified: true,
-      iat: Math.floor(Date.now() / 1000)
-    },
-    JWT_SECRET,
-    { expiresIn: JWT_EXPIRY }
-  )
-}
-
-/**
- * Verify and decode a session token
- */
-export function verifySessionToken(token: string): {
-  walletAddress: string
-  verified: boolean
-} | null {
-  try {
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      walletAddress: string
-      verified: boolean
-    }
-    return decoded
-  } catch {
-    return null
-  }
-}
-
-/**
- * Clean up expired verifications in memory cache
- */
-export function cleanupExpiredVerifications(): void {
-  const now = Date.now()
-  for (const [key, verification] of pendingVerificationsCache.entries()) {
-    if (now > verification.expiresAt) {
-      pendingVerificationsCache.delete(key)
-    }
-  }
-}
-
 /**
  * Clean up expired verifications in database
  */
@@ -398,12 +252,7 @@ export async function cleanupExpiredVerificationsInDB(): Promise<number> {
   }
 }
 
-// Clean up in-memory cache every 5 minutes
-if (typeof setInterval !== 'undefined') {
-  setInterval(cleanupExpiredVerifications, 5 * 60 * 1000)
-}
-
-// Clean up DB every 15 minutes (less frequent to reduce DB load)
+// Clean up DB every 15 minutes
 if (typeof setInterval !== 'undefined') {
   setInterval(() => {
     cleanupExpiredVerificationsInDB().catch(() => {})
