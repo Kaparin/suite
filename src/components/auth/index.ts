@@ -2,3 +2,4 @@ export { TelegramLoginButton, TelegramLoginFallback, TelegramLoginLink, type Tel
 export { UserMenu } from './UserMenu'
 export { AuthGuard, withAuth } from './AuthGuard'
 export { WalletBindModal } from './WalletBindModal'
+export { WalletManager } from './WalletManager'

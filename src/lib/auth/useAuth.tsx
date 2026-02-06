@@ -12,6 +12,7 @@ export interface AuthWallet {
   label: string | null
   isPrimary: boolean
   verifiedAt: string
+  createdAt: string
 }
 
 export interface AuthUser {

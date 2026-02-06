@@ -7,6 +7,7 @@ import Image from 'next/image'
 import { useWallet, truncateAddress } from '@/lib/wallet'
 import { useAuth } from '@/lib/auth/useAuth'
 import { TokenStatusBadge } from '@/components/token'
+import { WalletManager } from '@/components/auth/WalletManager'
 
 interface UserProject {
   id: string
@@ -162,60 +163,9 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        {/* User Status Card */}
+        {/* Wallets Section */}
         <div className="bg-gradient-to-br from-purple-500/10 via-gray-900 to-blue-500/10 border border-gray-800 rounded-2xl p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div className="flex items-center gap-6">
-              {/* Verification Status */}
-              <div>
-                <p className="text-sm text-gray-400 mb-1">Status</p>
-                <div className="flex items-center gap-2">
-                  {user?.wallets && user.wallets.length > 0 ? (
-                    <>
-                      <div className="w-2 h-2 bg-green-400 rounded-full" />
-                      <span className="text-green-400 font-medium">Verified</span>
-                    </>
-                  ) : (
-                    <>
-                      <div className="w-2 h-2 bg-yellow-400 rounded-full" />
-                      <span className="text-yellow-400 font-medium">Unverified</span>
-                    </>
-                  )}
-                </div>
-              </div>
-              {/* Wallets */}
-              {user?.wallets && user.wallets.length > 0 && (
-                <div>
-                  <p className="text-sm text-gray-400 mb-1">
-                    {user.wallets.length === 1 ? 'Wallet' : `Wallets (${user.wallets.length})`}
-                  </p>
-                  <p className="text-sm font-mono text-white">
-                    {truncateAddress(user.primaryWallet || user.wallets[0].address)}
-                  </p>
-                </div>
-              )}
-              {/* Balance */}
-              {isConnected && (
-                <div>
-                  <p className="text-sm text-gray-400 mb-1">Balance</p>
-                  <div className="flex items-center gap-1">
-                    <span className="text-white font-medium">
-                      {balance.isLoading ? '...' : balance.axm}
-                    </span>
-                    <span className="text-purple-400 text-sm">AXM</span>
-                  </div>
-                </div>
-              )}
-            </div>
-            {!(user?.wallets && user.wallets.length > 0) && (
-              <Link
-                href="/login?verify=true"
-                className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white text-sm font-medium rounded-lg"
-              >
-                Verify Wallet
-              </Link>
-            )}
-          </div>
+          <WalletManager />
         </div>
 
         {/* Stats Grid */}

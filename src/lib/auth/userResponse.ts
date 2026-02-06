@@ -18,6 +18,7 @@ export function buildAuthUserResponse(user: {
     label: string | null
     isPrimary: boolean
     verifiedAt: Date
+    createdAt: Date
   }>
 }): AuthUser {
   const primaryWallet = user.wallets.find(w => w.isPrimary) || user.wallets[0] || null
@@ -32,7 +33,8 @@ export function buildAuthUserResponse(user: {
       address: w.address,
       label: w.label,
       isPrimary: w.isPrimary,
-      verifiedAt: w.verifiedAt.toISOString()
+      verifiedAt: w.verifiedAt.toISOString(),
+      createdAt: w.createdAt.toISOString()
     })),
     primaryWallet: primaryWallet?.address || null,
     isVerified: user.wallets.length > 0,
