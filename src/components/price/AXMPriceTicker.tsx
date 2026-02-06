@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import Image from 'next/image'
 import type { AXMPriceData } from '@/app/api/price/axm/route'
 
 interface AXMPriceTickerProps {
@@ -95,7 +96,10 @@ export function AXMPriceTicker({
   if (compact) {
     return (
       <div className={`flex items-center gap-2 text-sm ${className}`}>
-        <span className="text-white/60">AXM</span>
+        <div className="flex items-center gap-1">
+          <Image src="/axm-logo.png" alt="AXM" width={16} height={16} className="rounded-full" />
+          <span className="text-white/60">AXM</span>
+        </div>
         <AnimatePresence mode="wait">
           <motion.span
             key={priceData.price}
@@ -124,9 +128,13 @@ export function AXMPriceTicker({
       {/* Main Price */}
       <div className="flex items-center gap-2">
         <div className="flex items-center gap-1.5">
-          <div className="w-5 h-5 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-[10px] font-bold">
-            A
-          </div>
+          <Image
+            src="/axm-logo.png"
+            alt="AXM"
+            width={20}
+            height={20}
+            className="rounded-full"
+          />
           <span className="text-white/80 font-medium">AXM/USDT</span>
         </div>
         <AnimatePresence mode="wait">

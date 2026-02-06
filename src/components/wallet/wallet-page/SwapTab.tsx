@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react'
 import { motion } from 'framer-motion'
+import Image from 'next/image'
 import { useWallet, useTokenBalances, useTransaction } from '@/lib/wallet'
 import { SignTransactionFlow } from '@/components/wallet'
 import { Card, CardContent, Button, Input } from '@/components/ui'
@@ -219,9 +220,13 @@ export function SwapTab() {
             <div className="relative">
               <div className="flex items-center gap-3 px-4 py-3 bg-gray-800 border border-gray-700 rounded-lg">
                 <div className="flex items-center gap-2 flex-shrink-0">
-                  <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-xs font-bold text-white">A</span>
-                  </div>
+                  <Image
+                    src="/axm-logo.png"
+                    alt="AXM"
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
                   <span className="font-medium text-white">AXM</span>
                 </div>
                 <input
