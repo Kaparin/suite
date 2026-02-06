@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifySessionTokenV2 } from '@/lib/auth/telegram'
+import { getRegisteredToken } from '@/lib/axiome/token-registry'
 
 // Helper to find or create project by ID or token address
 async function findOrCreateProject(idOrAddress: string, createIfMissing: boolean = false) {
@@ -19,9 +20,11 @@ async function findOrCreateProject(idOrAddress: string, createIfMissing: boolean
   if (project) return project
 
   // If not found and createIfMissing is true, create a minimal project for chain token
-  // WITHOUT an owner - the real owner can claim it later via the claiming flow
   if (createIfMissing && idOrAddress.startsWith('axm')) {
-    // We need a placeholder owner - find or create a system user
+    // Check token registry for known token info
+    const knownToken = getRegisteredToken(idOrAddress)
+
+    // Find or create system user for placeholder ownership
     let systemUser = await prisma.user.findFirst({
       where: { telegramId: 'SYSTEM' }
     })
@@ -39,9 +42,11 @@ async function findOrCreateProject(idOrAddress: string, createIfMissing: boolean
     project = await prisma.project.create({
       data: {
         tokenAddress: idOrAddress,
-        name: 'Unclaimed Token',
-        ticker: 'TOKEN',
-        ownerId: systemUser.id, // System user placeholder - real owner claims later
+        name: knownToken?.name || 'Unclaimed Token',
+        ticker: knownToken?.symbol || 'TOKEN',
+        logo: knownToken?.logoUrl || null,
+        isVerified: knownToken?.verified || false,
+        ownerId: systemUser.id,
         status: 'LAUNCHED'
       }
     })

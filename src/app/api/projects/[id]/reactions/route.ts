@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifySessionTokenV2 } from '@/lib/auth/telegram'
+import { getRegisteredToken } from '@/lib/axiome/token-registry'
 
 type ReactionType = 'ROCKET' | 'FIRE' | 'HEART' | 'EYES' | 'WARNING'
 
@@ -135,6 +136,9 @@ export async function POST(
 
     // If project doesn't exist but this is a chain token, create a placeholder project
     if (!project && id.startsWith('axm')) {
+      // Check token registry for known token info
+      const knownToken = getRegisteredToken(id)
+
       // Create system user if needed
       let systemUser = await prisma.user.findFirst({
         where: { telegramId: 'SYSTEM' }
@@ -153,8 +157,10 @@ export async function POST(
       project = await prisma.project.create({
         data: {
           tokenAddress: id,
-          name: 'Unclaimed Token',
-          ticker: 'TOKEN',
+          name: knownToken?.name || 'Unclaimed Token',
+          ticker: knownToken?.symbol || 'TOKEN',
+          logo: knownToken?.logoUrl || null,
+          isVerified: knownToken?.verified || false,
           ownerId: systemUser.id,
           status: 'LAUNCHED'
         }
