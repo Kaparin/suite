@@ -82,15 +82,26 @@
     },
     "token": {
       "title": "$LAUNCH Token",
-      "subtitle": "Bald verfügbar",
-      "description": "Der native Token von Axiome Launch Suite. Halte $LAUNCH für Premium-Features, reduzierte Gebühren und exklusiven Presale-Zugang.",
+      "subtitle": "Ökosystem-Token",
+      "description": "Der native Token des Axiome Launch Suite Ökosystems. $LAUNCH-Halter erhalten exklusive Vorteile und teilen den Erfolg aller über unsere Plattform gestarteten Projekte.",
+      "holdersTitle": "Für $LAUNCH-Halter",
       "features": {
-        "premium": "Premium KI-Generierungen",
-        "fees": "Reduzierte Gebühren",
-        "presale": "Früher Presale-Zugang",
-        "governance": "Abstimmung über Features"
+        "discount": "Rabatte auf vollständige Projektunterstützung",
+        "support": "Prioritäre Unterstützung: technische Spezifikationen, Landing Pages, Marketing",
+        "revenue": "Umsatzbeteiligung an allen neuen Projekten",
+        "earlyAccess": "Früher Zugang zu vielversprechenden Launches"
       },
-      "notify": "Benachrichtigt werden"
+      "revenueTitle": "Umsatzbeteiligung",
+      "revenueDescription": "Jedes über Axiome Launch Suite gestartete Projekt generiert Gebühren. $LAUNCH-Halter erhalten einen Anteil dieser Gebühren proportional zu ihren Beständen.",
+      "servicesTitle": "Premium-Dienste",
+      "services": {
+        "techSpecs": "Technische Spezifikationen & Tokenomics-Design",
+        "landing": "Professionelle Landing Pages",
+        "marketing": "Marketingstrategie & Content",
+        "support": "Vollständige Launch-Unterstützung & Beratung"
+      },
+      "notify": "Benachrichtigt werden",
+      "learnMore": "Mehr erfahren"
     },
     "cta": {
       "title": "Bereit zum Launch?",

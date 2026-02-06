@@ -82,15 +82,26 @@
     },
     "token": {
       "title": "$LAUNCH 代币",
-      "subtitle": "即将推出",
-      "description": "Axiome Launch Suite的原生代币。持有$LAUNCH解锁高级功能、降低费用和独家预售访问权。",
+      "subtitle": "生态系统代币",
+      "description": "Axiome Launch Suite生态系统的原生代币。$LAUNCH持有者获得独家权益，并分享通过我们平台启动的所有项目的成功。",
+      "holdersTitle": "$LAUNCH持有者权益",
       "features": {
-        "premium": "高级AI生成",
-        "fees": "降低平台费用",
-        "presale": "预售早期访问",
-        "governance": "新功能投票"
+        "discount": "全程项目支持折扣",
+        "support": "优先协助：技术规格、落地页、营销",
+        "revenue": "所有新项目的收益分成",
+        "earlyAccess": "有前景项目的早期访问权"
       },
-      "notify": "获取通知"
+      "revenueTitle": "收益分享",
+      "revenueDescription": "通过Axiome Launch Suite启动的每个项目都会产生费用。$LAUNCH持有者根据其持有量按比例获得这些费用的分成。",
+      "servicesTitle": "高级服务",
+      "services": {
+        "techSpecs": "技术规格和代币经济学设计",
+        "landing": "专业落地页",
+        "marketing": "营销策略和内容",
+        "support": "全程启动支持和咨询"
+      },
+      "notify": "获取通知",
+      "learnMore": "了解更多"
     },
     "cta": {
       "title": "准备启动？",

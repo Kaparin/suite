@@ -82,15 +82,26 @@
     },
     "token": {
       "title": "$LAUNCH Token",
-      "subtitle": "Coming Soon",
-      "description": "The native token of Axiome Launch Suite. Hold $LAUNCH to unlock premium features, reduced fees, and exclusive access to presales.",
+      "subtitle": "Ecosystem Token",
+      "description": "The native token of Axiome Launch Suite ecosystem. $LAUNCH holders get exclusive benefits and share in the success of all projects launched through our platform.",
+      "holdersTitle": "For $LAUNCH Holders",
       "features": {
-        "premium": "Premium AI generations",
-        "fees": "Reduced platform fees",
-        "presale": "Early access to presales",
-        "governance": "Voting on new features"
+        "discount": "Discounts on full project support",
+        "support": "Priority assistance: tech specs, landing pages, marketing",
+        "revenue": "Revenue share from all new projects",
+        "earlyAccess": "Early access to promising launches"
       },
-      "notify": "Get Notified"
+      "revenueTitle": "Revenue Sharing",
+      "revenueDescription": "Every project launched through Axiome Launch Suite generates fees. $LAUNCH holders receive a share of these fees proportional to their holdings.",
+      "servicesTitle": "Premium Services",
+      "services": {
+        "techSpecs": "Technical specifications & tokenomics design",
+        "landing": "Professional landing pages",
+        "marketing": "Marketing strategy & content",
+        "support": "Full launch support & consulting"
+      },
+      "notify": "Get Notified",
+      "learnMore": "Learn More"
     },
     "cta": {
       "title": "Ready to Launch?",
