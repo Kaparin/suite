@@ -2,6 +2,55 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
+// Helper to find or create project by ID or token address
+async function findOrCreateProject(idOrAddress: string, createIfMissing: boolean = false) {
+  // First try to find by project ID
+  let project = await prisma.project.findUnique({
+    where: { id: idOrAddress }
+  })
+
+  if (project) return project
+
+  // Try to find by token address
+  project = await prisma.project.findUnique({
+    where: { tokenAddress: idOrAddress }
+  })
+
+  if (project) return project
+
+  // If not found and createIfMissing is true, create a minimal project for chain token
+  // WITHOUT an owner - the real owner can claim it later via the claiming flow
+  if (createIfMissing && idOrAddress.startsWith('axm')) {
+    // We need a placeholder owner - find or create a system user
+    let systemUser = await prisma.user.findFirst({
+      where: { telegramId: 'SYSTEM' }
+    })
+
+    if (!systemUser) {
+      systemUser = await prisma.user.create({
+        data: {
+          telegramId: 'SYSTEM',
+          username: 'System',
+          telegramFirstName: 'System'
+        }
+      })
+    }
+
+    project = await prisma.project.create({
+      data: {
+        tokenAddress: idOrAddress,
+        name: 'Unclaimed Token',
+        ticker: 'TOKEN',
+        ownerId: systemUser.id, // System user placeholder - real owner claims later
+        status: 'LAUNCHED'
+      }
+    })
+    return project
+  }
+
+  return null
+}
+
 // GET /api/projects/[id]/comments - Get comments for a project
 export async function GET(
   request: NextRequest,
@@ -13,9 +62,19 @@ export async function GET(
     const limit = parseInt(searchParams.get('limit') || '50')
     const offset = parseInt(searchParams.get('offset') || '0')
 
+    // Find project by ID or token address
+    const project = await findOrCreateProject(id)
+
+    if (!project) {
+      return NextResponse.json({
+        comments: [],
+        pagination: { total: 0, limit, offset, hasMore: false }
+      })
+    }
+
     const [comments, total] = await Promise.all([
       prisma.comment.findMany({
-        where: { projectId: id },
+        where: { projectId: project.id },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: offset,
@@ -30,7 +89,7 @@ export async function GET(
           }
         }
       }),
-      prisma.comment.count({ where: { projectId: id } })
+      prisma.comment.count({ where: { projectId: project.id } })
     ])
 
     return NextResponse.json({
@@ -94,14 +153,12 @@ export async function POST(
       )
     }
 
-    // Check if project exists
-    const project = await prisma.project.findUnique({
-      where: { id }
-    })
+    // Find or create project (auto-creates for chain tokens)
+    const project = await findOrCreateProject(id, true)
 
     if (!project) {
       return NextResponse.json(
-        { error: 'Project not found' },
+        { error: 'Token not found' },
         { status: 404 }
       )
     }
@@ -109,7 +166,7 @@ export async function POST(
     // Create comment
     const comment = await prisma.comment.create({
       data: {
-        projectId: id,
+        projectId: project.id,
         userId: decoded.userId,
         content: content.trim()
       },

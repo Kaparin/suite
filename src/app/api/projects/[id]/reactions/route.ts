@@ -4,6 +4,23 @@ import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 
 type ReactionType = 'ROCKET' | 'FIRE' | 'HEART' | 'EYES' | 'WARNING'
 
+// Helper to find project by ID or token address
+async function findProject(idOrAddress: string) {
+  // First try to find by project ID
+  let project = await prisma.project.findUnique({
+    where: { id: idOrAddress }
+  })
+
+  if (project) return project
+
+  // Try to find by token address
+  project = await prisma.project.findUnique({
+    where: { tokenAddress: idOrAddress }
+  })
+
+  return project
+}
+
 // GET /api/projects/[id]/reactions - Get reactions for a project
 export async function GET(
   request: NextRequest,
@@ -12,10 +29,22 @@ export async function GET(
   try {
     const { id } = await params
 
+    // Find project by ID or token address
+    const project = await findProject(id)
+
+    if (!project) {
+      // Return empty counts for non-existent projects
+      return NextResponse.json({
+        counts: { ROCKET: 0, FIRE: 0, HEART: 0, EYES: 0, WARNING: 0 },
+        userReactions: [],
+        total: 0
+      })
+    }
+
     // Get reaction counts by type
     const reactionCounts = await prisma.reaction.groupBy({
       by: ['type'],
-      where: { projectId: id },
+      where: { projectId: project.id },
       _count: { type: true }
     })
 
@@ -28,7 +57,7 @@ export async function GET(
       if (decoded) {
         const reactions = await prisma.reaction.findMany({
           where: {
-            projectId: id,
+            projectId: project.id,
             userId: decoded.userId
           },
           select: { type: true }
@@ -101,10 +130,36 @@ export async function POST(
       )
     }
 
-    // Check if project exists
-    const project = await prisma.project.findUnique({
-      where: { id }
-    })
+    // Find project by ID or token address
+    let project = await findProject(id)
+
+    // If project doesn't exist but this is a chain token, create a placeholder project
+    if (!project && id.startsWith('axm')) {
+      // Create system user if needed
+      let systemUser = await prisma.user.findFirst({
+        where: { telegramId: 'SYSTEM' }
+      })
+
+      if (!systemUser) {
+        systemUser = await prisma.user.create({
+          data: {
+            telegramId: 'SYSTEM',
+            username: 'System',
+            telegramFirstName: 'System'
+          }
+        })
+      }
+
+      project = await prisma.project.create({
+        data: {
+          tokenAddress: id,
+          name: 'Unclaimed Token',
+          ticker: 'TOKEN',
+          ownerId: systemUser.id,
+          status: 'LAUNCHED'
+        }
+      })
+    }
 
     if (!project) {
       return NextResponse.json(
@@ -117,7 +172,7 @@ export async function POST(
     const existingReaction = await prisma.reaction.findUnique({
       where: {
         projectId_userId_type: {
-          projectId: id,
+          projectId: project.id,
           userId: decoded.userId,
           type
         }
@@ -138,7 +193,7 @@ export async function POST(
       // Add reaction (toggle on)
       await prisma.reaction.create({
         data: {
-          projectId: id,
+          projectId: project.id,
           userId: decoded.userId,
           type
         }

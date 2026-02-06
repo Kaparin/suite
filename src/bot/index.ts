@@ -31,7 +31,7 @@ type ProjectWithScore = ProjectWithMetricsAndFlags & {
 }
 
 const bot = new Bot<MyContext>(process.env.TELEGRAM_BOT_TOKEN!)
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://suite-1.vercel.app'
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.axiome-launch.com'
 
 // Session middleware
 bot.use(session({
@@ -92,7 +92,7 @@ bot.command('start', async (ctx) => {
     })
 
     // Generate auth URL with user data
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://suite-1.vercel.app'
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.axiome-launch.com'
 
     // Fetch user wallets for response
     const wallets = await prisma.wallet.findMany({

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const customUrl = searchParams.get('url')
 
   // Determine the base URL
-  const baseUrl = customUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://suite-1.vercel.app'
+  const baseUrl = customUrl || process.env.NEXT_PUBLIC_APP_URL || 'https://www.axiome-launch.com'
   const webhookUrl = `${baseUrl}/api/telegram/webhook`
 
   try {

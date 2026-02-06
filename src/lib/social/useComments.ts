@@ -11,7 +11,7 @@ interface CommentUser {
   isVerified: boolean
 }
 
-interface Comment {
+export interface Comment {
   id: string
   content: string
   isEdited: boolean
@@ -29,6 +29,7 @@ interface UseCommentsReturn {
   fetchComments: () => Promise<void>
   loadMore: () => Promise<void>
   addComment: (content: string) => Promise<Comment | null>
+  deleteComment: (commentId: string) => Promise<boolean>
 }
 
 export function useComments(projectId: string): UseCommentsReturn {
@@ -125,6 +126,36 @@ export function useComments(projectId: string): UseCommentsReturn {
     }
   }, [projectId, token])
 
+  const deleteComment = useCallback(async (commentId: string): Promise<boolean> => {
+    if (!token) {
+      setError('Please log in to delete comments')
+      return false
+    }
+
+    try {
+      const response = await fetch(`/api/comments/${commentId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      })
+
+      if (!response.ok) {
+        const data = await response.json()
+        throw new Error(data.error || 'Failed to delete comment')
+      }
+
+      // Remove comment from the list
+      setComments(prev => prev.filter(c => c.id !== commentId))
+      setTotal(prev => prev - 1)
+
+      return true
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete comment')
+      return false
+    }
+  }, [token])
+
   return {
     comments,
     isLoading,
@@ -133,6 +164,7 @@ export function useComments(projectId: string): UseCommentsReturn {
     total,
     fetchComments,
     loadMore,
-    addComment
+    addComment,
+    deleteComment
   }
 }

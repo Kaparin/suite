@@ -39,7 +39,7 @@ type TokenData = {
     } | null
     links: ProjectLinks | null
     isVerified: boolean
-    createdAt: string
+    createdAt: string | null
     riskFlags: RiskFlag[]
     owner?: {
       walletAddress?: string
@@ -558,37 +558,37 @@ export default function TokenPage() {
                 </div>
               )}
 
-              <p className="text-sm text-gray-500 mt-2">
-                {t('createdOn')} {formatDate(project.createdAt)}
-              </p>
+              {project.createdAt && (
+                <p className="text-sm text-gray-500 mt-2">
+                  {t('createdOn')} {formatDate(project.createdAt)}
+                </p>
+              )}
             </CardContent>
           </Card>
         </motion.div>
 
         {/* Social Features - Reactions & Comments */}
-        {project.id && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.0 }}
-            className="space-y-6"
-          >
-            {/* Reactions */}
-            <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-              <CardContent>
-                <h2 className="text-xl font-semibold mb-4">Community Reactions</h2>
-                <ReactionBar projectId={project.id} />
-              </CardContent>
-            </Card>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.0 }}
+          className="space-y-6"
+        >
+          {/* Reactions - use project.id or tokenAddress */}
+          <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
+            <CardContent>
+              <h2 className="text-xl font-semibold mb-4">Community Reactions</h2>
+              <ReactionBar projectId={project.id || tokenAddress} />
+            </CardContent>
+          </Card>
 
-            {/* Comments */}
-            <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
-              <CardContent>
-                <CommentSection projectId={project.id} />
-              </CardContent>
-            </Card>
-          </motion.div>
-        )}
+          {/* Comments - use project.id or tokenAddress */}
+          <Card className="bg-gray-900/50 backdrop-blur-sm border-gray-800/50">
+            <CardContent>
+              <CommentSection projectId={project.id || tokenAddress} />
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Disclaimer */}
         <p className="text-center text-gray-500 text-sm mt-8">

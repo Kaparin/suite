@@ -193,7 +193,7 @@ export async function GET(
               decimals: chainTokenInfo.decimals
             } : null,
             isVerified: knownToken?.verified || false,
-            createdAt: new Date().toISOString(),
+            createdAt: null, // Unknown for chain-discovered tokens without DB record
             riskFlags: [],
             owner: chainMinter ? { wallets: [{ address: chainMinter }] } : null,
           },
