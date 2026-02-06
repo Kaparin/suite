@@ -46,7 +46,15 @@
       "Bash(npm run lint)",
       "Bash(wc:*)",
       "WebFetch(domain:ibb.co)",
-      "Bash(git diff:*)"
+      "Bash(git diff:*)",
+      "Bash(test:*)",
+      "Bash(git rm:*)",
+      "WebFetch(domain:api.mexc.com)",
+      "WebFetch(domain:api.axiometrade.pro)",
+      "WebFetch(domain:api-docs.axiomeinfo.org)",
+      "WebFetch(domain:api-chain.axiomechain.org)",
+      "Bash(for pool in axm1fh0hm98gkd96rx3w92ea2wm45q85eu9g3hqvx2p968ppfqv392vs8d4jqx axm1zjd5lwhch4ndnmayqxurja4x5y5mavy9ktrk6fzsyzan4wcgawnqeh4llv axm1tzv867e4qz06rue60k4v2pk5xevj9gn3r7274qv0nprl68kvykgs6w4emy axm1qsufk856fmakeycjq5swmtd53l4drqtu4xefdfuu9h4m5ce89rhschkv0c axm1n8zk28ycq7s5epdknwytvvpt8848954yfuz0vcf6l3yz73g4sd2s36s3wm)",
+      "Bash(do echo \"=== $pool ===\")"
     ]
   }
 }

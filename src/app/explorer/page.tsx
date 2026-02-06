@@ -21,6 +21,11 @@ interface TokenData {
   isNew: boolean
   isTrending: boolean
   isVerified: boolean
+  // Price data
+  priceInAxm?: number | null
+  priceInUsd?: number | null
+  liquidity?: number | null
+  hasPool?: boolean
 }
 
 interface TokensResponse {
@@ -195,6 +200,24 @@ export default function ExplorerPage() {
     if (diffDays < 7) return `${diffDays}д назад`
     if (diffDays < 30) return `${Math.floor(diffDays / 7)}нед назад`
     return `${Math.floor(diffDays / 30)}мес назад`
+  }
+
+  const formatPrice = (price: number | null | undefined) => {
+    if (price === null || price === undefined) return null
+    if (price < 0.000001) return price.toExponential(2)
+    if (price < 0.0001) return price.toFixed(6)
+    if (price < 0.01) return price.toFixed(5)
+    if (price < 1) return price.toFixed(4)
+    if (price < 100) return price.toFixed(3)
+    if (price < 10000) return price.toFixed(2)
+    return price.toLocaleString(undefined, { maximumFractionDigits: 0 })
+  }
+
+  const formatLiquidity = (liquidity: number | null | undefined) => {
+    if (!liquidity) return null
+    if (liquidity >= 1000000) return `${(liquidity / 1000000).toFixed(2)}M`
+    if (liquidity >= 1000) return `${(liquidity / 1000).toFixed(1)}K`
+    return liquidity.toFixed(0)
   }
 
   return (
@@ -485,6 +508,16 @@ export default function ExplorerPage() {
                                 Новый
                               </span>
                             )}
+                            {token.isTrending && (
+                              <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full">
+                                🔥 Trending
+                              </span>
+                            )}
+                            {token.hasPool && !token.isTrending && (
+                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">
+                                DEX
+                              </span>
+                            )}
                           </div>
                         </div>
 
@@ -498,12 +531,28 @@ export default function ExplorerPage() {
                         {/* Stats */}
                         <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-800">
                           <div>
-                            <p className="text-xs text-gray-500 mb-1">Эмиссия</p>
-                            <p className="text-sm font-medium text-white">{token.displayTotalSupply}</p>
+                            <p className="text-xs text-gray-500 mb-1">Цена</p>
+                            {token.priceInUsd ? (
+                              <p className="text-sm font-medium text-green-400">
+                                ${formatPrice(token.priceInUsd)}
+                              </p>
+                            ) : token.priceInAxm ? (
+                              <p className="text-sm font-medium text-blue-400">
+                                {formatPrice(token.priceInAxm)} AXM
+                              </p>
+                            ) : (
+                              <p className="text-sm font-medium text-gray-500">—</p>
+                            )}
                           </div>
                           <div>
-                            <p className="text-xs text-gray-500 mb-1">Создан</p>
-                            <p className="text-sm font-medium text-white">{formatAge(token.createdAt)}</p>
+                            <p className="text-xs text-gray-500 mb-1">Ликвидность</p>
+                            {token.liquidity ? (
+                              <p className="text-sm font-medium text-white">
+                                {formatLiquidity(token.liquidity)} AXM
+                              </p>
+                            ) : (
+                              <p className="text-sm font-medium text-gray-500">—</p>
+                            )}
                           </div>
                         </div>
 

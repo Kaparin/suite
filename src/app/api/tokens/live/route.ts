@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { KNOWN_TOKENS } from '@/lib/axiome/token-registry'
+import { getAllTokenPrices, getAxmPriceUsd } from '@/lib/axiome/pool-discovery'
 
 const REST_URL = process.env.AXIOME_REST_URL
 const CW20_CODE_ID = process.env.NEXT_PUBLIC_CW20_CODE_ID || '1'
@@ -21,6 +22,11 @@ interface TokenData {
   isNew: boolean
   isTrending: boolean
   isVerified: boolean
+  // Price data
+  priceInAxm?: number | null
+  priceInUsd?: number | null
+  liquidity?: number | null
+  hasPool?: boolean
 }
 
 // Get all CW20 contracts from chain
@@ -164,6 +170,10 @@ export async function GET(request: NextRequest) {
       allContracts.add(contract)
     }
 
+    // Fetch price data for all tokens with pools
+    const tokenPrices = await getAllTokenPrices()
+    const axmPriceUsd = await getAxmPriceUsd()
+
     // Fetch token data
     const tokens: TokenData[] = []
     const contractList = Array.from(allContracts)
@@ -193,6 +203,9 @@ export async function GET(request: NextRequest) {
               ? Math.floor((now.getTime() - new Date(createdAt).getTime()) / (1000 * 60 * 60 * 24))
               : null
 
+            // Get price data from pools
+            const priceData = tokenPrices.get(contractAddress.toLowerCase())
+
             const token: TokenData = {
               contractAddress,
               name: knownToken?.name || dbProject?.name || tokenInfo.name || 'Unknown',
@@ -207,8 +220,13 @@ export async function GET(request: NextRequest) {
               holderCount: 0,
               owner: dbProject?.owner?.wallets?.[0]?.address || undefined,
               isNew: ageInDays !== null && ageInDays <= 7,
-              isTrending: false,
-              isVerified: knownToken?.verified || dbProject?.isVerified || false
+              isTrending: priceData ? priceData.liquidity > 1000 : false, // Trending if high liquidity
+              isVerified: knownToken?.verified || dbProject?.isVerified || false,
+              // Price data
+              priceInAxm: priceData?.priceInAxm || null,
+              priceInUsd: priceData?.priceInUsd || null,
+              liquidity: priceData?.liquidity || null,
+              hasPool: !!priceData
             }
 
             return token
@@ -247,10 +265,16 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Sort: verified first, then by creation date
+    // Sort: verified first, then by liquidity (has pool), then by creation date
     filteredTokens.sort((a, b) => {
+      // Verified first
       if (a.isVerified && !b.isVerified) return -1
       if (!a.isVerified && b.isVerified) return 1
+      // Then by liquidity (tokens with pools first)
+      const aLiq = a.liquidity || 0
+      const bLiq = b.liquidity || 0
+      if (aLiq !== bLiq) return bLiq - aLiq
+      // Then by creation date
       return new Date(b.createdAt || 0).getTime() - new Date(a.createdAt || 0).getTime()
     })
 
@@ -267,7 +291,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       tokens: paginatedTokens,
       pagination: { total, limit, offset, hasMore: offset + limit < total },
-      counts
+      counts,
+      axmPriceUsd
     })
   } catch (error) {
     console.error('Error fetching live tokens:', error)
