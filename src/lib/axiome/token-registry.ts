@@ -13,6 +13,14 @@ export interface RegisteredToken {
 // Official/verified tokens
 export const KNOWN_TOKENS: RegisteredToken[] = [
   {
+    contractAddress: 'axm1zvjnc08uy0zz43m0nlh9f5aetpa3amn6a034yqvmsgvzshk9clds375xx9',
+    symbol: 'LAUNCH',
+    name: 'Launch Token',
+    decimals: 6,
+    logoUrl: 'https://image2url.com/r2/default/images/1770220782157-0e2ab4ed-cb61-46aa-a681-b50a302b1254.png',
+    verified: true
+  },
+  {
     contractAddress: 'axm1etxtq3v4chzn7xrah3w6ukkxy7vlc889n5ervgxz425msar6ajzskdmm0v',
     symbol: 'AXP',
     name: 'Axiome Points',
