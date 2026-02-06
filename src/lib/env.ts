@@ -75,7 +75,8 @@ export const env = {
   DATABASE_URL: process.env.DATABASE_URL!,
   JWT_SECRET: process.env.JWT_SECRET || 'axiome-launch-suite-secret-key-change-in-production',
   TELEGRAM_BOT_TOKEN: process.env.TELEGRAM_BOT_TOKEN || '',
-  AXIOME_REST_URL: process.env.AXIOME_REST_URL || 'https://axiome-api.quantnode.tech',
+  // Use official public REST gateway by default
+  AXIOME_REST_URL: process.env.AXIOME_REST_URL || 'https://api-chain.axiomechain.org',
   VERIFICATION_WALLET_ADDRESS: process.env.VERIFICATION_WALLET_ADDRESS || 'axm1weskc3hd8d5u0d5s0wprys0sqljqkcak6twd24',
   NODE_ENV: process.env.NODE_ENV || 'development',
 } as const

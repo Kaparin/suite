@@ -1,11 +1,18 @@
 // Axiome blockchain client using public REST API
 // Configure AXIOME_REST_URL environment variable with your node's REST endpoint
 
-const REST_URL = process.env.AXIOME_REST_URL
+// Primary and fallback REST endpoints
+const PRIMARY_REST_URL = process.env.AXIOME_REST_URL || 'https://api-chain.axiomechain.org'
+const FALLBACK_REST_URL = 'https://axiome-api.quantnode.tech'
 
-if (!REST_URL) {
-  console.warn('AXIOME_REST_URL not configured - blockchain features will be unavailable')
-}
+// Request timeout in milliseconds
+const REQUEST_TIMEOUT = 10000 // 10 seconds
+
+// Maximum retry attempts per endpoint
+const MAX_RETRIES = 2
+
+// Delay between retries (ms)
+const RETRY_DELAY = 1000
 
 export interface TokenInfo {
   address: string
@@ -29,30 +36,78 @@ export interface Transaction {
   amount: string
 }
 
-class AxiomeClient {
-  private baseUrl: string | undefined
+// Helper to delay execution
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
-  constructor(baseUrl?: string) {
-    this.baseUrl = baseUrl || REST_URL
+class AxiomeClient {
+  private primaryUrl: string
+  private fallbackUrl: string
+
+  constructor(primaryUrl?: string, fallbackUrl?: string) {
+    this.primaryUrl = primaryUrl || PRIMARY_REST_URL
+    this.fallbackUrl = fallbackUrl || FALLBACK_REST_URL
+  }
+
+  private async fetchWithTimeout<T>(url: string, timeout: number): Promise<T> {
+    const controller = new AbortController()
+    const timeoutId = setTimeout(() => controller.abort(), timeout)
+
+    try {
+      const response = await fetch(url, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        signal: controller.signal,
+        next: { revalidate: 60 } // Cache for 60 seconds
+      })
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status} ${response.statusText}`)
+      }
+
+      return response.json()
+    } finally {
+      clearTimeout(timeoutId)
+    }
   }
 
   private async fetch<T>(endpoint: string): Promise<T> {
-    if (!this.baseUrl) {
-      throw new Error('AXIOME_REST_URL not configured')
+    const endpoints = [this.primaryUrl, this.fallbackUrl]
+    let lastError: Error | null = null
+
+    for (const baseUrl of endpoints) {
+      for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        try {
+          return await this.fetchWithTimeout<T>(`${baseUrl}${endpoint}`, REQUEST_TIMEOUT)
+        } catch (error) {
+          lastError = error instanceof Error ? error : new Error(String(error))
+
+          // Don't retry on 4xx errors (client errors)
+          if (lastError.message.includes('API error: 4')) {
+            throw lastError
+          }
+
+          // Log retry attempt
+          console.warn(
+            `[AxiomeClient] Request failed (${baseUrl}, attempt ${attempt + 1}/${MAX_RETRIES}):`,
+            lastError.message
+          )
+
+          // Wait before retry (except on last attempt of this endpoint)
+          if (attempt < MAX_RETRIES - 1) {
+            await delay(RETRY_DELAY)
+          }
+        }
+      }
+
+      // Log switching to fallback
+      if (baseUrl === this.primaryUrl) {
+        console.warn('[AxiomeClient] Primary endpoint failed, trying fallback...')
+      }
     }
 
-    const response = await fetch(`${this.baseUrl}${endpoint}`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      next: { revalidate: 60 } // Cache for 60 seconds
-    })
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`)
-    }
-
-    return response.json()
+    // All attempts failed
+    throw lastError || new Error('All API endpoints failed')
   }
 
   // Get account balances
