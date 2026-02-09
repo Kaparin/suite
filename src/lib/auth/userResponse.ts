@@ -1,9 +1,10 @@
 import 'server-only'
 
-import type { AuthUser } from './useAuth'
+import type { AuthUser, LockTier } from './useAuth'
 
 /**
  * Build a standard AuthUser response object from a Prisma user with wallets.
+ * Optionally includes the user's highest active lock tier.
  */
 export function buildAuthUserResponse(user: {
   id: string
@@ -20,7 +21,7 @@ export function buildAuthUserResponse(user: {
     verifiedAt: Date
     createdAt: Date
   }>
-}): AuthUser {
+}, tier?: LockTier | null): AuthUser {
   const primaryWallet = user.wallets.find(w => w.isPrimary) || user.wallets[0] || null
   return {
     id: user.id,
@@ -38,6 +39,7 @@ export function buildAuthUserResponse(user: {
     })),
     primaryWallet: primaryWallet?.address || null,
     isVerified: user.wallets.length > 0,
-    plan: user.plan
+    plan: user.plan,
+    tier: tier ?? null
   }
 }

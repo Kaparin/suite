@@ -15,6 +15,8 @@ export interface AuthWallet {
   createdAt: string
 }
 
+export type LockTier = 'EXPLORER' | 'BUILDER' | 'FOUNDER' | 'GOVERNOR'
+
 export interface AuthUser {
   id: string
   telegramId: string | null
@@ -25,6 +27,7 @@ export interface AuthUser {
   primaryWallet: string | null    // convenience: primary wallet address
   isVerified: boolean             // computed: wallets.length > 0
   plan: string
+  tier: LockTier | null           // highest active lock tier
 }
 
 interface AuthContextType {

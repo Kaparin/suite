@@ -1,8 +1,40 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { openai, MODELS } from '@/lib/openai'
+import { openai, getModelForPlan } from '@/lib/openai'
+import { verifySessionTokenV2 } from '@/lib/auth/telegram'
+import { prisma } from '@/lib/prisma'
+import { getUserEffectivePlan } from '@/lib/payments'
+import { AI_LIMITS } from '@/lib/auth/features'
 
 export async function POST(request: NextRequest) {
   try {
+    // Check auth and rate limits
+    const authHeader = request.headers.get('Authorization')
+    let plan: 'FREE' | 'PRO' = 'FREE'
+
+    if (authHeader?.startsWith('Bearer ')) {
+      const decoded = verifySessionTokenV2(authHeader.substring(7))
+      if (decoded) {
+        plan = await getUserEffectivePlan(decoded.userId)
+
+        // Check daily limit
+        const today = new Date()
+        today.setHours(0, 0, 0, 0)
+        const todayCount = await prisma.aiGeneration.count({
+          where: {
+            userId: decoded.userId,
+            createdAt: { gte: today },
+          },
+        })
+        const limit = AI_LIMITS[plan].daily
+        if (todayCount >= limit) {
+          return NextResponse.json(
+            { error: `Daily limit reached (${limit}/${limit}). ${plan === 'FREE' ? 'Upgrade to PRO for more.' : ''}` },
+            { status: 429 }
+          )
+        }
+      }
+    }
+
     const body = await request.json()
     const { projectName, idea, audience, utilities, tone, language } = body
 
@@ -67,7 +99,7 @@ Return JSON with this exact structure:
 }`
 
     const completion = await openai.chat.completions.create({
-      model: MODELS.free,
+      model: getModelForPlan(plan),
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt },

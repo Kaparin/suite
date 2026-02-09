@@ -11,6 +11,7 @@ import { defaultLocale, type Locale } from '@/i18n/config'
 import { useWallet, truncateAddress } from '@/lib/wallet'
 import { useAuth } from '@/lib/auth/useAuth'
 import { UserMenu, WalletBindModal } from '@/components/auth'
+import { TierBadge } from '@/components/lock/TierBadge'
 
 export function Header() {
   const pathname = usePathname()
@@ -33,6 +34,7 @@ export function Header() {
     { name: t('home'), href: '/' },
     { name: t('explorer'), href: '/explorer' },
     { name: t('studio'), href: '/studio' },
+    { name: t('docs'), href: '/docs' },
   ]
 
   const handleConnect = () => {
@@ -121,7 +123,8 @@ export function Header() {
 
             {/* User Menu (if authenticated) */}
             {isAuthenticated && user && (
-              <div className="hidden sm:block">
+              <div className="hidden sm:flex items-center gap-2">
+                <TierBadge tier={user.tier} />
                 <UserMenu
                   user={user}
                   onLogout={logout}

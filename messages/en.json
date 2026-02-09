@@ -11,101 +11,130 @@
     "explorer": "Explorer",
     "studio": "Studio",
     "wallet": "Wallet",
-    "dashboard": "Dashboard"
+    "dashboard": "Dashboard",
+    "docs": "Launch Docs"
   },
   "home": {
+    "badges": {
+      "verifiedLinks": "Verified Links",
+      "reputation": "Reputation & Risk Flags",
+      "preLaunch": "Pre-launch Community Feedback"
+    },
     "hero": {
-      "title": "Token Launch Platform",
-      "subtitle": "Create, discuss, and launch tokens on Axiome blockchain. From idea to launch — with AI assistant and community support.",
-      "cta": "Begin Your Journey"
+      "title": "Axiome Trust Layer for Tokens & Projects",
+      "subtitle": "Token pages, verified links, reputation, and community feedback — all in one place.",
+      "subtitle2": "Create in 2 clicks anywhere. Build trust here.",
+      "cta1": "Explore Tokens",
+      "cta2": "Claim a Token Page",
+      "docsLink": "Read LAUNCH Docs",
+      "poweredBy": "Powered by on-chain proof & wallet signatures"
     },
-    "about": {
-      "title": "What is Launch Suite?",
-      "description": "Launch Suite is a platform for preparing and launching tokens on Axiome. We've created a unique system where tokens first exist as projects within the platform, and only after preparation are launched on the blockchain.",
-      "highlight": "This allows the community to discuss, evaluate, and provide feedback before the token even appears on the network."
+    "mockCard": {
+      "utility": "Utility Token",
+      "supply": "Supply",
+      "reserve": "Reserve",
+      "staking": "Staking",
+      "liquidity": "Liquidity",
+      "utilityAccess": "Unlock tiers & premium features",
+      "utilityReputation": "Build reputation & trust score",
+      "utilityGovernance": "Vote on platform decisions",
+      "utilityRewards": "Earn staking & community rewards",
+      "platformToken": "Platform token",
+      "axiomeChain": "Axiome Chain"
     },
-    "howItWorks": {
-      "title": "How It Works",
-      "steps": {
-        "create": {
-          "title": "Create a Project",
-          "description": "Describe your idea or use the AI assistant to generate tokenomics, descriptions, and launch plan. The token is created as a project within the platform."
-        },
-        "community": {
-          "title": "Gather Feedback",
-          "description": "The community sees your project in Explorer. Get comments, reactions, and advice before launch. Improve your project based on feedback."
-        },
-        "launch": {
-          "title": "Launch on Blockchain",
-          "description": "When ready — launch your token on Axiome blockchain via Token Lab. All information from the platform is automatically imported."
-        }
-      }
+    "why": {
+      "title": "Why this exists",
+      "problemTitle": "Problem",
+      "problemText1": "Creating tokens is easy. Understanding them isn't.",
+      "problemText2": "Most tokens launch without context: no official links, no clear description, no history, no community review — and trust collapses.",
+      "solutionTitle": "Solution",
+      "solutionText1": "A verified profile layer for every token.",
+      "solutionText2": "Axiome Launch adds project pages, token passports, community discussion, and transparent economics — so good projects stand out.",
+      "docsLink": "Learn more in Launch Docs"
     },
     "features": {
-      "title": "Platform Features",
-      "studio": {
-        "title": "AI Token Studio",
-        "description": "AI assistant helps create everything you need: name, description, tokenomics, FAQ, and even social media posts. Don't know where to start? Just describe your idea.",
-        "bullets": {
-          "generate": "Generate tokenomics and descriptions",
-          "edit": "AI editing of existing projects",
-          "promo": "Ready-made promo materials"
-        }
+      "title": "What you can do on Axiome Launch",
+      "subtitle": "Everything a token needs to build trust — from creation to community feedback.",
+      "tokenProfiles": {
+        "title": "Token Profiles",
+        "desc": "Rich pages with official links, update history, and community activity.",
+        "bullet1": "Description & links",
+        "bullet2": "Update timeline"
       },
-      "explorer": {
-        "title": "Token Explorer",
-        "description": "Explore all tokens on Axiome. Check trust scores, risk flags, community activity. Find promising projects before they take off.",
-        "bullets": {
-          "risk": "Risk assessment and warning flags",
-          "stats": "Holder and transaction statistics",
-          "upcoming": "Upcoming projects section"
-        }
+      "ownerVerification": {
+        "title": "Owner Verification",
+        "desc": "Claim a token page by connecting your wallet and signing once.",
+        "bullet1": "Ownership badge",
+        "bullet2": "Edit access"
       },
-      "ownership": {
-        "title": "Ownership & Editing",
-        "description": "Created a token? Verify ownership by linking your wallet and get full control over the project page. Add logo, links, update description.",
-        "bullets": {
-          "claim": "Ownership verification via wallet",
-          "edit": "Edit all information",
-          "ai": "AI assistant for content improvement"
-        }
+      "verifiedLinks": {
+        "title": "Verified Links",
+        "desc": "Anti-phishing link verification to protect users and projects.",
+        "bullet1": "Official social links",
+        "bullet2": "Warning flags"
       },
-      "community": {
-        "title": "Community",
-        "description": "Comment on projects, add reactions, follow updates. The community helps filter quality projects from scams.",
-        "bullets": {
-          "comments": "Comments and discussions",
-          "reactions": "Reactions: rocket, fire, warning",
-          "alerts": "Telegram notifications (coming soon)"
-        }
+      "riskFlags": {
+        "title": "Risk Flags & Trust Signals",
+        "desc": "Transparency signals that help users navigate noise.",
+        "bullet1": "Frequent link changes",
+        "bullet2": "Missing proof markers"
+      },
+      "preLaunch": {
+        "title": "Pre-Launch Projects",
+        "desc": "Show ideas before launch and gather feedback early.",
+        "bullet1": "Pre-launch listings",
+        "bullet2": "Community comments"
+      },
+      "aiStudio": {
+        "title": "AI Studio",
+        "desc": "Generate descriptions, tokenomics drafts, and promo content.",
+        "bullet1": "Idea to draft",
+        "bullet2": "Edit & improve",
+        "badge": "Beta"
       }
     },
-    "token": {
-      "title": "$LAUNCH Token",
-      "subtitle": "Ecosystem Token",
-      "description": "The native token of Axiome Launch Suite ecosystem. $LAUNCH holders get exclusive benefits and share in the success of all projects launched through our platform.",
-      "holdersTitle": "For $LAUNCH Holders",
-      "features": {
-        "discount": "Discounts on full project support",
-        "support": "Priority assistance: tech specs, landing pages, marketing",
-        "revenue": "Revenue share from all new projects",
-        "earlyAccess": "Early access to promising launches"
-      },
-      "revenueTitle": "Revenue Sharing",
-      "revenueDescription": "Every project launched through Axiome Launch Suite generates fees. $LAUNCH holders receive a share of these fees proportional to their holdings.",
-      "servicesTitle": "Premium Services",
-      "services": {
-        "techSpecs": "Technical specifications & tokenomics design",
-        "landing": "Professional landing pages",
-        "marketing": "Marketing strategy & content",
-        "support": "Full launch support & consulting"
-      },
-      "notify": "Get Notified",
-      "learnMore": "Learn More"
+    "steps": {
+      "title": "How it works",
+      "step1": { "title": "Create or Discover", "desc": "Create a project page (pre-launch) or explore existing tokens." },
+      "step2": { "title": "Verify & Enrich", "desc": "Token owners claim the page and add verified links + info." },
+      "step3": { "title": "Community Feedback", "desc": "Comments, reactions, and review templates surface quality." },
+      "step4": { "title": "Launch & Grow", "desc": "When you launch on-chain, your token already has context and reputation." }
+    },
+    "utility": {
+      "title": "LAUNCH token utility",
+      "subtitle": "LAUNCH is a utility token that powers access, reputation, and rewards inside the platform.",
+      "access": { "title": "Access", "desc": "Unlock features via Lock tiers: publish projects, vote, and use pro tools." },
+      "reputation": { "title": "Reputation", "desc": "Stake-to-list / stake-to-update reduces spam and signals seriousness." },
+      "rewards": { "title": "Rewards", "desc": "Earn for real contributions: reviews, reports, and community help — funded from platform economics." },
+      "readMore": "Read tokenomics"
+    },
+    "tiers": {
+      "title": "Lock tiers",
+      "cta": "Open Launch Docs",
+      "note": "Numbers may be adjusted by governance."
+    },
+    "feeSplit": {
+      "title": "Transparent economics",
+      "subtitle": "Platform revenue supports development, community rewards, grants, and LAUNCH buyback — designed for long-term sustainability.",
+      "operations": "Operations",
+      "buyback": "Buyback LAUNCH",
+      "rewards": "Rewards",
+      "grants": "Grants / Accelerator"
+    },
+    "community": {
+      "title": "Built with the Axiome community",
+      "subtitle": "Discuss tokens, spot red flags early, and help good projects get discovered.",
+      "cta": "Join discussion in Explorer",
+      "comment1": { "user": "alex_dev", "text": "Solid project, the roadmap looks realistic. Links verified.", "badge": "Builder" },
+      "comment2": { "user": "crypto_guard", "text": "Flagged a suspicious link change — resolved by the team within 2h.", "badge": "Explorer" },
+      "comment3": { "user": "dao_whale", "text": "Great community discussion before launch. Trust score growing.", "badge": "Governor" }
     },
     "cta": {
-      "title": "Ready to Launch?",
-      "subtitle": "Create a token project in minutes. AI helps with content, community — with feedback."
+      "title": "Explore tokens. Claim ownership. Build trust.",
+      "subtitle": "The trust layer for every token in the Axiome ecosystem.",
+      "cta1": "Explore Tokens",
+      "cta2": "Claim a Token Page",
+      "docsLink": "Read Launch Docs"
     }
   },
   "explorer": {
@@ -404,6 +433,389 @@
       "totalTokens": "Total Tokens",
       "totalReactions": "Total Reactions",
       "totalComments": "Total Comments"
+    }
+  },
+  "docs": {
+    "sidebar": {
+      "onThisPage": "On this page",
+      "overview": "Overview",
+      "whyLaunch": "Why Launch",
+      "features": "Features",
+      "token": "LAUNCH Token",
+      "accessTiers": "Access Tiers",
+      "reputation": "Reputation",
+      "rewards": "Rewards",
+      "monetization": "Monetization",
+      "feeSplit": "Fee Split",
+      "allocation": "Allocation",
+      "governance": "Governance",
+      "transparency": "Transparency",
+      "disclaimer": "Disclaimer"
+    },
+    "hero": {
+      "badge": "LAUNCH Litepaper",
+      "title": "Launch Docs",
+      "subtitle": "Axiome Launch — the trust and reputation layer for tokens and projects in the Axiome ecosystem.",
+      "description": "We're building a place where tokens and projects get a \"passport\": description, official links, update history, community discussion, ratings, and transparent rules. When creating a token is easy — the hard part is understanding what's behind it. We close that gap.",
+      "card1Title": "Token Profile",
+      "card1Desc": "Full identity for every token",
+      "card2Title": "Verified Links",
+      "card2Desc": "Anti-phishing protection",
+      "card3Title": "Community Voting",
+      "card3Desc": "Transparent signal & ratings",
+      "cta1": "Explore Tokens",
+      "cta2": "Read Tokenomics"
+    },
+    "why": {
+      "title": "Why Axiome Launch is Needed",
+      "problemTitle": "Problem",
+      "problemText": "Creating tokens is becoming \"2 clicks\", but most have no proper showcase: who's the team, which links are official, what's the project plan, how the community rates the idea. The result — information noise and distrust by default.",
+      "solutionTitle": "Solution",
+      "solutionText": "Axiome Launch adds context and trust: token and project pages, discussions, reputation signals, and transparent anti-spam mechanics.",
+      "value1": "Filtering noise from signal",
+      "value2": "Trust through transparency",
+      "value3": "Community-driven reputation"
+    },
+    "features": {
+      "title": "What Axiome Launch Offers",
+      "tokenProfiles": { "title": "Token Profiles", "desc": "Token pages with descriptions, links, trust statuses, and change history.", "badge": "Live" },
+      "projectHub": { "title": "Project Hub", "desc": "Publish and discuss projects, including pre-launch phases.", "badge": "Live" },
+      "verifiedLinks": { "title": "Verified Links", "desc": "Protection against link spoofing and phishing.", "badge": "Live" },
+      "communityFeedback": { "title": "Community Feedback", "desc": "Comments, ratings, and community voting.", "badge": "Live" },
+      "transparency": { "title": "Transparency", "desc": "Public treasury, clear fee rules, transparent tokenomics.", "badge": "Coming soon" },
+      "aiStudio": { "title": "AI Studio", "desc": "AI-powered tokenomics generation, descriptions, and launch plans.", "badge": "Live" }
+    },
+    "token": {
+      "title": "LAUNCH — Platform Utility Token",
+      "subtitle": "LAUNCH provides access to platform features, strengthens reputation, and enables participation in voting and rewards. It's not a \"hope coin\" — it's a key to capabilities within Axiome Launch.",
+      "access": { "title": "Access", "desc": "Lock LAUNCH to unlock platform tiers and premium features." },
+      "reputation": { "title": "Reputation", "desc": "Stake-to-list shows you have skin in the game. Anti-spam by design." },
+      "rewards": { "title": "Rewards", "desc": "Earn for useful contributions: reviews, reports, community help." }
+    },
+    "access": {
+      "title": "Access Tiers via Lock",
+      "subtitle": "To keep access fair and protected from \"buy for 5 min → vote → sell\", key rights work through Lock — a voluntary lock-up of LAUNCH for a period.",
+      "lockButton": "Lock LAUNCH",
+      "explorer": { "name": "Explorer", "perk1": "Comments & discussions", "perk2": "Community voting", "perk3": "Profile badge" },
+      "builder": { "name": "Builder", "perk1": "Publish projects & pre-launch cards", "perk2": "Pro-light analytics access", "perk3": "Priority in explorer" },
+      "founder": { "name": "Founder", "perk1": "Extended project profile", "perk2": "Showcase priority", "perk3": "Dedicated support" },
+      "governor": { "name": "Governor", "perk1": "Grants participation", "perk2": "Governance decisions", "perk3": "Full feature access" }
+    },
+    "reputation": {
+      "title": "Stake-to-List: Proof of Seriousness",
+      "subtitle": "To reduce spam and increase trust, we introduce \"stake-to-list\" for token/project creator actions.",
+      "claim": { "title": "Claim Token Page", "desc": "Confirm ownership of a token page by staking LAUNCH. A signal that says \"I have skin in the game.\"" },
+      "update": { "title": "Update Critical Info", "desc": "Update official links and key data with a full change history. Requires a stake for accountability." },
+      "safety": { "title": "Safety & Appeals", "desc": "In case of proven phishing, link spoofing, or mass spam — penalties via moderation rules with an appeals process." }
+    },
+    "rewards": {
+      "title": "Rewards for Value, Not Noise",
+      "subtitle": "We incentivize ecosystem contributions: token reviews, quality problem reports, roadmap updates, helping newcomers. Rewards come from a dedicated pool and a share of platform revenue — to keep the program sustainable.",
+      "tokenReview": { "title": "Token Review", "desc": "Write quality token/project reviews" },
+      "scamReport": { "title": "Scam Report", "desc": "Report phishing links or suspicious projects" },
+      "projectUpdate": { "title": "Project Update", "desc": "Keep roadmap and project info up to date" },
+      "communityHelp": { "title": "Community Help", "desc": "Help newcomers navigate the platform" },
+      "pool": "Rewards Pool",
+      "poolStatus": "Active",
+      "poolSource": "Funded from community allocation + platform revenue share"
+    },
+    "monetization": {
+      "title": "How Axiome Launch Earns",
+      "verified": { "title": "Verified / Featured", "desc": "Paid trust statuses and token/project promotion in explorer and homepage." },
+      "analytics": { "title": "Pro Analytics", "desc": "Subscription for advanced analytics, alerts, and market insights." },
+      "laas": { "title": "Launch-as-a-Service", "desc": "End-to-end project packaging: landing pages, bots, integrations." },
+      "accelerator": { "title": "Accelerator / Batches", "desc": "Project selection, bundled launch campaigns, and community exposure." }
+    },
+    "feeSplit": {
+      "title": "Revenue Distribution (Transparent)",
+      "subtitle": "We want the economics to work long-term: part of revenue goes to product development, part to community rewards, and part to grants and buyback mechanics to support LAUNCH demand.",
+      "chartLabel": "Revenue Split",
+      "devOps": "Development & Ops",
+      "buyback": "Buyback LAUNCH",
+      "communityRewards": "Community Rewards",
+      "grants": "Grants / Accelerator",
+      "note": "Percentages may be adjusted via governance."
+    },
+    "allocation": {
+      "title": "Supply & Distribution",
+      "totalSupply": "Total supply:",
+      "totalAmount": "100,000,000 LAUNCH",
+      "subtitle": "We follow transparency principles: public pool addresses, unlock calendar, and reports.",
+      "chartLabel": "100M LAUNCH",
+      "liquidity": "Liquidity & Market Ops",
+      "communityGrowth": "Community Growth",
+      "treasury": "Treasury",
+      "team": "Team (vesting 24-36 mo)",
+      "partnerships": "Partnerships",
+      "accelerator": "Accelerator / Grants",
+      "vestingTitle": "Vesting Schedule",
+      "vesting1Period": "TGE",
+      "vesting1Desc": "Liquidity pools deployed, community airdrop distributed",
+      "vesting2Period": "Month 1-6",
+      "vesting2Desc": "Partnership unlocks begin, accelerator grants distributed",
+      "vesting3Period": "Month 6-12",
+      "vesting3Desc": "First team tokens unlock, treasury starts community programs",
+      "vesting4Period": "Month 12-36",
+      "vesting4Desc": "Remaining team vesting, ongoing community growth allocation"
+    },
+    "governance": {
+      "title": "Governance & Voting",
+      "subtitle": "We use mechanics that reduce manipulation and the impact of \"throwaway\" votes: voting is available to users with locked LAUNCH, lock period restrictions apply, and voting weight can be quadratic (so whales don't dominate).",
+      "faq1Q": "Who can vote?",
+      "faq1A": "Users who have LAUNCH locked in a tier (Explorer+). Lock period must be active at the time of voting.",
+      "faq2Q": "How is vote weight calculated?",
+      "faq2A": "Quadratic voting is planned: the weight grows sub-linearly with locked amount, preventing whale dominance.",
+      "faq3Q": "\"Project of the Month\" selection",
+      "faq3A": "Community selects top projects via lock-weighted voting. Winners receive visibility boost and potential grant funding.",
+      "faq4Q": "Can governance change tokenomics?",
+      "faq4A": "Revenue split percentages and reward parameters can be adjusted through governance proposals by Governor-tier holders.",
+      "flowLock": "Lock",
+      "flowVote": "Vote",
+      "flowResult": "Result"
+    },
+    "transparency": {
+      "title": "Trust Layer: What We Show Publicly",
+      "item1": "Public treasury / rewards / grants wallets",
+      "item2": "Token profile change history",
+      "item3": "Verified links and page ownership status",
+      "item4": "Risk flags (e.g., missing proof, frequent link changes)",
+      "viewTreasury": "View Treasury"
+    },
+    "disclaimer": {
+      "text": "LAUNCH is a utility token that provides access to platform features and community mechanics participation. We do not promise returns; reward rules and access depend on platform activity and policies."
+    }
+  },
+  "lock": {
+    "title": "Lock LAUNCH",
+    "subtitle": "Lock your LAUNCH tokens to unlock platform tiers, features, and community participation.",
+    "noTier": "No tier",
+    "currentTier": "Current tier",
+    "lockButton": "Lock LAUNCH",
+    "unlockButton": "Unlock",
+    "verifyButton": "Verify Balance",
+    "amount": "Amount",
+    "amountPlaceholder": "Enter LAUNCH amount",
+    "duration": "Lock Duration",
+    "wallet": "Wallet",
+    "selectWallet": "Select wallet",
+    "tierPreview": "You will get",
+    "insufficientTier": "Not enough for any tier",
+    "activeLocks": "Your Locks",
+    "noLocks": "No active locks. Lock LAUNCH to get started.",
+    "status": {
+      "ACTIVE": "Active",
+      "EXPIRED": "Expired",
+      "UNLOCKED": "Unlocked",
+      "VIOLATED": "Balance dropped"
+    },
+    "expiresIn": "Expires in",
+    "expired": "Expired",
+    "days": "days",
+    "tierComparison": "Tier Comparison",
+    "perDay": "days lock",
+    "tier": {
+      "explorer": "Explorer",
+      "builder": "Builder",
+      "founder": "Founder",
+      "governor": "Governor"
+    },
+    "perk": {
+      "explorer1": "Comments & discussions",
+      "explorer2": "Community voting",
+      "explorer3": "Profile badge",
+      "builder1": "Publish projects & pre-launch cards",
+      "builder2": "Pro-light analytics access",
+      "builder3": "Priority in Explorer",
+      "founder1": "Extended project profile",
+      "founder2": "Showcase priority",
+      "founder3": "Dedicated support",
+      "governor1": "Grants participation",
+      "governor2": "Governance decisions",
+      "governor3": "Full feature access"
+    },
+    "gate": {
+      "required": "Requires {tier} tier or higher",
+      "requires": "Requires {tier} tier or higher",
+      "upgrade": "Lock LAUNCH to upgrade",
+      "lockToUpgrade": "Lock LAUNCH tokens to unlock this feature.",
+      "lockButton": "Lock LAUNCH"
+    },
+    "success": "Lock created successfully!",
+    "error": "Failed to create lock",
+    "panel": {
+      "currentTier": "Current Tier",
+      "noTier": "No active tier"
+    },
+    "form": {
+      "title": "Create New Lock",
+      "wallet": "Wallet",
+      "primary": "primary",
+      "noWallets": "No wallets linked",
+      "amount": "Amount (LAUNCH)",
+      "duration": "Lock Duration",
+      "days": "d",
+      "tierPreview": "Tier you will get",
+      "noTierPreview": "Enter amount & duration to preview",
+      "lockButton": "Lock LAUNCH",
+      "locking": "Locking...",
+      "success": "Lock created successfully!",
+      "errorNoWallet": "Please select a wallet.",
+      "errorInvalidAmount": "Please enter a valid amount.",
+      "errorMinDuration": "Minimum lock duration is 7 days.",
+      "errorGeneric": "Something went wrong. Please try again."
+    },
+    "locks": {
+      "title": "Your Locks",
+      "amount": "Amount",
+      "duration": "Duration",
+      "endDate": "End Date",
+      "timeLeft": "Time Left",
+      "wallet": "Wallet",
+      "unlock": "Unlock",
+      "status": {
+        "active": "Active",
+        "expired": "Expired",
+        "unlocked": "Unlocked",
+        "violated": "Violated"
+      }
+    },
+    "page": {
+      "badge": "LAUNCH Lock",
+      "title": "Lock LAUNCH",
+      "subtitle": "Lock your LAUNCH tokens to unlock platform tiers, premium features, and community governance participation.",
+      "disclaimer": "Locking is a voluntary commitment. Tokens remain in your wallet but must maintain the required balance for the lock duration. Tier access is revoked if the balance drops below the locked amount."
+    },
+    "tiers": {
+      "title": "Tier Comparison",
+      "subtitle": "Higher tiers unlock more features. Lock more LAUNCH for longer to reach higher tiers.",
+      "lockButton": "Lock LAUNCH",
+      "explorer": { "name": "Explorer", "perk1": "Comments & discussions", "perk2": "Community voting", "perk3": "Profile badge" },
+      "builder": { "name": "Builder", "perk1": "Publish projects & pre-launch cards", "perk2": "Pro-light analytics access", "perk3": "Priority in explorer" },
+      "founder": { "name": "Founder", "perk1": "Extended project profile", "perk2": "Showcase priority", "perk3": "Dedicated support" },
+      "governor": { "name": "Governor", "perk1": "Grants participation", "perk2": "Governance decisions", "perk3": "Full feature access" }
+    }
+  },
+  "trust": {
+    "title": "Trust Score",
+    "score": "score",
+    "rating": {
+      "A": "Excellent — Highly trusted",
+      "B": "Good — Above average",
+      "C": "Average — Standard risk",
+      "D": "Low — Below average",
+      "F": "Poor — High risk"
+    },
+    "factor": {
+      "verification": "Verification",
+      "liquidity": "Liquidity",
+      "holders": "Holders",
+      "activity": "Activity",
+      "contract": "Contract Safety",
+      "community": "Community"
+    },
+    "calculatedAt": "Last updated: {date}",
+    "noScore": "Not yet rated"
+  },
+  "premium": {
+    "title": "Premium Plans",
+    "subtitle": "Unlock the full potential of Axiome Launch Suite",
+    "currentPlan": "Current Plan",
+    "free": {
+      "name": "Free",
+      "price": "0 LAUNCH",
+      "feature1": "3 AI generations per day",
+      "feature2": "Basic token explorer",
+      "feature3": "Community access",
+      "feature4": "Standard model (gpt-4o-mini)"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "500 LAUNCH / month",
+      "feature1": "50 AI generations per day",
+      "feature2": "Advanced analytics & alerts",
+      "feature3": "Priority support",
+      "feature4": "Premium model (gpt-4o)",
+      "badge": "Popular"
+    },
+    "upgrade": "Upgrade to Pro",
+    "active": "Active",
+    "expiresAt": "Expires: {date}",
+    "paymentPending": "Awaiting payment...",
+    "paymentSuccess": "Payment confirmed!",
+    "signTransaction": "Sign the transaction in your wallet",
+    "processing": "Processing..."
+  },
+  "changeHistory": {
+    "title": "Change History",
+    "more": "more changes",
+    "type": {
+      "name": "Name changed",
+      "descriptionShort": "Short description updated",
+      "descriptionLong": "Description updated",
+      "links": "Links updated",
+      "logo": "Logo updated",
+      "tokenomics": "Tokenomics updated",
+      "status": "Status changed"
+    }
+  },
+  "rewards": {
+    "title": "Rewards",
+    "subtitle": "Earn LAUNCH for contributing to the community",
+    "totalEarned": "Total Earned",
+    "pending": "Pending",
+    "claimed": "Claimed",
+    "claimButton": "Claim Rewards",
+    "claiming": "Claiming...",
+    "noRewards": "No rewards yet. Start contributing!",
+    "type": {
+      "TOKEN_REVIEW": "Token Review",
+      "SCAM_REPORT": "Scam Report",
+      "PROJECT_UPDATE": "Project Update",
+      "DAILY_ACTIVITY": "Daily Activity"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "APPROVED": "Approved",
+      "PAID": "Paid",
+      "REJECTED": "Rejected"
+    }
+  },
+  "governance": {
+    "title": "Governance",
+    "subtitle": "Shape the future of Axiome Launch Suite",
+    "createProposal": "Create Proposal",
+    "activeProposals": "Active Proposals",
+    "pastProposals": "Past Proposals",
+    "noProposals": "No proposals yet",
+    "voteFor": "Vote For",
+    "voteAgainst": "Vote Against",
+    "voted": "Voted",
+    "timeLeft": "Time left",
+    "ended": "Ended",
+    "quorum": "Quorum",
+    "votingPower": "Your voting power",
+    "requiresTier": "Requires Explorer tier to vote",
+    "requiresGovernor": "Requires Governor tier to propose",
+    "type": {
+      "FEATURE_PROJECT": "Feature Project",
+      "DELIST_PROJECT": "Delist Project",
+      "PLATFORM_CHANGE": "Platform Change",
+      "COMMUNITY_PICK": "Community Pick"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "PASSED": "Passed",
+      "REJECTED": "Rejected",
+      "EXECUTED": "Executed",
+      "EXPIRED": "Expired"
+    },
+    "form": {
+      "title": "Proposal Title",
+      "description": "Description",
+      "type": "Type",
+      "duration": "Duration (days)",
+      "submit": "Submit Proposal",
+      "submitting": "Submitting..."
     }
   }
 }

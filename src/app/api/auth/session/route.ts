@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { verifySessionTokenV2 } from '@/lib/auth/telegram'
 import { prisma } from '@/lib/prisma'
 import { buildAuthUserResponse } from '@/lib/auth/userResponse'
+import { getUserTier } from '@/lib/lock'
 
 /**
  * GET /api/auth/session
@@ -39,9 +40,10 @@ export async function GET(request: NextRequest) {
     })
 
     if (user) {
+      const tier = await getUserTier(user.id)
       return NextResponse.json({
         verified: true,
-        user: buildAuthUserResponse(user)
+        user: buildAuthUserResponse(user, tier)
       })
     }
   } catch (error) {

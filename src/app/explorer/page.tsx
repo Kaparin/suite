@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Card, Input, Button } from '@/components/ui'
 import { ExplorerTabs, UpcomingTokenCard } from '@/components/explorer'
+import { TrustScoreInline } from '@/components/trust/TrustScoreBadge'
 
 interface TokenData {
   contractAddress: string
@@ -26,6 +27,9 @@ interface TokenData {
   priceInUsd?: number | null
   liquidity?: number | null
   hasPool?: boolean
+  // Trust score
+  trustScore?: number | null
+  trustRating?: string | null
 }
 
 interface TokensResponse {
@@ -512,6 +516,9 @@ export default function ExplorerPage() {
                               <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full">
                                 🔥 Trending
                               </span>
+                            )}
+                            {token.trustRating && token.trustScore != null && (
+                              <TrustScoreInline score={token.trustScore} rating={token.trustRating} />
                             )}
                             {token.hasPool && !token.isTrending && (
                               <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">

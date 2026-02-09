@@ -7,6 +7,8 @@ import { motion } from 'framer-motion'
 import { Badge, Button, Card, CardContent } from '@/components/ui'
 import { OwnerPanel } from '@/components/token'
 import { ReactionBar, CommentSection } from '@/components/social'
+import { TrustScoreBreakdown } from '@/components/trust/TrustScoreBreakdown'
+import { ChangeHistory } from '@/components/trust/ChangeHistory'
 import { useWallet, truncateAddress } from '@/lib/wallet'
 import { useAuth } from '@/lib/auth/useAuth'
 import { useTranslations } from 'next-intl'
@@ -44,8 +46,27 @@ type TokenData = {
     owner?: {
       walletAddress?: string
     }
+    changes?: {
+      id: string
+      changeType: string
+      oldValue: unknown
+      newValue: unknown
+      createdAt: string
+      userId?: string
+    }[]
   }
   chainMinter?: string | null
+  trustScore?: {
+    totalScore: number
+    rating: string
+    verificationScore: number
+    liquidityScore: number
+    holderScore: number
+    activityScore: number
+    contractScore: number
+    communityScore: number
+    calculatedAt: string
+  } | null
 }
 
 export default function TokenPage() {
@@ -378,6 +399,18 @@ export default function TokenPage() {
           </Card>
         </motion.div>
 
+        {/* Trust Score */}
+        {data?.trustScore && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.45 }}
+            className="mb-8"
+          >
+            <TrustScoreBreakdown data={data.trustScore} />
+          </motion.div>
+        )}
+
         {/* Risk Assessment */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -406,6 +439,18 @@ export default function TokenPage() {
             </CardContent>
           </Card>
         </motion.div>
+
+        {/* Change History */}
+        {data?.project?.changes && data.project.changes.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.55 }}
+            className="mb-8"
+          >
+            <ChangeHistory changes={data.project.changes} />
+          </motion.div>
+        )}
 
         {/* About */}
         {project.descriptionLong && (

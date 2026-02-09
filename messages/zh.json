@@ -11,101 +11,130 @@
     "explorer": "浏览器",
     "studio": "工作室",
     "wallet": "钱包",
-    "dashboard": "仪表板"
+    "dashboard": "仪表板",
+    "docs": "Launch Docs"
   },
   "home": {
+    "badges": {
+      "verifiedLinks": "已验证链接",
+      "reputation": "声誉与风险标志",
+      "preLaunch": "上线前社区反馈"
+    },
     "hero": {
-      "title": "代币发行平台",
-      "subtitle": "在Axiome区块链上创建、讨论和启动代币。从想法到启动——借助AI助手和社区支持。",
-      "cta": "开始旅程"
+      "title": "Axiome 代币与项目信任层",
+      "subtitle": "代币页面、已验证链接、声誉和社区反馈——尽在一处。",
+      "subtitle2": "随时随地2次点击即可创建。在这里建立信任。",
+      "cta1": "探索代币",
+      "cta2": "认领代币页面",
+      "docsLink": "阅读 LAUNCH 文档",
+      "poweredBy": "基于链上证明与钱包签名"
     },
-    "about": {
-      "title": "什么是 Launch Suite？",
-      "description": "Launch Suite是一个在Axiome上准备和启动代币的平台。我们创建了一个独特的系统，代币首先作为平台内的项目存在，只有在准备好后才会在区块链上启动。",
-      "highlight": "这使社区能够在代币出现在网络上之前进行讨论、评估和提供反馈。"
+    "mockCard": {
+      "utility": "实用代币",
+      "supply": "发行量",
+      "reserve": "储备",
+      "staking": "质押",
+      "liquidity": "流动性",
+      "utilityAccess": "解锁等级和高级功能",
+      "utilityReputation": "建立声誉和信任评分",
+      "utilityGovernance": "参与平台决策投票",
+      "utilityRewards": "获得质押和社区奖励",
+      "platformToken": "平台代币",
+      "axiomeChain": "Axiome Chain"
     },
-    "howItWorks": {
-      "title": "如何运作",
-      "steps": {
-        "create": {
-          "title": "创建项目",
-          "description": "描述您的想法或使用AI助手生成代币经济学、描述和启动计划。代币作为平台内的项目创建。"
-        },
-        "community": {
-          "title": "收集反馈",
-          "description": "社区在浏览器中看到您的项目。在启动前获取评论、反应和建议。"
-        },
-        "launch": {
-          "title": "在区块链上启动",
-          "description": "准备好后——通过Token Lab在Axiome区块链上启动您的代币。所有信息自动导入。"
-        }
-      }
+    "why": {
+      "title": "为什么需要这个",
+      "problemTitle": "问题",
+      "problemText1": "创建代币很容易，理解它们却不容易。",
+      "problemText2": "大多数代币在没有背景信息的情况下发行：没有官方链接、没有清晰描述、没有历史记录、没有社区审核——信任随之崩塌。",
+      "solutionTitle": "解决方案",
+      "solutionText1": "为每个代币提供经过验证的资料层。",
+      "solutionText2": "Axiome Launch 添加项目页面、代币护照、社区讨论和透明经济——让优质项目脱颖而出。",
+      "docsLink": "在 Launch 文档中了解更多"
     },
     "features": {
-      "title": "平台功能",
-      "studio": {
-        "title": "AI 代币工作室",
-        "description": "AI助手帮助创建所需的一切：名称、描述、代币经济学、常见问题甚至社交媒体帖子。不知道从哪里开始？只需描述您的想法。",
-        "bullets": {
-          "generate": "生成代币经济学和描述",
-          "edit": "AI编辑现有项目",
-          "promo": "现成的推广材料"
-        }
+      "title": "在 Axiome Launch 上你能做什么",
+      "subtitle": "代币建立信任所需的一切——从创建到社区反馈。",
+      "tokenProfiles": {
+        "title": "代币资料",
+        "desc": "包含官方链接、更新历史和社区活动的丰富页面。",
+        "bullet1": "描述与链接",
+        "bullet2": "更新时间线"
       },
-      "explorer": {
-        "title": "代币浏览器",
-        "description": "探索Axiome上的所有代币。检查信任评分、风险标志、社区活动。在它们起飞前找到有前途的项目。",
-        "bullets": {
-          "risk": "风险评估和警告标志",
-          "stats": "持有者和交易统计",
-          "upcoming": "即将推出的项目部分"
-        }
+      "ownerVerification": {
+        "title": "所有者验证",
+        "desc": "连接钱包并签名一次即可认领代币页面。",
+        "bullet1": "所有者徽章",
+        "bullet2": "编辑权限"
       },
-      "ownership": {
-        "title": "所有权和编辑",
-        "description": "创建了代币？通过链接钱包验证所有权，获得对项目页面的完全控制。添加徽标、链接，更新描述。",
-        "bullets": {
-          "claim": "通过钱包验证所有权",
-          "edit": "编辑所有信息",
-          "ai": "AI助手改进内容"
-        }
+      "verifiedLinks": {
+        "title": "已验证链接",
+        "desc": "反钓鱼链接验证，保护用户和项目。",
+        "bullet1": "官方社交链接",
+        "bullet2": "警告标志"
       },
-      "community": {
-        "title": "社区",
-        "description": "评论项目，添加反应，关注更新。社区帮助筛选优质项目，过滤骗局。",
-        "bullets": {
-          "comments": "评论和讨论",
-          "reactions": "反应：火箭、火焰、警告",
-          "alerts": "Telegram通知（即将推出）"
-        }
+      "riskFlags": {
+        "title": "风险标志与信任信号",
+        "desc": "帮助用户在纷杂信息中辨别方向的透明信号。",
+        "bullet1": "频繁更改链接",
+        "bullet2": "缺失证明标记"
+      },
+      "preLaunch": {
+        "title": "预发行项目",
+        "desc": "在正式发行前展示想法并尽早收集反馈。",
+        "bullet1": "预发行列表",
+        "bullet2": "社区评论"
+      },
+      "aiStudio": {
+        "title": "AI 工作室",
+        "desc": "生成描述、代币经济学草案和推广内容。",
+        "bullet1": "从想法到草案",
+        "bullet2": "编辑与改进",
+        "badge": "测试版"
       }
     },
-    "token": {
-      "title": "$LAUNCH 代币",
-      "subtitle": "生态系统代币",
-      "description": "Axiome Launch Suite生态系统的原生代币。$LAUNCH持有者获得独家权益，并分享通过我们平台启动的所有项目的成功。",
-      "holdersTitle": "$LAUNCH持有者权益",
-      "features": {
-        "discount": "全程项目支持折扣",
-        "support": "优先协助：技术规格、落地页、营销",
-        "revenue": "所有新项目的收益分成",
-        "earlyAccess": "有前景项目的早期访问权"
-      },
-      "revenueTitle": "收益分享",
-      "revenueDescription": "通过Axiome Launch Suite启动的每个项目都会产生费用。$LAUNCH持有者根据其持有量按比例获得这些费用的分成。",
-      "servicesTitle": "高级服务",
-      "services": {
-        "techSpecs": "技术规格和代币经济学设计",
-        "landing": "专业落地页",
-        "marketing": "营销策略和内容",
-        "support": "全程启动支持和咨询"
-      },
-      "notify": "获取通知",
-      "learnMore": "了解更多"
+    "steps": {
+      "title": "运作方式",
+      "step1": { "title": "创建或发现", "desc": "创建项目页面（预发行）或探索现有代币。" },
+      "step2": { "title": "验证与完善", "desc": "代币所有者认领页面并添加已验证链接和信息。" },
+      "step3": { "title": "社区反馈", "desc": "评论、反应和审核模板凸显品质。" },
+      "step4": { "title": "发行与成长", "desc": "当你在链上发行时，你的代币已经具备了背景和声誉。" }
+    },
+    "utility": {
+      "title": "LAUNCH 代币用途",
+      "subtitle": "LAUNCH 是一种实用代币，为平台内的访问、声誉和奖励提供支持。",
+      "access": { "title": "访问", "desc": "通过锁仓等级解锁功能：发布项目、投票和使用专业工具。" },
+      "reputation": { "title": "声誉", "desc": "质押上架/质押更新可减少垃圾信息并表明诚意。" },
+      "rewards": { "title": "奖励", "desc": "为真实贡献获得奖励：审核、举报和社区帮助——由平台经济支持。" },
+      "readMore": "阅读代币经济学"
+    },
+    "tiers": {
+      "title": "锁仓等级",
+      "cta": "打开 Launch 文档",
+      "note": "数值可能会通过治理进行调整。"
+    },
+    "feeSplit": {
+      "title": "透明经济",
+      "subtitle": "平台收入支持开发、社区奖励、资助和 LAUNCH 回购——为长期可持续性而设计。",
+      "operations": "运营",
+      "buyback": "回购 LAUNCH",
+      "rewards": "奖励",
+      "grants": "资助 / 加速器"
+    },
+    "community": {
+      "title": "与 Axiome 社区共建",
+      "subtitle": "讨论代币，尽早发现风险信号，帮助优质项目被发现。",
+      "cta": "加入 Explorer 中的讨论",
+      "comment1": { "user": "alex_dev", "text": "扎实的项目，路线图看起来切合实际。链接已验证。", "badge": "Builder" },
+      "comment2": { "user": "crypto_guard", "text": "标记了可疑的链接更改——团队在2小时内解决了问题。", "badge": "Explorer" },
+      "comment3": { "user": "dao_whale", "text": "发行前社区讨论非常好。信任评分正在增长。", "badge": "Governor" }
     },
     "cta": {
-      "title": "准备启动？",
-      "subtitle": "几分钟内创建代币项目。AI帮助内容，社区帮助反馈。"
+      "title": "探索代币。认领所有权。建立信任。",
+      "subtitle": "Axiome 生态系统中每个代币的信任层。",
+      "cta1": "探索代币",
+      "cta2": "认领代币页面",
+      "docsLink": "阅读 Launch 文档"
     }
   },
   "explorer": {
@@ -404,6 +433,409 @@
       "totalTokens": "Total Tokens",
       "totalReactions": "Total Reactions",
       "totalComments": "Total Comments"
+    }
+  },
+  "docs": {
+    "sidebar": {
+      "onThisPage": "本页内容",
+      "overview": "概览",
+      "whyLaunch": "为什么选择 Launch",
+      "features": "功能",
+      "token": "LAUNCH 代币",
+      "accessTiers": "访问等级",
+      "reputation": "声誉",
+      "rewards": "奖励",
+      "monetization": "盈利模式",
+      "feeSplit": "收入分配",
+      "allocation": "代币分配",
+      "governance": "治理",
+      "transparency": "透明度",
+      "disclaimer": "免责声明"
+    },
+    "hero": {
+      "badge": "LAUNCH 简明白皮书",
+      "title": "Launch Docs",
+      "subtitle": "Axiome Launch — Axiome 生态系统中代币和项目的信任与声誉层。",
+      "description": "我们正在构建一个让代币和项目获得'护照'的地方：描述、官方链接、更新历史、社区讨论、评级和透明规则。当创建代币变得容易时——难的是理解背后的内容。我们填补这个空白。",
+      "card1Title": "代币资料",
+      "card1Desc": "每个代币的完整身份",
+      "card2Title": "已验证链接",
+      "card2Desc": "反钓鱼保护",
+      "card3Title": "社区投票",
+      "card3Desc": "透明的信号与评级",
+      "cta1": "探索代币",
+      "cta2": "阅读代币经济学"
+    },
+    "why": {
+      "title": "为什么需要 Axiome Launch",
+      "problemTitle": "问题",
+      "problemText": "创建代币正变成'2次点击'，但大多数代币没有适当的展示：谁是团队、哪些链接是官方的、项目计划是什么、社区如何评价这个想法。结果——信息噪音和默认的不信任。",
+      "solutionTitle": "解决方案",
+      "solutionText": "Axiome Launch 添加了背景和信任：代币和项目页面、讨论、声誉信号和透明的反垃圾机制。",
+      "value1": "从噪音中过滤信号",
+      "value2": "通过透明建立信任",
+      "value3": "社区驱动的声誉"
+    },
+    "features": {
+      "title": "Axiome Launch 提供什么",
+      "tokenProfiles": { "title": "代币资料", "desc": "包含描述、链接、信任状态和更改历史的代币页面。", "badge": "已上线" },
+      "projectHub": { "title": "项目中心", "desc": "发布和讨论项目，包括预发行阶段。", "badge": "已上线" },
+      "verifiedLinks": { "title": "已验证链接", "desc": "防止链接欺骗和钓鱼。", "badge": "已上线" },
+      "communityFeedback": { "title": "社区反馈", "desc": "评论、评级和社区投票。", "badge": "已上线" },
+      "transparency": { "title": "透明度", "desc": "公开国库、明确的费用规则、透明的代币经济学。", "badge": "即将推出" },
+      "aiStudio": { "title": "AI 工作室", "desc": "AI驱动的代币经济学生成、描述和发行计划。", "badge": "已上线" }
+    },
+    "token": {
+      "title": "LAUNCH — 平台实用代币",
+      "subtitle": "LAUNCH 提供平台功能访问权限，增强声誉，并支持参与投票和奖励。它不是'希望币'——它是 Axiome Launch 中功能的钥匙。",
+      "access": { "title": "访问", "desc": "锁定 LAUNCH 以解锁平台等级和高级功能。" },
+      "reputation": { "title": "声誉", "desc": "Stake-to-List 表明你有切身利益。反垃圾设计。" },
+      "rewards": { "title": "奖励", "desc": "为有用的贡献获得奖励：评审、举报、社区帮助。" }
+    },
+    "access": {
+      "title": "通过 Lock 的访问等级",
+      "subtitle": "为了保持公平并防止'买入5分钟 → 投票 → 卖出'，关键权限通过 Lock 运作——自愿将 LAUNCH 锁定一段时间。",
+      "lockButton": "锁定 LAUNCH",
+      "explorer": { "name": "Explorer", "perk1": "评论和讨论", "perk2": "社区投票", "perk3": "个人资料徽章" },
+      "builder": { "name": "Builder", "perk1": "发布项目和预发行卡片", "perk2": "Pro-Light 分析访问", "perk3": "Explorer 中的优先显示" },
+      "founder": { "name": "Founder", "perk1": "扩展项目资料", "perk2": "展示优先", "perk3": "专属支持" },
+      "governor": { "name": "Governor", "perk1": "参与资助", "perk2": "治理决策", "perk3": "完整功能访问" }
+    },
+    "reputation": {
+      "title": "Stake-to-List：诚意证明",
+      "subtitle": "为了减少垃圾信息并增加信任，我们为代币/项目创建者的操作引入了'Stake-to-List'。",
+      "claim": { "title": "认领代币页面", "desc": "通过质押 LAUNCH 确认代币页面的所有权。一个说明'我有切身利益'的信号。" },
+      "update": { "title": "更新关键信息", "desc": "更新官方链接和关键数据，并保留完整的更改历史。需要质押以示负责。" },
+      "safety": { "title": "安全与申诉", "desc": "在证实钓鱼、链接欺骗或大规模垃圾信息的情况下——通过审核规则进行处罚，并提供申诉流程。" }
+    },
+    "rewards": {
+      "title": "奖励价值，而非噪音",
+      "subtitle": "我们激励生态系统贡献：代币评审、高质量问题报告、路线图更新、帮助新人。奖励来自专用池和平台收入份额——以保持项目的可持续性。",
+      "tokenReview": { "title": "代币评审", "desc": "撰写高质量的代币/项目评审" },
+      "scamReport": { "title": "诈骗举报", "desc": "举报钓鱼链接或可疑项目" },
+      "projectUpdate": { "title": "项目更新", "desc": "保持路线图和项目信息最新" },
+      "communityHelp": { "title": "社区帮助", "desc": "帮助新人熟悉平台" },
+      "pool": "奖励池",
+      "poolStatus": "活跃",
+      "poolSource": "由社区分配 + 平台收入份额资助"
+    },
+    "monetization": {
+      "title": "Axiome Launch 如何盈利",
+      "verified": { "title": "认证 / 推荐", "desc": "付费信任状态和代币/项目在 Explorer 和首页中的推广。" },
+      "analytics": { "title": "Pro 分析", "desc": "高级分析、警报和市场洞察的订阅服务。" },
+      "laas": { "title": "Launch即服务", "desc": "端到端项目打包：落地页、机器人、集成。" },
+      "accelerator": { "title": "加速器 / 批次", "desc": "项目筛选、捆绑发行活动和社区曝光。" }
+    },
+    "feeSplit": {
+      "title": "收入分配（透明）",
+      "subtitle": "我们希望经济模型长期运转：部分收入用于产品开发，部分用于社区奖励，部分用于资助和回购机制以支撑 LAUNCH 需求。",
+      "chartLabel": "收入分配",
+      "devOps": "开发与运营",
+      "buyback": "回购 LAUNCH",
+      "communityRewards": "社区奖励",
+      "grants": "资助 / 加速器",
+      "note": "百分比可通过治理调整。"
+    },
+    "allocation": {
+      "title": "供应量与分配",
+      "totalSupply": "总供应量：",
+      "totalAmount": "100,000,000 LAUNCH",
+      "subtitle": "我们遵循透明原则：公开池地址、解锁日历和报告。",
+      "chartLabel": "1亿 LAUNCH",
+      "liquidity": "流动性与市场运营",
+      "communityGrowth": "社区增长",
+      "treasury": "国库",
+      "team": "团队（24-36个月归属期）",
+      "partnerships": "合作伙伴",
+      "accelerator": "加速器 / 资助",
+      "vestingTitle": "归属时间表",
+      "vesting1Period": "TGE",
+      "vesting1Desc": "流动性池部署，社区空投分发",
+      "vesting2Period": "第1-6个月",
+      "vesting2Desc": "合作伙伴解锁开始，加速器资助分发",
+      "vesting3Period": "第6-12个月",
+      "vesting3Desc": "首批团队代币解锁，国库启动社区计划",
+      "vesting4Period": "第12-36个月",
+      "vesting4Desc": "剩余团队归属，持续的社区增长分配"
+    },
+    "governance": {
+      "title": "治理与投票",
+      "subtitle": "我们采用减少操纵和'一次性'投票影响的机制：投票仅对锁定 LAUNCH 的用户开放，锁定期限制适用，投票权重可以是二次方的（这样巨鲸不会主导）。",
+      "faq1Q": "谁可以投票？",
+      "faq1A": "在某个等级（Explorer+）锁定了 LAUNCH 的用户。投票时锁定期必须处于活跃状态。",
+      "faq2Q": "投票权重如何计算？",
+      "faq2A": "计划采用二次方投票：权重随锁定金额亚线性增长，防止巨鲸主导。",
+      "faq3Q": "'月度最佳项目'评选",
+      "faq3A": "社区通过锁仓加权投票选出顶级项目。获胜者获得更多曝光度和潜在资助。",
+      "faq4Q": "治理能改变代币经济学吗？",
+      "faq4A": "收入分配百分比和奖励参数可以通过 Governor 等级持有者的治理提案进行调整。",
+      "flowLock": "Lock",
+      "flowVote": "Vote",
+      "flowResult": "结果"
+    },
+    "transparency": {
+      "title": "信任层：我们公开展示什么",
+      "item1": "公开的国库 / 奖励 / 资助钱包",
+      "item2": "代币资料更改历史",
+      "item3": "已验证链接和页面所有权状态",
+      "item4": "风险标志（例如：缺失证明、频繁更改链接）",
+      "viewTreasury": "查看国库"
+    },
+    "disclaimer": {
+      "text": "LAUNCH 是一种实用代币，提供平台功能访问和社区机制参与。我们不承诺回报；奖励规则和访问权限取决于平台活动和政策。"
+    }
+  },
+  "lock": {
+    "title": "锁定 LAUNCH",
+    "subtitle": "锁定您的 LAUNCH 代币以解锁平台等级、功能和社区参与。",
+    "noTier": "无等级",
+    "currentTier": "当前等级",
+    "lockButton": "锁定 LAUNCH",
+    "unlockButton": "解锁",
+    "verifyButton": "验证余额",
+    "amount": "数量",
+    "amountPlaceholder": "输入 LAUNCH 数量",
+    "duration": "锁定期限",
+    "wallet": "钱包",
+    "selectWallet": "选择钱包",
+    "tierPreview": "您将获得",
+    "insufficientTier": "不足以达到任何等级",
+    "activeLocks": "您的锁定",
+    "noLocks": "没有活跃的锁定。锁定 LAUNCH 以开始使用。",
+    "status": {
+      "ACTIVE": "活跃",
+      "EXPIRED": "已过期",
+      "UNLOCKED": "已解锁",
+      "VIOLATED": "余额下降"
+    },
+    "expiresIn": "到期剩余",
+    "expired": "已过期",
+    "days": "天",
+    "tierComparison": "等级对比",
+    "perDay": "天锁定",
+    "tier": {
+      "explorer": "Explorer",
+      "builder": "Builder",
+      "founder": "Founder",
+      "governor": "Governor"
+    },
+    "perk": {
+      "explorer1": "评论与讨论",
+      "explorer2": "社区投票",
+      "explorer3": "个人资料徽章",
+      "builder1": "发布项目和预发行卡片",
+      "builder2": "Pro-Light 分析访问",
+      "builder3": "Explorer 中的优先显示",
+      "founder1": "扩展项目资料",
+      "founder2": "展示优先",
+      "founder3": "专属支持",
+      "governor1": "参与资助",
+      "governor2": "治理决策",
+      "governor3": "完整功能访问"
+    },
+    "gate": {
+      "required": "需要 {tier} 等级或更高",
+      "requires": "需要 {tier} 等级或更高",
+      "upgrade": "锁定 LAUNCH 以升级",
+      "lockToUpgrade": "锁定 LAUNCH 代币以解锁此功能。",
+      "lockButton": "锁定 LAUNCH"
+    },
+    "success": "锁定创建成功！",
+    "error": "创建锁定失败",
+    "panel": {
+      "currentTier": "当前等级",
+      "noTier": "无活跃等级"
+    },
+    "form": {
+      "title": "创建新锁定",
+      "wallet": "钱包",
+      "primary": "主要",
+      "noWallets": "未关联钱包",
+      "amount": "数量 (LAUNCH)",
+      "duration": "锁定期限",
+      "days": "天",
+      "tierPreview": "您将获得的等级",
+      "noTierPreview": "输入数量和期限以预览",
+      "lockButton": "锁定 LAUNCH",
+      "locking": "锁定中...",
+      "success": "锁定创建成功！",
+      "errorNoWallet": "请选择一个钱包。",
+      "errorInvalidAmount": "请输入有效的数量。",
+      "errorMinDuration": "最短锁定期限为 7 天。",
+      "errorGeneric": "出现问题，请重试。"
+    },
+    "locks": {
+      "title": "您的锁定",
+      "amount": "数量",
+      "duration": "期限",
+      "endDate": "结束日期",
+      "timeLeft": "剩余时间",
+      "wallet": "钱包",
+      "unlock": "解锁",
+      "status": {
+        "active": "活跃",
+        "expired": "已过期",
+        "unlocked": "已解锁",
+        "violated": "违规"
+      }
+    },
+    "page": {
+      "badge": "LAUNCH 锁定",
+      "title": "锁定 LAUNCH",
+      "subtitle": "锁定您的 LAUNCH 代币以解锁平台等级、高级功能和社区治理参与。",
+      "disclaimer": "锁定是自愿承诺。代币保留在您的钱包中，但必须在锁定期限内保持所需余额。如果余额低于锁定数量，等级访问将被撤销。"
+    },
+    "tiers": {
+      "title": "等级对比",
+      "subtitle": "更高的等级解锁更多功能。锁定更多 LAUNCH 更长时间以达到更高等级。",
+      "lockButton": "锁定 LAUNCH",
+      "explorer": {
+        "name": "Explorer",
+        "perk1": "评论与讨论",
+        "perk2": "社区投票",
+        "perk3": "个人资料徽章"
+      },
+      "builder": {
+        "name": "Builder",
+        "perk1": "发布项目和预发行卡片",
+        "perk2": "Pro-Light 分析访问",
+        "perk3": "Explorer 中的优先显示"
+      },
+      "founder": {
+        "name": "Founder",
+        "perk1": "扩展项目资料",
+        "perk2": "展示优先",
+        "perk3": "专属支持"
+      },
+      "governor": {
+        "name": "Governor",
+        "perk1": "参与资助",
+        "perk2": "治理决策",
+        "perk3": "完整功能访问"
+      }
+    }
+  },
+  "trust": {
+    "title": "信任评分",
+    "score": "分数",
+    "rating": {
+      "A": "优秀 — 高度可信",
+      "B": "良好 — 高于平均",
+      "C": "一般 — 标准风险",
+      "D": "较低 — 低于平均",
+      "F": "较差 — 高风险"
+    },
+    "factor": {
+      "verification": "验证",
+      "liquidity": "流动性",
+      "holders": "持有者",
+      "activity": "活跃度",
+      "contract": "合约安全",
+      "community": "社区"
+    },
+    "calculatedAt": "最后更新：{date}",
+    "noScore": "尚未评级"
+  },
+  "premium": {
+    "title": "高级计划",
+    "subtitle": "释放 Axiome Launch Suite 的全部潜力",
+    "currentPlan": "当前计划",
+    "free": {
+      "name": "免费版",
+      "price": "0 LAUNCH",
+      "feature1": "每天 3 次 AI 生成",
+      "feature2": "基础代币浏览器",
+      "feature3": "社区访问",
+      "feature4": "标准模型 (gpt-4o-mini)"
+    },
+    "pro": {
+      "name": "Pro",
+      "price": "500 LAUNCH / 月",
+      "feature1": "每天 50 次 AI 生成",
+      "feature2": "高级分析与警报",
+      "feature3": "优先支持",
+      "feature4": "高级模型 (gpt-4o)",
+      "badge": "热门"
+    },
+    "upgrade": "升级到 Pro",
+    "active": "已激活",
+    "expiresAt": "到期时间：{date}",
+    "paymentPending": "等待付款...",
+    "paymentSuccess": "付款已确认！",
+    "signTransaction": "在您的钱包中签署交易",
+    "processing": "处理中..."
+  },
+  "changeHistory": {
+    "title": "变更历史",
+    "more": "更多变更",
+    "type": {
+      "name": "名称已更改",
+      "descriptionShort": "简短描述已更新",
+      "descriptionLong": "描述已更新",
+      "links": "链接已更新",
+      "logo": "徽标已更新",
+      "tokenomics": "代币经济学已更新",
+      "status": "状态已更改"
+    }
+  },
+  "rewards": {
+    "title": "奖励",
+    "subtitle": "通过社区贡献赚取 LAUNCH",
+    "totalEarned": "总收入",
+    "pending": "待处理",
+    "claimed": "已领取",
+    "claimButton": "领取奖励",
+    "claiming": "领取中...",
+    "noRewards": "暂无奖励。开始贡献吧！",
+    "type": {
+      "TOKEN_REVIEW": "代币评审",
+      "SCAM_REPORT": "诈骗举报",
+      "PROJECT_UPDATE": "项目更新",
+      "DAILY_ACTIVITY": "每日活跃"
+    },
+    "status": {
+      "PENDING": "待处理",
+      "APPROVED": "已批准",
+      "PAID": "已支付",
+      "REJECTED": "已拒绝"
+    }
+  },
+  "governance": {
+    "title": "治理",
+    "subtitle": "塑造 Axiome Launch Suite 的未来",
+    "createProposal": "创建提案",
+    "activeProposals": "活跃提案",
+    "pastProposals": "历史提案",
+    "noProposals": "暂无提案",
+    "voteFor": "赞成",
+    "voteAgainst": "反对",
+    "voted": "已投票",
+    "timeLeft": "剩余时间",
+    "ended": "已结束",
+    "quorum": "法定人数",
+    "votingPower": "您的投票权",
+    "requiresTier": "需要 Explorer 等级才能投票",
+    "requiresGovernor": "需要 Governor 等级才能提案",
+    "type": {
+      "FEATURE_PROJECT": "推荐项目",
+      "DELIST_PROJECT": "下架项目",
+      "PLATFORM_CHANGE": "平台变更",
+      "COMMUNITY_PICK": "社区精选"
+    },
+    "status": {
+      "ACTIVE": "进行中",
+      "PASSED": "已通过",
+      "REJECTED": "已否决",
+      "EXECUTED": "已执行",
+      "EXPIRED": "已过期"
+    },
+    "form": {
+      "title": "提案标题",
+      "description": "描述",
+      "type": "类型",
+      "duration": "持续时间（天）",
+      "submit": "提交提案",
+      "submitting": "提交中..."
     }
   }
 }

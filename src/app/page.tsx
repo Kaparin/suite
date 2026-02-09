@@ -4,859 +4,598 @@ import { FloatingParticles } from '@/components/animations/FloatingParticles'
 import { GlowingOrb } from '@/components/animations/GlowingOrb'
 import { StarField } from '@/components/animations/StarField'
 import { AXMPriceTicker } from '@/components/price/AXMPriceTicker'
-import { Button } from '@/components/ui'
 import { motion } from 'framer-motion'
-import { useTranslations } from 'next-intl'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useTranslations } from 'next-intl'
 
-const containerVariants = {
+/* ─── animation helpers ─── */
+const fadeUp = {
+  initial: { opacity: 0, y: 30 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true } as const,
+  transition: { duration: 0.55 },
+}
+
+const stagger = {
   hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.3,
-    },
-  },
+  visible: { opacity: 1, transition: { staggerChildren: 0.12, delayChildren: 0.2 } },
+}
+const staggerItem = {
+  hidden: { opacity: 0, y: 24 },
+  visible: { opacity: 1, y: 0 },
 }
 
-const itemVariants = {
-  hidden: { opacity: 0, y: 30 },
-  visible: {
-    opacity: 1,
-    y: 0,
-  },
+/* ─── data ─── */
+const features = [
+  { key: 'tokenProfiles', icon: 'M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 114 0v1m-4 0a2 2 0 104 0m-5 8a2 2 0 100-4 2 2 0 000 4zm0 0c1.306 0 2.417.835 2.83 2M9 14a3.001 3.001 0 00-2.83 2M15 11h3m-3 4h2', color: 'blue', href: '/explorer' },
+  { key: 'ownerVerification', icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'purple', href: '/explorer' },
+  { key: 'verifiedLinks', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', color: 'emerald', href: '/explorer' },
+  { key: 'riskFlags', icon: 'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z', color: 'amber', href: '/explorer' },
+  { key: 'preLaunch', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6', color: 'pink', href: '/explorer' },
+  { key: 'aiStudio', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z', color: 'cyan', hasBadge: true, href: '/studio' },
+]
+
+const steps = [
+  { key: 'step1', num: 1, icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6', color: 'from-blue-500 to-blue-600' },
+  { key: 'step2', num: 2, icon: 'M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z', color: 'from-purple-500 to-purple-600' },
+  { key: 'step3', num: 3, icon: 'M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z', color: 'from-pink-500 to-pink-600' },
+  { key: 'step4', num: 4, icon: 'M13 10V3L4 14h7v7l9-11h-7z', color: 'from-emerald-500 to-emerald-600' },
+]
+
+const tiers = [
+  { name: 'Explorer', amount: '10,000', period: '7 days', color: '#3B82F6' },
+  { name: 'Builder', amount: '50,000', period: '30 days', color: '#8B5CF6' },
+  { name: 'Founder', amount: '200,000', period: '90 days', color: '#EC4899' },
+  { name: 'Governor', amount: '1,000,000', period: '180 days', color: '#F59E0B' },
+]
+
+const feeSplit = [
+  { key: 'operations', pct: 30, color: '#3B82F6' },
+  { key: 'buyback', pct: 25, color: '#8B5CF6' },
+  { key: 'rewards', pct: 25, color: '#10B981' },
+  { key: 'grants', pct: 20, color: '#F59E0B' },
+]
+
+const mockComments = [
+  { key: 'comment1', avatar: 'A' },
+  { key: 'comment2', avatar: 'C' },
+  { key: 'comment3', avatar: 'D' },
+]
+
+const utilityItems = [
+  { key: 'access', icon: 'M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z', color: 'blue' },
+  { key: 'reputation', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z', color: 'violet' },
+  { key: 'rewards', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z', color: 'emerald' },
+]
+
+/* helper: color utility */
+const colorMap: Record<string, { bg: string; border: string; text: string; glow: string }> = {
+  blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400', glow: 'from-blue-600/20 to-cyan-600/20' },
+  purple: { bg: 'bg-purple-500/10', border: 'border-purple-500/20', text: 'text-purple-400', glow: 'from-purple-600/20 to-pink-600/20' },
+  emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400', glow: 'from-emerald-600/20 to-green-600/20' },
+  amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400', glow: 'from-amber-600/20 to-yellow-600/20' },
+  pink: { bg: 'bg-pink-500/10', border: 'border-pink-500/20', text: 'text-pink-400', glow: 'from-pink-600/20 to-rose-600/20' },
+  cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400', glow: 'from-cyan-600/20 to-blue-600/20' },
 }
 
-const featureCardVariants = {
-  hidden: { opacity: 0, y: 50, scale: 0.9 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    scale: 1,
-  },
+/* ─── Donut mini chart ─── */
+function MiniDonut({ data }: { data: typeof feeSplit }) {
+  let cum = 0
+  return (
+    <svg viewBox="0 0 100 100" className="w-40 h-40 -rotate-90">
+      {data.map((s, i) => {
+        const start = cum * 3.6; cum += s.pct
+        const end = cum * 3.6
+        const sr = (start * Math.PI) / 180, er = (end * Math.PI) / 180
+        const x1 = 50 + 38 * Math.cos(sr), y1 = 50 + 38 * Math.sin(sr)
+        const x2 = 50 + 38 * Math.cos(er), y2 = 50 + 38 * Math.sin(er)
+        return <path key={i} d={`M 50 50 L ${x1} ${y1} A 38 38 0 ${s.pct > 50 ? 1 : 0} 1 ${x2} ${y2} Z`} fill={s.color} className="hover:opacity-80 transition-opacity" />
+      })}
+      <circle cx="50" cy="50" r="22" fill="#0f0f1a" />
+    </svg>
+  )
 }
 
+/* ─── PAGE ─── */
 export default function HomePage() {
   const t = useTranslations('home')
-  const tCommon = useTranslations('common')
 
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Animated Background */}
+      {/* Animated BG */}
       <StarField />
-      <FloatingParticles count={40} />
-
-      {/* Glowing Orbs */}
+      <FloatingParticles count={30} />
       <GlowingOrb color="blue" size="xl" className="-top-32 -left-32" delay={0} />
       <GlowingOrb color="purple" size="lg" className="top-1/4 -right-20" delay={2} />
-      <GlowingOrb color="cyan" size="md" className="bottom-1/4 left-1/4" delay={4} />
-      <GlowingOrb color="pink" size="lg" className="-bottom-20 right-1/3" delay={1} />
+      <GlowingOrb color="cyan" size="md" className="bottom-1/3 left-1/4" delay={4} />
 
-      {/* Hero Section */}
-      <section className="relative z-20 pt-20 pb-16">
+      {/* ════════ 1. HERO ════════ */}
+      <section className="relative z-20 pt-6 sm:pt-10 pb-12 sm:pb-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+          {/* ── Animated Logo ── */}
           <motion.div
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
-            className="text-center max-w-4xl mx-auto relative z-20"
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="text-center mb-6 sm:mb-10 relative z-20"
           >
-            {/* Logo animation */}
             <motion.div
-              variants={itemVariants}
-              className="mb-6 relative z-20"
+              animate={{
+                filter: [
+                  'drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))',
+                  'drop-shadow(0 0 40px rgba(147, 51, 234, 0.5))',
+                  'drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))',
+                ],
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="inline-block relative z-10"
             >
-              <motion.div
-                animate={{
-                  filter: [
-                    'drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))',
-                    'drop-shadow(0 0 40px rgba(147, 51, 234, 0.5))',
-                    'drop-shadow(0 0 20px rgba(59, 130, 246, 0.4))',
-                  ],
-                }}
-                transition={{ duration: 3, repeat: Infinity }}
-                className="inline-block bg-transparent shadow-none relative z-10"
-                style={{ background: 'transparent', boxShadow: 'none' }}
-              >
-                <Image
-                  src="/axiome-launch-suite-logo.png"
-                  alt="Axiome Launch Suite"
-                  width={700}
-                  height={252}
-                  className="h-60 sm:h-80 md:h-96 w-auto object-contain bg-transparent relative z-10"
-                  priority
-                  style={{ background: 'transparent', boxShadow: 'none' }}
-                />
+              <Image
+                src="/axiome-launch-suite-logo.png"
+                alt="Axiome Launch Suite"
+                width={700}
+                height={252}
+                className="h-28 sm:h-44 md:h-56 lg:h-64 w-auto object-contain"
+                priority
+              />
+            </motion.div>
+
+            {/* Glow layers beneath logo */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 top-[calc(60%-25px)] w-[350px] sm:w-[600px] md:w-[800px] lg:w-[950px]"
+              style={{
+                background: 'radial-gradient(ellipse at center top, rgba(147, 197, 253, 0.4) 0%, rgba(99, 102, 241, 0.35) 20%, rgba(147, 51, 234, 0.25) 50%, transparent 100%)',
+                filter: 'blur(20px)',
+                clipPath: 'polygon(49.5% 0%, 50.5% 0%, 70% 100%, 30% 100%)',
+                height: '300px',
+                zIndex: 0,
+              }}
+              animate={{ opacity: [0.6, 0.9, 0.6], scale: [1, 1.08, 1] }}
+              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+            />
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 top-[calc(60%-25px)] w-[300px] sm:w-[550px] md:w-[750px] lg:w-[900px]"
+              style={{
+                background: 'linear-gradient(to bottom, rgba(255,255,255,1) 0%, rgba(191,219,254,0.8) 10%, rgba(147,197,253,0.6) 25%, rgba(99,102,241,0.4) 45%, rgba(147,51,234,0.2) 65%, transparent 100%)',
+                filter: 'blur(12px)',
+                clipPath: 'polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%)',
+                height: '300px',
+                zIndex: 1,
+              }}
+              animate={{ opacity: [0.8, 1, 0.8] }}
+              transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+            />
+          </motion.div>
+
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 items-center relative z-20">
+            {/* Left – copy */}
+            <motion.div variants={stagger} initial="hidden" animate="visible" className="text-center lg:text-left">
+              <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start gap-2 mb-4 sm:mb-5">
+                {(['verifiedLinks', 'reputation', 'preLaunch'] as const).map(badgeKey => (
+                  <span key={badgeKey} className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1 text-[11px] sm:text-xs font-medium rounded-full bg-violet-500/10 border border-violet-500/20 text-violet-400">
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                    {t(`badges.${badgeKey}`)}
+                  </span>
+                ))}
               </motion.div>
 
-              {/* Soft blue glow - breathing effect */}
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 top-full w-[700px] sm:w-[950px] md:w-[1150px] flame-glow-outer"
-                style={{
-                  background: 'radial-gradient(ellipse at center top, rgba(147, 197, 253, 0.4) 0%, rgba(99, 102, 241, 0.35) 20%, rgba(147, 51, 234, 0.25) 50%, transparent 100%)',
-                  filter: 'blur(20px)',
-                  clipPath: 'polygon(49.5% 0%, 50.5% 0%, 70% 100%, 30% 100%)',
-                  zIndex: 0,
-                  height: '800px',
-                }}
-                animate={{
-                  opacity: [0.6, 0.9, 0.6],
-                  scale: [1, 1.08, 1],
-                  filter: ['blur(20px)', 'blur(25px)', 'blur(20px)'],
-                }}
-                transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
+              <motion.h1 variants={staggerItem} className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-[1.1] mb-4 sm:mb-5">
+                <span className="bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent">
+                  {t('hero.title')}
+                </span>
+              </motion.h1>
 
-              {/* Additional soft layer for depth */}
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 top-full w-[680px] sm:w-[920px] md:w-[1100px] flame-glow-outer"
-                style={{
-                  background: 'radial-gradient(ellipse at center top, rgba(191, 219, 254, 0.5) 0%, rgba(147, 197, 253, 0.4) 30%, rgba(99, 102, 241, 0.3) 60%, transparent 100%)',
-                  filter: 'blur(15px)',
-                  clipPath: 'polygon(49.5% 0%, 50.5% 0%, 65% 100%, 35% 100%)',
-                  zIndex: 0,
-                  height: '800px',
-                }}
-                animate={{
-                  opacity: [0.5, 0.75, 0.5],
-                  scale: [1, 1.1, 1],
-                }}
-                transition={{
-                  duration: 2.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 0.5,
-                }}
-              />
+              <motion.p variants={staggerItem} className="text-base sm:text-lg text-gray-400 max-w-xl mx-auto lg:mx-0 leading-relaxed mb-4">
+                {t('hero.subtitle')}<br />
+                <span className="text-gray-300">{t('hero.subtitle2')}</span>
+              </motion.p>
 
-              {/* Cyan-blue glow layer */}
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 top-full w-[720px] sm:w-[980px] md:w-[1200px] flame-glow-outer"
-                style={{
-                  background: 'radial-gradient(ellipse at center top, rgba(59, 130, 246, 0.35) 0%, rgba(37, 99, 235, 0.3) 25%, rgba(29, 78, 216, 0.2) 50%, rgba(30, 64, 175, 0.1) 75%, transparent 100%)',
-                  filter: 'blur(22px)',
-                  clipPath: 'polygon(49.5% 0%, 50.5% 0%, 75% 100%, 25% 100%)',
-                  zIndex: 0,
-                  height: '800px',
-                }}
-                animate={{
-                  opacity: [0.4, 0.7, 0.4],
-                  scale: [1, 1.12, 1],
-                  filter: ['blur(22px)', 'blur(28px)', 'blur(22px)'],
-                }}
-                transition={{
-                  duration: 3.5,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                  delay: 1,
-                }}
-              />
+              <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-4 sm:mb-5">
+                <Link href="/explorer">
+                  <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm sm:text-base font-medium rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                    {t('hero.cta1')}
+                  </motion.span>
+                </Link>
+                <Link href="/explorer">
+                  <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-gray-700 hover:border-gray-500 text-gray-200 text-sm sm:text-base font-medium rounded-xl transition-all hover:bg-white/5">
+                    {t('hero.cta2')}
+                  </motion.span>
+                </Link>
+              </motion.div>
 
-              {/* Inner soft core */}
-              <motion.div
-                className="absolute left-1/2 -translate-x-1/2 top-full w-[625px] sm:w-[833px] md:w-[1000px] flame-glow-inner"
-                style={{
-                  background: 'linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.95) 2%, rgba(255, 255, 255, 0.85) 5%, rgba(191, 219, 254, 0.8) 10%, rgba(147, 197, 253, 0.6) 25%, rgba(99, 102, 241, 0.4) 45%, rgba(147, 51, 234, 0.2) 65%, rgba(99, 102, 241, 0.1) 80%, rgba(99, 102, 241, 0.05) 90%, rgba(99, 102, 241, 0.02) 95%, transparent 100%)',
-                  filter: 'blur(12px)',
-                  clipPath: 'polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%)',
-                  zIndex: 1,
-                  boxShadow: '0 0 40px rgba(255, 255, 255, 0.5), 0 0 60px rgba(255, 255, 255, 0.3), 0 0 80px rgba(147, 197, 253, 0.2)',
-                  height: '800px',
-                  transformOrigin: 'top',
-                }}
-                animate={{
-                  opacity: [0.9, 1, 0.9],
-                }}
-                transition={{
-                  duration: 2,
-                  repeat: Infinity,
-                  ease: 'easeInOut',
-                }}
-              />
+              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start items-center gap-4">
+                <Link href="/docs" className="text-sm text-violet-400 hover:text-violet-300 transition-colors flex items-center gap-1">
+                  {t('hero.docsLink')} <span aria-hidden="true">&rarr;</span>
+                </Link>
+              </motion.div>
+
+              <motion.div variants={staggerItem} className="mt-4 sm:mt-6 inline-flex items-center gap-2 text-xs text-gray-500">
+                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                {t('hero.poweredBy')}
+              </motion.div>
             </motion.div>
 
-            {/* Title with gradient animation */}
-            <motion.h1
-              variants={itemVariants}
-              className="text-4xl sm:text-5xl md:text-7xl font-bold mb-4 relative z-30"
-            >
-              <motion.span
-                className="inline-block bg-gradient-to-r from-white via-blue-200 to-purple-200 bg-clip-text text-transparent"
-                animate={{
-                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
-                }}
-                transition={{ duration: 5, repeat: Infinity }}
-                style={{ backgroundSize: '200% 200%' }}
-              >
-                {t('hero.title')}
-              </motion.span>
-            </motion.h1>
-
-            {/* Subtitle */}
-            <motion.p
-              variants={itemVariants}
-              className="text-lg sm:text-xl text-gray-400 mb-8 max-w-2xl mx-auto leading-relaxed relative z-30"
-            >
-              {t('hero.subtitle')}
-            </motion.p>
-
-            {/* CTA Buttons */}
+            {/* Right – mock token preview card */}
             <motion.div
-              variants={itemVariants}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-30"
+              initial={{ opacity: 0, x: 40 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, delay: 0.4 }}
+              className="hidden lg:block"
             >
-              <Link href="/studio">
-                <motion.div
-                  whileHover={{ scale: 1.05, boxShadow: '0 0 40px rgba(59, 130, 246, 0.5)' }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button size="lg" className="px-8 py-4 text-lg bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 border-0 shadow-xl shadow-blue-500/30">
-                    {tCommon('createToken')}
-                  </Button>
-                </motion.div>
-              </Link>
-              <Link href="/explorer">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                >
-                  <Button variant="outline" size="lg" className="px-8 py-4 text-lg border-gray-600 hover:border-purple-500 hover:bg-purple-500/10">
-                    {tCommon('exploreTokens')}
-                  </Button>
-                </motion.div>
-              </Link>
-            </motion.div>
+              <div className="relative">
+                {/* glow behind */}
+                <div className="absolute -inset-6 bg-gradient-to-br from-blue-500/20 via-purple-500/15 to-pink-500/10 rounded-3xl blur-2xl" />
 
-            {/* AXM Price Ticker */}
-            <motion.div
-              variants={itemVariants}
-              className="mt-8 flex justify-center relative z-30"
-            >
-              <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3">
-                <AXMPriceTicker showVolume showHighLow />
+                <div className="relative bg-gray-900/70 backdrop-blur-xl border border-gray-700/50 rounded-2xl p-6 shadow-2xl">
+                  {/* Header row */}
+                  <div className="flex items-center gap-4 mb-5">
+                    <img src="https://image2url.com/r2/default/images/1770220782157-0e2ab4ed-cb61-46aa-a681-b50a302b1254.png" alt="LAUNCH" className="w-14 h-14 rounded-xl shadow-lg shadow-violet-500/30" />
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <span className="text-white font-bold text-lg">LAUNCH</span>
+                        <span className="px-2 py-0.5 text-[10px] font-semibold bg-violet-500/15 text-violet-400 rounded-full border border-violet-500/20">{t('mockCard.utility')}</span>
+                      </div>
+                      <span className="text-sm text-gray-400">$LAUNCH</span>
+                    </div>
+                  </div>
+
+                  {/* Supply info */}
+                  <div className="flex items-center gap-3 mb-5 p-3 bg-gray-800/50 rounded-xl">
+                    <div className="text-center min-w-[70px]">
+                      <div className="text-lg font-bold text-violet-400">100M</div>
+                      <div className="text-[10px] text-gray-500 uppercase tracking-wider">{t('mockCard.supply')}</div>
+                    </div>
+                    <div className="flex-1 space-y-1.5">
+                      <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden flex">
+                        <div className="h-full bg-violet-500 rounded-l-full" style={{ width: '20%' }} />
+                        <div className="h-full bg-blue-500" style={{ width: '15%' }} />
+                        <div className="h-full bg-emerald-500" style={{ width: '15%' }} />
+                        <div className="h-full bg-amber-500" style={{ width: '15%' }} />
+                        <div className="h-full bg-pink-500" style={{ width: '10%' }} />
+                        <div className="h-full bg-cyan-500" style={{ width: '15%' }} />
+                        <div className="h-full bg-red-400 rounded-r-full" style={{ width: '10%' }} />
+                      </div>
+                      <div className="flex justify-between text-[10px] text-gray-500">
+                        <span>{t('mockCard.reserve')}</span><span>{t('mockCard.staking')}</span><span>{t('mockCard.liquidity')}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Utility items */}
+                  <div className="space-y-2 mb-5">
+                    {([
+                      { labelKey: 'utilityAccess' as const, icon: '🔑' },
+                      { labelKey: 'utilityReputation' as const, icon: '⭐' },
+                      { labelKey: 'utilityGovernance' as const, icon: '🗳️' },
+                      { labelKey: 'utilityRewards' as const, icon: '🎁' },
+                    ]).map(item => (
+                      <div key={item.labelKey} className="flex items-center gap-2.5 text-sm">
+                        <span className="text-base">{item.icon}</span>
+                        <span className="text-gray-300">{t(`mockCard.${item.labelKey}`)}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Tags */}
+                  <div className="flex flex-wrap gap-2">
+                    <span className="text-[10px] px-2 py-1 rounded-md bg-violet-500/10 text-violet-400 border border-violet-500/15">{t('mockCard.platformToken')}</span>
+                    <span className="text-[10px] px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 border border-blue-500/15">{t('mockCard.axiomeChain')}</span>
+                  </div>
+                </div>
               </div>
             </motion.div>
+          </div>
 
-            {/* Scroll indicator */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 2 }}
-              className="mt-10"
-            >
-              <motion.div
-                animate={{ y: [0, 10, 0] }}
-                transition={{ duration: 2, repeat: Infinity }}
-                className="text-gray-500"
-              >
-                <svg className="w-6 h-6 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                </svg>
-              </motion.div>
-            </motion.div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* About Section */}
-      <section className="relative z-20 py-16 border-t border-gray-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="max-w-4xl mx-auto text-center"
-          >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">
-              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                {t('about.title')}
-              </span>
-            </h2>
-            <p className="text-lg text-gray-400 mb-6 leading-relaxed">
-              {t('about.description')}
-            </p>
-            <div className="inline-block px-6 py-4 bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl">
-              <p className="text-blue-300 font-medium">
-                {t('about.highlight')}
-              </p>
+          {/* AXM ticker */}
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 1 }} className="mt-6 sm:mt-10 flex justify-center relative z-30">
+            <div className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-full px-6 py-3">
+              <AXMPriceTicker showVolume showHighLow />
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* How It Works Section */}
-      <section className="relative z-20 py-16 border-t border-gray-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-center mb-12"
-          >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {t('howItWorks.title')}
-            </span>
+      {/* ════════ 2. PROBLEM → SOLUTION ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-10">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('why.title')}</span>
           </motion.h2>
 
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connection line */}
-            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-500/50 via-purple-500/50 to-pink-500/50" />
-
-            {/* Step 1 */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="relative text-center"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-blue-500/20 to-blue-600/20 rounded-full flex items-center justify-center border-2 border-blue-500/30 relative z-10 backdrop-blur-sm"
-              >
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg shadow-blue-500/30">
-                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
+          <div className="grid md:grid-cols-2 gap-6">
+            <motion.div {...fadeUp} className="bg-red-500/5 border border-red-500/15 rounded-2xl p-7 backdrop-blur-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-11 h-11 bg-red-500/15 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                  1
-                </div>
-              </motion.div>
-              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.create.title')}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.create.description')}</p>
+                <h3 className="text-lg font-semibold text-red-400">{t('why.problemTitle')}</h3>
+              </div>
+              <p className="text-white font-medium mb-2">{t('why.problemText1')}</p>
+              <p className="text-sm text-gray-400 leading-relaxed">{t('why.problemText2')}</p>
             </motion.div>
 
-            {/* Step 2 */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="relative text-center"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-purple-500/20 to-purple-600/20 rounded-full flex items-center justify-center border-2 border-purple-500/30 relative z-10 backdrop-blur-sm"
-              >
-                <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center shadow-lg shadow-purple-500/30">
-                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-                  </svg>
+            <motion.div {...fadeUp} transition={{ duration: 0.55, delay: 0.1 }} className="bg-emerald-500/5 border border-emerald-500/15 rounded-2xl p-7 backdrop-blur-sm">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-11 h-11 bg-emerald-500/15 rounded-xl flex items-center justify-center">
+                  <svg className="w-5 h-5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
                 </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                  2
-                </div>
-              </motion.div>
-              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.community.title')}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.community.description')}</p>
-            </motion.div>
-
-            {/* Step 3 */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.3 }}
-              className="relative text-center"
-            >
-              <motion.div
-                whileHover={{ scale: 1.1 }}
-                className="w-32 h-32 mx-auto mb-6 bg-gradient-to-br from-pink-500/20 to-pink-600/20 rounded-full flex items-center justify-center border-2 border-pink-500/30 relative z-10 backdrop-blur-sm"
-              >
-                <div className="w-20 h-20 bg-gradient-to-br from-pink-500 to-pink-600 rounded-full flex items-center justify-center shadow-lg shadow-pink-500/30">
-                  <svg className="w-10 h-10 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                  </svg>
-                </div>
-                <div className="absolute -top-2 -right-2 w-8 h-8 bg-pink-500 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
-                  3
-                </div>
-              </motion.div>
-              <h3 className="text-xl font-semibold text-white mb-3">{t('howItWorks.steps.launch.title')}</h3>
-              <p className="text-gray-400 text-sm leading-relaxed">{t('howItWorks.steps.launch.description')}</p>
+                <h3 className="text-lg font-semibold text-emerald-400">{t('why.solutionTitle')}</h3>
+              </div>
+              <p className="text-white font-medium mb-2">{t('why.solutionText1')}</p>
+              <p className="text-sm text-gray-400 leading-relaxed">{t('why.solutionText2')}</p>
             </motion.div>
           </div>
+
+          <motion.div {...fadeUp} className="mt-6 text-center">
+            <Link href="/docs" className="text-sm text-gray-500 hover:text-violet-400 transition-colors">
+              {t('why.docsLink')} &rarr;
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* Features Section */}
-      <section className="relative z-20 py-16 border-t border-gray-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl font-bold text-center mb-12"
-          >
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              {t('features.title')}
-            </span>
+      {/* ════════ 3. CORE FEATURES 2×3 ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-4">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('features.title')}</span>
           </motion.h2>
+          <motion.p {...fadeUp} className="text-gray-400 text-center mb-12 max-w-xl mx-auto">
+            {t('features.subtitle')}
+          </motion.p>
 
-          <div className="grid md:grid-cols-2 gap-8">
-            {/* Feature 1 - AI Studio */}
-            <motion.div
-              variants={featureCardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-blue-500/50 transition-all duration-500 h-full">
-                <div className="flex items-start gap-4 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30 flex-shrink-0"
-                  >
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
-                    </svg>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white group-hover:text-blue-300 transition-colors">
-                      {t('features.studio.title')}
-                    </h3>
-                  </div>
-                </div>
-                <p className="text-gray-400 mb-4 leading-relaxed">
-                  {t('features.studio.description')}
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.studio.bullets.generate')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.studio.bullets.edit')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-blue-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.studio.bullets.promo')}
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Feature 2 - Explorer */}
-            <motion.div
-              variants={featureCardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-green-500/50 transition-all duration-500 h-full">
-                <div className="flex items-start gap-4 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-14 h-14 bg-gradient-to-br from-green-500 to-emerald-500 rounded-xl flex items-center justify-center shadow-lg shadow-green-500/30 flex-shrink-0"
-                  >
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                    </svg>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white group-hover:text-green-300 transition-colors">
-                      {t('features.explorer.title')}
-                    </h3>
-                  </div>
-                </div>
-                <p className="text-gray-400 mb-4 leading-relaxed">
-                  {t('features.explorer.description')}
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.explorer.bullets.risk')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.explorer.bullets.stats')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.explorer.bullets.upcoming')}
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Feature 3 - Ownership */}
-            <motion.div
-              variants={featureCardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-purple-500/50 transition-all duration-500 h-full">
-                <div className="flex items-start gap-4 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-14 h-14 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center shadow-lg shadow-purple-500/30 flex-shrink-0"
-                  >
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z" />
-                    </svg>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white group-hover:text-purple-300 transition-colors">
-                      {t('features.ownership.title')}
-                    </h3>
-                  </div>
-                </div>
-                <p className="text-gray-400 mb-4 leading-relaxed">
-                  {t('features.ownership.description')}
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.ownership.bullets.claim')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.ownership.bullets.edit')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-purple-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.ownership.bullets.ai')}
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-
-            {/* Feature 4 - Community */}
-            <motion.div
-              variants={featureCardVariants}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true }}
-              whileHover={{ y: -5, transition: { duration: 0.3 } }}
-              className="group relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-orange-600/20 to-yellow-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-              <div className="relative bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8 hover:border-orange-500/50 transition-all duration-500 h-full">
-                <div className="flex items-start gap-4 mb-4">
-                  <motion.div
-                    whileHover={{ rotate: 360, scale: 1.1 }}
-                    transition={{ duration: 0.6 }}
-                    className="w-14 h-14 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl flex items-center justify-center shadow-lg shadow-orange-500/30 flex-shrink-0"
-                  >
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                    </svg>
-                  </motion.div>
-                  <div>
-                    <h3 className="text-xl font-semibold text-white group-hover:text-orange-300 transition-colors">
-                      {t('features.community.title')}
-                    </h3>
-                  </div>
-                </div>
-                <p className="text-gray-400 mb-4 leading-relaxed">
-                  {t('features.community.description')}
-                </p>
-                <ul className="space-y-2">
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.community.bullets.comments')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.community.bullets.reactions')}
-                  </li>
-                  <li className="flex items-center gap-2 text-sm text-gray-300">
-                    <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    {t('features.community.bullets.alerts')}
-                  </li>
-                </ul>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* $LAUNCH Token Section */}
-      <section className="relative z-20 py-16 border-t border-gray-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="relative"
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-yellow-600/10 via-orange-600/10 to-red-600/10 rounded-3xl blur-3xl" />
-
-            <div className="relative bg-gray-900/30 backdrop-blur-sm border border-yellow-500/20 rounded-3xl p-8 md:p-12">
-              {/* Header */}
-              <div className="text-center mb-12">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <motion.div
-                    animate={{ rotate: [0, 10, -10, 0] }}
-                    transition={{ duration: 2, repeat: Infinity }}
-                    className="w-14 h-14 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center shadow-lg shadow-yellow-500/30"
-                  >
-                    <svg className="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </motion.div>
-                </div>
-                <h3 className="text-3xl md:text-4xl font-bold text-white mb-2">{t('token.title')}</h3>
-                <span className="inline-block px-4 py-1 bg-yellow-500/20 text-yellow-400 text-sm font-medium rounded-full">{t('token.subtitle')}</span>
-                <p className="text-gray-400 mt-4 max-w-2xl mx-auto leading-relaxed">
-                  {t('token.description')}
-                </p>
-              </div>
-
-              <div className="grid md:grid-cols-2 gap-8">
-                {/* Left - Holder Benefits */}
-                <motion.div
-                  initial={{ opacity: 0, x: -20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-yellow-500 to-orange-500 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
-                      </svg>
-                    </div>
-                    <h4 className="text-xl font-semibold text-white">{t('token.holdersTitle')}</h4>
-                  </div>
-
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-3 text-gray-300">
-                      <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{t('token.features.discount')}</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-gray-300">
-                      <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{t('token.features.support')}</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-gray-300">
-                      <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{t('token.features.revenue')}</span>
-                    </li>
-                    <li className="flex items-start gap-3 text-gray-300">
-                      <svg className="w-5 h-5 text-yellow-400 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{t('token.features.earlyAccess')}</span>
-                    </li>
-                  </ul>
-
-                  {/* Revenue Share Highlight */}
-                  <div className="mt-6 p-4 bg-gradient-to-r from-yellow-500/10 to-orange-500/10 border border-yellow-500/20 rounded-xl">
-                    <h5 className="text-sm font-semibold text-yellow-400 mb-2">{t('token.revenueTitle')}</h5>
-                    <p className="text-sm text-gray-400 leading-relaxed">{t('token.revenueDescription')}</p>
-                  </div>
-                </motion.div>
-
-                {/* Right - Premium Services */}
-                <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  className="bg-gray-800/30 border border-gray-700/50 rounded-2xl p-6"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-lg flex items-center justify-center">
-                      <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
-                      </svg>
-                    </div>
-                    <h4 className="text-xl font-semibold text-white">{t('token.servicesTitle')}</h4>
-                  </div>
-
-                  <div className="space-y-4">
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-300">{t('token.services.techSpecs')}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-300">{t('token.services.landing')}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-300">{t('token.services.marketing')}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <svg className="w-4 h-4 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
-                        </svg>
-                      </div>
-                      <div>
-                        <p className="text-gray-300">{t('token.services.support')}</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Token Visual */}
-                  <div className="mt-6 flex justify-center">
-                    <motion.div
-                      animate={{
-                        y: [0, -5, 0],
-                        scale: [1, 1.02, 1]
-                      }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                      className="relative"
-                    >
-                      <div className="w-32 h-32 bg-gradient-to-br from-yellow-500 via-orange-500 to-red-500 rounded-full flex items-center justify-center shadow-xl shadow-yellow-500/30">
-                        <div className="w-26 h-26 bg-gray-900/90 rounded-full flex items-center justify-center" style={{ width: '104px', height: '104px' }}>
-                          <span className="text-2xl font-bold bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">$LAUNCH</span>
+          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+            {features.map(f => {
+              const c = colorMap[f.color]
+              return (
+                <motion.div key={f.key} variants={staggerItem}>
+                  <Link href={f.href}>
+                    <div className="group relative h-full">
+                      <div className={`absolute inset-0 bg-gradient-to-r ${c.glow} rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500`} />
+                      <div className={`relative h-full bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:border-gray-700/80 transition-all duration-300 hover:-translate-y-1`}>
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className={`w-10 h-10 ${c.bg} rounded-xl flex items-center justify-center`}>
+                            <svg className={`w-5 h-5 ${c.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={f.icon} /></svg>
+                          </div>
+                          <h3 className="text-white font-semibold">{t(`features.${f.key}.title`)}</h3>
+                          {f.hasBadge && (
+                            <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 font-medium">{t(`features.${f.key}.badge`)}</span>
+                          )}
                         </div>
+                        <p className="text-sm text-gray-400 mb-3">{t(`features.${f.key}.desc`)}</p>
+                        <ul className="space-y-1">
+                          {(['bullet1', 'bullet2'] as const).map(bulletKey => (
+                            <li key={bulletKey} className="flex items-center gap-2 text-xs text-gray-500">
+                              <svg className={`w-3 h-3 ${c.text}`} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" /></svg>
+                              {t(`features.${f.key}.${bulletKey}`)}
+                            </li>
+                          ))}
+                        </ul>
                       </div>
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{ duration: 8, repeat: Infinity, ease: "linear" }}
-                        className="absolute inset-0"
-                      >
-                        <div className="absolute top-0 left-1/2 w-2 h-2 bg-yellow-400 rounded-full shadow-lg shadow-yellow-400/50" />
-                        <div className="absolute bottom-0 left-1/2 w-1.5 h-1.5 bg-orange-400 rounded-full shadow-lg shadow-orange-400/50" />
-                      </motion.div>
-                    </motion.div>
+                    </div>
+                  </Link>
+                </motion.div>
+              )
+            })}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════ 4. HOW IT WORKS (4 steps) ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-12">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('steps.title')}</span>
+          </motion.h2>
+
+          {/* Desktop: horizontal stepper */}
+          <div className="hidden md:block relative">
+            {/* connector line */}
+            <div className="absolute top-10 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-blue-500/40 via-purple-500/40 to-emerald-500/40" />
+
+            <div className="grid grid-cols-4 gap-6">
+              {steps.map((s, i) => (
+                <motion.div key={s.num} {...fadeUp} transition={{ duration: 0.55, delay: i * 0.12 }} className="text-center relative">
+                  <div className={`w-20 h-20 mx-auto mb-4 bg-gradient-to-br ${s.color} rounded-full flex items-center justify-center shadow-lg relative z-10`}>
+                    <svg className="w-9 h-9 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} /></svg>
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-white text-gray-900 rounded-full text-xs font-bold flex items-center justify-center shadow">{s.num}</div>
+                  </div>
+                  <h3 className="text-white font-semibold mb-1">{t(`steps.${s.key}.title`)}</h3>
+                  <p className="text-sm text-gray-400 leading-relaxed">{t(`steps.${s.key}.desc`)}</p>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+
+          {/* Mobile: vertical stepper */}
+          <div className="md:hidden relative">
+            <div className="absolute left-5 top-0 bottom-0 w-0.5 bg-gray-800" />
+            <div className="space-y-8">
+              {steps.map((s, i) => (
+                <motion.div key={s.num} {...fadeUp} transition={{ duration: 0.55, delay: i * 0.1 }} className="flex items-start gap-5 relative">
+                  <div className={`w-10 h-10 bg-gradient-to-br ${s.color} rounded-full flex items-center justify-center shrink-0 z-10 shadow-lg`}>
+                    <span className="text-white font-bold text-sm">{s.num}</span>
+                  </div>
+                  <div>
+                    <h3 className="text-white font-semibold mb-1">{t(`steps.${s.key}.title`)}</h3>
+                    <p className="text-sm text-gray-400">{t(`steps.${s.key}.desc`)}</p>
                   </div>
                 </motion.div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ════════ 5. LAUNCH TOKEN UTILITY ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-3">
+            <span className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 bg-clip-text text-transparent">{t('utility.title')}</span>
+          </motion.h2>
+          <motion.p {...fadeUp} className="text-gray-400 text-center mb-10 max-w-xl mx-auto">
+            {t('utility.subtitle')}
+          </motion.p>
+
+          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-3 gap-5">
+            {utilityItems.map(c => (
+              <motion.div key={c.key} variants={staggerItem} className="bg-gray-900/40 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 text-center hover:-translate-y-1 transition-transform duration-300">
+                <div className={`w-14 h-14 mx-auto mb-4 rounded-xl flex items-center justify-center ${c.color === 'blue' ? 'bg-blue-500/15' : c.color === 'violet' ? 'bg-violet-500/15' : 'bg-emerald-500/15'}`}>
+                  <svg className={`w-7 h-7 ${c.color === 'blue' ? 'text-blue-400' : c.color === 'violet' ? 'text-violet-400' : 'text-emerald-400'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={c.icon} /></svg>
+                </div>
+                <h3 className="text-white font-semibold text-lg mb-2">{t(`utility.${c.key}.title`)}</h3>
+                <p className="text-sm text-gray-400 leading-relaxed">{t(`utility.${c.key}.desc`)}</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div {...fadeUp} className="mt-8 text-center">
+            <Link href="/docs#token" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
+              {t('utility.readMore')} &rarr;
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════ 6. TIERS PREVIEW ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-10">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('tiers.title')}</span>
+          </motion.h2>
+
+          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {tiers.map(tier => (
+              <motion.div key={tier.name} variants={staggerItem} className="bg-gray-900/50 backdrop-blur-sm border rounded-2xl p-5 text-center hover:-translate-y-1 transition-transform duration-300" style={{ borderColor: `${tier.color}33` }}>
+                <div className="w-10 h-10 mx-auto mb-3 rounded-full flex items-center justify-center" style={{ backgroundColor: `${tier.color}20` }}>
+                  <div className="w-3 h-3 rounded-full" style={{ backgroundColor: tier.color }} />
+                </div>
+                <h3 className="text-white font-bold mb-1">{tier.name}</h3>
+                <div className="text-xl font-bold" style={{ color: tier.color }}>{tier.amount}</div>
+                <div className="text-xs text-gray-500 mb-3">LAUNCH / {tier.period}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div {...fadeUp} className="mt-6 text-center space-y-2">
+            <Link href="/docs#access" className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white text-sm font-medium rounded-xl transition-all">
+              {t('tiers.cta')}
+            </Link>
+            <p className="text-xs text-gray-600">{t('tiers.note')}</p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════ 7. FEE SPLIT + TRANSPARENCY ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-3">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('feeSplit.title')}</span>
+          </motion.h2>
+          <motion.p {...fadeUp} className="text-gray-400 text-center mb-10 max-w-xl mx-auto">
+            {t('feeSplit.subtitle')}
+          </motion.p>
+
+          <motion.div {...fadeUp} className="bg-gray-900/40 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-8">
+            <div className="grid md:grid-cols-2 gap-8 items-center">
+              <div className="flex justify-center">
+                <MiniDonut data={feeSplit} />
+              </div>
+              <div className="space-y-4">
+                {feeSplit.map(s => (
+                  <div key={s.key} className="flex items-center gap-3">
+                    <div className="w-3 h-3 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
+                    <div className="flex-1">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-gray-300">{t(`feeSplit.${s.key}`)}</span>
+                        <span className="text-white font-medium">{s.pct}%</span>
+                      </div>
+                      <div className="h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                        <div className="h-full rounded-full" style={{ width: `${s.pct * 100 / 30}%`, backgroundColor: s.color }} />
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="relative z-20 py-12 border-t border-gray-800/30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* ════════ 8. SOCIAL PROOF / COMMUNITY ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-3">
+            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">{t('community.title')}</span>
+          </motion.h2>
+          <motion.p {...fadeUp} className="text-gray-400 text-center mb-10 max-w-lg mx-auto">
+            {t('community.subtitle')}
+          </motion.p>
+
+          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-3 gap-5 mb-8">
+            {mockComments.map((c, i) => (
+              <motion.div key={i} variants={staggerItem} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-5">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-9 h-9 bg-gradient-to-br from-violet-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-bold">{c.avatar}</div>
+                  <div>
+                    <div className="text-white text-sm font-medium">{t(`community.${c.key}.user`)}</div>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-violet-500/10 text-violet-400 border border-violet-500/15">{t(`community.${c.key}.badge`)}</span>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-400 leading-relaxed">&quot;{t(`community.${c.key}.text`)}&quot;</p>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          <motion.div {...fadeUp} className="text-center">
+            <Link href="/explorer" className="inline-flex items-center gap-2 px-5 py-2.5 border border-gray-700 hover:border-gray-500 text-gray-300 hover:text-white text-sm font-medium rounded-xl transition-all">
+              {t('community.cta')}
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ════════ 9. FINAL CTA ════════ */}
+      <section className="relative z-20 py-20 border-t border-gray-800/30">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
+            initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-            className="relative text-center"
+            transition={{ duration: 0.6 }}
+            className="relative"
           >
-            {/* Background glow */}
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-pink-600/10 rounded-3xl blur-3xl" />
+            {/* glow */}
+            <div className="absolute -inset-4 bg-gradient-to-r from-blue-600/15 via-purple-600/15 to-pink-600/15 rounded-3xl blur-3xl" />
 
-            <div className="relative bg-gray-900/30 backdrop-blur-sm border border-gray-800/50 rounded-3xl p-8 md:p-12">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-5xl font-bold mb-4"
-              >
+            <div className="relative bg-gray-900/40 backdrop-blur-sm border border-gray-800/50 rounded-3xl p-10 md:p-14 text-center">
+              <h2 className="text-3xl md:text-5xl font-bold mb-4">
                 <span className="bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
                   {t('cta.title')}
                 </span>
-              </motion.h2>
-              <motion.p
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.2 }}
-                className="text-gray-400 mb-8 max-w-xl mx-auto text-lg"
-              >
+              </h2>
+              <p className="text-gray-400 mb-8 max-w-lg mx-auto text-lg">
                 {t('cta.subtitle')}
-              </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.4 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-4"
-              >
-                <Link href="/studio">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-block"
-                  >
-                    <Button size="lg" className="px-10 py-5 text-xl bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 border-0 shadow-2xl shadow-purple-500/30">
-                      {tCommon('createToken')}
-                    </Button>
-                  </motion.div>
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-4">
+                <Link href="/explorer">
+                  <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 hover:from-blue-500 hover:via-purple-500 hover:to-pink-500 text-white text-lg font-medium rounded-xl shadow-2xl shadow-purple-500/25 transition-all">
+                    {t('cta.cta1')}
+                  </motion.span>
                 </Link>
                 <Link href="/explorer">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-block"
-                  >
-                    <Button variant="outline" size="lg" className="px-10 py-5 text-xl border-gray-600 hover:border-purple-500 hover:bg-purple-500/10">
-                      {tCommon('exploreTokens')}
-                    </Button>
-                  </motion.div>
+                  <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 border border-gray-600 hover:border-purple-500 hover:bg-purple-500/10 text-gray-200 text-lg font-medium rounded-xl transition-all">
+                    {t('cta.cta2')}
+                  </motion.span>
                 </Link>
-              </motion.div>
+              </div>
+
+              <Link href="/docs" className="text-sm text-violet-400 hover:text-violet-300 transition-colors">
+                {t('cta.docsLink')} &rarr;
+              </Link>
             </div>
           </motion.div>
         </div>

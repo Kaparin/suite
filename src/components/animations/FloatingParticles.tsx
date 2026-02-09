@@ -1,7 +1,7 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { useMemo } from 'react'
+import { useState, useEffect } from 'react'
 
 interface Particle {
   id: number
@@ -10,19 +10,27 @@ interface Particle {
   size: number
   duration: number
   delay: number
+  drift: number
 }
 
 export function FloatingParticles({ count = 30 }: { count?: number }) {
-  const particles = useMemo<Particle[]>(() => {
-    return Array.from({ length: count }, (_, i) => ({
-      id: i,
-      x: Math.random() * 100,
-      y: Math.random() * 100,
-      size: Math.random() * 4 + 1,
-      duration: Math.random() * 20 + 10,
-      delay: Math.random() * 5,
-    }))
+  const [particles, setParticles] = useState<Particle[]>([])
+
+  useEffect(() => {
+    setParticles(
+      Array.from({ length: count }, (_, i) => ({
+        id: i,
+        x: Math.random() * 100,
+        y: Math.random() * 100,
+        size: Math.random() * 4 + 1,
+        duration: Math.random() * 20 + 10,
+        delay: Math.random() * 5,
+        drift: Math.random() * 20 - 10,
+      }))
+    )
   }, [count])
+
+  if (particles.length === 0) return null
 
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden z-10">
@@ -40,7 +48,7 @@ export function FloatingParticles({ count = 30 }: { count?: number }) {
           }}
           animate={{
             y: [0, -30, 0],
-            x: [0, Math.random() * 20 - 10, 0],
+            x: [0, particle.drift, 0],
             opacity: [0.2, 0.8, 0.2],
             scale: [1, 1.5, 1],
           }}

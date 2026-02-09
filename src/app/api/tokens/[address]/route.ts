@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifySessionTokenV2 } from '@/lib/auth'
 import { KNOWN_TOKENS } from '@/lib/axiome/token-registry'
+import { getProjectTrustScore } from '@/lib/trust/calculator'
 
 const REST_URL = process.env.AXIOME_REST_URL
 
@@ -109,54 +110,41 @@ export async function GET(
     const { address } = await params
 
     // Сначала ищем по tokenAddress, потом по ID
-    let project = await prisma.project.findUnique({
-      where: { tokenAddress: address },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            username: true,
-            wallets: {
-              where: { isPrimary: true },
-              select: { address: true },
-              take: 1
-            },
+    const includeConfig = {
+      owner: {
+        select: {
+          id: true,
+          username: true,
+          wallets: {
+            where: { isPrimary: true },
+            select: { address: true },
+            take: 1,
           },
         },
-        metrics: {
-          orderBy: { date: 'desc' },
-          take: 30,
-        },
-        riskFlags: {
-          where: { isActive: true },
-        },
       },
+      metrics: {
+        orderBy: { date: 'desc' as const },
+        take: 30,
+      },
+      riskFlags: {
+        where: { isActive: true },
+      },
+      changes: {
+        orderBy: { createdAt: 'desc' as const },
+        take: 20,
+      },
+    }
+
+    let project = await prisma.project.findUnique({
+      where: { tokenAddress: address },
+      include: includeConfig,
     })
 
     // Если не найден по адресу, ищем по ID
     if (!project) {
       project = await prisma.project.findUnique({
         where: { id: address },
-        include: {
-          owner: {
-            select: {
-              id: true,
-              username: true,
-              wallets: {
-                where: { isPrimary: true },
-                select: { address: true },
-                take: 1
-              },
-            },
-          },
-          metrics: {
-            orderBy: { date: 'desc' },
-            take: 30,
-          },
-          riskFlags: {
-            where: { isActive: true },
-          },
-        },
+        include: includeConfig,
       })
     }
 
@@ -209,24 +197,15 @@ export async function GET(
       )
     }
 
-    // Вычисляем score на основе метрик и флагов
     const latestMetric = project.metrics[0]
-    const riskCount = project.riskFlags.length
 
-    let score = 100
-    // Уменьшаем score за каждый риск-флаг
-    score -= riskCount * 15
-    // Увеличиваем за активность
-    if (latestMetric) {
-      if (latestMetric.txCount > 100) score += 5
-      if (latestMetric.holdersEstimate > 50) score += 5
-    }
-    // Ограничиваем score в пределах 0-100
-    score = Math.max(0, Math.min(100, score))
+    // Get persistent trust score
+    const trustScore = await getProjectTrustScore(project.id)
 
     return NextResponse.json({
       project,
-      score,
+      score: trustScore?.totalScore ?? 50,
+      trustScore: trustScore ?? null,
       metrics: {
         holders: latestMetric?.holdersEstimate || 0,
         txCount: latestMetric?.txCount || 0,
@@ -387,6 +366,37 @@ export async function PATCH(
         { error: 'Token not found' },
         { status: 404 }
       )
+    }
+
+    // Track changes before updating
+    const changes: { changeType: string; oldValue: unknown; newValue: unknown }[] = []
+    if (name && name !== project.name) {
+      changes.push({ changeType: 'name', oldValue: project.name, newValue: name })
+    }
+    if (descriptionShort !== undefined && descriptionShort !== project.descriptionShort) {
+      changes.push({ changeType: 'descriptionShort', oldValue: project.descriptionShort, newValue: descriptionShort })
+    }
+    if (descriptionLong !== undefined && descriptionLong !== project.descriptionLong) {
+      changes.push({ changeType: 'descriptionLong', oldValue: project.descriptionLong, newValue: descriptionLong })
+    }
+    if (links !== undefined && JSON.stringify(links) !== JSON.stringify(project.links)) {
+      changes.push({ changeType: 'links', oldValue: project.links, newValue: links })
+    }
+    if (logo !== undefined && logo !== project.logo) {
+      changes.push({ changeType: 'logo', oldValue: project.logo, newValue: logo })
+    }
+
+    // Save change records
+    if (changes.length > 0) {
+      await prisma.projectChange.createMany({
+        data: changes.map(c => ({
+          projectId: project.id,
+          userId: decoded.userId,
+          changeType: c.changeType,
+          oldValue: c.oldValue as any,
+          newValue: c.newValue as any,
+        })),
+      })
     }
 
     // Update project

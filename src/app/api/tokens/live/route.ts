@@ -27,6 +27,9 @@ interface TokenData {
   priceInUsd?: number | null
   liquidity?: number | null
   hasPool?: boolean
+  // Trust score
+  trustScore?: number | null
+  trustRating?: string | null
 }
 
 // Get all CW20 contracts from chain
@@ -149,6 +152,12 @@ export async function GET(request: NextRequest) {
               take: 1
             }
           }
+        },
+        trustScore: {
+          select: {
+            totalScore: true,
+            rating: true,
+          }
         }
       }
     })
@@ -226,7 +235,9 @@ export async function GET(request: NextRequest) {
               priceInAxm: priceData?.priceInAxm || null,
               priceInUsd: priceData?.priceInUsd || null,
               liquidity: priceData?.liquidity || null,
-              hasPool: !!priceData
+              hasPool: !!priceData,
+              trustScore: dbProject?.trustScore?.totalScore ?? null,
+              trustRating: dbProject?.trustScore?.rating ?? null,
             }
 
             return token
