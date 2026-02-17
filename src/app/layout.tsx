@@ -16,7 +16,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Axiome Launch Suite",
-  description: "Create, launch and discover tokens on Axiome blockchain. AI-powered token studio with auto-generated landing pages and risk scoring.",
+  description: "Create projects and discover tokens on Axiome blockchain. Community forum with project pages and risk scoring.",
   keywords: ["Axiome", "blockchain", "token", "crypto", "launch", "AI"],
   icons: {
     icon: [

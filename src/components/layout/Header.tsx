@@ -32,8 +32,8 @@ export function Header() {
 
   const navigation = [
     { name: t('home'), href: '/' },
+    { name: t('play'), href: 'https://coinflip.axiome-launch.com/game', external: true },
     { name: t('explorer'), href: '/explorer' },
-    { name: t('studio'), href: '/studio' },
     { name: t('docs'), href: '/docs' },
   ]
 
@@ -87,7 +87,8 @@ export function Header() {
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
             {navigation.map((item, index) => {
-              const isActive = pathname === item.href
+              const isActive = !('external' in item && item.external) && pathname === item.href
+              const linkClass = `relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${isActive ? 'text-white' : 'text-gray-400 hover:text-white'}`
               return (
                 <motion.div
                   key={item.name}
@@ -95,23 +96,27 @@ export function Header() {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 + 0.3 }}
                 >
-                  <Link
-                    href={item.href}
-                    className={`relative px-4 py-2 rounded-lg text-sm font-medium transition-all duration-300 ${
-                      isActive
-                        ? 'text-white'
-                        : 'text-gray-400 hover:text-white'
-                    }`}
-                  >
-                    {isActive && (
-                      <motion.div
-                        layoutId="navbar-active"
-                        className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg border border-blue-500/30"
-                        transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                      />
-                    )}
-                    <span className="relative z-10">{item.name}</span>
-                  </Link>
+                  {'external' in item && item.external ? (
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className={linkClass}
+                    >
+                      <span className="relative z-10">{item.name}</span>
+                    </a>
+                  ) : (
+                    <Link href={item.href} className={linkClass}>
+                      {isActive && (
+                        <motion.div
+                          layoutId="navbar-active"
+                          className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-lg border border-blue-500/30"
+                          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                        />
+                      )}
+                      <span className="relative z-10">{item.name}</span>
+                    </Link>
+                  )}
                 </motion.div>
               )
             })}
@@ -335,17 +340,25 @@ export function Header() {
             >
               <nav className="flex flex-col gap-2">
                 {navigation.map((item) => {
-                  const isActive = pathname === item.href
-                  return (
+                  const isActive = !('external' in item && item.external) && pathname === item.href
+                  const linkClass = `px-4 py-3 rounded-lg text-sm font-medium transition-colors ${isActive ? 'bg-blue-600/20 text-white' : 'text-gray-400 hover:text-white hover:bg-gray-800/50'}`
+                  return 'external' in item && item.external ? (
+                    <a
+                      key={item.name}
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className={linkClass}
+                    >
+                      {item.name}
+                    </a>
+                  ) : (
                     <Link
                       key={item.name}
                       href={item.href}
                       onClick={() => setIsMobileMenuOpen(false)}
-                      className={`px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
-                        isActive
-                          ? 'bg-blue-600/20 text-white'
-                          : 'text-gray-400 hover:text-white hover:bg-gray-800/50'
-                      }`}
+                      className={linkClass}
                     >
                       {item.name}
                     </Link>

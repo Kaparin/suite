@@ -95,8 +95,8 @@ export default function TokenomicsPage() {
             <Link href="/explorer" className="text-zinc-400 hover:text-white transition-colors">
               Explorer
             </Link>
-            <Link href="/studio" className="text-zinc-400 hover:text-white transition-colors">
-              Studio
+            <Link href="/create" className="text-zinc-400 hover:text-white transition-colors">
+              Create
             </Link>
             <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
               Dashboard

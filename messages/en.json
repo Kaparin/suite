@@ -8,6 +8,7 @@
   },
   "nav": {
     "home": "Home",
+    "play": "Play",
     "explorer": "Explorer",
     "studio": "Studio",
     "wallet": "Wallet",
@@ -16,21 +17,75 @@
   },
   "home": {
     "badges": {
-      "verifiedLinks": "Verified Links",
-      "reputation": "Reputation & Risk Flags",
-      "preLaunch": "Pre-launch Community Feedback"
+      "ecosystem": "Startup Ecosystem",
+      "launchToken": "Launch Token",
+      "liveProduct": "Live PvP Game"
     },
     "hero": {
-      "title": "Axiome Trust Layer for Tokens & Projects",
-      "subtitle": "Token pages, verified links, reputation, and community feedback — all in one place.",
-      "subtitle2": "Create in 2 clicks anywhere. Build trust here.",
-      "cta1": "Explore Tokens",
-      "cta2": "Claim a Token Page",
-      "docsLink": "Read LAUNCH Docs",
-      "poweredBy": "Powered by on-chain proof & wallet signatures"
+      "title": "Axiome Startup Ecosystem",
+      "subtitle": "We build independent Web3 products inside the Axiome ecosystem.",
+      "subtitle2": "Our Launch Token powers every project we create.",
+      "cta1": "Play Heads or Tails",
+      "cta2": "Explore Ecosystem",
+      "docsLink": "Read Docs",
+      "poweredBy": "Powered by Axiome blockchain"
+    },
+    "coinflip": {
+      "title": "Heads or Tails — Live PvP Game",
+      "subtitle": "A real-time crypto PvP game where players compete against each other. Transparent mechanics. Provably fair. Instant rewards.",
+      "playNow": "Play Now",
+      "viewMechanics": "View Game Mechanics",
+      "features": {
+        "pvp": "Player vs Player",
+        "realStakes": "Real stakes",
+        "platformFee": "10% platform fee",
+        "instantMatch": "Instant match system",
+        "tournaments": "Upcoming tournaments"
+      }
+    },
+    "ecosystem": {
+      "title": "Ecosystem Projects",
+      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip. Provably fair. 50/50. Winner takes 90%." },
+      "tournaments": { "title": "Tournaments", "status": "Coming Soon", "desc": "Competitive events with LAUNCH prizes." },
+      "communityProjects": { "title": "Community Projects", "status": "Future", "desc": "Community-proposed ideas and builds." },
+      "tbd": { "title": "TBD Project", "status": "Planned", "desc": "Next product in development." }
+    },
+    "launchToken": {
+      "title": "Launch Token — Fuel of Our Ecosystem",
+      "subtitle": "The Launch Token is the core utility asset powering every project within our ecosystem. Used for participation, governance proposals, future tournaments, and ecosystem incentives.",
+      "tokenomics": "Tokenomics",
+      "tokenomicsTbd": "Supply & distribution TBD — coming soon",
+      "features": {
+        "allProducts": "Used in all future products",
+        "governance": "Governance & project proposals",
+        "community": "Community participation",
+        "utility": "Utility across ecosystem"
+      },
+      "contractAddress": "Contract address",
+      "totalSupply": "Total supply",
+      "viewExplorer": "View in Explorer"
+    },
+    "community": {
+      "title": "Build With Us",
+      "subtitle": "Launch Token holders can propose new ideas and contribute to future development. Our ecosystem grows together with the community.",
+      "submitIdea": "Submit Project Idea",
+      "joinCommunity": "Join Community"
+    },
+    "vision": {
+      "title": "Long-Term Vision",
+      "text": "We are building a multi-project startup ecosystem inside Axiome. Each product strengthens the utility of Launch Token. Our mission is to create sustainable Web3 products — not hype."
+    },
+    "tokensOverview": {
+      "title": "Tokens & Contracts",
+      "subtitle": "Overview of ecosystem tokens and smart contracts.",
+      "tokenName": "Token",
+      "contractAddress": "Contract",
+      "utility": "Utility",
+      "status": "Status"
     },
     "mockCard": {
       "utility": "Utility Token",
+      "tokenomicsTbd": "Tokenomics TBD — supply & distribution coming soon",
       "supply": "Supply",
       "reserve": "Reserve",
       "staking": "Staking",
@@ -130,11 +185,11 @@
       "comment3": { "user": "dao_whale", "text": "Great community discussion before launch. Trust score growing.", "badge": "Governor" }
     },
     "cta": {
-      "title": "Explore tokens. Claim ownership. Build trust.",
-      "subtitle": "The trust layer for every token in the Axiome ecosystem.",
-      "cta1": "Explore Tokens",
-      "cta2": "Claim a Token Page",
-      "docsLink": "Read Launch Docs"
+      "title": "We build real products.",
+      "subtitle": "Axiome Startup Ecosystem — Heads or Tails, Launch Token, and more to come.",
+      "cta1": "Play Heads or Tails",
+      "cta2": "Explore Ecosystem",
+      "docsLink": "Read Docs"
     }
   },
   "explorer": {
@@ -439,150 +494,82 @@
     "sidebar": {
       "onThisPage": "On this page",
       "overview": "Overview",
-      "whyLaunch": "Why Launch",
-      "features": "Features",
+      "headsOrTails": "Heads or Tails",
       "token": "LAUNCH Token",
-      "accessTiers": "Access Tiers",
-      "reputation": "Reputation",
-      "rewards": "Rewards",
-      "monetization": "Monetization",
-      "feeSplit": "Fee Split",
-      "allocation": "Allocation",
-      "governance": "Governance",
-      "transparency": "Transparency",
+      "projects": "Projects & Community",
+      "vision": "Vision",
       "disclaimer": "Disclaimer"
     },
-    "hero": {
-      "badge": "LAUNCH Litepaper",
-      "title": "Launch Docs",
-      "subtitle": "Axiome Launch — the trust and reputation layer for tokens and projects in the Axiome ecosystem.",
-      "description": "We're building a place where tokens and projects get a \"passport\": description, official links, update history, community discussion, ratings, and transparent rules. When creating a token is easy — the hard part is understanding what's behind it. We close that gap.",
-      "card1Title": "Token Profile",
-      "card1Desc": "Full identity for every token",
-      "card2Title": "Verified Links",
-      "card2Desc": "Anti-phishing protection",
-      "card3Title": "Community Voting",
-      "card3Desc": "Transparent signal & ratings",
-      "cta1": "Explore Tokens",
-      "cta2": "Read Tokenomics"
+    "overview": {
+      "badge": "Documentation",
+      "title": "Axiome Startup Ecosystem",
+      "subtitle": "A community-driven ecosystem for tokens and projects on Axiome blockchain.",
+      "description": "Axiome Launch combines token discovery, project creation, and Heads or Tails — a live PvP game — into one ecosystem. Create projects, discuss ideas, explore tokens, and play.",
+      "card1Title": "Token Profiles",
+      "card1Desc": "Full identity for every token with verified links",
+      "card2Title": "Heads or Tails",
+      "card2Desc": "PvP coin flip game — 50/50, instant matches",
+      "card3Title": "Community Forum",
+      "card3Desc": "Create projects and discuss with the community",
+      "cta1": "Play Heads or Tails",
+      "cta2": "Explore Tokens"
     },
-    "why": {
-      "title": "Why Axiome Launch is Needed",
-      "problemTitle": "Problem",
-      "problemText": "Creating tokens is becoming \"2 clicks\", but most have no proper showcase: who's the team, which links are official, what's the project plan, how the community rates the idea. The result — information noise and distrust by default.",
-      "solutionTitle": "Solution",
-      "solutionText": "Axiome Launch adds context and trust: token and project pages, discussions, reputation signals, and transparent anti-spam mechanics.",
-      "value1": "Filtering noise from signal",
-      "value2": "Trust through transparency",
-      "value3": "Community-driven reputation"
-    },
-    "features": {
-      "title": "What Axiome Launch Offers",
-      "tokenProfiles": { "title": "Token Profiles", "desc": "Token pages with descriptions, links, trust statuses, and change history.", "badge": "Live" },
-      "projectHub": { "title": "Project Hub", "desc": "Publish and discuss projects, including pre-launch phases.", "badge": "Live" },
-      "verifiedLinks": { "title": "Verified Links", "desc": "Protection against link spoofing and phishing.", "badge": "Live" },
-      "communityFeedback": { "title": "Community Feedback", "desc": "Comments, ratings, and community voting.", "badge": "Live" },
-      "transparency": { "title": "Transparency", "desc": "Public treasury, clear fee rules, transparent tokenomics.", "badge": "Coming soon" },
-      "aiStudio": { "title": "AI Studio", "desc": "AI-powered tokenomics generation, descriptions, and launch plans.", "badge": "Live" }
+    "coinflip": {
+      "title": "Heads or Tails",
+      "subtitle": "PvP coin flip game on Axiome. Two players bet LAUNCH, choose heads or tails, reveal — winner takes 90%, 10% platform commission.",
+      "howItWorks": "How it works",
+      "howDesc": "Simple 50/50 mechanics. Both players commit their choice on-chain; the reveal determines the winner.",
+      "step1Title": "Create or join a bet",
+      "step1Desc": "Set your bet amount (min 1 LAUNCH) and choose heads or tails. Or join an existing open bet.",
+      "step2Title": "Opponent joins",
+      "step2Desc": "Another player joins your bet with the same amount and the opposite side.",
+      "step3Title": "Reveal",
+      "step3Desc": "Both players reveal their choice on-chain. The outcome is determined by the protocol.",
+      "step4Title": "Winner takes 90%",
+      "step4Desc": "Winner receives 90% of the total pot. 10% goes to the platform.",
+      "step5Title": "Referral rewards",
+      "step5Desc": "Invite friends — earn 3%, 1.5%, or 0.5% of the pot for 3 referral levels.",
+      "commissionTitle": "Commission",
+      "commissionDesc": "10% of each pot goes to the platform. Winner gets 90% of the total.",
+      "securityTitle": "Security",
+      "securityDesc": "All logic is on-chain. No custody of funds — smart contract holds stakes until reveal.",
+      "paramsTitle": "Parameters",
+      "paramMinBet": "Minimum bet: 1 LAUNCH",
+      "paramBetExpiry": "Open bet TTL: 3 hours",
+      "paramRevealTimeout": "Reveal timeout: 5 minutes",
+      "paramOneClick": "1-Click Play: Authz delegation for 30 days (no sign per game)",
+      "referralTitle": "Referral program",
+      "referralDesc": "Earn a share of the pot when your referrals play:",
+      "referralL1": "Level 1: 3% of pot",
+      "referralL2": "Level 2: 1.5% of pot",
+      "referralL3": "Level 3: 0.5% of pot",
+      "playNow": "Play Heads or Tails"
     },
     "token": {
-      "title": "LAUNCH — Platform Utility Token",
-      "subtitle": "LAUNCH provides access to platform features, strengthens reputation, and enables participation in voting and rewards. It's not a \"hope coin\" — it's a key to capabilities within Axiome Launch.",
-      "access": { "title": "Access", "desc": "Lock LAUNCH to unlock platform tiers and premium features." },
-      "reputation": { "title": "Reputation", "desc": "Stake-to-list shows you have skin in the game. Anti-spam by design." },
-      "rewards": { "title": "Rewards", "desc": "Earn for useful contributions: reviews, reports, community help." }
+      "title": "LAUNCH Token",
+      "subtitle": "Utility token for the Axiome ecosystem. Used in Heads or Tails, token discovery, and future governance.",
+      "totalSupply": "Supply & distribution:",
+      "supplyTbd": "TBD — coming soon",
+      "allProducts": { "title": "All products", "desc": "Bet in Heads or Tails, explore tokens, create projects." },
+      "governance": { "title": "Governance", "desc": "Future: voting, grants, ecosystem decisions." },
+      "ecosystem": { "title": "Ecosystem", "desc": "Unified token across Launch products and partners." }
     },
-    "access": {
-      "title": "Access Tiers via Lock",
-      "subtitle": "To keep access fair and protected from \"buy for 5 min → vote → sell\", key rights work through Lock — a voluntary lock-up of LAUNCH for a period.",
-      "lockButton": "Lock LAUNCH",
-      "explorer": { "name": "Explorer", "perk1": "Comments & discussions", "perk2": "Community voting", "perk3": "Profile badge" },
-      "builder": { "name": "Builder", "perk1": "Publish projects & pre-launch cards", "perk2": "Pro-light analytics access", "perk3": "Priority in explorer" },
-      "founder": { "name": "Founder", "perk1": "Extended project profile", "perk2": "Showcase priority", "perk3": "Dedicated support" },
-      "governor": { "name": "Governor", "perk1": "Grants participation", "perk2": "Governance decisions", "perk3": "Full feature access" }
+    "projects": {
+      "title": "Projects & Community",
+      "subtitle": "Create projects and discuss them with the community. No AI — just ideas, descriptions, and feedback.",
+      "createTitle": "Create Project",
+      "createDesc": "Publish your project idea, description, and links. Get feedback from the community.",
+      "createCta": "Create project",
+      "commentsTitle": "Comments & Discussion",
+      "commentsDesc": "Comment on tokens and projects. Community-driven signal and ratings.",
+      "commentsCta": "Explore tokens"
     },
-    "reputation": {
-      "title": "Stake-to-List: Proof of Seriousness",
-      "subtitle": "To reduce spam and increase trust, we introduce \"stake-to-list\" for token/project creator actions.",
-      "claim": { "title": "Claim Token Page", "desc": "Confirm ownership of a token page by staking LAUNCH. A signal that says \"I have skin in the game.\"" },
-      "update": { "title": "Update Critical Info", "desc": "Update official links and key data with a full change history. Requires a stake for accountability." },
-      "safety": { "title": "Safety & Appeals", "desc": "In case of proven phishing, link spoofing, or mass spam — penalties via moderation rules with an appeals process." }
-    },
-    "rewards": {
-      "title": "Rewards for Value, Not Noise",
-      "subtitle": "We incentivize ecosystem contributions: token reviews, quality problem reports, roadmap updates, helping newcomers. Rewards come from a dedicated pool and a share of platform revenue — to keep the program sustainable.",
-      "tokenReview": { "title": "Token Review", "desc": "Write quality token/project reviews" },
-      "scamReport": { "title": "Scam Report", "desc": "Report phishing links or suspicious projects" },
-      "projectUpdate": { "title": "Project Update", "desc": "Keep roadmap and project info up to date" },
-      "communityHelp": { "title": "Community Help", "desc": "Help newcomers navigate the platform" },
-      "pool": "Rewards Pool",
-      "poolStatus": "Active",
-      "poolSource": "Funded from community allocation + platform revenue share"
-    },
-    "monetization": {
-      "title": "How Axiome Launch Earns",
-      "verified": { "title": "Verified / Featured", "desc": "Paid trust statuses and token/project promotion in explorer and homepage." },
-      "analytics": { "title": "Pro Analytics", "desc": "Subscription for advanced analytics, alerts, and market insights." },
-      "laas": { "title": "Launch-as-a-Service", "desc": "End-to-end project packaging: landing pages, bots, integrations." },
-      "accelerator": { "title": "Accelerator / Batches", "desc": "Project selection, bundled launch campaigns, and community exposure." }
-    },
-    "feeSplit": {
-      "title": "Revenue Distribution (Transparent)",
-      "subtitle": "We want the economics to work long-term: part of revenue goes to product development, part to community rewards, and part to grants and buyback mechanics to support LAUNCH demand.",
-      "chartLabel": "Revenue Split",
-      "devOps": "Development & Ops",
-      "buyback": "Buyback LAUNCH",
-      "communityRewards": "Community Rewards",
-      "grants": "Grants / Accelerator",
-      "note": "Percentages may be adjusted via governance."
-    },
-    "allocation": {
-      "title": "Supply & Distribution",
-      "totalSupply": "Total supply:",
-      "totalAmount": "100,000,000 LAUNCH",
-      "subtitle": "We follow transparency principles: public pool addresses, unlock calendar, and reports.",
-      "chartLabel": "100M LAUNCH",
-      "liquidity": "Liquidity & Market Ops",
-      "communityGrowth": "Community Growth",
-      "treasury": "Treasury",
-      "team": "Team (vesting 24-36 mo)",
-      "partnerships": "Partnerships",
-      "accelerator": "Accelerator / Grants",
-      "vestingTitle": "Vesting Schedule",
-      "vesting1Period": "TGE",
-      "vesting1Desc": "Liquidity pools deployed, community airdrop distributed",
-      "vesting2Period": "Month 1-6",
-      "vesting2Desc": "Partnership unlocks begin, accelerator grants distributed",
-      "vesting3Period": "Month 6-12",
-      "vesting3Desc": "First team tokens unlock, treasury starts community programs",
-      "vesting4Period": "Month 12-36",
-      "vesting4Desc": "Remaining team vesting, ongoing community growth allocation"
-    },
-    "governance": {
-      "title": "Governance & Voting",
-      "subtitle": "We use mechanics that reduce manipulation and the impact of \"throwaway\" votes: voting is available to users with locked LAUNCH, lock period restrictions apply, and voting weight can be quadratic (so whales don't dominate).",
-      "faq1Q": "Who can vote?",
-      "faq1A": "Users who have LAUNCH locked in a tier (Explorer+). Lock period must be active at the time of voting.",
-      "faq2Q": "How is vote weight calculated?",
-      "faq2A": "Quadratic voting is planned: the weight grows sub-linearly with locked amount, preventing whale dominance.",
-      "faq3Q": "\"Project of the Month\" selection",
-      "faq3A": "Community selects top projects via lock-weighted voting. Winners receive visibility boost and potential grant funding.",
-      "faq4Q": "Can governance change tokenomics?",
-      "faq4A": "Revenue split percentages and reward parameters can be adjusted through governance proposals by Governor-tier holders.",
-      "flowLock": "Lock",
-      "flowVote": "Vote",
-      "flowResult": "Result"
-    },
-    "transparency": {
-      "title": "Trust Layer: What We Show Publicly",
-      "item1": "Public treasury / rewards / grants wallets",
-      "item2": "Token profile change history",
-      "item3": "Verified links and page ownership status",
-      "item4": "Risk flags (e.g., missing proof, frequent link changes)",
-      "viewTreasury": "View Treasury"
+    "vision": {
+      "title": "Long-term vision",
+      "text": "We're building a sustainable Web3 ecosystem: real products (Heads or Tails), real utility (LAUNCH), and community-driven discovery. No hype — just tools that work."
     },
     "disclaimer": {
-      "text": "LAUNCH is a utility token that provides access to platform features and community mechanics participation. We do not promise returns; reward rules and access depend on platform activity and policies."
+      "text": "LAUNCH is a utility token. Heads or Tails involves risk — only bet what you can afford to lose. We do not promise returns. Play responsibly."
     }
   },
   "lock": {

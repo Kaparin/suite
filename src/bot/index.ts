@@ -759,25 +759,18 @@ Send "skip" to skip this step.`,
       ctx.session.projectData!.utilities = text.toLowerCase() === 'skip' ? '' : text
       ctx.session.step = undefined
 
-      // Generate link to studio with prefilled data
+      // Link to create project
       const data = ctx.session.projectData!
-      const params = new URLSearchParams({
-        name: data.name || '',
-        idea: data.idea || '',
-        audience: data.audience || '',
-        utilities: data.utilities || '',
-        from: 'telegram'
-      })
 
       const keyboard = new InlineKeyboard()
-        .url('🚀 Generate with AI', `${SITE_URL}/studio?${params}`)
+        .url('🚀 Create Project', `${SITE_URL}/create`)
 
       await ctx.reply(
         `🎉 *All set!*
 
 Your project: *${data.name}*
 
-Click the button below to open Token Studio and generate your complete token package with AI!`,
+Click the button below to create your project and get community feedback!`,
         {
           parse_mode: 'Markdown',
           reply_markup: keyboard

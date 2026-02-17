@@ -343,12 +343,12 @@ export default function ExplorerPage() {
             </div>
 
             {/* Create button */}
-            <Link href="/studio">
+            <Link href="/create">
               <Button className="h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
                 <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
-                Создать токен
+                Создать проект
               </Button>
             </Link>
           </div>
@@ -448,9 +448,9 @@ export default function ExplorerPage() {
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Токены не найдены</h3>
             <p className="text-gray-400 mb-6">Попробуйте изменить поисковый запрос или категорию</p>
-            <Link href="/studio">
+            <Link href="/create">
               <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
-                Создать первый токен
+                Создать первый проект
               </Button>
             </Link>
           </motion.div>
@@ -587,13 +587,13 @@ export default function ExplorerPage() {
         >
           <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-500/20">
             <div className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-white mb-2">Готовы запустить свой токен?</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Готовы создать проект?</h3>
               <p className="text-gray-400 mb-6 max-w-lg mx-auto">
-                Используйте AI-студию для создания токена за минуты. Автоматическая генерация описания, токеномики и маркетинговых материалов.
+                Создайте проект, опишите идею и получите обратную связь от сообщества.
               </p>
-              <Link href="/studio">
+              <Link href="/create">
                 <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
-                  Начать создание
+                  Создать проект
                   <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
