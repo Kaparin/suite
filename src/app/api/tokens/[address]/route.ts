@@ -172,7 +172,7 @@ export async function GET(
             name: knownToken?.name || chainTokenInfo?.name || 'Unknown Token',
             ticker: knownToken?.symbol || chainTokenInfo?.symbol || 'TOKEN',
             tokenAddress: address,
-            descriptionShort: chainMarketingInfo?.description || null,
+            descriptionShort: chainMarketingInfo?.description || knownToken?.description || null,
             descriptionLong: null,
             logo: knownToken?.logoUrl || chainMarketingInfo?.logo?.url || null,
             links: null,

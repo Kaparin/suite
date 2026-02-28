@@ -8,6 +8,10 @@ export interface RegisteredToken {
   decimals: number
   logoUrl?: string
   verified?: boolean
+  /** Our ecosystem tokens — pinned first in explorer */
+  isOurToken?: boolean
+  /** Fallback description when no DB/chain description available */
+  description?: string
 }
 
 // Official/verified tokens
@@ -18,7 +22,19 @@ export const KNOWN_TOKENS: RegisteredToken[] = [
     name: 'Launch Token',
     decimals: 6,
     logoUrl: 'https://image2url.com/r2/default/images/1770220782157-0e2ab4ed-cb61-46aa-a681-b50a302b1254.png',
-    verified: true
+    verified: true,
+    isOurToken: true,
+    description: 'Platform token of the Launch ecosystem. Hold LAUNCH to earn revenue share from all ecosystem projects on Axiome.',
+  },
+  {
+    contractAddress: 'axm1cv5er0wsla3u33w6rkn7ckxpn88huqh9aw0xpu0pagksege7v7nsn8qdhs',
+    symbol: 'COIN',
+    name: 'Coin Token',
+    decimals: 6,
+    logoUrl: 'https://coinflip.axiome-launch.com/coin-token-logo.png',
+    verified: true,
+    isOurToken: true,
+    description: 'Game token for Heads or Tails — PvP coin flip game on Axiome. Wager COIN against other players, winner takes all.',
   },
   {
     contractAddress: 'axm1etxtq3v4chzn7xrah3w6ukkxy7vlc889n5ervgxz425msar6ajzskdmm0v',

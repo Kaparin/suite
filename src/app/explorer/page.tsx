@@ -22,6 +22,7 @@ interface TokenData {
   isNew: boolean
   isTrending: boolean
   isVerified: boolean
+  isOurToken?: boolean
   // Price data
   priceInAxm?: number | null
   priceInUsd?: number | null
@@ -472,8 +473,21 @@ export default function ExplorerPage() {
                   layout
                 >
                   <Link href={`/t/${token.contractAddress}`}>
-                    <Card className="bg-gray-900/50 border-gray-800 hover:border-purple-500/50 transition-all group cursor-pointer h-full">
+                    <Card className={`transition-all group cursor-pointer h-full ${
+                      token.isOurToken
+                        ? 'bg-gradient-to-br from-purple-900/40 via-gray-900/80 to-blue-900/40 border-purple-500/40 hover:border-purple-400/70 shadow-lg shadow-purple-500/10'
+                        : 'bg-gray-900/50 border-gray-800 hover:border-purple-500/50'
+                    }`}>
                       <div className="p-5">
+                        {/* Our token badge */}
+                        {token.isOurToken && (
+                          <div className="flex items-center gap-1.5 mb-3 -mt-1">
+                            <span className="px-2.5 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-wider rounded-full">
+                              Launch Ecosystem
+                            </span>
+                          </div>
+                        )}
+
                         {/* Header */}
                         <div className="flex items-start gap-4 mb-4">
                           {/* Logo */}
@@ -481,7 +495,7 @@ export default function ExplorerPage() {
                             <img
                               src={token.logoUrl}
                               alt={token.symbol}
-                              className="w-14 h-14 rounded-full object-cover"
+                              className={`w-14 h-14 rounded-full object-cover ${token.isOurToken ? 'ring-2 ring-purple-500/50' : ''}`}
                             />
                           ) : (
                             <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
@@ -493,7 +507,9 @@ export default function ExplorerPage() {
 
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-1">
-                              <h3 className="font-semibold text-white group-hover:text-purple-300 transition-colors truncate">
+                              <h3 className={`font-semibold transition-colors truncate ${
+                                token.isOurToken ? 'text-white group-hover:text-purple-200' : 'text-white group-hover:text-purple-300'
+                              }`}>
                                 {token.name}
                               </h3>
                               {token.isVerified && (

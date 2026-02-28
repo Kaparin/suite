@@ -22,6 +22,7 @@ interface TokenData {
   isNew: boolean
   isTrending: boolean
   isVerified: boolean
+  isOurToken: boolean
   // Price data
   priceInAxm?: number | null
   priceInUsd?: number | null
@@ -223,7 +224,7 @@ export async function GET(request: NextRequest) {
               totalSupply: tokenInfo.total_supply || '0',
               displayTotalSupply: formatAmount(tokenInfo.total_supply || '0', decimals),
               logoUrl: knownToken?.logoUrl || dbProject?.logo || marketingInfo?.logo?.url,
-              description: dbProject?.descriptionShort || marketingInfo?.description,
+              description: dbProject?.descriptionShort || marketingInfo?.description || knownToken?.description,
               verified: knownToken?.verified || dbProject?.isVerified || false,
               createdAt: createdAt?.toISOString(),
               holderCount: 0,
@@ -231,6 +232,7 @@ export async function GET(request: NextRequest) {
               isNew: ageInDays !== null && ageInDays <= 7,
               isTrending: priceData ? priceData.liquidity > 1000 : false, // Trending if high liquidity
               isVerified: knownToken?.verified || dbProject?.isVerified || false,
+              isOurToken: knownToken?.isOurToken || false,
               // Price data
               priceInAxm: priceData?.priceInAxm || null,
               priceInUsd: priceData?.priceInUsd || null,
@@ -276,9 +278,12 @@ export async function GET(request: NextRequest) {
         break
     }
 
-    // Sort: verified first, then by liquidity (has pool), then by creation date
+    // Sort: our tokens first, then verified, then by liquidity, then by date
     filteredTokens.sort((a, b) => {
-      // Verified first
+      // Our ecosystem tokens always first
+      if (a.isOurToken && !b.isOurToken) return -1
+      if (!a.isOurToken && b.isOurToken) return 1
+      // Verified next
       if (a.isVerified && !b.isVerified) return -1
       if (!a.isVerified && b.isVerified) return 1
       // Then by liquidity (tokens with pools first)
@@ -316,11 +321,13 @@ export async function GET(request: NextRequest) {
       totalSupply: '0',
       displayTotalSupply: '0',
       logoUrl: t.logoUrl,
+      description: t.description,
       verified: t.verified || false,
       holderCount: 0,
       isNew: false,
       isTrending: false,
-      isVerified: t.verified || false
+      isVerified: t.verified || false,
+      isOurToken: t.isOurToken || false,
     }))
 
     return NextResponse.json({
