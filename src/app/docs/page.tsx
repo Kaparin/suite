@@ -151,6 +151,14 @@ export default function DocsPage() {
               </ul>
             </div>
 
+            <div className="bg-amber-500/5 border border-amber-500/15 rounded-xl p-6">
+              <h4 className="text-amber-400 font-semibold mb-2 flex items-center gap-2">
+                <span className="text-lg">🪙</span>
+                {t('coinflip.coinTokenTitle')}
+              </h4>
+              <p className="text-sm text-zinc-400">{t('coinflip.coinTokenDesc')}</p>
+            </div>
+
             <div className="bg-indigo-500/5 border border-indigo-500/15 rounded-xl p-6">
               <h4 className="text-indigo-400 font-semibold mb-2">{t('coinflip.referralTitle')}</h4>
               <p className="text-sm text-zinc-400 mb-4">{t('coinflip.referralDesc')}</p>
@@ -159,6 +167,14 @@ export default function DocsPage() {
                 <li>• {t('coinflip.referralL2')}</li>
                 <li>• {t('coinflip.referralL3')}</li>
               </ul>
+            </div>
+
+            <div className="bg-emerald-500/5 border border-emerald-500/15 rounded-xl p-6">
+              <h4 className="text-emerald-400 font-semibold mb-2 flex items-center gap-2">
+                <span className="text-lg">🏆</span>
+                {t('coinflip.eventsTitle')}
+              </h4>
+              <p className="text-sm text-zinc-400">{t('coinflip.eventsDesc')}</p>
             </div>
 
             <a href={COINFLIP_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium rounded-xl transition-all">

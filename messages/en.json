@@ -23,8 +23,8 @@
     },
     "hero": {
       "title": "Axiome Startup Ecosystem",
-      "subtitle": "We build independent Web3 products inside the Axiome ecosystem.",
-      "subtitle2": "Our Launch Token powers every project we create.",
+      "subtitle": "We build independent Web3 products inside the Axiome ecosystem — each with its own token and economy.",
+      "subtitle2": "LAUNCH token holders earn revenue from every project we create.",
       "cta1": "Play Heads or Tails",
       "cta2": "Explore Ecosystem",
       "docsLink": "Read Docs",
@@ -32,34 +32,34 @@
     },
     "coinflip": {
       "title": "Heads or Tails — Live PvP Game",
-      "subtitle": "A real-time crypto PvP game where players compete against each other. Transparent mechanics. Provably fair. Instant rewards.",
+      "subtitle": "PvP crypto game on COIN token. Two players wager, a coin is flipped — winner takes 90%. Provably fair, instant results, on-chain verification.",
       "playNow": "Play Now",
       "viewMechanics": "View Game Mechanics",
       "features": {
         "pvp": "Player vs Player",
-        "realStakes": "Real stakes",
+        "realStakes": "COIN token wagers",
         "platformFee": "10% platform fee",
         "instantMatch": "Instant match system",
-        "tournaments": "Upcoming tournaments"
+        "tournaments": "Events & raffles"
       }
     },
     "ecosystem": {
       "title": "Ecosystem Projects",
-      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip. Provably fair. 50/50. Winner takes 90%." },
-      "tournaments": { "title": "Tournaments", "status": "Coming Soon", "desc": "Competitive events with LAUNCH prizes." },
+      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip on COIN token. Provably fair. 50/50. Winner takes 90%." },
+      "tournaments": { "title": "Events & Raffles", "status": "Live", "desc": "Contests and raffles with real COIN prizes for active players." },
       "communityProjects": { "title": "Community Projects", "status": "Future", "desc": "Community-proposed ideas and builds." },
-      "tbd": { "title": "TBD Project", "status": "Planned", "desc": "Next product in development." }
+      "tbd": { "title": "Next Project", "status": "Planned", "desc": "Next product in development. Each project has its own token." }
     },
     "launchToken": {
-      "title": "Launch Token — Fuel of Our Ecosystem",
-      "subtitle": "The Launch Token is the core utility asset powering every project within our ecosystem. Used for participation, governance proposals, future tournaments, and ecosystem incentives.",
+      "title": "LAUNCH — Ecosystem Revenue Token",
+      "subtitle": "LAUNCH is the master token of the ecosystem. Each project we build (like Heads or Tails with COIN) generates revenue — and LAUNCH holders earn a share of it. The more projects, the more value flows to LAUNCH.",
       "tokenomics": "Tokenomics",
       "tokenomicsTbd": "Supply & distribution TBD — coming soon",
       "features": {
-        "allProducts": "Used in all future products",
+        "allProducts": "Revenue from all ecosystem projects",
         "governance": "Governance & project proposals",
-        "community": "Community participation",
-        "utility": "Utility across ecosystem"
+        "community": "Access to tiers & features",
+        "utility": "Earn tokens from each project"
       },
       "contractAddress": "Contract address",
       "totalSupply": "Total supply",
@@ -67,13 +67,13 @@
     },
     "community": {
       "title": "Build With Us",
-      "subtitle": "Launch Token holders can propose new ideas and contribute to future development. Our ecosystem grows together with the community.",
+      "subtitle": "LAUNCH holders can propose new ideas and vote on ecosystem decisions. Each new project means more revenue flowing back to holders.",
       "submitIdea": "Submit Project Idea",
       "joinCommunity": "Join Community"
     },
     "vision": {
       "title": "Long-Term Vision",
-      "text": "We are building a multi-project startup ecosystem inside Axiome. Each product strengthens the utility of Launch Token. Our mission is to create sustainable Web3 products — not hype."
+      "text": "We are building a multi-project startup ecosystem inside Axiome. Each product (Heads or Tails, and more to come) has its own token and economy, while LAUNCH holders earn revenue from every project. Our mission is sustainable Web3 products — not hype."
     },
     "tokensOverview": {
       "title": "Tokens & Contracts",
@@ -84,17 +84,17 @@
       "status": "Status"
     },
     "mockCard": {
-      "utility": "Utility Token",
+      "utility": "Ecosystem Token",
       "tokenomicsTbd": "Tokenomics TBD — supply & distribution coming soon",
       "supply": "Supply",
       "reserve": "Reserve",
       "staking": "Staking",
       "liquidity": "Liquidity",
-      "utilityAccess": "Unlock tiers & premium features",
-      "utilityReputation": "Build reputation & trust score",
+      "utilityAccess": "Revenue share from all ecosystem projects",
+      "utilityReputation": "Access tiers & premium features",
       "utilityGovernance": "Vote on platform decisions",
-      "utilityRewards": "Earn staking & community rewards",
-      "platformToken": "Platform token",
+      "utilityRewards": "Earn tokens from each launched project",
+      "platformToken": "Ecosystem token",
       "axiomeChain": "Axiome Chain"
     },
     "why": {
@@ -157,10 +157,10 @@
     },
     "utility": {
       "title": "LAUNCH token utility",
-      "subtitle": "LAUNCH is a utility token that powers access, reputation, and rewards inside the platform.",
-      "access": { "title": "Access", "desc": "Unlock features via Lock tiers: publish projects, vote, and use pro tools." },
-      "reputation": { "title": "Reputation", "desc": "Stake-to-list / stake-to-update reduces spam and signals seriousness." },
-      "rewards": { "title": "Rewards", "desc": "Earn for real contributions: reviews, reports, and community help — funded from platform economics." },
+      "subtitle": "LAUNCH is the ecosystem revenue token. Hold LAUNCH to earn from every project we build and participate in governance.",
+      "access": { "title": "Revenue Share", "desc": "Earn tokens from each launched project: COIN from Heads or Tails, and tokens from future projects." },
+      "reputation": { "title": "Access & Tiers", "desc": "Lock LAUNCH to unlock platform features: publish projects, vote, and use pro tools." },
+      "rewards": { "title": "Governance", "desc": "Propose new projects, vote on ecosystem decisions, and shape the future of the platform." },
       "readMore": "Read tokenomics"
     },
     "tiers": {
@@ -170,11 +170,11 @@
     },
     "feeSplit": {
       "title": "Transparent economics",
-      "subtitle": "Platform revenue supports development, community rewards, grants, and LAUNCH buyback — designed for long-term sustainability.",
+      "subtitle": "Each project generates revenue (e.g. 10% commission from Heads or Tails). A portion flows to LAUNCH holders, a portion to development and ecosystem growth.",
       "operations": "Operations",
-      "buyback": "Buyback LAUNCH",
-      "rewards": "Rewards",
-      "grants": "Grants / Accelerator"
+      "buyback": "LAUNCH holder rewards",
+      "rewards": "Project development",
+      "grants": "Grants / New projects"
     },
     "community": {
       "title": "Built with the Axiome community",
@@ -186,7 +186,7 @@
     },
     "cta": {
       "title": "We build real products.",
-      "subtitle": "Axiome Startup Ecosystem — Heads or Tails, Launch Token, and more to come.",
+      "subtitle": "Heads or Tails is live. LAUNCH holders earn from every project. More products coming soon.",
       "cta1": "Play Heads or Tails",
       "cta2": "Explore Ecosystem",
       "docsLink": "Read Docs"
@@ -503,56 +503,60 @@
     "overview": {
       "badge": "Documentation",
       "title": "Axiome Startup Ecosystem",
-      "subtitle": "A community-driven ecosystem for tokens and projects on Axiome blockchain.",
-      "description": "Axiome Launch combines token discovery, project creation, and Heads or Tails — a live PvP game — into one ecosystem. Create projects, discuss ideas, explore tokens, and play.",
-      "card1Title": "Token Profiles",
-      "card1Desc": "Full identity for every token with verified links",
-      "card2Title": "Heads or Tails",
-      "card2Desc": "PvP coin flip game — 50/50, instant matches",
-      "card3Title": "Community Forum",
-      "card3Desc": "Create projects and discuss with the community",
+      "subtitle": "A multi-project Web3 ecosystem on Axiome blockchain. Each project has its own token — LAUNCH ties them all together.",
+      "description": "We build independent products inside the Axiome ecosystem. Our first live project is Heads or Tails — a PvP game on COIN token. LAUNCH is the ecosystem token: holders earn revenue from every project we create. Token discovery, community, and governance — all in one place.",
+      "card1Title": "Heads or Tails",
+      "card1Desc": "Live PvP game on COIN token — 50/50, instant results",
+      "card2Title": "LAUNCH Token",
+      "card2Desc": "Ecosystem token — earn revenue from all projects",
+      "card3Title": "Community & Governance",
+      "card3Desc": "Propose ideas, vote, and shape the ecosystem",
       "cta1": "Play Heads or Tails",
       "cta2": "Explore Tokens"
     },
     "coinflip": {
       "title": "Heads or Tails",
-      "subtitle": "PvP coin flip game on Axiome. Two players bet LAUNCH, choose heads or tails, reveal — winner takes 90%, 10% platform commission.",
+      "subtitle": "PvP coin flip game on Axiome blockchain. Two players bet COIN tokens, one creates a bet and the other accepts — winner takes 90%, 10% goes as platform commission.",
       "howItWorks": "How it works",
-      "howDesc": "Simple 50/50 mechanics. Both players commit their choice on-chain; the reveal determines the winner.",
-      "step1Title": "Create or join a bet",
-      "step1Desc": "Set your bet amount (min 1 LAUNCH) and choose heads or tails. Or join an existing open bet.",
-      "step2Title": "Opponent joins",
-      "step2Desc": "Another player joins your bet with the same amount and the opposite side.",
-      "step3Title": "Reveal",
-      "step3Desc": "Both players reveal their choice on-chain. The outcome is determined by the protocol.",
+      "howDesc": "Simple 50/50 mechanics powered by commit-reveal scheme. The creator's choice is sealed on-chain as a hash. When an opponent accepts, the result is determined and paid out instantly in a single atomic transaction.",
+      "step1Title": "Deposit COIN to game balance",
+      "step1Desc": "Buy COIN tokens on the presale and deposit them to your game vault. This is your in-game balance.",
+      "step2Title": "Create or accept a bet",
+      "step2Desc": "Set your bet amount (min 1 COIN) and create a bet. Or browse open bets and accept one with a single click.",
+      "step3Title": "Instant result",
+      "step3Desc": "When a bet is accepted, the smart contract verifies the creator's secret, determines the winner, and distributes the payout — all in one atomic transaction. No delays.",
       "step4Title": "Winner takes 90%",
-      "step4Desc": "Winner receives 90% of the total pot. 10% goes to the platform.",
+      "step4Desc": "Winner receives 90% of the total pot. 10% goes as platform commission.",
       "step5Title": "Referral rewards",
-      "step5Desc": "Invite friends — earn 3%, 1.5%, or 0.5% of the pot for 3 referral levels.",
+      "step5Desc": "Invite friends via referral link — earn up to 3% of each pot from your referrals' games across 3 levels.",
       "commissionTitle": "Commission",
-      "commissionDesc": "10% of each pot goes to the platform. Winner gets 90% of the total.",
-      "securityTitle": "Security",
-      "securityDesc": "All logic is on-chain. No custody of funds — smart contract holds stakes until reveal.",
-      "paramsTitle": "Parameters",
-      "paramMinBet": "Minimum bet: 1 LAUNCH",
-      "paramBetExpiry": "Open bet TTL: 3 hours",
-      "paramRevealTimeout": "Reveal timeout: 5 minutes",
-      "paramOneClick": "1-Click Play: Authz delegation for 30 days (no sign per game)",
+      "commissionDesc": "10% of each pot goes as platform commission. Winner gets 90% of the total.",
+      "securityTitle": "Security & Fairness",
+      "securityDesc": "All logic is on-chain via CosmWasm smart contract. Commit-reveal scheme ensures provable fairness — no one can cheat. Funds are locked in the contract until the result is determined.",
+      "paramsTitle": "Game Parameters",
+      "paramMinBet": "Minimum bet: 1 COIN",
+      "paramBetExpiry": "Open bet lifetime: 3 hours",
+      "paramRevealTimeout": "Bet expiration: auto-cancel after 3 hours if not accepted",
+      "paramOneClick": "Account activation: one-time Authz delegation for 30 days (no signature per game)",
+      "coinTokenTitle": "COIN Token",
+      "coinTokenDesc": "COIN is a CW20 token on Axiome blockchain, created specifically for the Heads or Tails game. Buy COIN on the presale page, deposit to your game balance, and start playing.",
       "referralTitle": "Referral program",
-      "referralDesc": "Earn a share of the pot when your referrals play:",
-      "referralL1": "Level 1: 3% of pot",
+      "referralDesc": "Earn a share of the pot when your referrals play. 3-level system:",
+      "referralL1": "Level 1 (direct invite): 3% of pot",
       "referralL2": "Level 2: 1.5% of pot",
       "referralL3": "Level 3: 0.5% of pot",
+      "eventsTitle": "Events & Raffles",
+      "eventsDesc": "The platform hosts regular contests and raffles with real COIN prizes. Contests count your bets automatically — just play. Raffles require clicking 'Join'. Prizes are funded from the 10% commission.",
       "playNow": "Play Heads or Tails"
     },
     "token": {
       "title": "LAUNCH Token",
-      "subtitle": "Utility token for the Axiome ecosystem. Used in Heads or Tails, token discovery, and future governance.",
+      "subtitle": "LAUNCH is the ecosystem revenue token. Each project we build (like Heads or Tails) has its own token — and LAUNCH holders earn a share of revenue from every project in the ecosystem.",
       "totalSupply": "Supply & distribution:",
       "supplyTbd": "TBD — coming soon",
-      "allProducts": { "title": "All products", "desc": "Bet in Heads or Tails, explore tokens, create projects." },
-      "governance": { "title": "Governance", "desc": "Future: voting, grants, ecosystem decisions." },
-      "ecosystem": { "title": "Ecosystem", "desc": "Unified token across Launch products and partners." }
+      "allProducts": { "title": "Revenue share", "desc": "Earn tokens from each ecosystem project — COIN from Heads or Tails, and more as new projects launch." },
+      "governance": { "title": "Governance", "desc": "Vote on new projects, grants, and ecosystem decisions." },
+      "ecosystem": { "title": "Multi-project", "desc": "Each project has its own token (COIN, etc.). LAUNCH ties them all together." }
     },
     "projects": {
       "title": "Projects & Community",
@@ -566,10 +570,10 @@
     },
     "vision": {
       "title": "Long-term vision",
-      "text": "We're building a sustainable Web3 ecosystem: real products (Heads or Tails), real utility (LAUNCH), and community-driven discovery. No hype — just tools that work."
+      "text": "We're building a sustainable multi-project Web3 ecosystem. Each product (like Heads or Tails) has its own token and economy. LAUNCH holders benefit from every project's success. No hype — real products, real revenue, real value."
     },
     "disclaimer": {
-      "text": "LAUNCH is a utility token. Heads or Tails involves risk — only bet what you can afford to lose. We do not promise returns. Play responsibly."
+      "text": "LAUNCH is an ecosystem token. COIN is the Heads or Tails game token. Gaming involves risk — only bet what you can afford to lose. We do not promise returns. Play responsibly."
     }
   },
   "lock": {

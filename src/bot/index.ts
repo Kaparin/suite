@@ -32,6 +32,7 @@ type ProjectWithScore = ProjectWithMetricsAndFlags & {
 
 const bot = new Bot<MyContext>(process.env.TELEGRAM_BOT_TOKEN!)
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.axiome-launch.com'
+const COINFLIP_URL = 'https://coinflip.axiome-launch.com/game'
 
 // Session middleware
 bot.use(session({
@@ -143,32 +144,41 @@ This will authorize your Telegram account: *${firstName}* ${username ? `(@${user
 
   // Regular /start command
   const keyboard = new InlineKeyboard()
+    .url('🎮 Play Heads or Tails', COINFLIP_URL)
+    .row()
     .text('🚀 Create Token', 'create')
     .text('🔍 Explorer', 'explorer')
     .row()
     .text('📊 Top Tokens', 'top')
-    .text('🆕 New Tokens', 'new')
-    .row()
     .text('⏳ Upcoming', 'upcoming')
+    .row()
     .url('🌐 Website', SITE_URL)
 
   await ctx.reply(
     `🌌 *Welcome to Axiome Launch Suite!*
 
-Your AI-powered launchpad for tokens on Axiome blockchain.
+We build independent Web3 products on Axiome blockchain. Each project has its own token and economy.
 
-*What can I do?*
-• /create - Create a new token with AI assistance
+🎮 *Heads or Tails* — Live PvP Game
+Flip a coin, win 90% of the pot. Powered by *COIN* token.
+Provably fair, instant results, on-chain verification.
+→ [Play now](${COINFLIP_URL})
+
+💎 *LAUNCH Token* — Ecosystem Revenue
+Hold LAUNCH to earn revenue from every project we build. The more products — the more value for holders.
+
+*Commands:*
+• /game - Play Heads or Tails
+• /create - Create a new token project
 • /token <address> - View token details
-• /top - Show top tokens by score
-• /new - Show newest tokens
-• /upcoming - Show upcoming token launches
-• /watch <address> - Subscribe to token alerts
+• /top - Top tokens by trust score
+• /upcoming - Upcoming token launches
 
 Let's build something amazing! 🚀`,
     {
       parse_mode: 'Markdown',
-      reply_markup: keyboard
+      reply_markup: keyboard,
+      link_preview_options: { is_disabled: true }
     }
   )
 
@@ -277,7 +287,12 @@ bot.command('login', async (ctx) => {
 
 Click the button below to log in with your Telegram account.
 
-${userWallets.length > 0 ? '✅ Your wallet is verified' : '⚠️ Verify your wallet on the website to create tokens'}`,
+${userWallets.length > 0 ? '✅ Your wallet is verified' : '⚠️ Verify your wallet on the website to access full features'}
+
+After login you can:
+• Play Heads or Tails (COIN token)
+• Create and manage token projects
+• Explore tokens and community discussions`,
     {
       parse_mode: 'Markdown',
       reply_markup: keyboard
@@ -368,6 +383,42 @@ What's the name of your token project?
 
 Example: _Moon Finance_, _Axiome Meme_, _SafeYield_`,
     { parse_mode: 'Markdown' }
+  )
+})
+
+// /game - Play Heads or Tails
+bot.command('game', async (ctx) => {
+  const keyboard = new InlineKeyboard()
+    .url('🎮 Play Now', COINFLIP_URL)
+    .url('📖 Game Rules', `${SITE_URL}/docs#coinflip`)
+
+  await ctx.reply(
+    `🎮 *Heads or Tails — Live PvP Game*
+
+Flip a coin against another player. Winner takes *90%* of the pot.
+
+🪙 *How it works:*
+1. Buy COIN tokens on the presale
+2. Deposit COIN to your game balance
+3. Create a bet or accept an existing one
+4. Result is instant — smart contract determines the winner
+
+💰 *Key info:*
+• Token: *COIN* (CW20 on Axiome)
+• Min bet: 1 COIN
+• Commission: 10% of the pot
+• Fairness: commit-reveal scheme, fully on-chain
+
+🎁 *Referral program:*
+Invite friends and earn up to 3% from their games!
+• Level 1: 3% • Level 2: 1.5% • Level 3: 0.5%
+
+🏆 *Events & Raffles:*
+Regular contests and raffles with real COIN prizes.`,
+    {
+      parse_mode: 'Markdown',
+      reply_markup: keyboard
+    }
   )
 })
 
@@ -696,11 +747,6 @@ bot.callbackQuery('explorer', async (ctx) => {
 bot.callbackQuery('top', async (ctx) => {
   await ctx.answerCallbackQuery()
   await ctx.api.sendMessage(ctx.chat!.id, '/top')
-})
-
-bot.callbackQuery('new', async (ctx) => {
-  await ctx.answerCallbackQuery()
-  await ctx.api.sendMessage(ctx.chat!.id, '/new')
 })
 
 bot.callbackQuery('upcoming', async (ctx) => {

@@ -23,8 +23,8 @@
     },
     "hero": {
       "title": "Axiome Startup Ecosystem",
-      "subtitle": "Wir bauen unabhängige Web3-Produkte in der Axiome-Ökosystem.",
-      "subtitle2": "Unser Launch Token treibt jedes Projekt an.",
+      "subtitle": "Wir bauen unabhängige Web3-Produkte im Axiome-Ökosystem — jedes mit eigenem Token und eigener Wirtschaft.",
+      "subtitle2": "LAUNCH-Token-Inhaber verdienen Einnahmen aus jedem Projekt, das wir erstellen.",
       "cta1": "Kopf oder Zahl spielen",
       "cta2": "Ökosystem erkunden",
       "docsLink": "Docs lesen",
@@ -32,34 +32,34 @@
     },
     "coinflip": {
       "title": "Kopf oder Zahl — Live PvP-Spiel",
-      "subtitle": "Echtzeit-Krypto-PvP. Transparente Mechanik. Nachweisbar fair. Sofortige Belohnungen.",
+      "subtitle": "PvP-Krypto-Spiel mit COIN-Token. Zwei Spieler setzen, eine Münze wird geworfen — der Gewinner erhält 90%. Nachweisbar fair, sofortige Ergebnisse, On-Chain-Verifizierung.",
       "playNow": "Jetzt spielen",
       "viewMechanics": "Spielmechanik",
       "features": {
         "pvp": "Spieler gegen Spieler",
-        "realStakes": "Echte Einsätze",
+        "realStakes": "COIN-Token-Einsätze",
         "platformFee": "10% Plattformgebühr",
         "instantMatch": "Sofortiges Match",
-        "tournaments": "Turniere bald"
+        "tournaments": "Events & Verlosungen"
       }
     },
     "ecosystem": {
       "title": "Ökosystem-Projekte",
-      "headsOrTails": { "title": "Kopf oder Zahl", "status": "Live", "desc": "PvP-Münzwurf. Nachweisbar fair. 50/50. Gewinner nimmt 90%." },
-      "tournaments": { "title": "Turniere", "status": "Demnächst", "desc": "Wettbewerbe mit LAUNCH-Preisen." },
+      "headsOrTails": { "title": "Kopf oder Zahl", "status": "Live", "desc": "PvP-Münzwurf mit COIN-Token. Nachweisbar fair. 50/50. Gewinner nimmt 90%." },
+      "tournaments": { "title": "Events & Verlosungen", "status": "Live", "desc": "Wettbewerbe und Verlosungen mit echten COIN-Preisen für aktive Spieler." },
       "communityProjects": { "title": "Community-Projekte", "status": "Geplant", "desc": "Community-Ideen und Builds." },
-      "tbd": { "title": "TBD-Projekt", "status": "Geplant", "desc": "Nächstes Produkt in Entwicklung." }
+      "tbd": { "title": "Nächstes Projekt", "status": "Geplant", "desc": "Nächstes Produkt in Entwicklung. Jedes Projekt hat seinen eigenen Token." }
     },
     "launchToken": {
-      "title": "Launch Token — Treibstoff unseres Ökosystems",
-      "subtitle": "Launch Token ist der Kern-Utility-Asset für jedes Projekt. Für Teilnahme, Governance, Turniere und Anreize.",
+      "title": "LAUNCH — Ökosystem-Ertrags-Token",
+      "subtitle": "LAUNCH ist der Master-Token des Ökosystems. Jedes Projekt, das wir bauen (wie Kopf oder Zahl mit COIN), generiert Einnahmen — und LAUNCH-Inhaber erhalten einen Anteil davon. Je mehr Projekte, desto mehr Wert fließt an LAUNCH.",
       "tokenomics": "Tokenomics",
       "tokenomicsTbd": "Angebot & Verteilung TBD — demnächst",
       "features": {
-        "allProducts": "In allen zukünftigen Produkten",
+        "allProducts": "Einnahmen aus allen Ökosystem-Projekten",
         "governance": "Governance & Projektvorschläge",
-        "community": "Community-Teilnahme",
-        "utility": "Utility im gesamten Ökosystem"
+        "community": "Zugang zu Stufen & Features",
+        "utility": "Token von jedem Projekt verdienen"
       },
       "contractAddress": "Vertragsadresse",
       "totalSupply": "Gesamtangebot",
@@ -67,13 +67,13 @@
     },
     "community": {
       "title": "Baue mit uns",
-      "subtitle": "Launch-Token-Inhaber können Ideen vorschlagen und zur Entwicklung beitragen. Unser Ökosystem wächst mit der Community.",
+      "subtitle": "LAUNCH-Inhaber können neue Ideen vorschlagen und über Ökosystem-Entscheidungen abstimmen. Jedes neue Projekt bedeutet mehr Einnahmen für die Inhaber.",
       "submitIdea": "Projektidee einreichen",
       "joinCommunity": "Community beitreten"
     },
     "vision": {
       "title": "Langfristige Vision",
-      "text": "Wir bauen ein Multi-Projekt-Startup-Ökosystem in Axiome. Jedes Produkt stärkt den Launch Token. Unsere Mission: nachhaltige Web3-Produkte — kein Hype."
+      "text": "Wir bauen ein Multi-Projekt-Startup-Ökosystem in Axiome. Jedes Produkt (Kopf oder Zahl und weitere) hat seinen eigenen Token und seine eigene Wirtschaft, während LAUNCH-Inhaber Einnahmen aus jedem Projekt verdienen. Unsere Mission: nachhaltige Web3-Produkte — kein Hype."
     },
     "tokensOverview": {
       "title": "Token & Verträge",
@@ -84,17 +84,17 @@
       "status": "Status"
     },
     "mockCard": {
-      "utility": "Utility-Token",
+      "utility": "Ökosystem-Token",
       "tokenomicsTbd": "Tokenomics TBD — Angebot & Verteilung demnächst",
       "supply": "Angebot",
       "reserve": "Reserve",
       "staking": "Staking",
       "liquidity": "Liquidität",
-      "utilityAccess": "Stufen & Premium-Funktionen freischalten",
-      "utilityReputation": "Reputation & Vertrauensscore aufbauen",
+      "utilityAccess": "Ertragsanteil aus allen Ökosystem-Projekten",
+      "utilityReputation": "Zugang zu Stufen & Premium-Funktionen",
       "utilityGovernance": "Über Plattformentscheidungen abstimmen",
-      "utilityRewards": "Staking- & Community-Belohnungen verdienen",
-      "platformToken": "Plattform-Token",
+      "utilityRewards": "Token von jedem gestarteten Projekt verdienen",
+      "platformToken": "Ökosystem-Token",
       "axiomeChain": "Axiome Chain"
     },
     "why": {
@@ -157,10 +157,10 @@
     },
     "utility": {
       "title": "LAUNCH Token Nutzen",
-      "subtitle": "LAUNCH ist ein Utility-Token, der Zugang, Reputation und Belohnungen innerhalb der Plattform ermöglicht.",
-      "access": { "title": "Zugang", "desc": "Schalte Features über Lock-Stufen frei: Projekte veröffentlichen, abstimmen und Pro-Tools nutzen." },
-      "reputation": { "title": "Reputation", "desc": "Stake-to-List / Stake-to-Update reduziert Spam und signalisiert Ernsthaftigkeit." },
-      "rewards": { "title": "Belohnungen", "desc": "Verdiene für echte Beiträge: Reviews, Meldungen und Community-Hilfe — finanziert aus der Plattform-Ökonomie." },
+      "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Halte LAUNCH, um an jedem Projekt mitzuverdienen und an der Governance teilzunehmen.",
+      "access": { "title": "Ertragsanteil", "desc": "Verdiene Token aus jedem gestarteten Projekt: COIN von Kopf oder Zahl und Token von zukünftigen Projekten." },
+      "reputation": { "title": "Zugang & Stufen", "desc": "Sperre LAUNCH, um Plattform-Features freizuschalten: Projekte veröffentlichen, abstimmen und Pro-Tools nutzen." },
+      "rewards": { "title": "Governance", "desc": "Schlage neue Projekte vor, stimme über Ökosystem-Entscheidungen ab und gestalte die Zukunft der Plattform." },
       "readMore": "Tokenomics lesen"
     },
     "tiers": {
@@ -170,11 +170,11 @@
     },
     "feeSplit": {
       "title": "Transparente Wirtschaft",
-      "subtitle": "Plattformeinnahmen unterstützen Entwicklung, Community-Belohnungen, Förderungen und LAUNCH-Rückkauf — konzipiert für langfristige Nachhaltigkeit.",
+      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). Ein Teil fließt an LAUNCH-Inhaber, ein Teil in Entwicklung und Ökosystem-Wachstum.",
       "operations": "Betrieb",
-      "buyback": "LAUNCH Rückkauf",
-      "rewards": "Belohnungen",
-      "grants": "Förderungen / Accelerator"
+      "buyback": "LAUNCH-Inhaber-Belohnungen",
+      "rewards": "Projektentwicklung",
+      "grants": "Förderungen / Neue Projekte"
     },
     "community": {
       "title": "Gemeinsam mit der Axiome-Community gebaut",
@@ -185,8 +185,8 @@
       "comment3": { "user": "dao_whale", "text": "Tolle Community-Diskussion vor dem Launch. Vertrauensscore wächst.", "badge": "Governor" }
     },
     "cta": {
-      "title": "Token erkunden. Eigentum beanspruchen. Vertrauen aufbauen.",
-      "subtitle": "Die Vertrauensschicht für jeden Token im Axiome-Ökosystem.",
+      "title": "Wir bauen echte Produkte.",
+      "subtitle": "Kopf oder Zahl ist live. LAUNCH-Inhaber verdienen an jedem Projekt. Weitere Produkte folgen bald.",
       "cta1": "Token erkunden",
       "cta2": "Token-Seite beanspruchen",
       "docsLink": "Launch Docs lesen"
@@ -503,56 +503,60 @@
     "overview": {
       "badge": "Dokumentation",
       "title": "Axiome Startup Ecosystem",
-      "subtitle": "Eine community-gesteuerte Ökosystem für Token und Projekte auf der Axiome-Blockchain.",
-      "description": "Axiome Launch vereint Token-Entdeckung, Projekt-Erstellung und Kopf oder Zahl — ein Live-PvP-Spiel — in einem Ökosystem. Erstelle Projekte, diskutiere Ideen, erkunde Token und spiele.",
-      "card1Title": "Token-Profile",
-      "card1Desc": "Vollständige Identität für jeden Token mit verifizierten Links",
-      "card2Title": "Kopf oder Zahl",
-      "card2Desc": "PvP-Münzwurf — 50/50, sofortige Matches",
-      "card3Title": "Community-Forum",
-      "card3Desc": "Erstelle Projekte und diskutiere mit der Community",
+      "subtitle": "Ein Multi-Projekt-Web3-Ökosystem auf der Axiome-Blockchain. Jedes Projekt hat seinen eigenen Token — LAUNCH verbindet sie alle.",
+      "description": "Wir bauen unabhängige Produkte im Axiome-Ökosystem. Unser erstes Live-Projekt ist Kopf oder Zahl — ein PvP-Spiel mit COIN-Token. LAUNCH ist der Ökosystem-Token: Inhaber verdienen Einnahmen aus jedem Projekt, das wir erstellen. Token-Entdeckung, Community und Governance — alles an einem Ort.",
+      "card1Title": "Kopf oder Zahl",
+      "card1Desc": "Live-PvP-Spiel mit COIN-Token — 50/50, sofortige Ergebnisse",
+      "card2Title": "LAUNCH Token",
+      "card2Desc": "Ökosystem-Token — Einnahmen aus allen Projekten",
+      "card3Title": "Community & Governance",
+      "card3Desc": "Ideen vorschlagen, abstimmen und das Ökosystem mitgestalten",
       "cta1": "Kopf oder Zahl spielen",
       "cta2": "Token erkunden"
     },
     "coinflip": {
       "title": "Kopf oder Zahl",
-      "subtitle": "PvP-Münzwurf auf Axiome. Zwei Spieler setzen LAUNCH, wählen Kopf oder Zahl, enthüllen — Gewinner erhält 90%, 10% Plattform-Kommission.",
+      "subtitle": "PvP-Münzwurf auf der Axiome-Blockchain. Zwei Spieler setzen COIN-Token, einer erstellt eine Wette und der andere nimmt an — Gewinner erhält 90%, 10% gehen als Plattform-Kommission.",
       "howItWorks": "So funktioniert es",
-      "howDesc": "Einfache 50/50-Mechanik. Beide Spieler bestätigen ihre Wahl on-chain; die Enthüllung bestimmt den Gewinner.",
-      "step1Title": "Erstelle oder trete einer Wette bei",
-      "step1Desc": "Setze deinen Einsatz (min. 1 LAUNCH) und wähle Kopf oder Zahl. Oder trete einer offenen Wette bei.",
-      "step2Title": "Gegner tritt bei",
-      "step2Desc": "Ein anderer Spieler tritt deiner Wette mit dem gleichen Betrag und der gegenteiligen Seite bei.",
-      "step3Title": "Enthüllung",
-      "step3Desc": "Beide Spieler enthüllen ihre Wahl on-chain. Das Ergebnis wird vom Protokoll bestimmt.",
+      "howDesc": "Einfache 50/50-Mechanik mit Commit-Reveal-Verfahren. Die Wahl des Erstellers wird als Hash on-chain versiegelt. Wenn ein Gegner annimmt, wird das Ergebnis bestimmt und sofort in einer einzigen atomaren Transaktion ausgezahlt.",
+      "step1Title": "COIN auf Spielguthaben einzahlen",
+      "step1Desc": "Kaufe COIN-Token im Presale und zahle sie auf dein Spielguthaben ein. Das ist dein In-Game-Guthaben.",
+      "step2Title": "Wette erstellen oder annehmen",
+      "step2Desc": "Setze deinen Einsatz (min. 1 COIN) und erstelle eine Wette. Oder durchsuche offene Wetten und nimm eine mit einem Klick an.",
+      "step3Title": "Sofortiges Ergebnis",
+      "step3Desc": "Wenn eine Wette angenommen wird, verifiziert der Smart Contract das Geheimnis des Erstellers, bestimmt den Gewinner und verteilt die Auszahlung — alles in einer atomaren Transaktion. Keine Verzögerungen.",
       "step4Title": "Gewinner erhält 90%",
       "step4Desc": "Der Gewinner erhält 90% des Gesamtpots. 10% gehen an die Plattform.",
       "step5Title": "Empfehlungs-Belohnungen",
       "step5Desc": "Lade Freunde ein — verdiene 3%, 1,5% oder 0,5% des Pots für 3 Empfehlungsstufen.",
       "commissionTitle": "Kommission",
       "commissionDesc": "10% jedes Pots gehen an die Plattform. Der Gewinner erhält 90% der Gesamtsumme.",
-      "securityTitle": "Sicherheit",
-      "securityDesc": "Alle Logik ist on-chain. Keine Verwahrung von Mitteln — Smart Contract hält die Einsätze bis zur Enthüllung.",
-      "paramsTitle": "Parameter",
-      "paramMinBet": "Mindesteinsatz: 1 LAUNCH",
-      "paramBetExpiry": "Offene Wette TTL: 3 Stunden",
-      "paramRevealTimeout": "Enthüllungs-Timeout: 5 Minuten",
-      "paramOneClick": "1-Click Play: Authz-Delegation für 30 Tage (keine Signatur pro Spiel)",
+      "securityTitle": "Sicherheit & Fairness",
+      "securityDesc": "Alle Logik ist on-chain über einen CosmWasm-Smart-Contract. Das Commit-Reveal-Verfahren garantiert nachweisbare Fairness — niemand kann betrügen. Mittel sind im Vertrag gesperrt, bis das Ergebnis feststeht.",
+      "paramsTitle": "Spielparameter",
+      "paramMinBet": "Mindesteinsatz: 1 COIN",
+      "paramBetExpiry": "Offene Wette Lebensdauer: 3 Stunden",
+      "paramRevealTimeout": "Wettablauf: automatische Stornierung nach 3 Stunden ohne Annahme",
+      "paramOneClick": "Kontoaktivierung: einmalige Authz-Delegation für 30 Tage (keine Signatur pro Spiel)",
+      "coinTokenTitle": "COIN Token",
+      "coinTokenDesc": "COIN ist ein CW20-Token auf der Axiome-Blockchain, speziell für das Kopf oder Zahl Spiel erstellt. Kaufe COIN auf der Presale-Seite, zahle auf dein Spielguthaben ein und fang an zu spielen.",
       "referralTitle": "Empfehlungsprogramm",
-      "referralDesc": "Verdiene einen Anteil des Pots, wenn deine Empfehlungen spielen:",
-      "referralL1": "Stufe 1: 3% des Pots",
+      "referralDesc": "Verdiene einen Anteil des Pots, wenn deine Empfehlungen spielen. 3-Stufen-System:",
+      "referralL1": "Stufe 1 (direkte Einladung): 3% des Pots",
       "referralL2": "Stufe 2: 1,5% des Pots",
       "referralL3": "Stufe 3: 0,5% des Pots",
+      "eventsTitle": "Events & Verlosungen",
+      "eventsDesc": "Die Plattform veranstaltet regelmäßig Wettbewerbe und Verlosungen mit echten COIN-Preisen. Wettbewerbe zählen deine Wetten automatisch — einfach spielen. Bei Verlosungen musst du auf 'Teilnehmen' klicken. Die Preise werden aus der 10%-Kommission finanziert.",
       "playNow": "Kopf oder Zahl spielen"
     },
     "token": {
       "title": "LAUNCH Token",
-      "subtitle": "Utility-Token für das Axiome-Ökosystem. Verwendet in Kopf oder Zahl, Token-Entdeckung und zukünftiger Governance.",
+      "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Jedes Projekt, das wir bauen (wie Kopf oder Zahl), hat seinen eigenen Token — und LAUNCH-Inhaber verdienen einen Anteil der Einnahmen aus jedem Projekt im Ökosystem.",
       "totalSupply": "Angebot & Verteilung:",
       "supplyTbd": "TBD — demnächst",
-      "allProducts": { "title": "Alle Produkte", "desc": "Setze in Kopf oder Zahl, erkunde Token, erstelle Projekte." },
-      "governance": { "title": "Governance", "desc": "Zukunft: Abstimmungen, Förderungen, Ökosystem-Entscheidungen." },
-      "ecosystem": { "title": "Ökosystem", "desc": "Einheitlicher Token über Launch-Produkte und Partner." }
+      "allProducts": { "title": "Ertragsanteil", "desc": "Verdiene Token aus jedem Ökosystem-Projekt — COIN von Kopf oder Zahl und mehr bei neuen Projektstarts." },
+      "governance": { "title": "Governance", "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab." },
+      "ecosystem": { "title": "Multi-Projekt", "desc": "Jedes Projekt hat seinen eigenen Token (COIN usw.). LAUNCH verbindet sie alle." }
     },
     "projects": {
       "title": "Projekte & Community",
@@ -566,10 +570,10 @@
     },
     "vision": {
       "title": "Langfristige Vision",
-      "text": "Wir bauen ein nachhaltiges Web3-Ökosystem: echte Produkte (Kopf oder Zahl), echte Utility (LAUNCH) und community-gesteuerte Entdeckung. Kein Hype — nur funktionierende Tools."
+      "text": "Wir bauen ein nachhaltiges Multi-Projekt-Web3-Ökosystem. Jedes Produkt (wie Kopf oder Zahl) hat seinen eigenen Token und seine eigene Wirtschaft. LAUNCH-Inhaber profitieren vom Erfolg jedes Projekts. Kein Hype — echte Produkte, echte Einnahmen, echter Wert."
     },
     "disclaimer": {
-      "text": "LAUNCH ist ein Utility-Token. Kopf oder Zahl birgt Risiken — setze nur das, was du dir leisten kannst zu verlieren. Wir versprechen keine Rendite. Spiele verantwortungsvoll."
+      "text": "LAUNCH ist ein Ökosystem-Token. COIN ist der Spieltoken für Kopf oder Zahl. Spielen birgt Risiken — setze nur das, was du dir leisten kannst zu verlieren. Wir versprechen keine Rendite. Spiele verantwortungsvoll."
     }
   },
   "lock": {
