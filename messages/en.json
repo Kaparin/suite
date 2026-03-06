@@ -497,7 +497,7 @@
       "overview": "Overview",
       "headsOrTails": "Heads or Tails",
       "token": "LAUNCH Token",
-      "projects": "Projects & Community",
+      "staking": "Staking",
       "vision": "Vision",
       "disclaimer": "Disclaimer"
     },
@@ -559,15 +559,21 @@
       "governance": { "title": "Governance", "desc": "Vote on new projects, grants, and ecosystem decisions." },
       "ecosystem": { "title": "Staking model", "desc": "Synthetix reward_per_token: fair, proportional, gas-efficient. No lock period — unstake anytime." }
     },
-    "projects": {
-      "title": "Projects & Community",
-      "subtitle": "Create projects and discuss them with the community. No AI — just ideas, descriptions, and feedback.",
-      "createTitle": "Create Project",
-      "createDesc": "Publish your project idea, description, and links. Get feedback from the community.",
-      "createCta": "Create project",
-      "commentsTitle": "Comments & Discussion",
-      "commentsDesc": "Comment on tokens and projects. Community-driven signal and ratings.",
-      "commentsCta": "Explore tokens"
+    "staking": {
+      "title": "LAUNCH Staking",
+      "subtitle": "Stake LAUNCH tokens and earn a share of revenue from all ecosystem projects. Rewards are distributed as native AXM.",
+      "howTitle": "How staking works",
+      "step1Title": "Stake LAUNCH tokens",
+      "step1Desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake anytime.",
+      "step2Title": "Projects distribute revenue",
+      "step2Desc": "2% of every game pot (and future project commissions) is sent to the staking contract as AXM.",
+      "step3Title": "Claim AXM rewards",
+      "step3Desc": "Rewards accumulate proportionally to your stake. Claim anytime — no vesting, no delays.",
+      "revenueTitle": "Revenue sources",
+      "revenueDesc": "Currently: 2% from Heads or Tails game commissions. As more projects launch, revenue grows proportionally.",
+      "modelTitle": "Fair distribution",
+      "modelDesc": "Uses Synthetix reward_per_token model — O(1) gas cost regardless of staker count. Proportional, transparent, on-chain.",
+      "cta": "Stake LAUNCH"
     },
     "vision": {
       "title": "Long-term vision",

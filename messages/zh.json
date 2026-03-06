@@ -497,7 +497,7 @@
       "overview": "概览",
       "headsOrTails": "正反面",
       "token": "LAUNCH 代币",
-      "projects": "项目与社区",
+      "staking": "质押",
       "vision": "愿景",
       "disclaimer": "免责声明"
     },
@@ -554,20 +554,26 @@
       "title": "LAUNCH 代币",
       "subtitle": "LAUNCH 是生态系统收益代币。我们构建的每个项目（如猜正反）都有自己的代币 — LAUNCH 持有者从生态系统中每个项目的收益中获得分成。",
       "totalSupply": "供应与分配：",
-      "supplyTbd": "TBD — 即将公布",
-      "allProducts": { "title": "收益分成", "desc": "从每个生态项目中赚取代币 — 从猜正反获得 COIN，随着新项目启动获得更多。" },
+      "supplyTbd": "100,000,000 LAUNCH",
+      "allProducts": { "title": "收益分成", "desc": "所有项目佣金的 2% 以 AXM 分配给质押者。更多项目 = 更多收入。" },
       "governance": { "title": "治理", "desc": "对新项目、资助和生态系统决策进行投票。" },
-      "ecosystem": { "title": "多项目", "desc": "每个项目都有自己的代币（COIN 等）。LAUNCH 将它们联系在一起。" }
+      "ecosystem": { "title": "质押模型", "desc": "Synthetix reward_per_token：公平、按比例、gas 高效。无锁定期。" }
     },
-    "projects": {
-      "title": "项目与社区",
-      "subtitle": "创建项目并与社区讨论。无 AI — 只有想法、描述和反馈。",
-      "createTitle": "创建项目",
-      "createDesc": "发布你的项目想法、描述和链接。获得社区反馈。",
-      "createCta": "创建项目",
-      "commentsTitle": "评论与讨论",
-      "commentsDesc": "评论代币和项目。社区驱动的信号和评级。",
-      "commentsCta": "探索代币"
+    "staking": {
+      "title": "LAUNCH 质押",
+      "subtitle": "质押 LAUNCH 代币，赚取所有生态项目收入的份额。奖励以原生 AXM 分发。",
+      "howTitle": "质押如何运作",
+      "step1Title": "质押 LAUNCH 代币",
+      "step1Desc": "将 LAUNCH 代币发送到质押合约。无锁仓期 — 随时取回。",
+      "step2Title": "项目分配收入",
+      "step2Desc": "每次游戏 2% 的奖池以 AXM 形式发送到质押合约。",
+      "step3Title": "领取 AXM 奖励",
+      "step3Desc": "奖励按质押比例累积。随时领取 — 无归属期，无延迟。",
+      "revenueTitle": "收入来源",
+      "revenueDesc": "目前：正反面游戏 2% 的佣金。随着更多项目上线，收入成比例增长。",
+      "modelTitle": "公平分配",
+      "modelDesc": "使用 Synthetix reward_per_token 模型 — O(1) gas，按比例，透明，链上。",
+      "cta": "质押 LAUNCH"
     },
     "vision": {
       "title": "长期愿景",

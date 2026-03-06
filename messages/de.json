@@ -497,7 +497,7 @@
       "overview": "Überblick",
       "headsOrTails": "Kopf oder Zahl",
       "token": "LAUNCH Token",
-      "projects": "Projekte & Community",
+      "staking": "Staking",
       "vision": "Vision",
       "disclaimer": "Haftungsausschluss"
     },
@@ -554,20 +554,26 @@
       "title": "LAUNCH Token",
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Jedes Projekt, das wir bauen (wie Kopf oder Zahl), hat seinen eigenen Token — und LAUNCH-Inhaber verdienen einen Anteil der Einnahmen aus jedem Projekt im Ökosystem.",
       "totalSupply": "Angebot & Verteilung:",
-      "supplyTbd": "TBD — demnächst",
-      "allProducts": { "title": "Ertragsanteil", "desc": "Verdiene Token aus jedem Ökosystem-Projekt — COIN von Kopf oder Zahl und mehr bei neuen Projektstarts." },
+      "supplyTbd": "100.000.000 LAUNCH",
+      "allProducts": { "title": "Ertragsanteil", "desc": "2% aller Projektprovisionen werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
       "governance": { "title": "Governance", "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab." },
-      "ecosystem": { "title": "Multi-Projekt", "desc": "Jedes Projekt hat seinen eigenen Token (COIN usw.). LAUNCH verbindet sie alle." }
+      "ecosystem": { "title": "Staking-Modell", "desc": "Synthetix reward_per_token: fair, proportional, gas-effizient. Keine Sperrfrist." }
     },
-    "projects": {
-      "title": "Projekte & Community",
-      "subtitle": "Erstelle Projekte und diskutiere sie mit der Community. Kein KI — nur Ideen, Beschreibungen und Feedback.",
-      "createTitle": "Projekt erstellen",
-      "createDesc": "Veröffentliche deine Projektidee, Beschreibung und Links. Erhalte Feedback von der Community.",
-      "createCta": "Projekt erstellen",
-      "commentsTitle": "Kommentare & Diskussion",
-      "commentsDesc": "Kommentiere Token und Projekte. Community-gesteuerte Signale und Bewertungen.",
-      "commentsCta": "Token erkunden"
+    "staking": {
+      "title": "LAUNCH Staking",
+      "subtitle": "Staken Sie LAUNCH-Token und verdienen Sie einen Anteil der Einnahmen aller Ökosystem-Projekte. Belohnungen in nativem AXM.",
+      "howTitle": "So funktioniert Staking",
+      "step1Title": "LAUNCH-Token staken",
+      "step1Desc": "Senden Sie LAUNCH-Token an den Staking-Vertrag. Keine Sperrfrist — jederzeit abheben.",
+      "step2Title": "Projekte verteilen Einnahmen",
+      "step2Desc": "2% jedes Spielpots werden als AXM an den Staking-Vertrag gesendet.",
+      "step3Title": "AXM-Belohnungen abholen",
+      "step3Desc": "Belohnungen sammeln sich proportional zu Ihrem Stake an. Jederzeit abholen.",
+      "revenueTitle": "Einnahmequellen",
+      "revenueDesc": "Aktuell: 2% der Kopf-oder-Zahl-Provisionen. Mit neuen Projekten wächst der Ertrag.",
+      "modelTitle": "Faire Verteilung",
+      "modelDesc": "Synthetix reward_per_token Modell — O(1) Gas, proportional, transparent, on-chain.",
+      "cta": "LAUNCH staken"
     },
     "vision": {
       "title": "Langfristige Vision",

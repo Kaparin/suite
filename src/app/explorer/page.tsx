@@ -343,15 +343,15 @@ export default function ExplorerPage() {
               />
             </div>
 
-            {/* Create button */}
-            <Link href="/create">
-              <Button className="h-12 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
-                <svg className="w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                Создать проект
-              </Button>
-            </Link>
+            {/* Refresh */}
+            <Button
+              onClick={() => fetchTokens()}
+              className="h-12 bg-gray-800/50 border border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </Button>
           </div>
 
           {/* Category Tabs (only for Live tab) */}
@@ -417,12 +417,7 @@ export default function ExplorerPage() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-white mb-2">No Upcoming Tokens</h3>
-              <p className="text-gray-400 mb-6">Be the first to create a token project!</p>
-              <Link href="/create">
-                <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
-                  Create Token
-                </Button>
-              </Link>
+              <p className="text-gray-400">Check back later for new projects in the ecosystem.</p>
             </motion.div>
           ) : (
             <motion.div
@@ -448,12 +443,7 @@ export default function ExplorerPage() {
               </svg>
             </div>
             <h3 className="text-xl font-semibold text-white mb-2">Токены не найдены</h3>
-            <p className="text-gray-400 mb-6">Попробуйте изменить поисковый запрос или категорию</p>
-            <Link href="/create">
-              <Button className="bg-gradient-to-r from-purple-600 to-blue-600">
-                Создать первый проект
-              </Button>
-            </Link>
+            <p className="text-gray-400">Попробуйте изменить поисковый запрос или категорию</p>
           </motion.div>
         ) : (
           <motion.div
@@ -594,22 +584,22 @@ export default function ExplorerPage() {
           </motion.div>
         )}
 
-        {/* CTA */}
+        {/* Staking CTA */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.5 }}
           className="mt-12"
         >
-          <Card className="bg-gradient-to-r from-purple-900/30 to-blue-900/30 border-purple-500/20">
+          <Card className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-green-500/20">
             <div className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-white mb-2">Готовы создать проект?</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">Stake LAUNCH, Earn AXM</h3>
               <p className="text-gray-400 mb-6 max-w-lg mx-auto">
-                Создайте проект, опишите идею и получите обратную связь от сообщества.
+                Стейкайте токены LAUNCH и получайте долю от комиссий всех проектов экосистемы.
               </p>
-              <Link href="/create">
-                <Button size="lg" className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500">
-                  Создать проект
+              <Link href="/staking">
+                <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
+                  Stake LAUNCH
                   <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
