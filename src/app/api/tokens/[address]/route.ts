@@ -71,8 +71,10 @@ async function getChainTokenInfo(contractAddress: string): Promise<{
 
 // Get marketing info from chain
 async function getChainMarketingInfo(contractAddress: string): Promise<{
-  description?: string
-  logo?: { url?: string }
+  description?: string | null
+  logo?: { url?: string } | null
+  project?: string | null
+  marketing?: string | null
 } | null> {
   if (!REST_URL) return null
 
@@ -149,15 +151,23 @@ export async function GET(
     }
 
     // Get chain minter for ownership verification
+    const contractAddr = project?.tokenAddress || address
     let chainMinter: string | null = null
-    if (project?.tokenAddress || address.startsWith('axm')) {
-      chainMinter = await getChainMinter(project?.tokenAddress || address)
+    if (contractAddr.startsWith('axm')) {
+      chainMinter = await getChainMinter(contractAddr)
+    }
+
+    // Always try to get chain data for on-chain tokens
+    let chainTokenInfo: Awaited<ReturnType<typeof getChainTokenInfo>> = null
+    let chainMarketingInfo: Awaited<ReturnType<typeof getChainMarketingInfo>> = null
+    if (contractAddr.startsWith('axm')) {
+      ;[chainTokenInfo, chainMarketingInfo] = await Promise.all([
+        getChainTokenInfo(contractAddr),
+        getChainMarketingInfo(contractAddr),
+      ])
     }
 
     if (!project) {
-      // Try to get token info from chain
-      const chainTokenInfo = await getChainTokenInfo(address)
-      const chainMarketingInfo = await getChainMarketingInfo(address)
 
       // Check if it's a known token
       const knownToken = KNOWN_TOKENS.find(
@@ -175,15 +185,19 @@ export async function GET(
             descriptionShort: chainMarketingInfo?.description || knownToken?.description || null,
             descriptionLong: null,
             logo: knownToken?.logoUrl || chainMarketingInfo?.logo?.url || null,
-            links: null,
+            links: chainMarketingInfo?.project ? { website: chainMarketingInfo.project } : null,
             tokenomics: chainTokenInfo ? {
               supply: chainTokenInfo.total_supply,
               decimals: chainTokenInfo.decimals
             } : null,
             isVerified: knownToken?.verified || false,
-            createdAt: null, // Unknown for chain-discovered tokens without DB record
+            createdAt: null,
             riskFlags: [],
             owner: chainMinter ? { wallets: [{ address: chainMinter }] } : null,
+          },
+          chainData: {
+            tokenInfo: chainTokenInfo,
+            marketingInfo: chainMarketingInfo,
           },
           score: knownToken?.verified ? 80 : 50,
           metrics: { holders: 0, txCount: 0, volume24h: 0 },
@@ -204,6 +218,10 @@ export async function GET(
 
     return NextResponse.json({
       project,
+      chainData: {
+        tokenInfo: chainTokenInfo,
+        marketingInfo: chainMarketingInfo,
+      },
       score: trustScore?.totalScore ?? 50,
       trustScore: trustScore ?? null,
       metrics: {
