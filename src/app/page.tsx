@@ -320,24 +320,19 @@ export default function HomePage() {
           <motion.div {...fadeUp} className="text-center mb-10">
             <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/20 mb-4">Staking</span>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Stake LAUNCH, Earn AXM</span>
+              <span className="bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">{t('stakingSection.title')}</span>
             </h2>
             <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              Every project in the ecosystem sends a portion of its revenue to the staking contract.
-              Your share is proportional to your staked LAUNCH — claim AXM rewards anytime.
+              {t('stakingSection.subtitle')}
             </p>
           </motion.div>
 
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-3 gap-4 mb-10">
-            {[
-              { icon: '📥', title: 'Stake', desc: 'Send LAUNCH tokens to the staking contract. No lock period — unstake whenever you want.' },
-              { icon: '💰', title: 'Earn', desc: 'Projects distribute AXM to all stakers. 2% of CoinFlip commissions go to the staking pool.' },
-              { icon: '🎁', title: 'Claim', desc: 'Accumulated AXM rewards can be claimed at any time. The more you stake, the bigger your share.' },
-            ].map(item => (
-              <motion.div key={item.title} variants={staggerItem} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 text-center">
-                <span className="text-3xl mb-3 block">{item.icon}</span>
-                <h3 className="text-white font-semibold text-lg mb-2">{item.title}</h3>
-                <p className="text-sm text-gray-400">{item.desc}</p>
+            {(['stake', 'earn', 'claim'] as const).map(key => (
+              <motion.div key={key} variants={staggerItem} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 text-center">
+                <span className="text-3xl mb-3 block">{t(`stakingSection.${key}.icon`)}</span>
+                <h3 className="text-white font-semibold text-lg mb-2">{t(`stakingSection.${key}.title`)}</h3>
+                <p className="text-sm text-gray-400">{t(`stakingSection.${key}.desc`)}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -345,7 +340,7 @@ export default function HomePage() {
           <motion.div {...fadeUp} className="flex justify-center">
             <Link href="/staking">
               <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-lg font-medium rounded-xl shadow-lg shadow-violet-500/25 transition-all">
-                Start Staking
+                {t('stakingSection.cta')}
               </motion.span>
             </Link>
           </motion.div>

@@ -66,6 +66,14 @@
       "viewExplorer": "Stake LAUNCH",
       "stakingCta": "Start Staking"
     },
+    "stakingSection": {
+      "title": "Stake LAUNCH, Earn AXM",
+      "subtitle": "Every project in the ecosystem sends a share of revenue to the staking contract. Your share is proportional to your staked LAUNCH — claim AXM anytime.",
+      "stake": { "icon": "📥", "title": "Stake", "desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake whenever you want." },
+      "earn": { "icon": "💰", "title": "Earn", "desc": "Projects distribute AXM to all stakers. 2% of CoinFlip commissions go to the staking pool." },
+      "claim": { "icon": "🎁", "title": "Claim", "desc": "Accumulated AXM rewards can be claimed at any time. The more you stake, the bigger your share." },
+      "cta": "Start Staking"
+    },
     "community": {
       "title": "Build With Us",
       "subtitle": "LAUNCH holders can propose new ideas and vote on ecosystem decisions. Each new project means more revenue flowing back to holders.",

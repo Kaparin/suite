@@ -66,6 +66,14 @@
       "viewExplorer": "质押 LAUNCH",
       "stakingCta": "开始质押"
     },
+    "stakingSection": {
+      "title": "质押 LAUNCH，赚取 AXM",
+      "subtitle": "每个项目将收入的一部分发送到质押合约。你的份额与你的质押成正比。",
+      "stake": { "icon": "📥", "title": "质押", "desc": "将 LAUNCH 代币发送到质押合约。无锁仓期。" },
+      "earn": { "icon": "💰", "title": "赚取", "desc": "项目将 AXM 分配给所有质押者。2% 的游戏佣金进入质押池。" },
+      "claim": { "icon": "🎁", "title": "领取", "desc": "累积的 AXM 随时可领。质押越多，份额越大。" },
+      "cta": "开始质押"
+    },
     "community": {
       "title": "与我们共建",
       "subtitle": "LAUNCH 持有者可以提出新想法并对生态系统决策进行投票。每个新项目意味着更多收益回馈给持有者。",

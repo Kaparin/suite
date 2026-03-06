@@ -66,6 +66,14 @@
       "viewExplorer": "LAUNCH staken",
       "stakingCta": "Staking starten"
     },
+    "stakingSection": {
+      "title": "Stake LAUNCH, verdiene AXM",
+      "subtitle": "Jedes Projekt sendet einen Anteil der Einnahmen an den Staking-Vertrag. Dein Anteil ist proportional zu deinem Stake.",
+      "stake": { "icon": "📥", "title": "Staken", "desc": "LAUNCH-Token an den Staking-Vertrag senden. Keine Sperrfrist." },
+      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 2% der CoinFlip-Provisionen." },
+      "claim": { "icon": "🎁", "title": "Abholen", "desc": "AXM-Belohnungen jederzeit abholen. Je mehr du stakst, desto mehr verdienst du." },
+      "cta": "Staking starten"
+    },
     "community": {
       "title": "Baue mit uns",
       "subtitle": "LAUNCH-Inhaber können neue Ideen vorschlagen und über Ökosystem-Entscheidungen abstimmen. Jedes neue Projekt bedeutet mehr Einnahmen für die Inhaber.",
