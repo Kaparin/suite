@@ -25,19 +25,19 @@
       "title": "Axiome Startup Ecosystem",
       "subtitle": "Wir bauen unabhängige Web3-Produkte im Axiome-Ökosystem — jedes mit eigenem Token und eigener Wirtschaft.",
       "subtitle2": "LAUNCH-Token-Inhaber verdienen Einnahmen aus jedem Projekt, das wir erstellen.",
-      "cta1": "Kopf oder Zahl spielen",
+      "cta1": "Projekte erkunden",
       "cta2": "Ökosystem erkunden",
       "docsLink": "Docs lesen",
       "poweredBy": "Auf Axiome-Blockchain"
     },
     "coinflip": {
       "title": "Kopf oder Zahl — Live PvP-Spiel",
-      "subtitle": "PvP-Krypto-Spiel mit COIN-Token. Zwei Spieler setzen, eine Münze wird geworfen — der Gewinner erhält 90%. Nachweisbar fair, sofortige Ergebnisse, On-Chain-Verifizierung.",
-      "playNow": "Jetzt spielen",
+      "subtitle": "PvP-Krypto-Spiel mit AXM. Zwei Spieler setzen, eine Münze wird geworfen — der Gewinner erhält 90%. Nachweisbar fair, sofortige Ergebnisse, On-Chain-Verifizierung.",
+      "playNow": "Projekte erkunden",
       "viewMechanics": "Spielmechanik",
       "features": {
         "pvp": "Spieler gegen Spieler",
-        "realStakes": "COIN-Token-Einsätze",
+        "realStakes": "AXM-Einsätze",
         "platformFee": "10% Plattformgebühr",
         "instantMatch": "Sofortiges Match",
         "tournaments": "Events & Verlosungen"
@@ -45,14 +45,14 @@
     },
     "ecosystem": {
       "title": "Ökosystem-Projekte",
-      "headsOrTails": { "title": "Kopf oder Zahl", "status": "Live", "desc": "PvP-Münzwurf mit COIN-Token. Nachweisbar fair. 50/50. Gewinner nimmt 90%." },
-      "tournaments": { "title": "Events & Verlosungen", "status": "Live", "desc": "Wettbewerbe und Verlosungen mit echten COIN-Preisen für aktive Spieler." },
+      "headsOrTails": { "title": "Kopf oder Zahl", "status": "Live", "desc": "PvP-Münzwurf mit AXM. Nachweisbar fair. 50/50. Gewinner nimmt 90%." },
+      "tournaments": { "title": "Events & Verlosungen", "status": "Live", "desc": "Wettbewerbe und Verlosungen mit echten AXM-Preisen für aktive Spieler." },
       "communityProjects": { "title": "Community-Projekte", "status": "Geplant", "desc": "Community-Ideen und Builds." },
       "tbd": { "title": "Nächstes Projekt", "status": "Geplant", "desc": "Nächstes Produkt in Entwicklung. Jedes Projekt hat seinen eigenen Token." }
     },
     "launchToken": {
       "title": "LAUNCH — Ökosystem-Ertrags-Token",
-      "subtitle": "LAUNCH ist der Master-Token des Ökosystems. Jedes Projekt, das wir bauen (wie Kopf oder Zahl mit COIN), generiert Einnahmen — und LAUNCH-Inhaber erhalten einen Anteil davon. Je mehr Projekte, desto mehr Wert fließt an LAUNCH.",
+      "subtitle": "LAUNCH ist der Master-Token des Ökosystems. Jedes Projekt, das wir bauen (wie Kopf oder Zahl mit AXM), generiert Einnahmen — und LAUNCH-Inhaber erhalten einen Anteil davon. Je mehr Projekte, desto mehr Wert fließt an LAUNCH.",
       "tokenomics": "Tokenomics",
       "tokenomicsTbd": "Angebot & Verteilung TBD — demnächst",
       "features": {
@@ -70,7 +70,7 @@
       "title": "Stake LAUNCH, verdiene AXM",
       "subtitle": "Jedes Projekt sendet einen Anteil der Einnahmen an den Staking-Vertrag. Dein Anteil ist proportional zu deinem Stake.",
       "stake": { "icon": "📥", "title": "Staken", "desc": "LAUNCH-Token an den Staking-Vertrag senden. Keine Sperrfrist." },
-      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 2% der CoinFlip-Provisionen." },
+      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 100% der Nettogewinne (7% jedes Pots)." },
       "claim": { "icon": "🎁", "title": "Abholen", "desc": "AXM-Belohnungen jederzeit abholen. Je mehr du stakst, desto mehr verdienst du." },
       "cta": "Staking starten"
     },
@@ -167,7 +167,7 @@
     "utility": {
       "title": "LAUNCH Token Nutzen",
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Halte LAUNCH, um an jedem Projekt mitzuverdienen und an der Governance teilzunehmen.",
-      "access": { "title": "Ertragsanteil", "desc": "Verdiene Token aus jedem gestarteten Projekt: COIN von Kopf oder Zahl und Token von zukünftigen Projekten." },
+      "access": { "title": "Ertragsanteil", "desc": "Verdiene AXM aus jedem gestarteten Projekt: AXM von Kopf oder Zahl und Einnahmen von zukünftigen Projekten." },
       "reputation": { "title": "Zugang & Stufen", "desc": "Sperre LAUNCH, um Plattform-Features freizuschalten: Projekte veröffentlichen, abstimmen und Pro-Tools nutzen." },
       "rewards": { "title": "Governance", "desc": "Schlage neue Projekte vor, stimme über Ökosystem-Entscheidungen ab und gestalte die Zukunft der Plattform." },
       "readMore": "Tokenomics lesen"
@@ -179,7 +179,7 @@
     },
     "feeSplit": {
       "title": "Transparente Wirtschaft",
-      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). Ein Teil fließt an LAUNCH-Inhaber, ein Teil in Entwicklung und Ökosystem-Wachstum.",
+      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). 100% der Nettogewinne (7% jedes Pots) fließen an LAUNCH-Staker. Das Team verdient als LAUNCH-Token-Inhaber.",
       "operations": "Betrieb",
       "buyback": "LAUNCH-Inhaber-Belohnungen",
       "rewards": "Projektentwicklung",
@@ -513,25 +513,25 @@
       "badge": "Dokumentation",
       "title": "Axiome Startup Ecosystem",
       "subtitle": "Ein Multi-Projekt-Web3-Ökosystem auf der Axiome-Blockchain. Jedes Projekt hat seinen eigenen Token — LAUNCH verbindet sie alle.",
-      "description": "Wir bauen unabhängige Produkte im Axiome-Ökosystem. Unser erstes Live-Projekt ist Kopf oder Zahl — ein PvP-Spiel mit COIN-Token. LAUNCH ist der Ökosystem-Token: Inhaber verdienen Einnahmen aus jedem Projekt, das wir erstellen. Token-Entdeckung, Community und Governance — alles an einem Ort.",
+      "description": "Wir bauen unabhängige Produkte im Axiome-Ökosystem. Unser erstes Live-Projekt ist Kopf oder Zahl — ein PvP-Spiel mit AXM-Einsätzen. LAUNCH ist der Ökosystem-Token: Inhaber verdienen Einnahmen aus jedem Projekt, das wir erstellen. Token-Entdeckung, Community und Governance — alles an einem Ort.",
       "card1Title": "Kopf oder Zahl",
-      "card1Desc": "Live-PvP-Spiel mit COIN-Token — 50/50, sofortige Ergebnisse",
+      "card1Desc": "Live-PvP-Spiel mit AXM — 50/50, sofortige Ergebnisse",
       "card2Title": "LAUNCH Token",
       "card2Desc": "Ökosystem-Token — Einnahmen aus allen Projekten",
       "card3Title": "Community & Governance",
       "card3Desc": "Ideen vorschlagen, abstimmen und das Ökosystem mitgestalten",
-      "cta1": "Kopf oder Zahl spielen",
+      "cta1": "Projekte erkunden",
       "cta2": "Token erkunden"
     },
     "coinflip": {
       "title": "Kopf oder Zahl",
-      "subtitle": "PvP-Münzwurf auf der Axiome-Blockchain. Zwei Spieler setzen COIN-Token, einer erstellt eine Wette und der andere nimmt an — Gewinner erhält 90%, 10% gehen als Plattform-Kommission.",
+      "subtitle": "PvP-Münzwurf auf der Axiome-Blockchain. Zwei Spieler setzen AXM, einer erstellt eine Wette und der andere nimmt an — Gewinner erhält 90%, 10% gehen als Plattform-Kommission.",
       "howItWorks": "So funktioniert es",
       "howDesc": "Einfache 50/50-Mechanik mit Commit-Reveal-Verfahren. Die Wahl des Erstellers wird als Hash on-chain versiegelt. Wenn ein Gegner annimmt, wird das Ergebnis bestimmt und sofort in einer einzigen atomaren Transaktion ausgezahlt.",
-      "step1Title": "COIN auf Spielguthaben einzahlen",
-      "step1Desc": "Kaufe COIN-Token im Presale und zahle sie auf dein Spielguthaben ein. Das ist dein In-Game-Guthaben.",
+      "step1Title": "AXM auf Spielguthaben einzahlen",
+      "step1Desc": "Zahle AXM auf dein Spielguthaben ein. Das ist dein In-Game-Guthaben.",
       "step2Title": "Wette erstellen oder annehmen",
-      "step2Desc": "Setze deinen Einsatz (min. 1 COIN) und erstelle eine Wette. Oder durchsuche offene Wetten und nimm eine mit einem Klick an.",
+      "step2Desc": "Setze deinen AXM-Einsatz und erstelle eine Wette. Oder durchsuche offene Wetten und nimm eine mit einem Klick an.",
       "step3Title": "Sofortiges Ergebnis",
       "step3Desc": "Wenn eine Wette angenommen wird, verifiziert der Smart Contract das Geheimnis des Erstellers, bestimmt den Gewinner und verteilt die Auszahlung — alles in einer atomaren Transaktion. Keine Verzögerungen.",
       "step4Title": "Gewinner erhält 90%",
@@ -543,27 +543,27 @@
       "securityTitle": "Sicherheit & Fairness",
       "securityDesc": "Alle Logik ist on-chain über einen CosmWasm-Smart-Contract. Das Commit-Reveal-Verfahren garantiert nachweisbare Fairness — niemand kann betrügen. Mittel sind im Vertrag gesperrt, bis das Ergebnis feststeht.",
       "paramsTitle": "Spielparameter",
-      "paramMinBet": "Mindesteinsatz: 1 COIN",
+      "paramMinBet": "Mindesteinsatz: in AXM",
       "paramBetExpiry": "Offene Wette Lebensdauer: 3 Stunden",
       "paramRevealTimeout": "Wettablauf: automatische Stornierung nach 3 Stunden ohne Annahme",
       "paramOneClick": "Kontoaktivierung: einmalige Authz-Delegation für 30 Tage (keine Signatur pro Spiel)",
       "coinTokenTitle": "COIN Token",
-      "coinTokenDesc": "COIN ist ein CW20-Token auf der Axiome-Blockchain, speziell für das Kopf oder Zahl Spiel erstellt. Kaufe COIN auf der Presale-Seite, zahle auf dein Spielguthaben ein und fang an zu spielen.",
+      "coinTokenDesc": "COIN ist ein Utility-Token für In-Game-Features: Shop, Kosmetik, Lotterie-Teilnahme und mehr. Einsätze bei Kopf oder Zahl werden in AXM (nativem Token) platziert.",
       "referralTitle": "Empfehlungsprogramm",
       "referralDesc": "Verdiene einen Anteil des Pots, wenn deine Empfehlungen spielen. 3-Stufen-System:",
       "referralL1": "Stufe 1 (direkte Einladung): 3% des Pots",
       "referralL2": "Stufe 2: 1,5% des Pots",
       "referralL3": "Stufe 3: 0,5% des Pots",
       "eventsTitle": "Events & Verlosungen",
-      "eventsDesc": "Die Plattform veranstaltet regelmäßig Wettbewerbe und Verlosungen mit echten COIN-Preisen. Wettbewerbe zählen deine Wetten automatisch — einfach spielen. Bei Verlosungen musst du auf 'Teilnehmen' klicken. Die Preise werden aus der 10%-Kommission finanziert.",
-      "playNow": "Kopf oder Zahl spielen"
+      "eventsDesc": "Die Plattform veranstaltet regelmäßig Wettbewerbe und Verlosungen mit echten AXM-Preisen. Wettbewerbe zählen deine Wetten automatisch — einfach spielen. Bei Verlosungen musst du auf 'Teilnehmen' klicken. Die Preise werden aus der 10%-Kommission finanziert.",
+      "playNow": "Projekte erkunden"
     },
     "token": {
       "title": "LAUNCH Token",
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Jedes Projekt, das wir bauen (wie Kopf oder Zahl), hat seinen eigenen Token — und LAUNCH-Inhaber verdienen einen Anteil der Einnahmen aus jedem Projekt im Ökosystem.",
       "totalSupply": "Angebot & Verteilung:",
       "supplyTbd": "100.000.000 LAUNCH",
-      "allProducts": { "title": "Ertragsanteil", "desc": "2% aller Projektprovisionen werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
+      "allProducts": { "title": "Ertragsanteil", "desc": "100% der Nettogewinne (7% jedes Pots) werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
       "governance": { "title": "Governance", "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab." },
       "ecosystem": { "title": "Staking-Modell", "desc": "Synthetix reward_per_token: fair, proportional, gas-effizient. Keine Sperrfrist." }
     },
@@ -574,11 +574,11 @@
       "step1Title": "LAUNCH-Token staken",
       "step1Desc": "Senden Sie LAUNCH-Token an den Staking-Vertrag. Keine Sperrfrist — jederzeit abheben.",
       "step2Title": "Projekte verteilen Einnahmen",
-      "step2Desc": "2% jedes Spielpots werden als AXM an den Staking-Vertrag gesendet.",
+      "step2Desc": "100% der Nettogewinne (7% jedes Pots) werden als AXM an den Staking-Vertrag gesendet.",
       "step3Title": "AXM-Belohnungen abholen",
       "step3Desc": "Belohnungen sammeln sich proportional zu Ihrem Stake an. Jederzeit abholen.",
       "revenueTitle": "Einnahmequellen",
-      "revenueDesc": "Aktuell: 2% der Kopf-oder-Zahl-Provisionen. Mit neuen Projekten wächst der Ertrag.",
+      "revenueDesc": "Aktuell: 100% der Nettogewinne (7% jedes Pots) aus Kopf oder Zahl. Mit neuen Projekten wächst der Ertrag.",
       "modelTitle": "Faire Verteilung",
       "modelDesc": "Synthetix reward_per_token Modell — O(1) Gas, proportional, transparent, on-chain.",
       "cta": "LAUNCH staken"
@@ -588,7 +588,7 @@
       "text": "Wir bauen ein nachhaltiges Multi-Projekt-Web3-Ökosystem. Jedes Produkt (wie Kopf oder Zahl) hat seinen eigenen Token und seine eigene Wirtschaft. LAUNCH-Inhaber profitieren vom Erfolg jedes Projekts. Kein Hype — echte Produkte, echte Einnahmen, echter Wert."
     },
     "disclaimer": {
-      "text": "LAUNCH ist ein Ökosystem-Token. COIN ist der Spieltoken für Kopf oder Zahl. Spielen birgt Risiken — setze nur das, was du dir leisten kannst zu verlieren. Wir versprechen keine Rendite. Spiele verantwortungsvoll."
+      "text": "LAUNCH ist ein Ökosystem-Token. COIN ist ein Utility-Token für In-Game-Features (Shop, Kosmetik, Lotterie). Einsätze bei Kopf oder Zahl werden in AXM platziert. Spielen birgt Risiken — setze nur das, was du dir leisten kannst zu verlieren. Wir versprechen keine Rendite. Spiele verantwortungsvoll."
     }
   },
   "lock": {

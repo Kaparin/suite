@@ -25,19 +25,19 @@
       "title": "Axiome 创业生态系统",
       "subtitle": "我们在 Axiome 生态系统中构建独立的 Web3 产品 — 每个产品都有自己的代币和经济体系。",
       "subtitle2": "LAUNCH 代币持有者从我们创建的每个项目中获得收益。",
-      "cta1": "玩猜正反",
+      "cta1": "探索项目",
       "cta2": "探索生态系统",
       "docsLink": "阅读文档",
       "poweredBy": "基于 Axiome 区块链"
     },
     "coinflip": {
       "title": "猜正反 — 实时 PvP 游戏",
-      "subtitle": "基于 COIN 代币的 PvP 加密游戏。两名玩家下注，抛硬币 — 赢家获得 90%。可证明公平，即时结果，链上验证。",
+      "subtitle": "基于 AXM 原生代币的 PvP 加密游戏。两名玩家下注，抛硬币 — 赢家获得 90%。可证明公平，即时结果，链上验证。",
       "playNow": "立即游戏",
       "viewMechanics": "游戏机制",
       "features": {
         "pvp": "玩家对战",
-        "realStakes": "COIN 代币下注",
+        "realStakes": "AXM 代币下注",
         "platformFee": "10% 平台费",
         "instantMatch": "即时匹配",
         "tournaments": "活动与抽奖"
@@ -45,14 +45,14 @@
     },
     "ecosystem": {
       "title": "生态系统项目",
-      "headsOrTails": { "title": "猜正反", "status": "上线", "desc": "基于 COIN 代币的 PvP 抛币。可证明公平。50/50。赢家获得 90%。" },
-      "tournaments": { "title": "活动与抽奖", "status": "上线", "desc": "为活跃玩家举办的竞赛和抽奖，提供真实 COIN 奖品。" },
+      "headsOrTails": { "title": "猜正反", "status": "上线", "desc": "基于 AXM 原生代币的 PvP 抛币。可证明公平。50/50。赢家获得 90%。" },
+      "tournaments": { "title": "活动与抽奖", "status": "上线", "desc": "为活跃玩家举办的竞赛和抽奖，提供真实 AXM 奖品。" },
       "communityProjects": { "title": "社区项目", "status": "计划中", "desc": "社区提议的想法和构建。" },
       "tbd": { "title": "下一个项目", "status": "计划中", "desc": "开发中的下一个产品。每个项目都有自己的代币。" }
     },
     "launchToken": {
       "title": "LAUNCH — 生态系统收益代币",
-      "subtitle": "LAUNCH 是生态系统的主代币。我们构建的每个项目（如猜正反使用 COIN）都会产生收益 — LAUNCH 持有者可从中分享收益。项目越多，流向 LAUNCH 的价值就越大。",
+      "subtitle": "LAUNCH 是生态系统的主代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得100%净利润（每局7%）。项目越多，流向 LAUNCH 的价值就越大。",
       "tokenomics": "代币经济学",
       "tokenomicsTbd": "供应与分配 TBD — 即将公布",
       "features": {
@@ -68,9 +68,9 @@
     },
     "stakingSection": {
       "title": "质押 LAUNCH，赚取 AXM",
-      "subtitle": "每个项目将收入的一部分发送到质押合约。你的份额与你的质押成正比。",
+      "subtitle": "每个项目将100%净利润发送到质押合约。你的份额与你的质押成正比。",
       "stake": { "icon": "📥", "title": "质押", "desc": "将 LAUNCH 代币发送到质押合约。无锁仓期。" },
-      "earn": { "icon": "💰", "title": "赚取", "desc": "项目将 AXM 分配给所有质押者。2% 的游戏佣金进入质押池。" },
+      "earn": { "icon": "💰", "title": "赚取", "desc": "项目将 AXM 分配给所有质押者。100%净利润（每局7%）进入质押池。" },
       "claim": { "icon": "🎁", "title": "领取", "desc": "累积的 AXM 随时可领。质押越多，份额越大。" },
       "cta": "开始质押"
     },
@@ -167,7 +167,7 @@
     "utility": {
       "title": "LAUNCH 代币用途",
       "subtitle": "LAUNCH 是生态系统收益代币。持有 LAUNCH 可从我们构建的每个项目中获得收益，并参与治理。",
-      "access": { "title": "收益分成", "desc": "从每个已启动项目中赚取代币：从猜正反获得 COIN，从未来项目获得更多代币。" },
+      "access": { "title": "收益分成", "desc": "从每个已启动项目中赚取 AXM：100%净利润（每局7%）分配给 LAUNCH 质押者。" },
       "reputation": { "title": "访问与等级", "desc": "锁定 LAUNCH 以解锁平台功能：发布项目、投票和使用专业工具。" },
       "rewards": { "title": "治理", "desc": "提出新项目，对生态系统决策投票，塑造平台的未来。" },
       "readMore": "阅读代币经济学"
@@ -179,7 +179,7 @@
     },
     "feeSplit": {
       "title": "透明经济",
-      "subtitle": "每个项目都会产生收益（例如猜正反的 10% 佣金）。一部分流向 LAUNCH 持有者，一部分用于开发和生态系统增长。",
+      "subtitle": "每个项目都会产生收益（例如猜正反的 10% 佣金）。100%净利润（每局7%）流向 LAUNCH 质押者。团队作为 LAUNCH 持有者获益。",
       "operations": "运营",
       "buyback": "LAUNCH 持有者奖励",
       "rewards": "项目开发",
@@ -513,25 +513,25 @@
       "badge": "文档",
       "title": "Axiome Startup Ecosystem",
       "subtitle": "Axiome 区块链上的多项目 Web3 生态系统。每个项目都有自己的代币 — LAUNCH 将它们联系在一起。",
-      "description": "我们在 Axiome 生态系统中构建独立产品。我们的第一个上线项目是猜正反 — 基于 COIN 代币的 PvP 游戏。LAUNCH 是生态系统代币：持有者从我们创建的每个项目中获得收益。代币发现、社区和治理 — 一站式体验。",
+      "description": "我们在 Axiome 生态系统中构建独立产品。我们的第一个上线项目是猜正反 — 基于 AXM 原生代币的 PvP 游戏。LAUNCH 是生态系统代币：质押者获得100%净利润（每局7%）。代币发现、社区和治理 — 一站式体验。",
       "card1Title": "猜正反",
-      "card1Desc": "基于 COIN 代币的实时 PvP 游戏 — 50/50，即时结果",
+      "card1Desc": "基于 AXM 原生代币的实时 PvP 游戏 — 50/50，即时结果",
       "card2Title": "LAUNCH 代币",
       "card2Desc": "生态系统代币 — 从所有项目中获得收益",
       "card3Title": "社区与治理",
       "card3Desc": "提出想法、投票并塑造生态系统",
-      "cta1": "玩正反面",
+      "cta1": "探索项目",
       "cta2": "探索代币"
     },
     "coinflip": {
       "title": "正反面",
-      "subtitle": "Axiome 区块链上的 PvP 抛币游戏。两名玩家下注 COIN 代币，一方创建投注，另一方接受 — 赢家获得 90%，10% 作为平台佣金。",
+      "subtitle": "Axiome 区块链上的 PvP 抛币游戏。两名玩家下注 AXM 代币，一方创建投注，另一方接受 — 赢家获得 90%，10% 作为平台佣金。",
       "howItWorks": "如何运作",
       "howDesc": "简单的 50/50 机制，采用承诺-揭示方案。创建者的选择以哈希形式密封在链上。当对手接受时，结果在单个原子交易中确定并立即支付。",
-      "step1Title": "充值 COIN 到游戏余额",
-      "step1Desc": "在预售页面购买 COIN 代币并充值到你的游戏金库。这是你的游戏内余额。",
+      "step1Title": "准备 AXM 游戏余额",
+      "step1Desc": "确保你的钱包中有 AXM 代币并充值到游戏金库。这是你的游戏内余额。",
       "step2Title": "创建或接受投注",
-      "step2Desc": "设置你的投注金额（最低 1 COIN）并创建投注。或浏览开放投注，一键接受。",
+      "step2Desc": "设置你的投注金额（最低 1 AXM）并创建投注。或浏览开放投注，一键接受。",
       "step3Title": "即时结果",
       "step3Desc": "当投注被接受时，智能合约验证创建者的秘密，确定赢家并分配奖金 — 所有操作在一个原子交易中完成，没有延迟。",
       "step4Title": "赢家获得 90%",
@@ -543,42 +543,42 @@
       "securityTitle": "安全与公平",
       "securityDesc": "所有逻辑通过 CosmWasm 智能合约在链上运行。承诺-揭示方案确保可证明的公平性 — 没人能作弊。资金在结果确定前被锁定在合约中。",
       "paramsTitle": "游戏参数",
-      "paramMinBet": "最低投注：1 COIN",
+      "paramMinBet": "最低投注：1 AXM",
       "paramBetExpiry": "开放投注有效期：3 小时",
       "paramRevealTimeout": "投注到期：3 小时内未接受则自动取消",
       "paramOneClick": "账户激活：一次性 Authz 委托 30 天（每局无需签名）",
       "coinTokenTitle": "COIN 代币",
-      "coinTokenDesc": "COIN 是 Axiome 区块链上的 CW20 代币，专为猜正反游戏创建。在预售页面购买 COIN，充值到游戏余额，即可开始游戏。",
+      "coinTokenDesc": "COIN 是 Axiome 区块链上的实用代币，用于游戏内功能（商店、装饰品、抽奖参与等）。游戏投注使用 AXM 原生代币。",
       "referralTitle": "推荐计划",
       "referralDesc": "当你的推荐人游戏时获得奖池份额。3 级系统：",
       "referralL1": "一级（直接邀请）：奖池的 3%",
       "referralL2": "二级：奖池的 1.5%",
       "referralL3": "三级：奖池的 0.5%",
       "eventsTitle": "活动与抽奖",
-      "eventsDesc": "平台定期举办竞赛和抽奖活动，提供真实 COIN 奖品。竞赛会自动统计你的投注 — 只需游戏即可。抽奖需要点击'加入'。奖品来自 10% 佣金。",
-      "playNow": "玩猜正反"
+      "eventsDesc": "平台定期举办竞赛和抽奖活动，提供真实 AXM 奖品。竞赛会自动统计你的投注 — 只需游戏即可。抽奖需要点击'加入'。奖品来自 10% 佣金。",
+      "playNow": "探索项目"
     },
     "token": {
       "title": "LAUNCH 代币",
-      "subtitle": "LAUNCH 是生态系统收益代币。我们构建的每个项目（如猜正反）都有自己的代币 — LAUNCH 持有者从生态系统中每个项目的收益中获得分成。",
+      "subtitle": "LAUNCH 是生态系统收益代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得100%净利润（每局7%）。",
       "totalSupply": "供应与分配：",
       "supplyTbd": "100,000,000 LAUNCH",
-      "allProducts": { "title": "收益分成", "desc": "所有项目佣金的 2% 以 AXM 分配给质押者。更多项目 = 更多收入。" },
+      "allProducts": { "title": "收益分成", "desc": "100%净利润（每局7%）以 AXM 分配给质押者。更多项目 = 更多收入。" },
       "governance": { "title": "治理", "desc": "对新项目、资助和生态系统决策进行投票。" },
       "ecosystem": { "title": "质押模型", "desc": "Synthetix reward_per_token：公平、按比例、gas 高效。无锁定期。" }
     },
     "staking": {
       "title": "LAUNCH 质押",
-      "subtitle": "质押 LAUNCH 代币，赚取所有生态项目收入的份额。奖励以原生 AXM 分发。",
+      "subtitle": "质押 LAUNCH 代币，赚取100%净利润（每局7%）。奖励以原生 AXM 分发。",
       "howTitle": "质押如何运作",
       "step1Title": "质押 LAUNCH 代币",
       "step1Desc": "将 LAUNCH 代币发送到质押合约。无锁仓期 — 随时取回。",
       "step2Title": "项目分配收入",
-      "step2Desc": "每次游戏 2% 的奖池以 AXM 形式发送到质押合约。",
+      "step2Desc": "100%净利润（每局7%）以 AXM 形式发送到质押合约。",
       "step3Title": "领取 AXM 奖励",
       "step3Desc": "奖励按质押比例累积。随时领取 — 无归属期，无延迟。",
       "revenueTitle": "收入来源",
-      "revenueDesc": "目前：正反面游戏 2% 的佣金。随着更多项目上线，收入成比例增长。",
+      "revenueDesc": "目前：正反面游戏100%净利润（每局7%）。随着更多项目上线，收入成比例增长。",
       "modelTitle": "公平分配",
       "modelDesc": "使用 Synthetix reward_per_token 模型 — O(1) gas，按比例，透明，链上。",
       "cta": "质押 LAUNCH"
@@ -588,7 +588,7 @@
       "text": "我们正在构建可持续的多项目 Web3 生态系统。每个产品（如猜正反）都有自己的代币和经济体系。LAUNCH 持有者从每个项目的成功中受益。不炒作 — 真实的产品，真实的收入，真实的价值。"
     },
     "disclaimer": {
-      "text": "LAUNCH 是生态系统代币。COIN 是猜正反游戏代币。游戏涉及风险 — 只下注你能承受损失的金额。我们不承诺回报。请负责任地游戏。"
+      "text": "LAUNCH 是生态系统代币。COIN 是游戏内实用代币（商店、装饰品、抽奖等）。游戏使用 AXM 原生代币下注，涉及风险 — 只下注你能承受损失的金额。我们不承诺回报。请负责任地游戏。"
     }
   },
   "lock": {

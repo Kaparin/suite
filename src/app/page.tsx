@@ -1,10 +1,11 @@
 'use client'
 
+import { useState } from 'react'
 import { FloatingParticles } from '@/components/animations/FloatingParticles'
 import { GlowingOrb } from '@/components/animations/GlowingOrb'
 import { StarField } from '@/components/animations/StarField'
 import { AXMPriceTicker } from '@/components/price/AXMPriceTicker'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useTranslations } from 'next-intl'
@@ -28,6 +29,120 @@ const staggerItem = {
 
 /* ─── data ─── */
 const COINFLIP_URL = 'https://coinflip.axiome-launch.com/game'
+
+/* ─── Project Slider ─── */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function ProjectSlider({ t }: { t: any }) {
+  const [activeSlide, setActiveSlide] = useState(0)
+  const totalSlides = 2
+
+  const goTo = (idx: number) => setActiveSlide(idx)
+  const goPrev = () => setActiveSlide(prev => (prev - 1 + totalSlides) % totalSlides)
+  const goNext = () => setActiveSlide(prev => (prev + 1) % totalSlides)
+
+  return (
+    <section className="relative z-20 py-20 border-t border-gray-800/30">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <motion.div {...fadeUp} className="text-center mb-10">
+          <h2 className="text-3xl md:text-4xl font-bold mb-3">
+            <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{t('ecosystem.title')}</span>
+          </h2>
+        </motion.div>
+
+        {/* Slider container */}
+        <div className="relative">
+          {/* Arrows */}
+          <button onClick={goPrev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 hidden md:flex w-10 h-10 items-center justify-center rounded-full bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
+          </button>
+          <button onClick={goNext} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 hidden md:flex w-10 h-10 items-center justify-center rounded-full bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
+          </button>
+
+          <div className="overflow-hidden rounded-2xl">
+            <AnimatePresence mode="wait">
+              {activeSlide === 0 && (
+                <motion.div
+                  key="coinflip"
+                  initial={{ opacity: 0, x: 60 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -60 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 md:p-10">
+                    <div className="flex items-center gap-3 mb-6">
+                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Live</span>
+                      <span className="text-xs text-gray-500">#1</span>
+                    </div>
+
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('coinflip.title')}</h3>
+                    <p className="text-gray-400 max-w-2xl text-base mb-8">{t('coinflip.subtitle')}</p>
+
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+                      {(['pvp', 'realStakes', 'platformFee', 'instantMatch', 'tournaments'] as const).map(key => (
+                        <div key={key} className="bg-gray-800/40 border border-gray-700/40 rounded-xl p-3 text-center">
+                          <p className="text-sm text-gray-300">{t(`coinflip.features.${key}`)}</p>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
+                      <a href={COINFLIP_URL} target="_blank" rel="noopener noreferrer">
+                        <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 transition-all">
+                          {t('coinflip.playNow')}
+                        </motion.span>
+                      </a>
+                      <a href="https://coinflip.axiome-launch.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors py-3">
+                        {t('coinflip.viewMechanics')} &rarr;
+                      </a>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {activeSlide === 1 && (
+                <motion.div
+                  key="coming-soon"
+                  initial={{ opacity: 0, x: 60 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -60 }}
+                  transition={{ duration: 0.35 }}
+                >
+                  <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 md:p-10 min-h-[320px] flex flex-col items-center justify-center text-center">
+                    <div className="flex items-center gap-3 mb-6">
+                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-500/15 text-gray-400 border border-gray-500/20">{t('ecosystem.tbd.status')}</span>
+                      <span className="text-xs text-gray-500">#2</span>
+                    </div>
+
+                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-2xl border border-violet-500/20 flex items-center justify-center">
+                      <svg className="w-10 h-10 text-violet-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                      </svg>
+                    </div>
+
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('ecosystem.tbd.title')}</h3>
+                    <p className="text-gray-400 max-w-lg text-base">{t('ecosystem.tbd.desc')}</p>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {/* Dots */}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            {Array.from({ length: totalSlides }).map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                className={`h-2 rounded-full transition-all ${i === activeSlide ? 'w-8 bg-violet-500' : 'w-2 bg-gray-600 hover:bg-gray-500'}`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
 
 /* ─── PAGE ─── */
 export default function HomePage() {
@@ -125,11 +240,11 @@ export default function HomePage() {
               </motion.p>
 
               <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-4 sm:mb-5">
-                <a href="https://coinflip.axiome-launch.com/game" target="_blank" rel="noopener noreferrer">
+                <Link href="/explorer">
                   <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm sm:text-base font-medium rounded-xl shadow-lg shadow-blue-500/25 transition-all">
                     {t('hero.cta1')}
                   </motion.span>
-                </a>
+                </Link>
                 <Link href="/explorer">
                   <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-gray-700 hover:border-gray-500 text-gray-200 text-sm sm:text-base font-medium rounded-xl transition-all hover:bg-white/5">
                     {t('hero.cta2')}
@@ -213,73 +328,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ════════ 2. HEADS OR TAILS — MAIN PRODUCT ════════ */}
-      <section className="relative z-20 py-20 border-t border-gray-800/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div {...fadeUp} className="text-center mb-12">
-            <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 mb-4">Live</span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{t('coinflip.title')}</span>
-            </h2>
-            <p className="text-gray-400 max-w-2xl mx-auto text-lg">
-              {t('coinflip.subtitle')}
-            </p>
-          </motion.div>
-
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4 mb-10">
-            {(['pvp', 'realStakes', 'platformFee', 'instantMatch', 'tournaments'] as const).map(key => (
-              <motion.div key={key} variants={staggerItem} className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-xl p-4 text-center">
-                <p className="text-sm text-gray-300">{t(`coinflip.features.${key}`)}</p>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div {...fadeUp} className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <a href="https://coinflip.axiome-launch.com/game" target="_blank" rel="noopener noreferrer">
-              <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white text-lg font-medium rounded-xl shadow-lg shadow-blue-500/25 transition-all">
-                {t('coinflip.playNow')}
-              </motion.span>
-            </a>
-            <a href="https://coinflip.axiome-launch.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors">
-              {t('coinflip.viewMechanics')} &rarr;
-            </a>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ════════ 3. ECOSYSTEM PROJECTS SLIDER ════════ */}
-      <section className="relative z-20 py-20 border-t border-gray-800/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.h2 {...fadeUp} className="text-3xl md:text-4xl font-bold text-center mb-12">
-            <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">{t('ecosystem.title')}</span>
-          </motion.h2>
-
-          <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {(['headsOrTails', 'tournaments', 'communityProjects', 'tbd'] as const).map(key => {
-              const statusColor = key === 'headsOrTails' ? 'emerald' : key === 'tournaments' ? 'amber' : key === 'communityProjects' ? 'blue' : 'gray'
-              const href = key === 'headsOrTails' ? 'https://coinflip.axiome-launch.com/game' : '#'
-              const content = (
-                <div className="h-full bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 hover:border-gray-700/80 transition-all duration-300 hover:-translate-y-1">
-                  <span className={`inline-block px-2.5 py-1 text-xs font-medium rounded-full border mb-4 ${statusColor === 'emerald' ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20' : statusColor === 'amber' ? 'bg-amber-500/15 text-amber-400 border-amber-500/20' : statusColor === 'blue' ? 'bg-blue-500/15 text-blue-400 border-blue-500/20' : 'bg-gray-500/15 text-gray-400 border-gray-500/20'}`}>
-                    {t(`ecosystem.${key}.status`)}
-                  </span>
-                  <h3 className="text-white font-semibold text-lg mb-2">{t(`ecosystem.${key}.title`)}</h3>
-                  <p className="text-sm text-gray-400">{t(`ecosystem.${key}.desc`)}</p>
-                </div>
-              )
-              return (
-                <motion.div key={key} variants={staggerItem}>
-                  {href.startsWith('http') ? (
-                    <a href={href} target="_blank" rel="noopener noreferrer" className="block h-full">{content}</a>
-                  ) : (
-                    <div className="h-full">{content}</div>
-                  )}
-                </motion.div>
-              )
-            })}
-          </motion.div>
-        </div>
-      </section>
+      {/* ════════ 2. ECOSYSTEM PROJECTS SLIDER ════════ */}
+      <ProjectSlider t={t} />
 
       {/* ════════ 4. LAUNCH TOKEN ════════ */}
       <section className="relative z-20 py-20 border-t border-gray-800/30">
@@ -401,11 +451,11 @@ export default function HomePage() {
                 {t('cta.subtitle')}
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="https://coinflip.axiome-launch.com/game" target="_blank" rel="noopener noreferrer">
+                <Link href="/explorer">
                   <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:via-indigo-500 hover:to-violet-500 text-white text-lg font-medium rounded-xl shadow-2xl shadow-indigo-500/25 transition-all">
                     {t('hero.cta1')}
                   </motion.span>
-                </a>
+                </Link>
                 <Link href="/explorer">
                   <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 border border-gray-600 hover:border-indigo-500 hover:bg-indigo-500/10 text-gray-200 text-lg font-medium rounded-xl transition-all">
                     {t('hero.cta2')}

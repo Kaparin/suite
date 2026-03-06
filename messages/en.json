@@ -25,19 +25,19 @@
       "title": "Axiome Startup Ecosystem",
       "subtitle": "We build independent Web3 products inside the Axiome ecosystem — each with its own token and economy.",
       "subtitle2": "LAUNCH token holders earn revenue from every project we create.",
-      "cta1": "Play Heads or Tails",
+      "cta1": "Explore Projects",
       "cta2": "Explore Ecosystem",
       "docsLink": "Read Docs",
       "poweredBy": "Powered by Axiome blockchain"
     },
     "coinflip": {
       "title": "Heads or Tails — Live PvP Game",
-      "subtitle": "PvP crypto game on COIN token. Two players wager, a coin is flipped — winner takes 90%. Provably fair, instant results, on-chain verification.",
+      "subtitle": "PvP crypto game on AXM. Two players wager, a coin is flipped — winner takes 90%. Provably fair, instant results, on-chain verification.",
       "playNow": "Play Now",
       "viewMechanics": "View Game Mechanics",
       "features": {
         "pvp": "Player vs Player",
-        "realStakes": "COIN token wagers",
+        "realStakes": "AXM wagers",
         "platformFee": "10% platform fee",
         "instantMatch": "Instant match system",
         "tournaments": "Events & raffles"
@@ -45,18 +45,18 @@
     },
     "ecosystem": {
       "title": "Ecosystem Projects",
-      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip on COIN token. Provably fair. 50/50. Winner takes 90%." },
-      "tournaments": { "title": "Events & Raffles", "status": "Live", "desc": "Contests and raffles with real COIN prizes for active players." },
+      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip on AXM. Provably fair. 50/50. Winner takes 90%." },
+      "tournaments": { "title": "Events & Raffles", "status": "Live", "desc": "Contests and raffles with real AXM prizes for active players." },
       "communityProjects": { "title": "Community Projects", "status": "Future", "desc": "Community-proposed ideas and builds." },
       "tbd": { "title": "Next Project", "status": "Planned", "desc": "Next product in development. Each project has its own token." }
     },
     "launchToken": {
       "title": "LAUNCH — Ecosystem Revenue Token",
-      "subtitle": "Stake LAUNCH tokens to earn a share of AXM revenue from all ecosystem projects. 2% of every CoinFlip commission is distributed to stakers — proportional to your stake.",
+      "subtitle": "Stake LAUNCH tokens to earn 100% of net project profits as AXM. 7% of every game pot is distributed to stakers — proportional to your stake.",
       "tokenomics": "Total Supply",
       "tokenomicsTbd": "100,000,000 LAUNCH",
       "features": {
-        "allProducts": "2% of all project commissions → stakers",
+        "allProducts": "100% of net profits → stakers (7% of each pot)",
         "governance": "Governance & project proposals",
         "community": "No lock period — unstake anytime",
         "utility": "Synthetix model — fair distribution"
@@ -70,7 +70,7 @@
       "title": "Stake LAUNCH, Earn AXM",
       "subtitle": "Every project in the ecosystem sends a share of revenue to the staking contract. Your share is proportional to your staked LAUNCH — claim AXM anytime.",
       "stake": { "icon": "📥", "title": "Stake", "desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake whenever you want." },
-      "earn": { "icon": "💰", "title": "Earn", "desc": "Projects distribute AXM to all stakers. 2% of CoinFlip commissions go to the staking pool." },
+      "earn": { "icon": "💰", "title": "Earn", "desc": "Projects distribute AXM to all stakers. 7% of each game pot (100% of net profits) goes to the staking pool." },
       "claim": { "icon": "🎁", "title": "Claim", "desc": "Accumulated AXM rewards can be claimed at any time. The more you stake, the bigger your share." },
       "cta": "Start Staking"
     },
@@ -167,7 +167,7 @@
     "utility": {
       "title": "LAUNCH token utility",
       "subtitle": "LAUNCH is the ecosystem revenue token. Hold LAUNCH to earn from every project we build and participate in governance.",
-      "access": { "title": "Revenue Share", "desc": "Earn tokens from each launched project: COIN from Heads or Tails, and tokens from future projects." },
+      "access": { "title": "Revenue Share", "desc": "Earn AXM from every project. 100% of net profits are distributed to LAUNCH stakers." },
       "reputation": { "title": "Access & Tiers", "desc": "Lock LAUNCH to unlock platform features: publish projects, vote, and use pro tools." },
       "rewards": { "title": "Governance", "desc": "Propose new projects, vote on ecosystem decisions, and shape the future of the platform." },
       "readMore": "Read tokenomics"
@@ -179,7 +179,7 @@
     },
     "feeSplit": {
       "title": "Transparent economics",
-      "subtitle": "Each project generates revenue (e.g. 10% commission from Heads or Tails). A portion flows to LAUNCH holders, a portion to development and ecosystem growth.",
+      "subtitle": "Each project generates revenue (e.g. 10% commission from Heads or Tails). 100% of net profits (7% of each pot) flows to LAUNCH stakers. Team earns as LAUNCH holders.",
       "operations": "Operations",
       "buyback": "LAUNCH holder rewards",
       "rewards": "Project development",
@@ -196,7 +196,7 @@
     "cta": {
       "title": "We build real products.",
       "subtitle": "Heads or Tails is live. LAUNCH holders earn from every project. More products coming soon.",
-      "cta1": "Play Heads or Tails",
+      "cta1": "Explore Projects",
       "cta2": "Explore Ecosystem",
       "docsLink": "Read Docs"
     }
@@ -513,9 +513,9 @@
       "badge": "Documentation",
       "title": "Axiome Startup Ecosystem",
       "subtitle": "A multi-project Web3 ecosystem on Axiome blockchain. Each project has its own token — LAUNCH ties them all together.",
-      "description": "We build independent products inside the Axiome ecosystem. Our first live project is Heads or Tails — a PvP game on COIN token. LAUNCH is the ecosystem token: holders earn revenue from every project we create. Token discovery, community, and governance — all in one place.",
+      "description": "We build independent products inside the Axiome ecosystem. Our first live project is Heads or Tails — a PvP game on AXM. LAUNCH is the ecosystem token: stakers earn 100% of net profits from every project. Token discovery, community, and governance — all in one place.",
       "card1Title": "Heads or Tails",
-      "card1Desc": "Live PvP game on COIN token — 50/50, instant results",
+      "card1Desc": "Live PvP game on AXM — 50/50, instant results",
       "card2Title": "LAUNCH Token",
       "card2Desc": "Ecosystem token — earn revenue from all projects",
       "card3Title": "Community & Governance",
@@ -525,13 +525,13 @@
     },
     "coinflip": {
       "title": "Heads or Tails",
-      "subtitle": "PvP coin flip game on Axiome blockchain. Two players bet COIN tokens, one creates a bet and the other accepts — winner takes 90%, 10% goes as platform commission.",
+      "subtitle": "PvP coin flip game on Axiome blockchain. Two players bet AXM, one creates a bet and the other accepts — winner takes 90%, 10% goes as platform commission.",
       "howItWorks": "How it works",
       "howDesc": "Simple 50/50 mechanics powered by commit-reveal scheme. The creator's choice is sealed on-chain as a hash. When an opponent accepts, the result is determined and paid out instantly in a single atomic transaction.",
-      "step1Title": "Deposit COIN to game balance",
-      "step1Desc": "Buy COIN tokens on the presale and deposit them to your game vault. This is your in-game balance.",
+      "step1Title": "Fund your game balance",
+      "step1Desc": "Deposit AXM to your game vault. This is your in-game balance for betting.",
       "step2Title": "Create or accept a bet",
-      "step2Desc": "Set your bet amount (min 1 COIN) and create a bet. Or browse open bets and accept one with a single click.",
+      "step2Desc": "Set your bet amount in AXM and create a bet. Or browse open bets and accept one with a single click.",
       "step3Title": "Instant result",
       "step3Desc": "When a bet is accepted, the smart contract verifies the creator's secret, determines the winner, and distributes the payout — all in one atomic transaction. No delays.",
       "step4Title": "Winner takes 90%",
@@ -543,19 +543,19 @@
       "securityTitle": "Security & Fairness",
       "securityDesc": "All logic is on-chain via CosmWasm smart contract. Commit-reveal scheme ensures provable fairness — no one can cheat. Funds are locked in the contract until the result is determined.",
       "paramsTitle": "Game Parameters",
-      "paramMinBet": "Minimum bet: 1 COIN",
+      "paramMinBet": "Minimum bet: 1 AXM",
       "paramBetExpiry": "Open bet lifetime: 3 hours",
       "paramRevealTimeout": "Bet expiration: auto-cancel after 3 hours if not accepted",
       "paramOneClick": "Account activation: one-time Authz delegation for 30 days (no signature per game)",
-      "coinTokenTitle": "COIN Token",
-      "coinTokenDesc": "COIN is a CW20 token on Axiome blockchain, created specifically for the Heads or Tails game. Buy COIN on the presale page, deposit to your game balance, and start playing.",
+      "coinTokenTitle": "COIN — Utility Token",
+      "coinTokenDesc": "COIN is a CW20 utility token on Axiome blockchain. Use COIN for in-game features: shop purchases, cosmetics, lottery and contest participation, creating giveaways, and more. Bets are placed in native AXM.",
       "referralTitle": "Referral program",
       "referralDesc": "Earn a share of the pot when your referrals play. 3-level system:",
       "referralL1": "Level 1 (direct invite): 3% of pot",
       "referralL2": "Level 2: 1.5% of pot",
       "referralL3": "Level 3: 0.5% of pot",
       "eventsTitle": "Events & Raffles",
-      "eventsDesc": "The platform hosts regular contests and raffles with real COIN prizes. Contests count your bets automatically — just play. Raffles require clicking 'Join'. Prizes are funded from the 10% commission.",
+      "eventsDesc": "The platform hosts regular contests and raffles with real AXM prizes. Contests count your bets automatically — just play. Raffles require clicking 'Join'. Prizes are funded from the 10% commission.",
       "playNow": "Play Heads or Tails"
     },
     "token": {
@@ -563,7 +563,7 @@
       "subtitle": "LAUNCH is the ecosystem revenue token. Stake LAUNCH to earn AXM from all project commissions. 100M total supply, CW20 on Axiome blockchain.",
       "totalSupply": "Total Supply:",
       "supplyTbd": "100,000,000 LAUNCH",
-      "allProducts": { "title": "Revenue share", "desc": "2% of all project commissions distributed to stakers as AXM. More projects = more revenue." },
+      "allProducts": { "title": "Revenue share", "desc": "100% of net profits (7% of each pot) distributed to stakers as AXM. More projects = more revenue." },
       "governance": { "title": "Governance", "desc": "Vote on new projects, grants, and ecosystem decisions." },
       "ecosystem": { "title": "Staking model", "desc": "Synthetix reward_per_token: fair, proportional, gas-efficient. No lock period — unstake anytime." }
     },
@@ -574,11 +574,11 @@
       "step1Title": "Stake LAUNCH tokens",
       "step1Desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake anytime.",
       "step2Title": "Projects distribute revenue",
-      "step2Desc": "2% of every game pot (and future project commissions) is sent to the staking contract as AXM.",
+      "step2Desc": "7% of every game pot (100% of net profits) is sent to the staking contract as AXM.",
       "step3Title": "Claim AXM rewards",
       "step3Desc": "Rewards accumulate proportionally to your stake. Claim anytime — no vesting, no delays.",
       "revenueTitle": "Revenue sources",
-      "revenueDesc": "Currently: 2% from Heads or Tails game commissions. As more projects launch, revenue grows proportionally.",
+      "revenueDesc": "Currently: 7% from every Heads or Tails game pot (100% of net profits). As more projects launch, revenue grows proportionally.",
       "modelTitle": "Fair distribution",
       "modelDesc": "Uses Synthetix reward_per_token model — O(1) gas cost regardless of staker count. Proportional, transparent, on-chain.",
       "cta": "Stake LAUNCH"
@@ -588,7 +588,7 @@
       "text": "We're building a sustainable multi-project Web3 ecosystem. Each product (like Heads or Tails) has its own token and economy. LAUNCH holders benefit from every project's success. No hype — real products, real revenue, real value."
     },
     "disclaimer": {
-      "text": "LAUNCH is an ecosystem token. COIN is the Heads or Tails game token. Gaming involves risk — only bet what you can afford to lose. We do not promise returns. Play responsibly."
+      "text": "LAUNCH is an ecosystem revenue token. COIN is a utility token for in-game features. Bets are placed in AXM. Gaming involves risk — only bet what you can afford to lose. We do not promise returns. Play responsibly."
     }
   },
   "lock": {
