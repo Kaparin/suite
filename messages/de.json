@@ -63,7 +63,8 @@
       },
       "contractAddress": "Vertragsadresse",
       "totalSupply": "Gesamtangebot",
-      "viewExplorer": "Im Explorer anzeigen"
+      "viewExplorer": "LAUNCH staken",
+      "stakingCta": "Staking starten"
     },
     "community": {
       "title": "Baue mit uns",

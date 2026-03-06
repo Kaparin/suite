@@ -52,18 +52,19 @@
     },
     "launchToken": {
       "title": "LAUNCH — Ecosystem Revenue Token",
-      "subtitle": "LAUNCH is the master token of the ecosystem. Each project we build (like Heads or Tails with COIN) generates revenue — and LAUNCH holders earn a share of it. The more projects, the more value flows to LAUNCH.",
-      "tokenomics": "Tokenomics",
-      "tokenomicsTbd": "Supply & distribution TBD — coming soon",
+      "subtitle": "Stake LAUNCH tokens to earn a share of AXM revenue from all ecosystem projects. 2% of every CoinFlip commission is distributed to stakers — proportional to your stake.",
+      "tokenomics": "Total Supply",
+      "tokenomicsTbd": "100,000,000 LAUNCH",
       "features": {
-        "allProducts": "Revenue from all ecosystem projects",
+        "allProducts": "2% of all project commissions → stakers",
         "governance": "Governance & project proposals",
-        "community": "Access to tiers & features",
-        "utility": "Earn tokens from each project"
+        "community": "No lock period — unstake anytime",
+        "utility": "Synthetix model — fair distribution"
       },
       "contractAddress": "Contract address",
       "totalSupply": "Total supply",
-      "viewExplorer": "View in Explorer"
+      "viewExplorer": "Stake LAUNCH",
+      "stakingCta": "Start Staking"
     },
     "community": {
       "title": "Build With Us",
@@ -85,15 +86,15 @@
     },
     "mockCard": {
       "utility": "Ecosystem Token",
-      "tokenomicsTbd": "Tokenomics TBD — supply & distribution coming soon",
+      "tokenomicsTbd": "100M total supply · Stake to earn revenue",
       "supply": "Supply",
       "reserve": "Reserve",
       "staking": "Staking",
       "liquidity": "Liquidity",
-      "utilityAccess": "Revenue share from all ecosystem projects",
+      "utilityAccess": "Stake LAUNCH → earn AXM from all projects",
       "utilityReputation": "Access tiers & premium features",
       "utilityGovernance": "Vote on platform decisions",
-      "utilityRewards": "Earn tokens from each launched project",
+      "utilityRewards": "No lock period — unstake anytime",
       "platformToken": "Ecosystem token",
       "axiomeChain": "Axiome Chain"
     },
@@ -550,13 +551,13 @@
       "playNow": "Play Heads or Tails"
     },
     "token": {
-      "title": "LAUNCH Token",
-      "subtitle": "LAUNCH is the ecosystem revenue token. Each project we build (like Heads or Tails) has its own token — and LAUNCH holders earn a share of revenue from every project in the ecosystem.",
-      "totalSupply": "Supply & distribution:",
-      "supplyTbd": "TBD — coming soon",
-      "allProducts": { "title": "Revenue share", "desc": "Earn tokens from each ecosystem project — COIN from Heads or Tails, and more as new projects launch." },
+      "title": "LAUNCH Token & Staking",
+      "subtitle": "LAUNCH is the ecosystem revenue token. Stake LAUNCH to earn AXM from all project commissions. 100M total supply, CW20 on Axiome blockchain.",
+      "totalSupply": "Total Supply:",
+      "supplyTbd": "100,000,000 LAUNCH",
+      "allProducts": { "title": "Revenue share", "desc": "2% of all project commissions distributed to stakers as AXM. More projects = more revenue." },
       "governance": { "title": "Governance", "desc": "Vote on new projects, grants, and ecosystem decisions." },
-      "ecosystem": { "title": "Multi-project", "desc": "Each project has its own token (COIN, etc.). LAUNCH ties them all together." }
+      "ecosystem": { "title": "Staking model", "desc": "Synthetix reward_per_token: fair, proportional, gas-efficient. No lock period — unstake anytime." }
     },
     "projects": {
       "title": "Projects & Community",

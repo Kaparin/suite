@@ -63,7 +63,8 @@
       },
       "contractAddress": "合约地址",
       "totalSupply": "总供应量",
-      "viewExplorer": "在 Explorer 中查看"
+      "viewExplorer": "质押 LAUNCH",
+      "stakingCta": "开始质押"
     },
     "community": {
       "title": "与我们共建",
