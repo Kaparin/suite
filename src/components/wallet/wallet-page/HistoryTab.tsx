@@ -157,6 +157,75 @@ export function HistoryTab() {
   )
 }
 
+// Map of contract action → human-readable label + color override
+const ACTION_CONFIG: Record<string, { label: string; color?: string; icon?: string }> = {
+  // CW20 token actions
+  transfer: { label: 'Transfer' },
+  send: { label: 'Send' },
+  mint: { label: 'Mint', color: 'text-purple-400 bg-purple-500/10' },
+  burn: { label: 'Burn', color: 'text-orange-400 bg-orange-500/10' },
+  approve: { label: 'Approve' },
+  increase_allowance: { label: 'Approve Allowance' },
+  decrease_allowance: { label: 'Revoke Allowance' },
+  update_marketing: { label: 'Update Token Info' },
+  update_minter: { label: 'Update Minter' },
+  // Staking
+  stake: { label: 'Stake', color: 'text-violet-400 bg-violet-500/10' },
+  unstake: { label: 'Unstake', color: 'text-orange-400 bg-orange-500/10' },
+  claim: { label: 'Claim Rewards', color: 'text-emerald-400 bg-emerald-500/10' },
+  withdraw: { label: 'Withdraw', color: 'text-emerald-400 bg-emerald-500/10' },
+  distribute: { label: 'Distribute Rewards', color: 'text-cyan-400 bg-cyan-500/10' },
+  // Presale / swap
+  buy: { label: 'Buy', color: 'text-green-400 bg-green-500/10' },
+  swap: { label: 'Swap', color: 'text-blue-400 bg-blue-500/10' },
+  // Governance
+  propose: { label: 'Create Proposal', color: 'text-purple-400 bg-purple-500/10' },
+  vote: { label: 'Vote', color: 'text-blue-400 bg-blue-500/10' },
+  // Authz
+  grant: { label: 'Grant Permission' },
+  revoke: { label: 'Revoke Permission' },
+  execute: { label: 'Execute' },
+  // CoinFlip game
+  create_bet: { label: 'Create Bet', color: 'text-amber-400 bg-amber-500/10' },
+  accept_bet: { label: 'Accept Bet', color: 'text-blue-400 bg-blue-500/10' },
+  reveal: { label: 'Reveal Result', color: 'text-emerald-400 bg-emerald-500/10' },
+  cancel_bet: { label: 'Cancel Bet', color: 'text-gray-400 bg-gray-500/10' },
+  claim_timeout: { label: 'Claim Timeout', color: 'text-orange-400 bg-orange-500/10' },
+}
+
+const TYPE_CONFIG: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
+  send: {
+    color: 'text-red-400 bg-red-500/10',
+    icon: <ArrowUpIcon />,
+    label: 'Sent',
+  },
+  receive: {
+    color: 'text-green-400 bg-green-500/10',
+    icon: <ArrowDownIcon />,
+    label: 'Received',
+  },
+  contract: {
+    color: 'text-blue-400 bg-blue-500/10',
+    icon: <CodeIcon />,
+    label: 'Contract Call',
+  },
+  instantiate: {
+    color: 'text-purple-400 bg-purple-500/10',
+    icon: <PlusIcon />,
+    label: 'Deploy Contract',
+  },
+  delegate: {
+    color: 'text-yellow-400 bg-yellow-500/10',
+    icon: <LockIcon />,
+    label: 'Delegate',
+  },
+  undelegate: {
+    color: 'text-orange-400 bg-orange-500/10',
+    icon: <UnlockIcon />,
+    label: 'Undelegate',
+  },
+}
+
 function TransactionRow({
   transaction: tx,
   address
@@ -165,68 +234,53 @@ function TransactionRow({
   address: string
 }) {
   const isOutgoing = tx.from.toLowerCase() === address.toLowerCase()
-
-  // Extended transaction type with contractAction
   const txWithAction = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
 
-  const typeConfig = {
-    send: {
-      color: 'text-red-400 bg-red-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-        </svg>
-      ),
-      label: 'Sent'
-    },
-    receive: {
-      color: 'text-green-400 bg-green-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-        </svg>
-      ),
-      label: 'Received'
-    },
-    contract: {
-      color: 'text-blue-400 bg-blue-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-        </svg>
-      ),
-      label: 'Contract'
-    },
-    instantiate: {
-      color: 'text-purple-400 bg-purple-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-        </svg>
-      ),
-      label: 'Deploy'
-    },
-    delegate: {
-      color: 'text-yellow-400 bg-yellow-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-        </svg>
-      ),
-      label: 'Staked'
-    },
-    undelegate: {
-      color: 'text-orange-400 bg-orange-500/10',
-      icon: (
-        <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-        </svg>
-      ),
-      label: 'Unstaked'
+  const baseConfig = TYPE_CONFIG[tx.type] || TYPE_CONFIG.contract
+
+  // Build label and potentially override color based on contract action
+  let label = baseConfig.label
+  let color = baseConfig.color
+  const icon = baseConfig.icon
+
+  if (tx.type === 'contract' && txWithAction.contractAction) {
+    const action = txWithAction.contractAction
+    const actionConfig = ACTION_CONFIG[action]
+    if (actionConfig) {
+      label = actionConfig.label
+      if (actionConfig.color) color = actionConfig.color
+    } else {
+      // Unknown action — format it nicely
+      label = action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ')
     }
   }
 
-  const config = typeConfig[tx.type] || typeConfig.contract
+  // Append token symbol if known
+  if (txWithAction.tokenSymbol) {
+    label = `${label} ${txWithAction.tokenSymbol}`
+  }
+
+  // Build description line
+  let description = ''
+  if (tx.type === 'send' || tx.type === 'receive') {
+    description = isOutgoing
+      ? `To ${truncateAddress(tx.to, 8, 6)}`
+      : `From ${truncateAddress(tx.from, 8, 6)}`
+  } else if (tx.type === 'contract') {
+    // For contract calls, show the contract address or counterparty
+    const counterparty = isOutgoing ? tx.to : tx.from
+    if (counterparty) {
+      description = `Contract ${truncateAddress(counterparty, 6, 4)}`
+    }
+  } else if (tx.type === 'delegate' || tx.type === 'undelegate') {
+    description = `Validator ${truncateAddress(tx.to, 6, 4)}`
+  } else if (tx.type === 'instantiate') {
+    if (tx.to) {
+      description = `New contract ${truncateAddress(tx.to, 6, 4)}`
+    }
+  }
+
+  // Format date
   const date = new Date(tx.timestamp)
   const formattedDate = date.toLocaleDateString('en-US', {
     month: 'short',
@@ -235,29 +289,9 @@ function TransactionRow({
     minute: '2-digit'
   })
 
-  // Build label with action and token symbol
-  let label = config.label
-  if (tx.type === 'contract' && txWithAction.contractAction) {
-    const action = txWithAction.contractAction
-    const actionLabels: Record<string, string> = {
-      transfer: 'Transfer',
-      send: 'Send',
-      mint: 'Mint',
-      burn: 'Burn',
-      approve: 'Approve',
-      increase_allowance: 'Approve',
-      decrease_allowance: 'Revoke',
-      update_marketing: 'Update Info',
-      update_minter: 'Update Minter'
-    }
-    label = actionLabels[action] || action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ')
-  }
-  if (txWithAction.tokenSymbol) {
-    label = `${label} ${txWithAction.tokenSymbol}`
-  }
-
-  // Determine if amount should be shown
-  const hasAmount = tx.amount.value !== '0' && tx.amount.displayValue !== '0'
+  // Amount display — check for non-zero numeric value
+  const numericValue = parseFloat(tx.amount.displayValue)
+  const hasAmount = !isNaN(numericValue) && numericValue > 0
 
   return (
     <a
@@ -267,45 +301,95 @@ function TransactionRow({
       className="flex items-center gap-4 py-4 px-4 hover:bg-gray-800/50 transition-colors"
     >
       {/* Icon */}
-      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${config.color}`}>
-        {config.icon}
+      <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${color}`}>
+        {icon}
       </div>
 
       {/* Details */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1">
-          <span className="font-medium text-white">{label}</span>
+        <div className="flex items-center gap-2 mb-0.5">
+          <span className="font-medium text-white text-sm">{label}</span>
           {tx.status === 'failed' && (
             <span className="px-2 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">
               Failed
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-500 truncate">
-          {isOutgoing ? 'To: ' : 'From: '}
-          {truncateAddress(isOutgoing ? tx.to : tx.from, 8, 6)}
-        </p>
-        <p className="text-xs text-gray-600">{formattedDate}</p>
+        {description && (
+          <p className="text-sm text-gray-500 truncate">{description}</p>
+        )}
+        <p className="text-xs text-gray-600 mt-0.5">{formattedDate}</p>
       </div>
 
       {/* Amount */}
-      <div className="text-right">
+      <div className="text-right flex-shrink-0">
         {hasAmount ? (
           <>
-            <p className={`font-mono font-medium ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
+            <p className={`font-mono font-medium text-sm ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
               {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
             </p>
-            <p className="text-sm text-gray-500">{tx.amount.displayDenom}</p>
+            <p className="text-xs text-gray-500">{tx.amount.displayDenom}</p>
           </>
+        ) : tx.fee?.displayValue && parseFloat(tx.fee.displayValue) > 0 ? (
+          <p className="text-xs text-gray-600">Fee {tx.fee.displayValue} AXM</p>
         ) : (
-          <p className="text-sm text-gray-500">-</p>
+          <p className="text-xs text-gray-600">—</p>
         )}
       </div>
 
       {/* Arrow */}
-      <svg className="w-4 h-4 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
       </svg>
     </a>
+  )
+}
+
+// Icon components
+function ArrowUpIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+    </svg>
+  )
+}
+
+function ArrowDownIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+    </svg>
+  )
+}
+
+function CodeIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+    </svg>
+  )
+}
+
+function PlusIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+    </svg>
+  )
+}
+
+function LockIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+    </svg>
+  )
+}
+
+function UnlockIcon() {
+  return (
+    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+    </svg>
   )
 }
