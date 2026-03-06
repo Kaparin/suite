@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useWallet, useTransaction } from '@/lib/wallet'
 import { buildExecutePayload } from '@/lib/wallet/transaction-builder'
@@ -38,6 +38,9 @@ export function StakingTab() {
   const [activeTab, setActiveTab] = useState<'stake' | 'unstake'>('stake')
   const [isLoading, setIsLoading] = useState(true)
 
+  // Snapshot of state before transaction — used for change detection
+  const snapshotRef = useRef<UserStaking | null>(null)
+
   const fetchStats = useCallback(async () => {
     try {
       const res = await fetch('/api/staking')
@@ -46,14 +49,16 @@ export function StakingTab() {
   }, [])
 
   const fetchUserStaking = useCallback(async () => {
-    if (!address) return
+    if (!address) return null
     try {
       const res = await fetch(`/api/staking/${address}`)
       if (res.ok) {
         const data = await res.json()
         setUserStaking(data)
+        return data as UserStaking
       }
     } catch { /* contract not yet deployed */ }
+    return null
   }, [address])
 
   const refreshData = useCallback(() => {
@@ -68,11 +73,55 @@ export function StakingTab() {
 
   const contractReady = !!STAKING_CONTRACT
 
+  // Build a checkTransaction function that detects staking state changes
+  const makeCheckTransaction = useCallback((
+    type: 'stake' | 'unstake' | 'claim'
+  ) => {
+    return async (): Promise<{ success: boolean; txHash?: string; error?: string }> => {
+      if (!address) return { success: false, error: 'No address' }
+      try {
+        const res = await fetch(`/api/staking/${address}`)
+        if (!res.ok) return { success: false }
+        const current = await res.json() as UserStaking
+        const prev = snapshotRef.current
+
+        if (!prev) return { success: false }
+
+        // Detect changes based on action type
+        switch (type) {
+          case 'stake':
+            if (current.staked > prev.staked) {
+              setUserStaking(current)
+              return { success: true }
+            }
+            break
+          case 'unstake':
+            if (current.staked < prev.staked) {
+              setUserStaking(current)
+              return { success: true }
+            }
+            break
+          case 'claim':
+            if (current.totalClaimed > prev.totalClaimed || current.pendingRewards < prev.pendingRewards) {
+              setUserStaking(current)
+              return { success: true }
+            }
+            break
+        }
+        return { success: false }
+      } catch {
+        return { success: false }
+      }
+    }
+  }, [address])
+
   const handleStake = () => {
     if (!address || !stakeAmount || !contractReady) return
     const microAmount = (parseFloat(stakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
 
-    // CW20 send to staking contract with inner {stake: {}} message
+    // Snapshot current state for change detection
+    snapshotRef.current = userStaking ? { ...userStaking } : null
+
     const payload = buildExecutePayload({
       contractAddress: LAUNCH_CW20,
       sender: address,
@@ -93,12 +142,15 @@ export function StakingTab() {
         setStakeAmount('')
         refreshData()
       },
+      checkTransaction: makeCheckTransaction('stake'),
     })
   }
 
   const handleUnstake = () => {
     if (!address || !unstakeAmount || !contractReady) return
     const microAmount = (parseFloat(unstakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
+
+    snapshotRef.current = userStaking ? { ...userStaking } : null
 
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
@@ -114,11 +166,14 @@ export function StakingTab() {
         setUnstakeAmount('')
         refreshData()
       },
+      checkTransaction: makeCheckTransaction('unstake'),
     })
   }
 
   const handleClaim = () => {
     if (!address || !contractReady) return
+
+    snapshotRef.current = userStaking ? { ...userStaking } : null
 
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
@@ -133,6 +188,7 @@ export function StakingTab() {
       onSuccess: () => {
         refreshData()
       },
+      checkTransaction: makeCheckTransaction('claim'),
     })
   }
 

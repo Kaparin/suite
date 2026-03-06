@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import { isMobileDevice, openAxiomeConnect } from '@/lib/wallet/axiome-connect'
@@ -14,7 +14,6 @@ interface SignTransactionFlowProps {
   deepLink: string
   title: string
   description: string
-  // Optional: function to check if transaction was successful
   checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
 }
 
@@ -32,8 +31,19 @@ export function SignTransactionFlow({
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
   const [isChecking, setIsChecking] = useState(false)
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const pollCountRef = useRef(0)
 
   const isMobile = isMobileDevice()
+
+  // Stop polling
+  const stopPolling = useCallback(() => {
+    if (pollRef.current) {
+      clearInterval(pollRef.current)
+      pollRef.current = null
+    }
+    pollCountRef.current = 0
+  }, [])
 
   // Reset state when modal opens
   useEffect(() => {
@@ -41,8 +51,49 @@ export function SignTransactionFlow({
       setStep('preview')
       setError(null)
       setTxHash(null)
+      stopPolling()
     }
-  }, [isOpen])
+    return () => stopPolling()
+  }, [isOpen, stopPolling])
+
+  // Auto-poll when in signing step and checkTransaction is provided
+  useEffect(() => {
+    if (step !== 'signing' || !checkTransaction) {
+      stopPolling()
+      return
+    }
+
+    // Start polling after 5s delay (give user time to scan and sign)
+    const startDelay = setTimeout(() => {
+      pollCountRef.current = 0
+      pollRef.current = setInterval(async () => {
+        pollCountRef.current++
+        // Stop after 60 attempts (~3 minutes)
+        if (pollCountRef.current > 60) {
+          stopPolling()
+          return
+        }
+        try {
+          const result = await checkTransaction()
+          if (result.success) {
+            stopPolling()
+            setTxHash(result.txHash || null)
+            setStep('success')
+            if (result.txHash && onSuccess) {
+              onSuccess(result.txHash)
+            }
+          }
+        } catch {
+          // Silently ignore poll errors
+        }
+      }, 3000)
+    }, 5000)
+
+    return () => {
+      clearTimeout(startDelay)
+      stopPolling()
+    }
+  }, [step, checkTransaction, onSuccess, stopPolling])
 
   const handleOpenWallet = () => {
     setStep('signing')
@@ -53,13 +104,13 @@ export function SignTransactionFlow({
 
   const handleCheckTransaction = useCallback(async () => {
     if (!checkTransaction) {
-      // No check function provided, just assume success
       setStep('success')
       return
     }
 
     setIsChecking(true)
     setStep('checking')
+    stopPolling()
 
     try {
       const result = await checkTransaction()
@@ -80,11 +131,16 @@ export function SignTransactionFlow({
     } finally {
       setIsChecking(false)
     }
-  }, [checkTransaction, onSuccess])
+  }, [checkTransaction, onSuccess, stopPolling])
 
   const handleRetry = () => {
     setStep('signing')
     setError(null)
+  }
+
+  const handleClose = () => {
+    stopPolling()
+    onClose()
   }
 
   if (!isOpen) return null
@@ -97,7 +153,7 @@ export function SignTransactionFlow({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          onClick={onClose}
+          onClick={handleClose}
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
         />
 
@@ -112,7 +168,7 @@ export function SignTransactionFlow({
           <div className="flex items-center justify-between p-6 border-b border-gray-800">
             <h2 className="text-xl font-semibold text-white">{title}</h2>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
             >
               <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -167,6 +223,14 @@ export function SignTransactionFlow({
                   </p>
                 </div>
 
+                {/* Auto-detection indicator */}
+                {checkTransaction && (
+                  <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
+                    Waiting for confirmation...
+                  </div>
+                )}
+
                 {/* Steps */}
                 <div className="p-4 bg-gray-800/50 rounded-xl space-y-3">
                   <div className="flex items-center gap-3">
@@ -183,16 +247,19 @@ export function SignTransactionFlow({
                     <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
                       <span className="text-xs text-white">2</span>
                     </div>
-                    <span className="text-gray-400">Review transaction details</span>
+                    <span className="text-gray-400">Review & confirm in wallet</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
                       <span className="text-xs text-white">3</span>
                     </div>
-                    <span className="text-gray-400">Confirm in wallet</span>
+                    <span className="text-gray-400">
+                      {checkTransaction ? 'Auto-detected once confirmed' : 'Confirm below after signing'}
+                    </span>
                   </div>
                 </div>
 
+                {/* Manual fallback button */}
                 <button
                   onClick={handleCheckTransaction}
                   disabled={isChecking}
@@ -203,6 +270,8 @@ export function SignTransactionFlow({
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Checking...
                     </>
+                  ) : checkTransaction ? (
+                    "Check manually"
                   ) : (
                     "I've signed the transaction"
                   )}
@@ -251,7 +320,7 @@ export function SignTransactionFlow({
                   </p>
                 )}
                 <button
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="mt-4 px-6 py-2 bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl transition-colors"
                 >
                   Done
@@ -281,7 +350,7 @@ export function SignTransactionFlow({
                     Try Again
                   </button>
                   <button
-                    onClick={onClose}
+                    onClick={handleClose}
                     className="px-6 py-2 border border-gray-700 hover:border-gray-600 text-gray-300 font-medium rounded-xl transition-colors"
                   >
                     Cancel

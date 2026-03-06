@@ -27,7 +27,6 @@ export function Header() {
 
   const navigation = [
     { name: t('home'), href: '/' },
-    { name: t('play'), href: 'https://coinflip.axiome-launch.com/game', external: true },
     { name: t('explorer'), href: '/explorer' },
     { name: t('docs'), href: '/docs' },
   ]
