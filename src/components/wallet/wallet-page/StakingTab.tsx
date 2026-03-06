@@ -2,9 +2,10 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
-import { useWallet } from '@/lib/wallet'
-import { STAKING_CONTRACT, LAUNCH_DECIMALS } from '@/lib/staking/constants'
-import { buildStakeLink, buildUnstakeLink, buildClaimLink } from '@/lib/staking/transactions'
+import { useWallet, useTransaction } from '@/lib/wallet'
+import { buildExecutePayload } from '@/lib/wallet/transaction-builder'
+import { SignTransactionFlow } from '@/components/wallet'
+import { STAKING_CONTRACT, LAUNCH_CW20, LAUNCH_DECIMALS } from '@/lib/staking/constants'
 
 interface StakingStats {
   totalStaked: number
@@ -29,6 +30,7 @@ function formatNumber(n: number, decimals = 2): string {
 
 export function StakingTab() {
   const { isConnected, address } = useWallet()
+  const { transactionState, closeTransaction, openTransaction } = useTransaction()
   const [stats, setStats] = useState<StakingStats | null>(null)
   const [userStaking, setUserStaking] = useState<UserStaking | null>(null)
   const [stakeAmount, setStakeAmount] = useState('')
@@ -54,28 +56,84 @@ export function StakingTab() {
     } catch { /* contract not yet deployed */ }
   }, [address])
 
+  const refreshData = useCallback(() => {
+    Promise.all([fetchStats(), fetchUserStaking()])
+  }, [fetchStats, fetchUserStaking])
+
   useEffect(() => {
     setIsLoading(true)
-    Promise.all([fetchStats(), fetchUserStaking()]).finally(() => setIsLoading(false))
-  }, [fetchStats, fetchUserStaking])
+    refreshData()
+    setIsLoading(false)
+  }, [refreshData])
 
   const contractReady = !!STAKING_CONTRACT
 
   const handleStake = () => {
     if (!address || !stakeAmount || !contractReady) return
     const microAmount = (parseFloat(stakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
-    window.location.href = buildStakeLink(address, microAmount)
+
+    // CW20 send to staking contract with inner {stake: {}} message
+    const payload = buildExecutePayload({
+      contractAddress: LAUNCH_CW20,
+      sender: address,
+      msg: {
+        send: {
+          contract: STAKING_CONTRACT,
+          amount: microAmount,
+          msg: btoa(JSON.stringify({ stake: {} })),
+        },
+      },
+    })
+
+    openTransaction({
+      payload,
+      title: 'Stake LAUNCH',
+      description: `Stake ${stakeAmount} LAUNCH tokens`,
+      onSuccess: () => {
+        setStakeAmount('')
+        refreshData()
+      },
+    })
   }
 
   const handleUnstake = () => {
     if (!address || !unstakeAmount || !contractReady) return
     const microAmount = (parseFloat(unstakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
-    window.location.href = buildUnstakeLink(address, microAmount)
+
+    const payload = buildExecutePayload({
+      contractAddress: STAKING_CONTRACT,
+      sender: address,
+      msg: { unstake: { amount: microAmount } },
+    })
+
+    openTransaction({
+      payload,
+      title: 'Unstake LAUNCH',
+      description: `Unstake ${unstakeAmount} LAUNCH tokens`,
+      onSuccess: () => {
+        setUnstakeAmount('')
+        refreshData()
+      },
+    })
   }
 
   const handleClaim = () => {
     if (!address || !contractReady) return
-    window.location.href = buildClaimLink(address)
+
+    const payload = buildExecutePayload({
+      contractAddress: STAKING_CONTRACT,
+      sender: address,
+      msg: { claim: {} },
+    })
+
+    openTransaction({
+      payload,
+      title: 'Claim Rewards',
+      description: `Claim ${userStaking ? formatNumber(userStaking.pendingRewards, 4) : ''} AXM rewards`,
+      onSuccess: () => {
+        refreshData()
+      },
+    })
   }
 
   const handleMaxStake = () => {
@@ -286,6 +344,17 @@ export function StakingTab() {
           </a>
         </div>
       )}
+
+      {/* Sign Transaction Modal */}
+      <SignTransactionFlow
+        isOpen={transactionState.isOpen}
+        onClose={closeTransaction}
+        deepLink={transactionState.deepLink}
+        title={transactionState.title}
+        description={transactionState.description}
+        onSuccess={transactionState.onSuccess}
+        checkTransaction={transactionState.checkTransaction}
+      />
     </motion.div>
   )
 }
