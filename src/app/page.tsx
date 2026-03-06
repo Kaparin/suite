@@ -307,7 +307,7 @@ export default function HomePage() {
                 <p className="text-lg font-bold text-white">{t('launchToken.tokenomicsTbd')}</p>
               </div>
             </div>
-            <Link href="/staking" className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-violet-500/20">
+            <Link href="/wallet?tab=staking" className="px-5 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-violet-500/20">
               {t('launchToken.viewExplorer')}
             </Link>
           </motion.div>
@@ -338,7 +338,7 @@ export default function HomePage() {
           </motion.div>
 
           <motion.div {...fadeUp} className="flex justify-center">
-            <Link href="/staking">
+            <Link href="/wallet?tab=staking">
               <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white text-lg font-medium rounded-xl shadow-lg shadow-violet-500/25 transition-all">
                 {t('stakingSection.cta')}
               </motion.span>

@@ -9,9 +9,6 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 import { useTranslations } from 'next-intl'
 import { defaultLocale, type Locale } from '@/i18n/config'
 import { useWallet, truncateAddress } from '@/lib/wallet'
-import { useAuth } from '@/lib/auth/useAuth'
-import { UserMenu, WalletBindModal } from '@/components/auth'
-import { TierBadge } from '@/components/lock/TierBadge'
 
 export function Header() {
   const pathname = usePathname()
@@ -20,10 +17,8 @@ export function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [showWalletBindModal, setShowWalletBindModal] = useState(false)
 
   const { isConnected, isConnecting, address, connect, disconnect, balance, refreshBalance, error } = useWallet()
-  const { user, isAuthenticated, logout, updateUser } = useAuth()
 
   // Get current locale from cookie (client-side)
   const currentLocale = (typeof document !== 'undefined'
@@ -33,7 +28,6 @@ export function Header() {
   const navigation = [
     { name: t('home'), href: '/' },
     { name: t('play'), href: 'https://coinflip.axiome-launch.com/game', external: true },
-    { name: 'Staking', href: '/staking' },
     { name: t('explorer'), href: '/explorer' },
     { name: t('docs'), href: '/docs' },
   ]
@@ -127,33 +121,7 @@ export function Header() {
           <div className="flex items-center gap-3">
             <LanguageSwitcher currentLocale={currentLocale} />
 
-            {/* User Menu (if authenticated) */}
-            {isAuthenticated && user && (
-              <div className="hidden sm:flex items-center gap-2">
-                <TierBadge tier={user.tier} />
-                <UserMenu
-                  user={user}
-                  onLogout={logout}
-                  onVerifyWallet={() => setShowWalletBindModal(true)}
-                />
-              </div>
-            )}
-
-            {/* Login Button (if not authenticated) */}
-            {!isAuthenticated && (
-              <Link
-                href="/login"
-                className="hidden sm:flex items-center gap-2 px-4 py-2 text-gray-300 hover:text-white border border-gray-700 hover:border-gray-600 rounded-xl transition-all"
-              >
-                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                </svg>
-                Log in
-              </Link>
-            )}
-
-            {/* Wallet Button - Only show when authenticated via Telegram */}
-            {isAuthenticated && (
+            {/* Wallet Button */}
             <div className="relative hidden sm:block">
               {isConnected && address ? (
                 <div className="relative">
@@ -247,14 +215,14 @@ export function Header() {
                             {t('wallet')}
                           </Link>
                           <Link
-                            href="/dashboard"
+                            href="/wallet?tab=staking"
                             onClick={() => setIsWalletMenuOpen(false)}
                             className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors"
                           >
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
                             </svg>
-                            {t('dashboard')}
+                            Staking
                           </Link>
                           <a
                             href={`https://axiomechain.org/address/${address}`}
@@ -312,7 +280,6 @@ export function Header() {
                 </motion.div>
               )}
             </div>
-            )}
 
             {/* Mobile menu button */}
             <button
@@ -366,88 +333,46 @@ export function Header() {
                   )
                 })}
 
-                {/* Mobile: User menu and wallet (only when authenticated) */}
-                {isAuthenticated && user && (
-                  <div className="mt-2 pt-2 border-t border-gray-800">
-                    <div className="px-4 py-2 mb-2">
-                      <div className="flex items-center gap-3">
-                        {user.telegramPhotoUrl ? (
-                          <img src={user.telegramPhotoUrl} alt="" className="w-8 h-8 rounded-full" />
-                        ) : (
-                          <div className="w-8 h-8 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                            {user.telegramFirstName?.[0] || user.telegramUsername?.[0] || '?'}
+                {/* Mobile wallet section */}
+                <div className="mt-2 pt-2 border-t border-gray-800">
+                  {isConnected && address ? (
+                    <div className="space-y-2">
+                      <div className="px-4 py-3 bg-gray-800/50 rounded-lg">
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-green-400 rounded-full" />
+                            <span className="text-sm text-gray-400">Connected</span>
                           </div>
-                        )}
-                        <div>
-                          <p className="text-sm font-medium text-white">{user.telegramFirstName || user.telegramUsername}</p>
-                          {user.telegramUsername && (
-                            <p className="text-xs text-gray-400">@{user.telegramUsername}</p>
-                          )}
+                          <span className="text-sm font-medium text-purple-400">
+                            {balance.isLoading ? '...' : `${balance.axm} AXM`}
+                          </span>
                         </div>
+                        <p className="text-sm font-mono text-white">{truncateAddress(address)}</p>
                       </div>
-                    </div>
-
-                    {/* Mobile wallet section - only when authenticated */}
-                    {isConnected && address ? (
-                      <div className="space-y-2">
-                        <div className="px-4 py-3 bg-gray-800/50 rounded-lg">
-                          <div className="flex items-center justify-between mb-2">
-                            <div className="flex items-center gap-2">
-                              <div className="w-2 h-2 bg-green-400 rounded-full" />
-                              <span className="text-sm text-gray-400">Connected</span>
-                            </div>
-                            <span className="text-sm font-medium text-purple-400">
-                              {balance.isLoading ? '...' : `${balance.axm} AXM`}
-                            </span>
-                          </div>
-                          <p className="text-sm font-mono text-white">{truncateAddress(address)}</p>
-                        </div>
-                        <Link
-                          href="/dashboard"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                          className="block w-full px-4 py-3 text-center text-white text-sm font-medium rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
-                        >
-                          My Dashboard
-                        </Link>
-                        <button
-                          onClick={handleDisconnect}
-                          className="w-full px-4 py-3 text-red-400 text-sm font-medium rounded-lg border border-red-500/30 hover:bg-red-500/10 transition-colors"
-                        >
-                          Disconnect Wallet
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        onClick={handleConnect}
-                        disabled={isConnecting}
-                        className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg disabled:opacity-50"
+                      <Link
+                        href="/wallet"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="block w-full px-4 py-3 text-center text-white text-sm font-medium rounded-lg bg-gray-800/50 hover:bg-gray-700/50 transition-colors"
                       >
-                        {isConnecting ? 'Connecting...' : tCommon('connectWallet')}
+                        {t('wallet')}
+                      </Link>
+                      <button
+                        onClick={handleDisconnect}
+                        className="w-full px-4 py-3 text-red-400 text-sm font-medium rounded-lg border border-red-500/30 hover:bg-red-500/10 transition-colors"
+                      >
+                        Disconnect Wallet
                       </button>
-                    )}
-
+                    </div>
+                  ) : (
                     <button
-                      onClick={logout}
-                      className="w-full mt-2 px-4 py-3 text-gray-400 text-sm rounded-lg hover:bg-gray-800/50 transition-colors"
+                      onClick={handleConnect}
+                      disabled={isConnecting}
+                      className="w-full px-4 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-medium rounded-lg disabled:opacity-50"
                     >
-                      Log out
+                      {isConnecting ? 'Connecting...' : tCommon('connectWallet')}
                     </button>
-                  </div>
-                )}
-
-                {/* Mobile: Login button when not authenticated */}
-                {!isAuthenticated && (
-                  <Link
-                    href="/login"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="mt-2 flex items-center justify-center gap-2 px-4 py-3 text-white text-sm font-medium rounded-lg bg-gradient-to-r from-blue-600 to-purple-600"
-                  >
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z" />
-                    </svg>
-                    Log in with Telegram
-                  </Link>
-                )}
+                  )}
+                </div>
               </nav>
             </motion.div>
           )}
@@ -461,15 +386,6 @@ export function Header() {
           onClick={() => setIsWalletMenuOpen(false)}
         />
       )}
-
-      {/* Wallet Bind Modal */}
-      <WalletBindModal
-        isOpen={showWalletBindModal}
-        onClose={() => setShowWalletBindModal(false)}
-        onSuccess={() => {
-          setShowWalletBindModal(false)
-        }}
-      />
     </motion.header>
   )
 }

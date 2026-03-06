@@ -3,8 +3,9 @@
 import { motion } from 'framer-motion'
 import { useWallet, useTokenBalances, useTransactionHistory, truncateAddress } from '@/lib/wallet'
 import { Card, CardHeader, CardTitle, CardContent, Button } from '@/components/ui'
+import type { Transaction } from '@/lib/wallet'
 
-type TabId = 'overview' | 'history' | 'send' | 'receive' | 'swap'
+type TabId = 'overview' | 'history' | 'send' | 'receive' | 'staking'
 
 interface OverviewTabProps {
   onNavigate: (tab: TabId) => void
@@ -135,15 +136,15 @@ export function OverviewTab({ onNavigate }: OverviewTabProps) {
 
         <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
           <Button
-            onClick={() => onNavigate('swap')}
+            onClick={() => onNavigate('staking')}
             className="w-full h-20 bg-gray-800 hover:bg-gray-700 border border-gray-700 flex-col gap-2"
           >
-            <div className="w-10 h-10 bg-blue-500/20 rounded-full flex items-center justify-center">
-              <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+            <div className="w-10 h-10 bg-violet-500/20 rounded-full flex items-center justify-center">
+              <svg className="w-5 h-5 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <span className="text-sm">Swap</span>
+            <span className="text-sm">Staking</span>
           </Button>
         </motion.div>
       </div>
@@ -185,7 +186,7 @@ export function OverviewTab({ onNavigate }: OverviewTabProps) {
           ) : (
             <div className="space-y-2">
               {transactions.map((tx) => (
-                <TransactionRow key={tx.hash} transaction={tx} address={address || ''} compact />
+                <TransactionRow key={tx.hash} transaction={tx} address={address || ''} />
               ))}
             </div>
           )}
@@ -195,79 +196,139 @@ export function OverviewTab({ onNavigate }: OverviewTabProps) {
   )
 }
 
-// Compact transaction row for overview
+// Compact transaction row for overview — with proper labels for contract actions
 function TransactionRow({
   transaction: tx,
   address,
-  compact = false
 }: {
-  transaction: {
-    hash: string
-    type: string
-    status: string
-    from: string
-    to: string
-    amount: { displayValue: string; displayDenom: string }
-    timestamp: string
-  }
+  transaction: Transaction
   address: string
-  compact?: boolean
 }) {
   const isOutgoing = tx.from.toLowerCase() === address.toLowerCase()
-  const typeColors = {
-    send: 'text-red-400 bg-red-500/10',
-    receive: 'text-green-400 bg-green-500/10',
-    contract: 'text-blue-400 bg-blue-500/10',
-    instantiate: 'text-purple-400 bg-purple-500/10'
+
+  const txWithAction = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
+
+  const typeConfig: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
+    send: {
+      color: 'text-red-400 bg-red-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
+        </svg>
+      ),
+      label: 'Sent',
+    },
+    receive: {
+      color: 'text-green-400 bg-green-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
+        </svg>
+      ),
+      label: 'Received',
+    },
+    contract: {
+      color: 'text-blue-400 bg-blue-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+        </svg>
+      ),
+      label: 'Contract',
+    },
+    instantiate: {
+      color: 'text-purple-400 bg-purple-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+        </svg>
+      ),
+      label: 'Deploy',
+    },
+    delegate: {
+      color: 'text-yellow-400 bg-yellow-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+        </svg>
+      ),
+      label: 'Staked',
+    },
+    undelegate: {
+      color: 'text-orange-400 bg-orange-500/10',
+      icon: (
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
+        </svg>
+      ),
+      label: 'Unstaked',
+    },
   }
 
-  const typeIcons = {
-    send: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-      </svg>
-    ),
-    receive: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-      </svg>
-    ),
-    contract: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-      </svg>
-    ),
-    instantiate: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-      </svg>
-    )
+  const config = typeConfig[tx.type] || typeConfig.contract
+
+  // Build label with action and token symbol
+  let label = config.label
+  if (tx.type === 'contract' && txWithAction.contractAction) {
+    const action = txWithAction.contractAction
+    const actionLabels: Record<string, string> = {
+      transfer: 'Transfer',
+      send: 'Send',
+      mint: 'Mint',
+      burn: 'Burn',
+      approve: 'Approve',
+      increase_allowance: 'Approve',
+      decrease_allowance: 'Revoke',
+      update_marketing: 'Update Info',
+      update_minter: 'Update Minter',
+      stake: 'Stake',
+      unstake: 'Unstake',
+      claim: 'Claim Rewards',
+      distribute: 'Distribute',
+    }
+    label = actionLabels[action] || action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ')
+  }
+  if (txWithAction.tokenSymbol) {
+    label = `${label} ${txWithAction.tokenSymbol}`
   }
 
-  const color = typeColors[tx.type as keyof typeof typeColors] || typeColors.contract
-  const icon = typeIcons[tx.type as keyof typeof typeIcons] || typeIcons.contract
+  const hasAmount = tx.amount.value !== '0' && tx.amount.displayValue !== '0'
 
   return (
-    <motion.div
+    <motion.a
+      href={`https://axiomechain.org/tx/${tx.hash}`}
+      target="_blank"
+      rel="noopener noreferrer"
       whileHover={{ backgroundColor: 'rgba(55, 65, 81, 0.3)' }}
       className="flex items-center gap-3 py-2 px-2 rounded-lg -mx-2"
     >
-      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${color}`}>
-        {icon}
+      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${config.color}`}>
+        {config.icon}
       </div>
       <div className="flex-1 min-w-0">
-        <p className="text-white font-medium capitalize">{tx.type}</p>
+        <div className="flex items-center gap-2">
+          <p className="text-white font-medium text-sm">{label}</p>
+          {tx.status === 'failed' && (
+            <span className="px-1.5 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">Failed</span>
+          )}
+        </div>
         <p className="text-xs text-gray-500 truncate">
           {isOutgoing ? 'To: ' : 'From: '}
           {truncateAddress(isOutgoing ? tx.to : tx.from, 6, 4)}
         </p>
       </div>
       <div className="text-right">
-        <p className={`font-mono ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
-          {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
-        </p>
-        <p className="text-xs text-gray-500">{tx.amount.displayDenom}</p>
+        {hasAmount ? (
+          <>
+            <p className={`font-mono text-sm ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
+              {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
+            </p>
+            <p className="text-xs text-gray-500">{tx.amount.displayDenom}</p>
+          </>
+        ) : (
+          <p className="text-xs text-gray-500">-</p>
+        )}
       </div>
-    </motion.div>
+    </motion.a>
   )
 }

@@ -93,9 +93,7 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
       </div>
 
       {!isAuthenticated && (
-        <p className="text-xs text-gray-500">
-          <a href="/login" className="text-purple-400 hover:underline">Log in</a> to react
-        </p>
+        <p className="text-xs text-gray-500">Connect wallet to react</p>
       )}
     </div>
   )

@@ -597,7 +597,7 @@ export default function ExplorerPage() {
               <p className="text-gray-400 mb-6 max-w-lg mx-auto">
                 Стейкайте токены LAUNCH и получайте долю от комиссий всех проектов экосистемы.
               </p>
-              <Link href="/staking">
+              <Link href="/wallet?tab=staking">
                 <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
                   Stake LAUNCH
                   <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -95,11 +95,11 @@ export default function TokenomicsPage() {
             <Link href="/explorer" className="text-zinc-400 hover:text-white transition-colors">
               Explorer
             </Link>
-            <Link href="/create" className="text-zinc-400 hover:text-white transition-colors">
-              Create
+            <Link href="/wallet" className="text-zinc-400 hover:text-white transition-colors">
+              Wallet
             </Link>
-            <Link href="/dashboard" className="text-zinc-400 hover:text-white transition-colors">
-              Dashboard
+            <Link href="/wallet?tab=staking" className="text-zinc-400 hover:text-white transition-colors">
+              Staking
             </Link>
           </nav>
         </div>
