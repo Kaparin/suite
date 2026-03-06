@@ -164,13 +164,25 @@ export function isMobileDevice(): boolean {
 
 /**
  * Open Axiome Connect deep link
- * On mobile: Opens the wallet app
+ * On mobile: Opens the wallet app via multiple fallback strategies
  * On desktop: Shows instructions to scan QR or use mobile
  */
 export function openAxiomeConnect(deepLink: string): void {
   if (isMobileDevice()) {
-    // On mobile, try to open the wallet app
-    window.location.href = deepLink
+    // Strategy 1: Create a temporary <a> tag and click it (most reliable on mobile)
+    const link = document.createElement('a')
+    link.href = deepLink
+    link.style.display = 'none'
+    document.body.appendChild(link)
+    link.click()
+    // Clean up after a short delay
+    setTimeout(() => {
+      document.body.removeChild(link)
+    }, 100)
+    // Strategy 2: Also try location.href as fallback (some browsers prefer this)
+    setTimeout(() => {
+      window.location.href = deepLink
+    }, 300)
   } else {
     // On desktop, open in new window (will likely fail, but user can copy the link)
     window.open(deepLink, '_blank')

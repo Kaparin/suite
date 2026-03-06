@@ -390,7 +390,7 @@ export function StakingTab() {
       <div className="flex items-center justify-between text-[10px] px-1">
         <div className="flex items-center gap-1.5">
           <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-          <span className="text-gray-500">Revenue source: 2% per pot</span>
+          <span className="text-gray-500">Revenue source: 20% of commission</span>
         </div>
         {contractReady && (
           <a

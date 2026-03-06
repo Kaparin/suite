@@ -70,7 +70,7 @@
       "title": "Stake LAUNCH, verdiene AXM",
       "subtitle": "Jedes Projekt sendet einen Anteil der Einnahmen an den Staking-Vertrag. Dein Anteil ist proportional zu deinem Stake.",
       "stake": { "icon": "📥", "title": "Staken", "desc": "LAUNCH-Token an den Staking-Vertrag senden. Keine Sperrfrist." },
-      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 2% jedes Pots fließen an Staker." },
+      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 20% jeder Kommission fließen an Staker." },
       "claim": { "icon": "🎁", "title": "Abholen", "desc": "AXM-Belohnungen jederzeit abholen. Je mehr du stakst, desto mehr verdienst du." },
       "cta": "Staking starten"
     },
@@ -183,7 +183,7 @@
     },
     "feeSplit": {
       "title": "Transparente Wirtschaft",
-      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). 2% jedes Pots fließen an LAUNCH-Staker. Das Team verdient als LAUNCH-Token-Inhaber.",
+      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). 20% der Kommission fließen an LAUNCH-Staker. Das Team verdient als LAUNCH-Token-Inhaber.",
       "operations": "Betrieb",
       "buyback": "LAUNCH-Inhaber-Belohnungen",
       "rewards": "Projektentwicklung",
@@ -559,7 +559,7 @@
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Jedes Projekt, das wir bauen (wie Kopf oder Zahl), hat seinen eigenen Token — und LAUNCH-Inhaber verdienen einen Anteil der Einnahmen aus jedem Projekt im Ökosystem.",
       "totalSupply": "Angebot & Verteilung:",
       "supplyTbd": "100.000.000 LAUNCH",
-      "allProducts": { "title": "Ertragsanteil", "desc": "2% jedes Pots werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
+      "allProducts": { "title": "Ertragsanteil", "desc": "20% der Kommission werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
       "governance": { "title": "Governance", "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab." },
       "ecosystem": { "title": "Staking-Modell", "desc": "Synthetix reward_per_token: fair, proportional, gas-effizient. Keine Sperrfrist." }
     },
@@ -570,11 +570,11 @@
       "step1Title": "LAUNCH-Token staken",
       "step1Desc": "Senden Sie LAUNCH-Token an den Staking-Vertrag. Keine Sperrfrist — jederzeit abheben.",
       "step2Title": "Projekte verteilen Einnahmen",
-      "step2Desc": "2% jedes Pots werden als AXM an den Staking-Vertrag gesendet.",
+      "step2Desc": "20% der Kommission werden als AXM an den Staking-Vertrag gesendet.",
       "step3Title": "AXM-Belohnungen abholen",
       "step3Desc": "Belohnungen sammeln sich proportional zu Ihrem Stake an. Jederzeit abholen.",
       "revenueTitle": "Einnahmequellen",
-      "revenueDesc": "Aktuell: 2% jedes Pots aus Kopf oder Zahl fließen an Staker. Mit neuen Projekten wächst der Ertrag.",
+      "revenueDesc": "Aktuell: 20% der Kommission aus Kopf oder Zahl fließen an Staker. Mit neuen Projekten wächst der Ertrag.",
       "modelTitle": "Faire Verteilung",
       "modelDesc": "Synthetix reward_per_token Modell — O(1) Gas, proportional, transparent, on-chain.",
       "cta": "LAUNCH staken"

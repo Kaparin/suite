@@ -278,12 +278,21 @@ export function SignTransactionFlow({
                 </button>
 
                 {isMobile && (
-                  <button
-                    onClick={handleOpenWallet}
-                    className="w-full py-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
-                  >
-                    Open wallet again
-                  </button>
+                  <>
+                    {/* Direct link fallback — tapping a native <a> is more reliable than JS */}
+                    <a
+                      href={deepLink}
+                      className="block w-full py-3 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors"
+                    >
+                      Open Axiome Wallet
+                    </a>
+                    <button
+                      onClick={handleOpenWallet}
+                      className="w-full py-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
+                    >
+                      Try opening again
+                    </button>
+                  </>
                 )}
               </motion.div>
             )}
