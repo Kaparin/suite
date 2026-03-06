@@ -52,10 +52,10 @@ function ProjectSlider({ t }: { t: any }) {
         {/* Slider container */}
         <div className="relative">
           {/* Arrows */}
-          <button onClick={goPrev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 hidden md:flex w-10 h-10 items-center justify-center rounded-full bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all">
+          <button onClick={goPrev} className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-2 md:-translate-x-5 z-10 hidden md:flex w-11 h-11 items-center justify-center rounded-full bg-black/60 backdrop-blur border border-white/10 text-gray-400 hover:text-white hover:border-white/25 hover:bg-white/10 transition-all">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
           </button>
-          <button onClick={goNext} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 hidden md:flex w-10 h-10 items-center justify-center rounded-full bg-gray-800/80 border border-gray-700 text-gray-400 hover:text-white hover:border-gray-500 transition-all">
+          <button onClick={goNext} className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-2 md:translate-x-5 z-10 hidden md:flex w-11 h-11 items-center justify-center rounded-full bg-black/60 backdrop-blur border border-white/10 text-gray-400 hover:text-white hover:border-white/25 hover:bg-white/10 transition-all">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
           </button>
 
@@ -69,32 +69,72 @@ function ProjectSlider({ t }: { t: any }) {
                   exit={{ opacity: 0, x: -60 }}
                   transition={{ duration: 0.35 }}
                 >
-                  <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 md:p-10">
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/20">Live</span>
-                      <span className="text-xs text-gray-500">#1</span>
-                    </div>
+                  {/* Heads or Tails — premium card */}
+                  <div className="relative overflow-hidden rounded-2xl border border-amber-500/20">
+                    {/* Ambient golden glow background */}
+                    <div className="absolute inset-0 bg-gradient-to-br from-amber-900/30 via-gray-950 to-blue-950/40" />
+                    <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/8 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                    <div className="absolute bottom-0 left-0 w-72 h-72 bg-blue-500/8 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4" />
 
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('coinflip.title')}</h3>
-                    <p className="text-gray-400 max-w-2xl text-base mb-8">{t('coinflip.subtitle')}</p>
+                    <div className="relative z-10 p-6 md:p-10">
+                      <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+                        {/* Logo */}
+                        <motion.div
+                          className="shrink-0 self-center md:self-start"
+                          animate={{
+                            filter: [
+                              'drop-shadow(0 0 16px rgba(245, 158, 11, 0.3))',
+                              'drop-shadow(0 0 28px rgba(245, 158, 11, 0.5))',
+                              'drop-shadow(0 0 16px rgba(245, 158, 11, 0.3))',
+                            ],
+                          }}
+                          transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+                        >
+                          <Image
+                            src="/heads-or-tails-logo-landing.png"
+                            alt="Heads or Tails"
+                            width={200}
+                            height={200}
+                            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain"
+                          />
+                        </motion.div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
-                      {(['pvp', 'realStakes', 'platformFee', 'instantMatch', 'tournaments'] as const).map(key => (
-                        <div key={key} className="bg-gray-800/40 border border-gray-700/40 rounded-xl p-3 text-center">
-                          <p className="text-sm text-gray-300">{t(`coinflip.features.${key}`)}</p>
+                        {/* Content */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-3 mb-4">
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/25">
+                              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                              Live
+                            </span>
+                            <span className="text-xs text-gray-500 font-medium">#1 Project</span>
+                          </div>
+
+                          <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t('coinflip.title')}</h3>
+                          <p className="text-gray-400 text-sm md:text-base mb-6 max-w-xl">{t('coinflip.subtitle')}</p>
+
+                          {/* Feature pills */}
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            {(['pvp', 'realStakes', 'platformFee', 'instantMatch', 'tournaments'] as const).map(key => (
+                              <span key={key} className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded-lg bg-white/5 border border-white/8 text-gray-300">
+                                {t(`coinflip.features.${key}`)}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* CTA buttons */}
+                          <div className="flex flex-col sm:flex-row items-start gap-3">
+                            <a href={COINFLIP_URL} target="_blank" rel="noopener noreferrer">
+                              <motion.span whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-semibold rounded-xl shadow-lg shadow-amber-500/25 transition-all text-sm">
+                                {t('coinflip.playNow')}
+                                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                              </motion.span>
+                            </a>
+                            <a href="https://coinflip.axiome-launch.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-amber-400 transition-colors py-3">
+                              {t('coinflip.viewMechanics')} <span aria-hidden="true">&rarr;</span>
+                            </a>
+                          </div>
                         </div>
-                      ))}
-                    </div>
-
-                    <div className="flex flex-col sm:flex-row items-start gap-4">
-                      <a href={COINFLIP_URL} target="_blank" rel="noopener noreferrer">
-                        <motion.span whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }} className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-medium rounded-xl shadow-lg shadow-blue-500/25 transition-all">
-                          {t('coinflip.playNow')}
-                        </motion.span>
-                      </a>
-                      <a href="https://coinflip.axiome-launch.com" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white transition-colors py-3">
-                        {t('coinflip.viewMechanics')} &rarr;
-                      </a>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
@@ -108,20 +148,25 @@ function ProjectSlider({ t }: { t: any }) {
                   exit={{ opacity: 0, x: -60 }}
                   transition={{ duration: 0.35 }}
                 >
-                  <div className="bg-gray-900/50 backdrop-blur-sm border border-gray-800/50 rounded-2xl p-6 md:p-10 min-h-[320px] flex flex-col items-center justify-center text-center">
-                    <div className="flex items-center gap-3 mb-6">
-                      <span className="inline-block px-3 py-1 text-xs font-medium rounded-full bg-gray-500/15 text-gray-400 border border-gray-500/20">{t('ecosystem.tbd.status')}</span>
-                      <span className="text-xs text-gray-500">#2</span>
-                    </div>
+                  {/* Coming soon — premium card */}
+                  <div className="relative overflow-hidden rounded-2xl border border-violet-500/15">
+                    <div className="absolute inset-0 bg-gradient-to-br from-violet-950/40 via-gray-950 to-blue-950/30" />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-500/6 rounded-full blur-[100px]" />
 
-                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-violet-500/20 to-blue-500/20 rounded-2xl border border-violet-500/20 flex items-center justify-center">
-                      <svg className="w-10 h-10 text-violet-400/60" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
-                    </div>
+                    <div className="relative z-10 p-6 md:p-10 min-h-[320px] flex flex-col items-center justify-center text-center">
+                      <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/20 mb-6">
+                        {t('ecosystem.tbd.status')}
+                      </span>
 
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('ecosystem.tbd.title')}</h3>
-                    <p className="text-gray-400 max-w-lg text-base">{t('ecosystem.tbd.desc')}</p>
+                      <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-violet-500/15 to-blue-500/15 rounded-2xl border border-violet-500/15 flex items-center justify-center backdrop-blur-sm">
+                        <svg className="w-10 h-10 text-violet-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg>
+                      </div>
+
+                      <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('ecosystem.tbd.title')}</h3>
+                      <p className="text-gray-400 max-w-lg text-base">{t('ecosystem.tbd.desc')}</p>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -134,7 +179,7 @@ function ProjectSlider({ t }: { t: any }) {
               <button
                 key={i}
                 onClick={() => goTo(i)}
-                className={`h-2 rounded-full transition-all ${i === activeSlide ? 'w-8 bg-violet-500' : 'w-2 bg-gray-600 hover:bg-gray-500'}`}
+                className={`h-2 rounded-full transition-all duration-300 ${i === activeSlide ? 'w-8 bg-gradient-to-r from-amber-400 to-amber-500' : 'w-2 bg-gray-700 hover:bg-gray-500'}`}
               />
             ))}
           </div>
