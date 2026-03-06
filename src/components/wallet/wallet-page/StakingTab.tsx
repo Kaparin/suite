@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
+import { Loader2, ExternalLink, RefreshCw, Coins, TrendingUp, Users } from 'lucide-react'
 import { useWallet, useTransaction } from '@/lib/wallet'
 import { buildExecutePayload } from '@/lib/wallet/transaction-builder'
 import { SignTransactionFlow } from '@/components/wallet'
 import { STAKING_CONTRACT, LAUNCH_CW20, LAUNCH_DECIMALS } from '@/lib/staking/constants'
+
+const EXPLORER_URL = 'https://explorer.axiome.pro'
 
 interface StakingStats {
   totalStaked: number
@@ -22,6 +25,8 @@ interface UserStaking {
   launchBalance: number
 }
 
+type TabMode = 'stake' | 'unstake'
+
 function formatNumber(n: number, decimals = 2): string {
   if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(decimals)}M`
   if (n >= 1_000) return `${(n / 1_000).toFixed(decimals)}K`
@@ -33,12 +38,10 @@ export function StakingTab() {
   const { transactionState, closeTransaction, openTransaction } = useTransaction()
   const [stats, setStats] = useState<StakingStats | null>(null)
   const [userStaking, setUserStaking] = useState<UserStaking | null>(null)
-  const [stakeAmount, setStakeAmount] = useState('')
-  const [unstakeAmount, setUnstakeAmount] = useState('')
-  const [activeTab, setActiveTab] = useState<'stake' | 'unstake'>('stake')
+  const [amount, setAmount] = useState('')
+  const [activeTab, setActiveTab] = useState<TabMode>('stake')
   const [isLoading, setIsLoading] = useState(true)
 
-  // Snapshot of state before transaction — used for change detection
   const snapshotRef = useRef<UserStaking | null>(null)
 
   const fetchStats = useCallback(async () => {
@@ -61,19 +64,17 @@ export function StakingTab() {
     return null
   }, [address])
 
-  const refreshData = useCallback(() => {
-    Promise.all([fetchStats(), fetchUserStaking()])
+  const refreshData = useCallback(async () => {
+    await Promise.all([fetchStats(), fetchUserStaking()])
   }, [fetchStats, fetchUserStaking])
 
   useEffect(() => {
     setIsLoading(true)
-    refreshData()
-    setIsLoading(false)
+    refreshData().finally(() => setIsLoading(false))
   }, [refreshData])
 
   const contractReady = !!STAKING_CONTRACT
 
-  // Build a checkTransaction function that detects staking state changes
   const makeCheckTransaction = useCallback((
     type: 'stake' | 'unstake' | 'claim'
   ) => {
@@ -84,44 +85,29 @@ export function StakingTab() {
         if (!res.ok) return { success: false }
         const current = await res.json() as UserStaking
         const prev = snapshotRef.current
-
         if (!prev) return { success: false }
-
-        // Detect changes based on action type
         switch (type) {
           case 'stake':
-            if (current.staked > prev.staked) {
-              setUserStaking(current)
-              return { success: true }
-            }
+            if (current.staked > prev.staked) { setUserStaking(current); return { success: true } }
             break
           case 'unstake':
-            if (current.staked < prev.staked) {
-              setUserStaking(current)
-              return { success: true }
-            }
+            if (current.staked < prev.staked) { setUserStaking(current); return { success: true } }
             break
           case 'claim':
-            if (current.totalClaimed > prev.totalClaimed || current.pendingRewards < prev.pendingRewards) {
-              setUserStaking(current)
-              return { success: true }
-            }
+            if (current.totalClaimed > prev.totalClaimed || current.pendingRewards < prev.pendingRewards) { setUserStaking(current); return { success: true } }
             break
         }
         return { success: false }
-      } catch {
-        return { success: false }
-      }
+      } catch { return { success: false } }
     }
   }, [address])
 
   const handleStake = () => {
-    if (!address || !stakeAmount || !contractReady) return
-    const microAmount = (parseFloat(stakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
-
-    // Snapshot current state for change detection
+    if (!address || !amount || !contractReady) return
+    const num = parseFloat(amount)
+    if (num <= 0 || (userStaking && num > userStaking.launchBalance)) return
+    const microAmount = (num * 10 ** LAUNCH_DECIMALS).toFixed(0)
     snapshotRef.current = userStaking ? { ...userStaking } : null
-
     const payload = buildExecutePayload({
       contractAddress: LAUNCH_CW20,
       sender: address,
@@ -133,151 +119,176 @@ export function StakingTab() {
         },
       },
     })
-
     openTransaction({
       payload,
       title: 'Stake LAUNCH',
-      description: `Stake ${stakeAmount} LAUNCH tokens`,
-      onSuccess: () => {
-        setStakeAmount('')
-        refreshData()
-      },
+      description: `Stake ${amount} LAUNCH tokens`,
+      onSuccess: () => { setAmount(''); refreshData() },
       checkTransaction: makeCheckTransaction('stake'),
     })
   }
 
   const handleUnstake = () => {
-    if (!address || !unstakeAmount || !contractReady) return
-    const microAmount = (parseFloat(unstakeAmount) * 10 ** LAUNCH_DECIMALS).toFixed(0)
-
+    if (!address || !amount || !contractReady) return
+    const num = parseFloat(amount)
+    if (num <= 0 || (userStaking && num > userStaking.staked)) return
+    const microAmount = (num * 10 ** LAUNCH_DECIMALS).toFixed(0)
     snapshotRef.current = userStaking ? { ...userStaking } : null
-
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
       sender: address,
       msg: { unstake: { amount: microAmount } },
     })
-
     openTransaction({
       payload,
       title: 'Unstake LAUNCH',
-      description: `Unstake ${unstakeAmount} LAUNCH tokens`,
-      onSuccess: () => {
-        setUnstakeAmount('')
-        refreshData()
-      },
+      description: `Unstake ${amount} LAUNCH tokens`,
+      onSuccess: () => { setAmount(''); refreshData() },
       checkTransaction: makeCheckTransaction('unstake'),
     })
   }
 
   const handleClaim = () => {
     if (!address || !contractReady) return
-
     snapshotRef.current = userStaking ? { ...userStaking } : null
-
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
       sender: address,
       msg: { claim: {} },
     })
-
     openTransaction({
       payload,
       title: 'Claim Rewards',
       description: `Claim ${userStaking ? formatNumber(userStaking.pendingRewards, 4) : ''} AXM rewards`,
-      onSuccess: () => {
-        refreshData()
-      },
+      onSuccess: () => { refreshData() },
       checkTransaction: makeCheckTransaction('claim'),
     })
   }
 
-  const handleMaxStake = () => {
-    if (userStaking) setStakeAmount(userStaking.launchBalance.toString())
+  const maxAmount = activeTab === 'stake' ? userStaking?.launchBalance ?? 0 : userStaking?.staked ?? 0
+
+  const setPercent = (pct: number) => {
+    if (maxAmount <= 0) return
+    const val = maxAmount * pct
+    setAmount(pct === 1 ? maxAmount.toString() : Math.floor(val).toString())
   }
 
-  const handleMaxUnstake = () => {
-    if (userStaking) setUnstakeAmount(userStaking.staked.toString())
-  }
+  const canSubmit = amount && parseFloat(amount) > 0 && parseFloat(amount) <= maxAmount && contractReady
 
   if (!isConnected) {
     return (
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-12">
-        <div className="w-16 h-16 mx-auto bg-violet-500/20 rounded-full flex items-center justify-center mb-4">
-          <svg className="w-8 h-8 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-          </svg>
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
+          <Coins size={24} className="text-violet-400" />
         </div>
         <p className="text-gray-400">Connect your wallet to stake LAUNCH tokens</p>
       </motion.div>
     )
   }
 
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-16">
+        <Loader2 size={28} className="animate-spin text-violet-400" />
+      </div>
+    )
+  }
+
+  if (!stats) {
+    return (
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center py-10">
+        <div className="w-14 h-14 mx-auto rounded-2xl bg-violet-500/10 flex items-center justify-center mb-4">
+          <Coins size={24} className="text-violet-400" />
+        </div>
+        <p className="text-sm text-gray-400 mb-1">LAUNCH Staking</p>
+        <p className="text-xs text-gray-500 mb-4">Staking contract unavailable</p>
+        <button type="button" onClick={() => { setIsLoading(true); refreshData().finally(() => setIsLoading(false)) }}
+          className="text-xs text-violet-400 hover:underline">
+          Retry
+        </button>
+      </motion.div>
+    )
+  }
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-violet-500/10 border border-violet-500/20 rounded-xl p-3 text-center">
-          <p className="text-lg font-bold text-white">{stats ? `${formatNumber(stats.totalStaked)}` : '—'}</p>
-          <p className="text-xs text-gray-400">Total Staked LAUNCH</p>
+      {/* === Rewards Card === */}
+      {userStaking && userStaking.pendingRewards > 0 ? (
+        <div className="relative overflow-hidden rounded-2xl p-[1px]">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-emerald-500/40 via-teal-500/20 to-emerald-500/5" />
+          <div className="relative rounded-2xl bg-gray-900/95 backdrop-blur-sm px-4 py-4">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-[10px] uppercase tracking-wider text-emerald-400/70 mb-0.5">Pending Rewards</p>
+                <div className="flex items-baseline gap-1.5">
+                  <p className="text-2xl font-bold text-emerald-400 tabular-nums">{formatNumber(userStaking.pendingRewards, 4)}</p>
+                  <p className="text-xs text-emerald-400/60 font-medium">AXM</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={handleClaim}
+                className="shrink-0 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold transition-all shadow-lg shadow-emerald-500/20"
+              >
+                Claim Rewards
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl p-3 text-center">
-          <p className="text-lg font-bold text-white">{stats ? `${formatNumber(stats.totalDistributed)}` : '—'}</p>
-          <p className="text-xs text-gray-400">Distributed AXM</p>
+      ) : userStaking ? (
+        <div className="rounded-2xl border border-gray-700/50 bg-gray-900/50 px-4 py-3 text-center">
+          <p className="text-xs text-gray-500">No pending rewards yet</p>
         </div>
-      </div>
+      ) : null}
 
-      {/* Your Position */}
-      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-sm font-medium text-gray-400">Your Position</h3>
-          {userStaking && userStaking.pendingRewards > 0 && (
-            <button
-              onClick={handleClaim}
-              disabled={!contractReady}
-              className="px-3 py-1.5 text-xs font-medium bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 disabled:opacity-40 text-white rounded-lg transition-all"
-            >
-              Claim {formatNumber(userStaking.pendingRewards, 4)} AXM
+      {/* === Your Position === */}
+      {userStaking && (
+        <div className="rounded-2xl border border-gray-700/50 bg-gray-900/50 overflow-hidden">
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Position</p>
+            <button type="button" onClick={() => { setIsLoading(true); refreshData().finally(() => setIsLoading(false)) }}
+              className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-800 transition-colors">
+              <RefreshCw size={12} />
             </button>
-          )}
-        </div>
-        <div className="grid grid-cols-3 gap-3">
-          <div>
-            <p className="text-xs text-gray-500 mb-0.5">Staked</p>
-            <p className="text-sm font-bold text-white">{userStaking ? formatNumber(userStaking.staked, 0) : '—'}</p>
-            <p className="text-xs text-gray-500">LAUNCH</p>
           </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-0.5">Rewards</p>
-            <p className="text-sm font-bold text-emerald-400">{userStaking ? formatNumber(userStaking.pendingRewards, 4) : '—'}</p>
-            <p className="text-xs text-gray-500">AXM</p>
-          </div>
-          <div>
-            <p className="text-xs text-gray-500 mb-0.5">Claimed</p>
-            <p className="text-sm font-bold text-gray-300">{userStaking ? formatNumber(userStaking.totalClaimed, 4) : '—'}</p>
-            <p className="text-xs text-gray-500">AXM</p>
+          <div className="grid grid-cols-3 divide-x divide-gray-700/50 px-1 pb-3">
+            <div className="text-center px-2">
+              <p className="text-lg font-bold tabular-nums text-white">{formatNumber(userStaking.staked, 0)}</p>
+              <p className="text-[10px] text-gray-500">LAUNCH staked</p>
+            </div>
+            <div className="text-center px-2">
+              <p className="text-lg font-bold text-emerald-400 tabular-nums">{formatNumber(userStaking.pendingRewards, 4)}</p>
+              <p className="text-[10px] text-gray-500">AXM rewards</p>
+            </div>
+            <div className="text-center px-2">
+              <p className="text-lg font-bold text-gray-400 tabular-nums">{formatNumber(userStaking.totalClaimed, 4)}</p>
+              <p className="text-[10px] text-gray-500">AXM claimed</p>
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Stake / Unstake Form */}
-      <div className="bg-gray-900/60 border border-gray-800 rounded-xl overflow-hidden">
-        <div className="flex border-b border-gray-800">
+      {/* === Stake / Unstake === */}
+      <div className="rounded-2xl border border-gray-700/50 bg-gray-900/50 overflow-hidden">
+        {/* Tab Pills */}
+        <div className="flex gap-1 p-1.5 bg-gray-800/50">
           <button
-            onClick={() => setActiveTab('stake')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            type="button"
+            onClick={() => { setActiveTab('stake'); setAmount('') }}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'stake'
-                ? 'text-white bg-violet-500/10 border-b-2 border-violet-500'
+                ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
             Stake
           </button>
           <button
-            onClick={() => setActiveTab('unstake')}
-            className={`flex-1 py-3 text-sm font-medium transition-colors ${
+            type="button"
+            onClick={() => { setActiveTab('unstake'); setAmount('') }}
+            className={`flex-1 py-2 text-xs font-bold rounded-xl transition-all ${
               activeTab === 'unstake'
-                ? 'text-white bg-violet-500/10 border-b-2 border-violet-500'
+                ? 'bg-rose-600 text-white shadow-md shadow-rose-500/25'
                 : 'text-gray-400 hover:text-white'
             }`}
           >
@@ -285,121 +296,114 @@ export function StakingTab() {
           </button>
         </div>
 
-        <div className="p-4">
-          {activeTab === 'stake' ? (
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs text-gray-400">Amount to stake</label>
-                  <span className="text-xs text-gray-500">
-                    Balance: {userStaking ? formatNumber(userStaking.launchBalance, 0) : '—'} LAUNCH
-                  </span>
-                </div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={stakeAmount}
-                    onChange={e => setStakeAmount(e.target.value)}
-                    placeholder="0"
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white text-lg placeholder-gray-600 focus:outline-none focus:border-violet-500/50 transition-colors"
-                  />
-                  <button
-                    onClick={handleMaxStake}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-medium text-violet-400 hover:text-violet-300 bg-violet-500/10 rounded-md transition-colors"
-                  >
-                    MAX
-                  </button>
-                </div>
-              </div>
+        <div className="px-4 py-4 space-y-3">
+          {/* Balance */}
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-gray-400">
+              {activeTab === 'stake' ? 'Available to stake' : 'Staked amount'}
+            </span>
+            <span className="text-[11px] font-bold tabular-nums text-white">
+              {userStaking ? formatNumber(maxAmount, 0) : '\u2014'} LAUNCH
+            </span>
+          </div>
 
-              {!contractReady ? (
-                <p className="text-center text-sm text-amber-400/70 py-2">Staking contract not yet deployed</p>
-              ) : (
-                <button
-                  onClick={handleStake}
-                  disabled={!stakeAmount || parseFloat(stakeAmount) <= 0}
-                  className="w-full py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all"
-                >
-                  Stake LAUNCH
-                </button>
-              )}
-            </div>
+          {/* Input */}
+          <div className="relative">
+            <input
+              type="number"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+              placeholder="0"
+              className="w-full rounded-xl border border-gray-700 bg-gray-800/50 px-4 py-3.5 pr-16 text-xl font-bold text-white placeholder-gray-600 focus:border-violet-500/50 focus:outline-none transition-colors tabular-nums"
+            />
+            <button
+              type="button"
+              onClick={() => setPercent(1)}
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg bg-violet-500/15 px-2.5 py-1 text-[10px] font-bold text-violet-400 hover:bg-violet-500/25 transition-colors"
+            >
+              MAX
+            </button>
+          </div>
+
+          {/* Percent Buttons */}
+          <div className="flex gap-2">
+            {[0.25, 0.5, 0.75, 1].map((pct) => (
+              <button
+                key={pct}
+                type="button"
+                onClick={() => setPercent(pct)}
+                className="flex-1 py-1.5 rounded-lg border border-gray-700 text-[10px] font-bold text-gray-400 hover:border-violet-500/40 hover:text-violet-400 transition-colors"
+              >
+                {pct === 1 ? 'MAX' : `${pct * 100}%`}
+              </button>
+            ))}
+          </div>
+
+          {/* Submit */}
+          {!contractReady ? (
+            <p className="text-center text-sm text-amber-400/70 py-2">Staking contract not yet deployed</p>
           ) : (
-            <div className="space-y-3">
-              <div>
-                <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs text-gray-400">Amount to unstake</label>
-                  <span className="text-xs text-gray-500">
-                    Staked: {userStaking ? formatNumber(userStaking.staked, 0) : '—'} LAUNCH
-                  </span>
-                </div>
-                <div className="relative">
-                  <input
-                    type="number"
-                    value={unstakeAmount}
-                    onChange={e => setUnstakeAmount(e.target.value)}
-                    placeholder="0"
-                    className="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white text-lg placeholder-gray-600 focus:outline-none focus:border-violet-500/50 transition-colors"
-                  />
-                  <button
-                    onClick={handleMaxUnstake}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-xs font-medium text-violet-400 hover:text-violet-300 bg-violet-500/10 rounded-md transition-colors"
-                  >
-                    MAX
-                  </button>
-                </div>
-              </div>
-
-              {!contractReady ? (
-                <p className="text-center text-sm text-amber-400/70 py-2">Staking contract not yet deployed</p>
-              ) : (
-                <button
-                  onClick={handleUnstake}
-                  disabled={!unstakeAmount || parseFloat(unstakeAmount) <= 0}
-                  className="w-full py-3 bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium rounded-xl transition-all"
-                >
-                  Unstake LAUNCH
-                </button>
-              )}
-            </div>
+            <button
+              type="button"
+              onClick={activeTab === 'stake' ? handleStake : handleUnstake}
+              disabled={!canSubmit}
+              className={`w-full rounded-xl py-3.5 text-sm font-bold transition-all disabled:opacity-30 disabled:cursor-not-allowed ${
+                activeTab === 'stake'
+                  ? 'bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white shadow-lg shadow-violet-500/20'
+                  : 'bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-lg shadow-rose-500/20'
+              }`}
+            >
+              {activeTab === 'stake' ? 'Stake LAUNCH' : 'Unstake LAUNCH'}
+            </button>
           )}
         </div>
       </div>
 
-      {/* Revenue Sources */}
-      <div className="bg-gray-800/30 border border-gray-800 rounded-xl p-4">
-        <h3 className="text-xs font-medium text-gray-400 mb-2">Revenue Sources</h3>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400" />
-              <span className="text-sm text-gray-300">Heads or Tails</span>
-            </div>
-            <span className="text-sm font-medium text-white">2%</span>
+      {/* === Protocol Stats === */}
+      <div className="grid grid-cols-3 gap-2">
+        <div className="rounded-xl border border-gray-700/50 bg-gray-900/50 px-3 py-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Coins size={10} className="text-violet-400" />
+            <p className="text-[9px] uppercase tracking-wider text-gray-500">Total Staked</p>
           </div>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-gray-600" />
-              <span className="text-sm text-gray-300">Future Projects</span>
-            </div>
-            <span className="text-sm font-medium text-gray-500">TBD</span>
+          <p className="text-sm font-bold tabular-nums text-white">{formatNumber(stats.totalStaked)}</p>
+          <p className="text-[9px] text-gray-500">LAUNCH</p>
+        </div>
+        <div className="rounded-xl border border-gray-700/50 bg-gray-900/50 px-3 py-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <TrendingUp size={10} className="text-emerald-400" />
+            <p className="text-[9px] uppercase tracking-wider text-gray-500">Distributed</p>
           </div>
+          <p className="text-sm font-bold text-emerald-400 tabular-nums">{formatNumber(stats.totalDistributed)}</p>
+          <p className="text-[9px] text-gray-500">AXM</p>
+        </div>
+        <div className="rounded-xl border border-gray-700/50 bg-gray-900/50 px-3 py-2.5 text-center">
+          <div className="flex items-center justify-center gap-1 mb-1">
+            <Users size={10} className="text-blue-400" />
+            <p className="text-[9px] uppercase tracking-wider text-gray-500">Stakers</p>
+          </div>
+          <p className="text-sm font-bold tabular-nums text-white">{stats.totalStakers}</p>
         </div>
       </div>
 
-      {/* Contract Info */}
-      {contractReady && (
-        <div className="text-center">
+      {/* Revenue + Contract */}
+      <div className="flex items-center justify-between text-[10px] px-1">
+        <div className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+          <span className="text-gray-500">Revenue source: 2% per pot</span>
+        </div>
+        {contractReady && (
           <a
-            href={`https://axiomechain.org/contract/${STAKING_CONTRACT}`}
+            href={`${EXPLORER_URL}/contract/${STAKING_CONTRACT}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-xs font-mono text-violet-400/60 hover:text-violet-400 transition-colors"
+            className="inline-flex items-center gap-1 font-mono text-violet-400/40 hover:text-violet-400 transition-colors"
           >
-            Contract: {STAKING_CONTRACT.slice(0, 16)}...{STAKING_CONTRACT.slice(-8)}
+            {STAKING_CONTRACT.slice(0, 8)}...{STAKING_CONTRACT.slice(-4)}
+            <ExternalLink size={9} />
           </a>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Sign Transaction Modal */}
       <SignTransactionFlow

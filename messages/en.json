@@ -78,7 +78,11 @@
       "title": "Build With Us",
       "subtitle": "LAUNCH holders can propose new ideas and vote on ecosystem decisions. Each new project means more revenue flowing back to holders.",
       "submitIdea": "Submit Project Idea",
-      "joinCommunity": "Join Community"
+      "joinCommunity": "Join Community",
+      "cta": "Join discussion in Explorer",
+      "comment1": { "user": "alex_dev", "text": "Solid project, the roadmap looks realistic. Links verified.", "badge": "Builder" },
+      "comment2": { "user": "crypto_guard", "text": "Flagged a suspicious link change — resolved by the team within 2h.", "badge": "Explorer" },
+      "comment3": { "user": "dao_whale", "text": "Great community discussion before launch. Trust score growing.", "badge": "Governor" }
     },
     "vision": {
       "title": "Long-Term Vision",
@@ -184,14 +188,6 @@
       "buyback": "LAUNCH holder rewards",
       "rewards": "Project development",
       "grants": "Grants / New projects"
-    },
-    "community": {
-      "title": "Built with the Axiome community",
-      "subtitle": "Discuss tokens, spot red flags early, and help good projects get discovered.",
-      "cta": "Join discussion in Explorer",
-      "comment1": { "user": "alex_dev", "text": "Solid project, the roadmap looks realistic. Links verified.", "badge": "Builder" },
-      "comment2": { "user": "crypto_guard", "text": "Flagged a suspicious link change — resolved by the team within 2h.", "badge": "Explorer" },
-      "comment3": { "user": "dao_whale", "text": "Great community discussion before launch. Trust score growing.", "badge": "Governor" }
     },
     "cta": {
       "title": "We build real products.",

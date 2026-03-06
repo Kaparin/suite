@@ -78,7 +78,11 @@
       "title": "Baue mit uns",
       "subtitle": "LAUNCH-Inhaber können neue Ideen vorschlagen und über Ökosystem-Entscheidungen abstimmen. Jedes neue Projekt bedeutet mehr Einnahmen für die Inhaber.",
       "submitIdea": "Projektidee einreichen",
-      "joinCommunity": "Community beitreten"
+      "joinCommunity": "Community beitreten",
+      "cta": "Zur Diskussion im Explorer",
+      "comment1": { "user": "alex_dev", "text": "Solides Projekt, der Fahrplan sieht realistisch aus. Links verifiziert.", "badge": "Builder" },
+      "comment2": { "user": "crypto_guard", "text": "Verdächtige Link-Änderung gemeldet — vom Team innerhalb von 2h gelöst.", "badge": "Explorer" },
+      "comment3": { "user": "dao_whale", "text": "Tolle Community-Diskussion vor dem Launch. Vertrauensscore wächst.", "badge": "Governor" }
     },
     "vision": {
       "title": "Langfristige Vision",
@@ -184,14 +188,6 @@
       "buyback": "LAUNCH-Inhaber-Belohnungen",
       "rewards": "Projektentwicklung",
       "grants": "Förderungen / Neue Projekte"
-    },
-    "community": {
-      "title": "Gemeinsam mit der Axiome-Community gebaut",
-      "subtitle": "Diskutiere Token, erkenne Warnsignale frühzeitig und hilf guten Projekten, entdeckt zu werden.",
-      "cta": "Zur Diskussion im Explorer",
-      "comment1": { "user": "alex_dev", "text": "Solides Projekt, der Fahrplan sieht realistisch aus. Links verifiziert.", "badge": "Builder" },
-      "comment2": { "user": "crypto_guard", "text": "Verdächtige Link-Änderung gemeldet — vom Team innerhalb von 2h gelöst.", "badge": "Explorer" },
-      "comment3": { "user": "dao_whale", "text": "Tolle Community-Diskussion vor dem Launch. Vertrauensscore wächst.", "badge": "Governor" }
     },
     "cta": {
       "title": "Wir bauen echte Produkte.",

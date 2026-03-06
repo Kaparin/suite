@@ -78,7 +78,11 @@
       "title": "与我们共建",
       "subtitle": "LAUNCH 持有者可以提出新想法并对生态系统决策进行投票。每个新项目意味着更多收益回馈给持有者。",
       "submitIdea": "提交项目想法",
-      "joinCommunity": "加入社区"
+      "joinCommunity": "加入社区",
+      "cta": "加入 Explorer 中的讨论",
+      "comment1": { "user": "alex_dev", "text": "扎实的项目，路线图看起来切合实际。链接已验证。", "badge": "Builder" },
+      "comment2": { "user": "crypto_guard", "text": "标记了可疑的链接更改——团队在2小时内解决了问题。", "badge": "Explorer" },
+      "comment3": { "user": "dao_whale", "text": "发行前社区讨论非常好。信任评分正在增长。", "badge": "Governor" }
     },
     "vision": {
       "title": "长期愿景",
@@ -184,14 +188,6 @@
       "buyback": "LAUNCH 持有者奖励",
       "rewards": "项目开发",
       "grants": "资助 / 新项目"
-    },
-    "community": {
-      "title": "与 Axiome 社区共建",
-      "subtitle": "讨论代币，尽早发现风险信号，帮助优质项目被发现。",
-      "cta": "加入 Explorer 中的讨论",
-      "comment1": { "user": "alex_dev", "text": "扎实的项目，路线图看起来切合实际。链接已验证。", "badge": "Builder" },
-      "comment2": { "user": "crypto_guard", "text": "标记了可疑的链接更改——团队在2小时内解决了问题。", "badge": "Explorer" },
-      "comment3": { "user": "dao_whale", "text": "发行前社区讨论非常好。信任评分正在增长。", "badge": "Governor" }
     },
     "cta": {
       "title": "我们构建真实的产品。",
