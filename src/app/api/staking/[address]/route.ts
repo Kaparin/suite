@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server'
-import { getStakerInfo, LAUNCH_DECIMALS, AXM_DECIMALS } from '@/lib/staking'
+import { getStakerInfo, LAUNCH_CW20, LAUNCH_DECIMALS, AXM_DECIMALS } from '@/lib/staking'
+import { axiomeClient } from '@/lib/axiome/client'
 
-/** GET /api/staking/:address — staker info for a specific address */
+/** GET /api/staking/:address — staker info + LAUNCH balance */
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ address: string }> }
@@ -13,16 +14,21 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid address' }, { status: 400 })
     }
 
-    const info = await getStakerInfo(address)
+    const [info, launchBalanceRaw] = await Promise.all([
+      getStakerInfo(address),
+      axiomeClient.getCW20Balance(LAUNCH_CW20, address),
+    ])
 
     const staked = Number(info.staked) / 10 ** LAUNCH_DECIMALS
     const pendingRewards = Number(info.pending_rewards) / 10 ** AXM_DECIMALS
     const totalClaimed = Number(info.total_claimed) / 10 ** AXM_DECIMALS
+    const launchBalance = Number(launchBalanceRaw) / 10 ** LAUNCH_DECIMALS
 
     return NextResponse.json({
       staked,
       pendingRewards,
       totalClaimed,
+      launchBalance,
       raw: info,
     })
   } catch (error) {

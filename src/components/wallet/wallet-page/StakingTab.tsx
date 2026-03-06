@@ -3,9 +3,8 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useWallet } from '@/lib/wallet'
-import { STAKING_CONTRACT, LAUNCH_CW20, LAUNCH_DECIMALS } from '@/lib/staking/constants'
+import { STAKING_CONTRACT, LAUNCH_DECIMALS } from '@/lib/staking/constants'
 import { buildStakeLink, buildUnstakeLink, buildClaimLink } from '@/lib/staking/transactions'
-import { axiomeClient } from '@/lib/axiome/client'
 
 interface StakingStats {
   totalStaked: number
@@ -47,16 +46,10 @@ export function StakingTab() {
   const fetchUserStaking = useCallback(async () => {
     if (!address) return
     try {
-      const [stakingRes, launchBalance] = await Promise.all([
-        fetch(`/api/staking/${address}`),
-        axiomeClient.getCW20Balance(LAUNCH_CW20, address),
-      ])
-      if (stakingRes.ok) {
-        const data = await stakingRes.json()
-        setUserStaking({
-          ...data,
-          launchBalance: Number(launchBalance) / 10 ** LAUNCH_DECIMALS,
-        })
+      const res = await fetch(`/api/staking/${address}`)
+      if (res.ok) {
+        const data = await res.json()
+        setUserStaking(data)
       }
     } catch { /* contract not yet deployed */ }
   }, [address])
