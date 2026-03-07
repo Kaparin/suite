@@ -27,11 +27,11 @@ export interface ChannelPostOptions {
   buttons?: InlineButton[][]
   photoUrl?: string
   disablePreview?: boolean
+  disableNotification?: boolean
 }
 
-/**
- * Send a text message to a Telegram chat.
- */
+// ── Simple message sender (for alerts) ───────────────────────────────
+
 export async function sendTelegramMessage(
   chatId: string,
   message: string,
@@ -66,10 +66,8 @@ export async function sendTelegramMessage(
   }
 }
 
-/**
- * Build inline keyboard markup from a 2D array of buttons.
- * Each inner array = one row of buttons.
- */
+// ── Inline keyboard builder ──────────────────────────────────────────
+
 function buildInlineKeyboard(buttons: InlineButton[][]) {
   return {
     inline_keyboard: buttons.map(row =>
@@ -78,10 +76,8 @@ function buildInlineKeyboard(buttons: InlineButton[][]) {
   }
 }
 
-/**
- * Publish a rich post to a Telegram channel/chat.
- * Supports: text, photo + caption, inline URL buttons.
- */
+// ── Channel post (send) ──────────────────────────────────────────────
+
 export async function sendChannelPost(options: ChannelPostOptions): Promise<{
   ok: boolean
   messageId?: number
@@ -91,7 +87,10 @@ export async function sendChannelPost(options: ChannelPostOptions): Promise<{
     return { ok: false, error: 'TELEGRAM_BOT_TOKEN is not set' }
   }
 
-  const { chatId, text, parseMode = 'HTML', buttons, photoUrl, disablePreview } = options
+  const {
+    chatId, text, parseMode = 'HTML', buttons, photoUrl,
+    disablePreview, disableNotification,
+  } = options
 
   const replyMarkup = buttons && buttons.length > 0
     ? buildInlineKeyboard(buttons)
@@ -102,7 +101,6 @@ export async function sendChannelPost(options: ChannelPostOptions): Promise<{
     let body: Record<string, unknown>
 
     if (photoUrl) {
-      // sendPhoto — photo + caption + buttons
       endpoint = `${TELEGRAM_API}/bot${BOT_TOKEN}/sendPhoto`
       body = {
         chat_id: chatId,
@@ -110,9 +108,9 @@ export async function sendChannelPost(options: ChannelPostOptions): Promise<{
         caption: text,
         parse_mode: parseMode,
         ...(replyMarkup && { reply_markup: replyMarkup }),
+        ...(disableNotification && { disable_notification: true }),
       }
     } else {
-      // sendMessage — text + buttons
       endpoint = `${TELEGRAM_API}/bot${BOT_TOKEN}/sendMessage`
       body = {
         chat_id: chatId,
@@ -120,6 +118,7 @@ export async function sendChannelPost(options: ChannelPostOptions): Promise<{
         parse_mode: parseMode,
         disable_web_page_preview: disablePreview ?? false,
         ...(replyMarkup && { reply_markup: replyMarkup }),
+        ...(disableNotification && { disable_notification: true }),
       }
     }
 
@@ -142,5 +141,133 @@ export async function sendChannelPost(options: ChannelPostOptions): Promise<{
     const msg = error instanceof Error ? error.message : String(error)
     console.error(`[telegram-sender] Channel post error:`, error)
     return { ok: false, error: msg }
+  }
+}
+
+// ── Pin message ──────────────────────────────────────────────────────
+
+export async function pinChannelMessage(
+  chatId: string,
+  messageId: number,
+  disableNotification = true
+): Promise<{ ok: boolean; error?: string }> {
+  if (!BOT_TOKEN) return { ok: false, error: 'BOT_TOKEN not set' }
+
+  try {
+    const response = await fetch(`${TELEGRAM_API}/bot${BOT_TOKEN}/pinChatMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        disable_notification: disableNotification,
+      }),
+    })
+    const result: TelegramResult = await response.json()
+    if (!result.ok) return { ok: false, error: result.description }
+    return { ok: true }
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+// ── Edit message ─────────────────────────────────────────────────────
+
+export async function editChannelMessage(
+  chatId: string,
+  messageId: number,
+  text: string,
+  options?: {
+    parseMode?: 'HTML' | 'MarkdownV2'
+    buttons?: InlineButton[][]
+    disablePreview?: boolean
+  }
+): Promise<{ ok: boolean; error?: string }> {
+  if (!BOT_TOKEN) return { ok: false, error: 'BOT_TOKEN not set' }
+
+  const replyMarkup = options?.buttons && options.buttons.length > 0
+    ? buildInlineKeyboard(options.buttons)
+    : undefined
+
+  try {
+    const response = await fetch(`${TELEGRAM_API}/bot${BOT_TOKEN}/editMessageText`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        text,
+        parse_mode: options?.parseMode ?? 'HTML',
+        disable_web_page_preview: options?.disablePreview ?? false,
+        ...(replyMarkup && { reply_markup: replyMarkup }),
+      }),
+    })
+    const result: TelegramResult = await response.json()
+    if (!result.ok) return { ok: false, error: result.description }
+    return { ok: true }
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+// ── Edit caption (for photo messages) ────────────────────────────────
+
+export async function editChannelCaption(
+  chatId: string,
+  messageId: number,
+  caption: string,
+  options?: {
+    parseMode?: 'HTML' | 'MarkdownV2'
+    buttons?: InlineButton[][]
+  }
+): Promise<{ ok: boolean; error?: string }> {
+  if (!BOT_TOKEN) return { ok: false, error: 'BOT_TOKEN not set' }
+
+  const replyMarkup = options?.buttons && options.buttons.length > 0
+    ? buildInlineKeyboard(options.buttons)
+    : undefined
+
+  try {
+    const response = await fetch(`${TELEGRAM_API}/bot${BOT_TOKEN}/editMessageCaption`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+        caption,
+        parse_mode: options?.parseMode ?? 'HTML',
+        ...(replyMarkup && { reply_markup: replyMarkup }),
+      }),
+    })
+    const result: TelegramResult = await response.json()
+    if (!result.ok) return { ok: false, error: result.description }
+    return { ok: true }
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) }
+  }
+}
+
+// ── Delete message ───────────────────────────────────────────────────
+
+export async function deleteChannelMessage(
+  chatId: string,
+  messageId: number
+): Promise<{ ok: boolean; error?: string }> {
+  if (!BOT_TOKEN) return { ok: false, error: 'BOT_TOKEN not set' }
+
+  try {
+    const response = await fetch(`${TELEGRAM_API}/bot${BOT_TOKEN}/deleteMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        message_id: messageId,
+      }),
+    })
+    const result: TelegramResult = await response.json()
+    if (!result.ok) return { ok: false, error: result.description }
+    return { ok: true }
+  } catch (error) {
+    return { ok: false, error: error instanceof Error ? error.message : String(error) }
   }
 }

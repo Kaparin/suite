@@ -1,5 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { sendChannelPost, type ChannelPostOptions } from '@/lib/alerts/telegram-sender'
+import {
+  sendChannelPost,
+  pinChannelMessage,
+  editChannelMessage,
+  editChannelCaption,
+  deleteChannelMessage,
+  type ChannelPostOptions,
+} from '@/lib/alerts/telegram-sender'
 
 const ADMIN_SECRET = process.env.ADMIN_SECRET || ''
 const CHANNEL_ID = process.env.TELEGRAM_CHANNEL_ID || ''
@@ -10,40 +17,84 @@ function checkAuth(request: NextRequest): boolean {
   return authHeader.substring(7) === ADMIN_SECRET
 }
 
+function requireChannel() {
+  if (!CHANNEL_ID) {
+    return NextResponse.json({ error: 'TELEGRAM_CHANNEL_ID is not configured' }, { status: 500 })
+  }
+  return null
+}
+
 /**
  * POST /api/telegram/channel
- * Publish a post to the Telegram channel.
  *
- * Headers: Authorization: Bearer <ADMIN_SECRET>
- *
- * Body: {
- *   text: string               // HTML-formatted message text (or photo caption)
- *   photoUrl?: string           // Optional photo URL (sends as sendPhoto)
- *   buttons?: { text: string, url: string }[][]  // Inline keyboard (2D array = rows)
- *   disablePreview?: boolean    // Disable link preview (default false)
- * }
+ * Actions:
+ *   send   — Publish a new post (default)
+ *   pin    — Pin a message by messageId
+ *   edit   — Edit a sent message text/caption
+ *   delete — Delete a message by messageId
  */
 export async function POST(request: NextRequest) {
   if (!checkAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  if (!CHANNEL_ID) {
-    return NextResponse.json(
-      { error: 'TELEGRAM_CHANNEL_ID is not configured' },
-      { status: 500 }
-    )
-  }
+  const channelErr = requireChannel()
+  if (channelErr) return channelErr
 
   try {
     const body = await request.json()
-    const { text, photoUrl, buttons, disablePreview } = body
+    const action = body.action || 'send'
+
+    // ── PIN ──────────────────────────────────────────────────────────
+    if (action === 'pin') {
+      const { messageId } = body
+      if (!messageId) {
+        return NextResponse.json({ error: 'messageId is required' }, { status: 400 })
+      }
+      const result = await pinChannelMessage(CHANNEL_ID, messageId)
+      if (!result.ok) {
+        return NextResponse.json({ error: result.error }, { status: 502 })
+      }
+      return NextResponse.json({ success: true })
+    }
+
+    // ── DELETE ────────────────────────────────────────────────────────
+    if (action === 'delete') {
+      const { messageId } = body
+      if (!messageId) {
+        return NextResponse.json({ error: 'messageId is required' }, { status: 400 })
+      }
+      const result = await deleteChannelMessage(CHANNEL_ID, messageId)
+      if (!result.ok) {
+        return NextResponse.json({ error: result.error }, { status: 502 })
+      }
+      return NextResponse.json({ success: true })
+    }
+
+    // ── EDIT ─────────────────────────────────────────────────────────
+    if (action === 'edit') {
+      const { messageId, text, buttons, isPhoto } = body
+      if (!messageId || !text) {
+        return NextResponse.json({ error: 'messageId and text are required' }, { status: 400 })
+      }
+      const opts = { parseMode: 'HTML' as const, buttons }
+      const result = isPhoto
+        ? await editChannelCaption(CHANNEL_ID, messageId, text, opts)
+        : await editChannelMessage(CHANNEL_ID, messageId, text, opts)
+      if (!result.ok) {
+        return NextResponse.json({ error: result.error }, { status: 502 })
+      }
+      return NextResponse.json({ success: true })
+    }
+
+    // ── SEND (default) ───────────────────────────────────────────────
+    const { text, photoUrl, buttons, disablePreview, disableNotification, pin } = body
 
     if (!text || typeof text !== 'string') {
       return NextResponse.json({ error: 'text is required' }, { status: 400 })
     }
 
-    // Validate buttons structure if provided
+    // Validate buttons
     if (buttons) {
       if (!Array.isArray(buttons)) {
         return NextResponse.json({ error: 'buttons must be a 2D array' }, { status: 400 })
@@ -54,10 +105,7 @@ export async function POST(request: NextRequest) {
         }
         for (const btn of row) {
           if (!btn.text || !btn.url) {
-            return NextResponse.json(
-              { error: 'Each button must have text and url' },
-              { status: 400 }
-            )
+            return NextResponse.json({ error: 'Each button must have text and url' }, { status: 400 })
           }
         }
       }
@@ -70,39 +118,32 @@ export async function POST(request: NextRequest) {
       buttons,
       photoUrl,
       disablePreview,
+      disableNotification,
     }
 
     const result = await sendChannelPost(options)
 
     if (!result.ok) {
-      return NextResponse.json(
-        { error: result.error || 'Failed to send post' },
-        { status: 502 }
-      )
+      return NextResponse.json({ error: result.error || 'Failed to send' }, { status: 502 })
     }
 
-    return NextResponse.json({
-      success: true,
-      messageId: result.messageId,
-    })
+    // Auto-pin if requested
+    if (pin && result.messageId) {
+      await pinChannelMessage(CHANNEL_ID, result.messageId)
+    }
+
+    return NextResponse.json({ success: true, messageId: result.messageId })
   } catch (error) {
     console.error('[channel-post] Error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
 
-/**
- * GET /api/telegram/channel
- * Preview: returns the channel ID and bot status.
- */
+/** GET /api/telegram/channel — status check */
 export async function GET(request: NextRequest) {
   if (!checkAuth(request)) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
-
   return NextResponse.json({
     channelId: CHANNEL_ID || null,
     configured: !!CHANNEL_ID && !!process.env.TELEGRAM_BOT_TOKEN,
