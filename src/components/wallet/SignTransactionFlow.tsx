@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
-import { isMobileDevice, openAxiomeConnect } from '@/lib/wallet/axiome-connect'
+import { isMobileDevice, openAxiomeConnect, AXIOME_WALLET_IOS, AXIOME_WALLET_ANDROID } from '@/lib/wallet/axiome-connect'
 
 type FlowStep = 'preview' | 'signing' | 'checking' | 'success' | 'error'
 
@@ -202,23 +202,22 @@ export function SignTransactionFlow({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-6"
+                className="space-y-4"
               >
-                {!isMobile && (
-                  <div className="flex justify-center">
-                    <div className="bg-white p-4 rounded-xl">
-                      <QRCodeSVG value={deepLink} size={280} level="L" />
-                    </div>
+                {/* QR code — shown on ALL devices */}
+                <div className="flex justify-center">
+                  <div className="bg-white p-3 rounded-xl">
+                    <QRCodeSVG value={deepLink} size={isMobile ? 200 : 280} level="L" />
                   </div>
-                )}
+                </div>
 
-                <div className="text-center space-y-2">
+                <div className="text-center space-y-1">
                   <p className="text-white font-medium">
-                    {isMobile ? 'Sign in Axiome Wallet' : 'Scan with Axiome Wallet'}
+                    {isMobile ? 'Scan QR or copy code' : 'Scan with Axiome Wallet'}
                   </p>
                   <p className="text-sm text-gray-400">
                     {isMobile
-                      ? 'The wallet app should open. Confirm the transaction there.'
+                      ? 'Open wallet → Scan QR from screenshot, or copy the code below'
                       : 'Open Axiome Wallet app and scan this QR code'}
                   </p>
                 </div>
@@ -231,35 +230,40 @@ export function SignTransactionFlow({
                   </div>
                 )}
 
-                {/* Steps */}
-                <div className="p-4 bg-gray-800/50 rounded-xl space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-purple-500 rounded-full flex items-center justify-center">
-                      <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                    </div>
-                    <span className="text-gray-300">
-                      {isMobile ? 'Open wallet app' : 'Scan QR code'}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-xs text-white">2</span>
-                    </div>
-                    <span className="text-gray-400">Review & confirm in wallet</span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <div className="w-6 h-6 bg-gray-600 rounded-full flex items-center justify-center">
-                      <span className="text-xs text-white">3</span>
-                    </div>
-                    <span className="text-gray-400">
-                      {checkTransaction ? 'Auto-detected once confirmed' : 'Confirm below after signing'}
-                    </span>
-                  </div>
-                </div>
+                {/* Copy code section — mobile only */}
+                {isMobile && <CopyCodeBlock deepLink={deepLink} />}
 
-                {/* Manual fallback button */}
+                {/* Mobile: try deep link + install wallet links */}
+                {isMobile && (
+                  <div className="space-y-2">
+                    <a
+                      href={deepLink}
+                      className="block w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
+                    >
+                      Try Open Axiome Wallet
+                    </a>
+                    <div className="flex gap-2">
+                      <a
+                        href={AXIOME_WALLET_IOS}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
+                      >
+                        App Store
+                      </a>
+                      <a
+                        href={AXIOME_WALLET_ANDROID}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
+                      >
+                        Google Play
+                      </a>
+                    </div>
+                  </div>
+                )}
+
+                {/* Manual check button */}
                 <button
                   onClick={handleCheckTransaction}
                   disabled={isChecking}
@@ -276,24 +280,6 @@ export function SignTransactionFlow({
                     "I've signed the transaction"
                   )}
                 </button>
-
-                {isMobile && (
-                  <>
-                    {/* Direct link fallback — tapping a native <a> is more reliable than JS */}
-                    <a
-                      href={deepLink}
-                      className="block w-full py-3 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors"
-                    >
-                      Open Axiome Wallet
-                    </a>
-                    <button
-                      onClick={handleOpenWallet}
-                      className="w-full py-2 text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors"
-                    >
-                      Try opening again
-                    </button>
-                  </>
-                )}
               </motion.div>
             )}
 
@@ -371,5 +357,58 @@ export function SignTransactionFlow({
         </motion.div>
       </div>
     </AnimatePresence>
+  )
+}
+
+/** Copyable transaction code block for mobile */
+function CopyCodeBlock({ deepLink }: { deepLink: string }) {
+  const [copied, setCopied] = useState(false)
+
+  // Extract just the base64 payload (after axiomesign://)
+  const code = deepLink.startsWith('axiomesign://') ? deepLink.slice(13) : deepLink
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(code)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    } catch {
+      // Fallback for older browsers
+      const textarea = document.createElement('textarea')
+      textarea.value = code
+      textarea.style.position = 'fixed'
+      textarea.style.opacity = '0'
+      document.body.appendChild(textarea)
+      textarea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textarea)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between">
+        <span className="text-xs text-gray-400 font-medium">Transaction code</span>
+        <button
+          onClick={handleCopy}
+          className="text-xs text-purple-400 hover:text-purple-300 font-medium transition-colors"
+        >
+          {copied ? 'Copied!' : 'Copy code'}
+        </button>
+      </div>
+      <div
+        onClick={handleCopy}
+        className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors"
+      >
+        <p className="text-xs text-gray-300 font-mono break-all line-clamp-3">
+          {code}
+        </p>
+      </div>
+      <p className="text-[11px] text-gray-500 text-center">
+        Open Axiome Wallet → Scan/Paste → Confirm
+      </p>
+    </div>
   )
 }
