@@ -150,6 +150,8 @@ export default function ChannelAdminPage() {
   // Editor state
   const [text, setText] = useState('')
   const [photoUrl, setPhotoUrl] = useState('')
+  const [photoFile, setPhotoFile] = useState<File | null>(null)
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null)
   const [buttons, setButtons] = useState<InlineButton[][]>([])
   const [disablePreview, setDisablePreview] = useState(false)
   const [silentSend, setSilentSend] = useState(false)
@@ -165,6 +167,7 @@ export default function ChannelAdminPage() {
   const [tab, setTab] = useState<'editor' | 'preview'>('editor')
 
   const textareaRef = useRef<HTMLTextAreaElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Load draft & history on mount
   useEffect(() => {
@@ -227,10 +230,38 @@ export default function ChannelAdminPage() {
 
   // ── Template ───────────────────────────────────────────────────────
 
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!file.type.startsWith('image/')) {
+      setResult({ ok: false, message: 'File must be an image' })
+      return
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setResult({ ok: false, message: 'Image must be under 10MB' })
+      return
+    }
+    setPhotoFile(file)
+    setPhotoUrl('') // Clear URL when file is selected
+    const reader = new FileReader()
+    reader.onload = () => setPhotoPreview(reader.result as string)
+    reader.readAsDataURL(file)
+  }, [])
+
+  const clearPhoto = useCallback(() => {
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    setPhotoUrl('')
+    if (fileInputRef.current) fileInputRef.current.value = ''
+  }, [])
+
   const applyTemplate = useCallback((tpl: PostTemplate) => {
     setText(tpl.text)
     setButtons(tpl.buttons.map(r => r.map(b => ({ ...b }))))
     setPhotoUrl(tpl.photoUrl || '')
+    setPhotoFile(null)
+    setPhotoPreview(null)
+    if (fileInputRef.current) fileInputRef.current.value = ''
     setEditingMessageId(null)
     setEditingIsPhoto(false)
     setTab('editor')
@@ -274,6 +305,8 @@ export default function ChannelAdminPage() {
     return buttons.map(r => r.filter(b => b.text.trim() && b.url.trim())).filter(r => r.length > 0)
   }, [buttons])
 
+  const hasPhoto = !!(photoFile || photoUrl.trim())
+
   const sendPost = useCallback(async () => {
     if (!text.trim()) return
     setSending(true)
@@ -281,23 +314,46 @@ export default function ChannelAdminPage() {
 
     try {
       const btns = cleanButtons()
-      const { response, data } = await apiCall({
-        action: 'send',
-        text,
-        photoUrl: photoUrl.trim() || undefined,
-        buttons: btns.length > 0 ? btns : undefined,
-        disablePreview,
-        disableNotification: silentSend,
-        pin: pinAfterSend,
-      })
+      let response: Response
+      let data: Record<string, unknown>
+
+      if (photoFile) {
+        // Upload file directly via multipart
+        const form = new FormData()
+        form.append('photo', photoFile)
+        form.append('caption', text)
+        if (btns.length > 0) form.append('buttons', JSON.stringify(btns))
+        if (silentSend) form.append('disableNotification', 'true')
+        if (pinAfterSend) form.append('pin', 'true')
+
+        response = await fetch('/api/telegram/channel/upload', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${secret}` },
+          body: form,
+        })
+        data = await response.json()
+      } else {
+        // JSON API (text or photo URL)
+        const result = await apiCall({
+          action: 'send',
+          text,
+          photoUrl: photoUrl.trim() || undefined,
+          buttons: btns.length > 0 ? btns : undefined,
+          disablePreview,
+          disableNotification: silentSend,
+          pin: pinAfterSend,
+        })
+        response = result.response
+        data = result.data
+      }
 
       if (response.ok) {
         const post: SentPost = {
-          messageId: data.messageId,
+          messageId: data.messageId as number,
           text,
-          photoUrl: photoUrl.trim() || undefined,
+          photoUrl: photoFile ? '(uploaded)' : (photoUrl.trim() || undefined),
           buttons: btns,
-          isPhoto: !!photoUrl.trim(),
+          isPhoto: hasPhoto,
           sentAt: new Date().toISOString(),
         }
         const newHistory = [post, ...history]
@@ -305,14 +361,14 @@ export default function ChannelAdminPage() {
         saveHistory(newHistory)
         setResult({ ok: true, message: `Sent! ID: ${data.messageId}${pinAfterSend ? ' (pinned)' : ''}` })
       } else {
-        setResult({ ok: false, message: data.error || 'Failed to send' })
+        setResult({ ok: false, message: (data.error as string) || 'Failed to send' })
       }
     } catch (err) {
       setResult({ ok: false, message: err instanceof Error ? err.message : 'Network error' })
     } finally {
       setSending(false)
     }
-  }, [text, photoUrl, buttons, disablePreview, silentSend, pinAfterSend, history, apiCall, cleanButtons])
+  }, [text, photoUrl, photoFile, hasPhoto, buttons, disablePreview, silentSend, pinAfterSend, history, secret, apiCall, cleanButtons])
 
   const editPost = useCallback(async () => {
     if (!editingMessageId || !text.trim()) return
@@ -396,7 +452,7 @@ export default function ChannelAdminPage() {
 
   // ── Character limits ───────────────────────────────────────────────
 
-  const charLimit = photoUrl.trim() ? 1024 : 4096
+  const charLimit = hasPhoto ? 1024 : 4096
   const charCount = text.length
   const isOverLimit = charCount > charLimit
 
@@ -580,18 +636,52 @@ export default function ChannelAdminPage() {
               }`}
             />
 
-            {/* Photo URL */}
+            {/* Photo */}
             <div>
-              <label className="text-[10px] font-bold uppercase tracking-wide text-gray-500 mb-1 block">
-                Photo URL <span className="font-normal normal-case text-gray-600">(optional — turns post into photo+caption)</span>
+              <label className="text-[10px] font-bold uppercase tracking-wide text-gray-500 mb-1.5 block">
+                Photo <span className="font-normal normal-case text-gray-600">(optional — turns post into photo+caption, max 1024 chars)</span>
               </label>
-              <input
-                type="text"
-                value={photoUrl}
-                onChange={e => setPhotoUrl(e.target.value)}
-                placeholder="https://example.com/image.jpg"
-                className="w-full rounded-lg border border-gray-800 bg-gray-900/50 px-3 py-2 text-sm outline-none focus:border-blue-500"
-              />
+
+              {/* File or preview */}
+              {(photoFile || photoPreview) ? (
+                <div className="relative rounded-lg border border-gray-800 bg-gray-900/50 overflow-hidden mb-2">
+                  {photoPreview && (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img src={photoPreview} alt="Selected" className="w-full h-32 object-cover" />
+                  )}
+                  <div className="flex items-center justify-between px-3 py-1.5 bg-gray-950/80">
+                    <span className="text-[11px] text-gray-400 truncate">{photoFile?.name} ({((photoFile?.size ?? 0) / 1024).toFixed(0)} KB)</span>
+                    <button onClick={clearPhoto} className="text-[10px] text-red-400 hover:text-red-300 ml-2 shrink-0">Remove</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex gap-2 items-start">
+                  {/* Upload button */}
+                  <button
+                    onClick={() => fileInputRef.current?.click()}
+                    className="shrink-0 rounded-lg border border-dashed border-gray-700 bg-gray-900/50 px-4 py-2 text-xs text-gray-400 hover:border-blue-500/40 hover:text-blue-400 transition-colors"
+                  >
+                    Upload Image
+                  </button>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileSelect}
+                    className="hidden"
+                  />
+                  {/* Or URL */}
+                  <div className="flex-1">
+                    <input
+                      type="text"
+                      value={photoUrl}
+                      onChange={e => setPhotoUrl(e.target.value)}
+                      placeholder="or paste image URL..."
+                      className="w-full rounded-lg border border-gray-800 bg-gray-900/50 px-3 py-2 text-xs outline-none focus:border-blue-500"
+                    />
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Inline buttons */}
@@ -710,11 +800,11 @@ export default function ChannelAdminPage() {
 
                 {/* Message content */}
                 <div className="p-4 space-y-3">
-                  {photoUrl.trim() && (
+                  {hasPhoto && (
                     <div className="rounded-lg bg-gray-800 h-48 overflow-hidden">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
-                        src={photoUrl}
+                        src={photoPreview || photoUrl}
                         alt="Preview"
                         className="w-full h-full object-cover"
                         onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
@@ -756,7 +846,7 @@ export default function ChannelAdminPage() {
                 {silentSend && <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">🔇 Silent</span>}
                 {pinAfterSend && <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">📌 Will pin</span>}
                 {disablePreview && <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">🔗 No preview</span>}
-                {photoUrl.trim() && <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">📷 Photo post</span>}
+                {hasPhoto && <span className="text-[10px] bg-gray-800 text-gray-400 px-2 py-0.5 rounded">📷 Photo post</span>}
               </div>
             </div>
           </div>
