@@ -53,8 +53,8 @@ const i18n = {
     btnPlay: 'Play Heads or Tails',
     btnSuite: 'Launch Suite',
     btnDocs: 'Documentation',
-    btnBuyLaunch: 'Buy LAUNCH',
-    btnBuyCoin: 'Buy COIN',
+    btnBuyLaunch: '',
+    btnBuyCoin: '',
     btnPlayNow: 'Play Now',
     btnRules: 'Game Rules',
     // /game
@@ -108,8 +108,8 @@ const i18n = {
     btnPlay: 'Играть в Орёл и Решку',
     btnSuite: 'Launch Suite',
     btnDocs: 'Документация',
-    btnBuyLaunch: 'Купить LAUNCH',
-    btnBuyCoin: 'Купить COIN',
+    btnBuyLaunch: '',
+    btnBuyCoin: '',
     btnPlayNow: 'Играть',
     btnRules: 'Правила',
     gameTitle: 'Орёл и Решка — PvP Игра',
@@ -167,9 +167,6 @@ function buildWelcomeKeyboard(lang: Lang): InlineKeyboard {
     .row()
     .url(t.btnSuite, SITE_URL)
     .url(t.btnDocs, DOCS_URL)
-    .row()
-    .url(t.btnBuyLaunch, `${SITE_URL}/staking`)
-    .url(t.btnBuyCoin, `${COINFLIP_URL}/presale`)
 }
 
 function buildGameText(lang: Lang): string {
