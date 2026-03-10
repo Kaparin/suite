@@ -225,11 +225,21 @@ export async function submitSigningRequest(axiomeSignPayload: string): Promise<s
   })
 
   if (!res.ok) {
-    throw new Error(`Failed to submit signing request: ${res.status}`)
+    const errorBody = await res.text()
+    console.error('[Axiome Connect] Sign request failed:', res.status, errorBody)
+    throw new Error(`Axiome Connect error: ${res.status} — ${errorBody.slice(0, 200)}`)
   }
 
   const data = await res.json()
-  return typeof data === 'string' ? data : data.id || data
+  console.log('[Axiome Connect] Sign response:', data)
+
+  // Handle various response formats
+  if (typeof data === 'string') return data
+  if (data?.id) return data.id
+  if (data?._id) return data._id
+  // If it's an object, try to stringify for debugging
+  console.warn('[Axiome Connect] Unexpected response format:', JSON.stringify(data))
+  return String(data)
 }
 
 /**

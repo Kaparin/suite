@@ -17,18 +17,24 @@ export async function GET(
       headers: { 'Content-Type': 'application/json' },
     })
 
+    const responseText = await res.text()
+
     if (!res.ok) {
-      const text = await res.text()
       return NextResponse.json(
-        { error: 'Axiome Connect API error', details: text },
+        { error: 'Axiome Connect API error', details: responseText },
         { status: res.status }
       )
     }
 
-    const data = await res.json()
-    return NextResponse.json(data)
+    // Try to parse as JSON, fallback to wrapping in object
+    try {
+      const data = JSON.parse(responseText)
+      return NextResponse.json(data)
+    } catch {
+      return NextResponse.json({ status: responseText.trim() })
+    }
   } catch (error) {
-    console.error('Connect sign poll error:', error)
+    console.error('[connect/sign/poll] Error:', error)
     return NextResponse.json(
       { error: 'Failed to poll signing status' },
       { status: 500 }

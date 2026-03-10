@@ -292,8 +292,18 @@ export function SignTransactionFlow({
                 className="space-y-4"
               >
                 {/* Transaction Code — show the short ID from API */}
-                {transactionId && (
+                {transactionId ? (
                   <CopyCodeBlock code={transactionId} label="Transaction code" />
+                ) : (
+                  <div className="space-y-2">
+                    <span className="text-xs text-gray-400 font-medium">Transaction code</span>
+                    <div className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 text-center">
+                      <div className="flex items-center justify-center gap-2">
+                        <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+                        <span className="text-sm text-gray-400">Getting code...</span>
+                      </div>
+                    </div>
+                  </div>
                 )}
 
                 {/* QR code — shown on ALL devices */}
@@ -305,12 +315,12 @@ export function SignTransactionFlow({
 
                 <div className="text-center space-y-1">
                   <p className="text-white font-medium">
-                    {transactionId ? 'Enter code or scan QR' : 'Scan with Axiome Wallet'}
+                    {transactionId ? 'Enter code or scan QR' : 'Scan QR with Axiome Wallet'}
                   </p>
                   <p className="text-sm text-gray-400">
                     {transactionId
                       ? 'Open Axiome Wallet → Axiome Connect → Enter the code above or scan QR'
-                      : 'Open Axiome Wallet app and scan this QR code'}
+                      : 'Open Axiome Wallet → Scan this QR code'}
                   </p>
                 </div>
 
@@ -322,35 +332,33 @@ export function SignTransactionFlow({
                   {getStatusLabel()}
                 </div>
 
-                {/* Mobile: try deep link + install wallet links */}
-                {isMobile && (
-                  <div className="space-y-2">
+                {/* Open wallet button — all devices */}
+                <div className="space-y-2">
+                  <a
+                    href={deepLink}
+                    className="block w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
+                  >
+                    Open Axiome Wallet
+                  </a>
+                  <div className="flex gap-2">
                     <a
-                      href={deepLink}
-                      className="block w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
+                      href={AXIOME_WALLET_IOS}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
                     >
-                      Open Axiome Wallet
+                      App Store
                     </a>
-                    <div className="flex gap-2">
-                      <a
-                        href={AXIOME_WALLET_IOS}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
-                      >
-                        App Store
-                      </a>
-                      <a
-                        href={AXIOME_WALLET_ANDROID}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
-                      >
-                        Google Play
-                      </a>
-                    </div>
+                    <a
+                      href={AXIOME_WALLET_ANDROID}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
+                    >
+                      Google Play
+                    </a>
                   </div>
-                )}
+                </div>
 
                 {/* Manual check button */}
                 <button
