@@ -348,6 +348,7 @@ export function CreateTokenModal({
           isOpen={transactionState.isOpen}
           onClose={closeTransaction}
           deepLink={transactionState.deepLink}
+          transactionId={transactionState.transactionId}
           title={transactionState.title}
           description={transactionState.description}
           onSuccess={transactionState.onSuccess}

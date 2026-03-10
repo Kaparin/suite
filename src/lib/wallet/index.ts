@@ -12,8 +12,12 @@ export {
   openAxiomeConnect,
   AXIOME_WALLET_IOS,
   AXIOME_WALLET_ANDROID,
+  submitSigningRequest,
+  pollSigningStatus,
+  cancelSigningRequest,
+  extractTxHash,
 } from './axiome-connect'
-export type { TransactionPayload as AxiomeConnectPayload } from './axiome-connect'
+export type { TransactionPayload as AxiomeConnectPayload, SigningStatus, SigningStatusResponse } from './axiome-connect'
 export { useTransaction } from './useTransaction'
 export { useTokenBalances } from './useTokenBalances'
 export type { CW20TokenBalance } from './useTokenBalances'

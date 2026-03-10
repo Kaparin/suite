@@ -201,3 +201,70 @@ export function getQRCodeData(deepLink: string): string {
 export const AXIOME_WALLET_IOS = 'https://apps.apple.com/app/axiome-wallet/id6502285079'
 export const AXIOME_WALLET_ANDROID = 'https://play.google.com/store/apps/details?id=club.relounge.axiomewallet'
 export const AXIOME_WALLET_TESTFLIGHT = 'https://testflight.apple.com/join/Bjz0XZ5v'
+
+// ============================================================================
+// Axiome Connect API — signing via backend (official protocol)
+// ============================================================================
+
+export type SigningStatus = 'new' | 'broadcast' | 'result' | 'cancel' | 'error' | 'pulling_timeout'
+
+export interface SigningStatusResponse {
+  status: SigningStatus
+  payload?: string
+}
+
+/**
+ * Submit a signing request to Axiome Connect API.
+ * Returns the transaction ID (short hex string like "69b0374804fcff812b6bd492").
+ */
+export async function submitSigningRequest(axiomeSignPayload: string): Promise<string> {
+  const res = await fetch('/api/connect/sign', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ payload: axiomeSignPayload }),
+  })
+
+  if (!res.ok) {
+    throw new Error(`Failed to submit signing request: ${res.status}`)
+  }
+
+  const data = await res.json()
+  return typeof data === 'string' ? data : data.id || data
+}
+
+/**
+ * Poll the signing request status.
+ */
+export async function pollSigningStatus(transactionId: string): Promise<SigningStatusResponse> {
+  const res = await fetch(`/api/connect/sign/${transactionId}`)
+
+  if (!res.ok) {
+    throw new Error(`Failed to poll signing status: ${res.status}`)
+  }
+
+  return res.json()
+}
+
+/**
+ * Cancel a signing request.
+ */
+export async function cancelSigningRequest(transactionId: string): Promise<void> {
+  await fetch('/api/connect/sign/status', {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id: transactionId, status: 'cancel' }),
+  })
+}
+
+/**
+ * Extract transaction hash from signing result payload.
+ */
+export function extractTxHash(payload: string | undefined): string | null {
+  if (!payload) return null
+  try {
+    const parsed = JSON.parse(payload.replace(/\\"/g, '"'))
+    return parsed?.transactionHash || null
+  } catch {
+    return null
+  }
+}

@@ -12,10 +12,12 @@ import {
   TransactionPayload,
   AxiomeConnectFunds
 } from './transaction-builder'
+import { submitSigningRequest } from './axiome-connect'
 
-interface TransactionState {
+export interface TransactionState {
   isOpen: boolean
   deepLink: string
+  transactionId: string | null
   title: string
   description: string
   onSuccess?: (txHash: string) => void
@@ -27,6 +29,7 @@ export function useTransaction() {
   const [state, setState] = useState<TransactionState>({
     isOpen: false,
     deepLink: '',
+    transactionId: null,
     title: '',
     description: ''
   })
@@ -36,7 +39,7 @@ export function useTransaction() {
   }, [])
 
   // Generic transaction opener
-  const openTransaction = useCallback((params: {
+  const openTransaction = useCallback(async (params: {
     payload: TransactionPayload
     title: string
     description: string
@@ -44,19 +47,31 @@ export function useTransaction() {
     checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
   }) => {
     const deepLink = buildAxiomeSignLink(params.payload)
+
+    // Open the modal immediately with deep link (for QR code)
     setState({
       isOpen: true,
       deepLink,
+      transactionId: null,
       title: params.title,
       description: params.description,
       onSuccess: params.onSuccess,
       checkTransaction: params.checkTransaction
     })
+
+    // Submit to Axiome Connect API in background to get transaction ID
+    try {
+      const txId = await submitSigningRequest(deepLink)
+      setState(prev => prev.isOpen ? { ...prev, transactionId: txId } : prev)
+    } catch (err) {
+      console.error('Failed to submit signing request to API:', err)
+      // Continue with deep link only — QR code still works
+    }
   }, [])
 
   // Create CW20 token
   const createToken = useCallback((params: {
-    codeId?: number  // Uses AXIOME_CHAIN.contracts.cw20 by default
+    codeId?: number
     name: string
     symbol: string
     initialSupply: string
@@ -73,16 +88,6 @@ export function useTransaction() {
 
     const codeId = params.codeId ?? AXIOME_CHAIN.contracts.cw20
 
-    // Build instantiate message
-    const instantiateMsg = {
-      name: params.name,
-      symbol: params.symbol,
-      decimals: params.decimals ?? 6,
-      initial_balances: [{ address, amount: params.initialSupply }],
-      ...(params.enableMint ? { mint: { minter: address } } : {})
-    }
-
-    // Try Axiome Connect format first
     const payload = buildCW20InstantiatePayload({
       codeId,
       sender: address,
@@ -93,9 +98,6 @@ export function useTransaction() {
       enableMint: params.enableMint,
       label: params.symbol
     })
-
-    // Log payload for debugging
-    console.log('Token creation payload:', JSON.stringify(payload, null, 2))
 
     openTransaction({
       payload,
@@ -164,6 +166,7 @@ export function useTransaction() {
     title: string
     description: string
     onSuccess?: (txHash: string) => void
+    checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
   }) => {
     if (!address) {
       throw new Error('Wallet not connected')
@@ -180,7 +183,8 @@ export function useTransaction() {
       payload,
       title: params.title,
       description: params.description,
-      onSuccess: params.onSuccess
+      onSuccess: params.onSuccess,
+      checkTransaction: params.checkTransaction
     })
   }, [address, openTransaction])
 

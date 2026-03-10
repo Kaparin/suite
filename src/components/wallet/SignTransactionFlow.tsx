@@ -3,7 +3,16 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
-import { isMobileDevice, openAxiomeConnect, AXIOME_WALLET_IOS, AXIOME_WALLET_ANDROID } from '@/lib/wallet/axiome-connect'
+import {
+  isMobileDevice,
+  openAxiomeConnect,
+  AXIOME_WALLET_IOS,
+  AXIOME_WALLET_ANDROID,
+  pollSigningStatus,
+  cancelSigningRequest,
+  extractTxHash,
+  type SigningStatus,
+} from '@/lib/wallet/axiome-connect'
 
 type FlowStep = 'preview' | 'signing' | 'checking' | 'success' | 'error'
 
@@ -12,6 +21,7 @@ interface SignTransactionFlowProps {
   onClose: () => void
   onSuccess?: (txHash: string) => void
   deepLink: string
+  transactionId?: string | null
   title: string
   description: string
   checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
@@ -23,6 +33,7 @@ export function SignTransactionFlow({
   onClose,
   onSuccess,
   deepLink,
+  transactionId,
   title,
   description,
   checkTransaction,
@@ -30,11 +41,18 @@ export function SignTransactionFlow({
   const [step, setStep] = useState<FlowStep>('preview')
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
+  const [apiStatus, setApiStatus] = useState<SigningStatus | null>(null)
   const [isChecking, setIsChecking] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const pollCountRef = useRef(0)
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const transactionIdRef = useRef<string | null>(null)
 
   const isMobile = isMobileDevice()
+
+  // Keep ref in sync
+  useEffect(() => {
+    transactionIdRef.current = transactionId ?? null
+  }, [transactionId])
 
   // Stop polling
   const stopPolling = useCallback(() => {
@@ -42,7 +60,10 @@ export function SignTransactionFlow({
       clearInterval(pollRef.current)
       pollRef.current = null
     }
-    pollCountRef.current = 0
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+      timeoutRef.current = null
+    }
   }, [])
 
   // Reset state when modal opens
@@ -51,43 +72,78 @@ export function SignTransactionFlow({
       setStep('preview')
       setError(null)
       setTxHash(null)
+      setApiStatus(null)
       stopPolling()
     }
     return () => stopPolling()
   }, [isOpen, stopPolling])
 
-  // Auto-poll when in signing step and checkTransaction is provided
+  // Poll Axiome Connect API for status when in signing step
   useEffect(() => {
-    if (step !== 'signing' || !checkTransaction) {
+    if (step !== 'signing') {
       stopPolling()
       return
     }
 
-    // Start polling after 5s delay (give user time to scan and sign)
+    // Start polling after 3s delay
     const startDelay = setTimeout(() => {
-      pollCountRef.current = 0
       pollRef.current = setInterval(async () => {
-        pollCountRef.current++
-        // Stop after 60 attempts (~3 minutes)
-        if (pollCountRef.current > 60) {
-          stopPolling()
-          return
-        }
-        try {
-          const result = await checkTransaction()
-          if (result.success) {
-            stopPolling()
-            setTxHash(result.txHash || null)
-            setStep('success')
-            if (result.txHash && onSuccess) {
-              onSuccess(result.txHash)
+        const txId = transactionIdRef.current
+
+        // Poll Axiome Connect API if we have a transaction ID
+        if (txId) {
+          try {
+            const result = await pollSigningStatus(txId)
+            setApiStatus(result.status)
+
+            if (result.status === 'result') {
+              stopPolling()
+              const hash = extractTxHash(result.payload)
+              setTxHash(hash)
+              setStep('success')
+              if (hash && onSuccess) onSuccess(hash)
+              return
             }
+            if (result.status === 'cancel') {
+              stopPolling()
+              setError('Transaction cancelled by user')
+              setStep('error')
+              return
+            }
+            if (result.status === 'error') {
+              stopPolling()
+              setError('Transaction failed')
+              setStep('error')
+              return
+            }
+          } catch {
+            // Ignore poll errors, continue polling
           }
-        } catch {
-          // Silently ignore poll errors
         }
-      }, 3000)
-    }, 5000)
+
+        // Also try the legacy checkTransaction callback (blockchain polling)
+        if (checkTransaction) {
+          try {
+            const result = await checkTransaction()
+            if (result.success) {
+              stopPolling()
+              setTxHash(result.txHash || null)
+              setStep('success')
+              if (result.txHash && onSuccess) onSuccess(result.txHash)
+              return
+            }
+          } catch {
+            // Ignore
+          }
+        }
+      }, 10_000) // Poll every 10 seconds (matching official app)
+
+      // Timeout after 5 minutes
+      timeoutRef.current = setTimeout(() => {
+        stopPolling()
+        setApiStatus('pulling_timeout')
+      }, 300_000)
+    }, 3000)
 
     return () => {
       clearTimeout(startDelay)
@@ -103,47 +159,78 @@ export function SignTransactionFlow({
   }
 
   const handleCheckTransaction = useCallback(async () => {
-    if (!checkTransaction) {
-      setStep('success')
-      return
+    setIsChecking(true)
+
+    // First try API check
+    const txId = transactionIdRef.current
+    if (txId) {
+      try {
+        const result = await pollSigningStatus(txId)
+        if (result.status === 'result') {
+          const hash = extractTxHash(result.payload)
+          setTxHash(hash)
+          setStep('success')
+          stopPolling()
+          if (hash && onSuccess) onSuccess(hash)
+          setIsChecking(false)
+          return
+        }
+      } catch {
+        // Fall through to legacy check
+      }
     }
 
-    setIsChecking(true)
-    setStep('checking')
-    stopPolling()
-
-    try {
-      const result = await checkTransaction()
-
-      if (result.success) {
-        setTxHash(result.txHash || null)
-        setStep('success')
-        if (result.txHash && onSuccess) {
-          onSuccess(result.txHash)
+    // Legacy blockchain check
+    if (checkTransaction) {
+      try {
+        const result = await checkTransaction()
+        if (result.success) {
+          setTxHash(result.txHash || null)
+          setStep('success')
+          stopPolling()
+          if (result.txHash && onSuccess) onSuccess(result.txHash)
+        } else {
+          setError(result.error || 'Transaction not found yet. Please wait or try again.')
+          setStep('error')
         }
-      } else {
-        setError(result.error || 'Transaction not found. Please try again.')
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to check transaction')
         setStep('error')
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to check transaction')
-      setStep('error')
-    } finally {
-      setIsChecking(false)
+    } else {
+      setStep('success')
     }
+
+    setIsChecking(false)
   }, [checkTransaction, onSuccess, stopPolling])
 
   const handleRetry = () => {
     setStep('signing')
     setError(null)
+    setApiStatus(null)
   }
 
   const handleClose = () => {
+    // Cancel signing request if still pending
+    const txId = transactionIdRef.current
+    if (txId && (apiStatus === 'new' || apiStatus === null)) {
+      cancelSigningRequest(txId).catch(() => {})
+    }
     stopPolling()
     onClose()
   }
 
   if (!isOpen) return null
+
+  // Status label for API polling
+  const getStatusLabel = () => {
+    switch (apiStatus) {
+      case 'new': return 'Waiting for wallet...'
+      case 'broadcast': return 'Broadcasting transaction...'
+      case 'pulling_timeout': return 'Timeout — please check manually'
+      default: return 'Waiting for confirmation...'
+    }
+  }
 
   return (
     <AnimatePresence>
@@ -204,6 +291,11 @@ export function SignTransactionFlow({
                 animate={{ opacity: 1 }}
                 className="space-y-4"
               >
+                {/* Transaction Code — show the short ID from API */}
+                {transactionId && (
+                  <CopyCodeBlock code={transactionId} label="Transaction code" />
+                )}
+
                 {/* QR code — shown on ALL devices */}
                 <div className="flex justify-center">
                   <div className="bg-white p-3 rounded-xl">
@@ -213,25 +305,22 @@ export function SignTransactionFlow({
 
                 <div className="text-center space-y-1">
                   <p className="text-white font-medium">
-                    {isMobile ? 'Scan QR or copy code' : 'Scan with Axiome Wallet'}
+                    {transactionId ? 'Enter code or scan QR' : 'Scan with Axiome Wallet'}
                   </p>
                   <p className="text-sm text-gray-400">
-                    {isMobile
-                      ? 'Open wallet → Scan QR from screenshot, or copy the code below'
+                    {transactionId
+                      ? 'Open Axiome Wallet → Axiome Connect → Enter the code above or scan QR'
                       : 'Open Axiome Wallet app and scan this QR code'}
                   </p>
                 </div>
 
                 {/* Auto-detection indicator */}
-                {checkTransaction && (
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse" />
-                    Waiting for confirmation...
-                  </div>
-                )}
-
-                {/* Copy code section — mobile only */}
-                {isMobile && <CopyCodeBlock deepLink={deepLink} />}
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+                  <div className={`w-2 h-2 rounded-full animate-pulse ${
+                    apiStatus === 'broadcast' ? 'bg-yellow-500' : 'bg-purple-500'
+                  }`} />
+                  {getStatusLabel()}
+                </div>
 
                 {/* Mobile: try deep link + install wallet links */}
                 {isMobile && (
@@ -240,7 +329,7 @@ export function SignTransactionFlow({
                       href={deepLink}
                       className="block w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
                     >
-                      Try Open Axiome Wallet
+                      Open Axiome Wallet
                     </a>
                     <div className="flex gap-2">
                       <a
@@ -274,10 +363,8 @@ export function SignTransactionFlow({
                       <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                       Checking...
                     </>
-                  ) : checkTransaction ? (
-                    "Check manually"
                   ) : (
-                    "I've signed the transaction"
+                    "Check manually"
                   )}
                 </button>
               </motion.div>
@@ -310,9 +397,14 @@ export function SignTransactionFlow({
                 </div>
                 <p className="text-xl font-medium text-white">Transaction Successful!</p>
                 {txHash && (
-                  <p className="text-sm text-gray-400 font-mono break-all">
+                  <a
+                    href={`https://axiomechain.pro/transactions/${txHash}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm text-purple-400 hover:text-purple-300 font-mono break-all transition-colors"
+                  >
                     TX: {txHash.slice(0, 16)}...{txHash.slice(-8)}
-                  </p>
+                  </a>
                 )}
                 <button
                   onClick={handleClose}
@@ -360,12 +452,9 @@ export function SignTransactionFlow({
   )
 }
 
-/** Copyable transaction code block for mobile */
-function CopyCodeBlock({ deepLink }: { deepLink: string }) {
+/** Copyable code block */
+function CopyCodeBlock({ code, label }: { code: string; label: string }) {
   const [copied, setCopied] = useState(false)
-
-  // Extract just the base64 payload (after axiomesign://)
-  const code = deepLink.startsWith('axiomesign://') ? deepLink.slice(13) : deepLink
 
   const handleCopy = async () => {
     try {
@@ -373,7 +462,6 @@ function CopyCodeBlock({ deepLink }: { deepLink: string }) {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
-      // Fallback for older browsers
       const textarea = document.createElement('textarea')
       textarea.value = code
       textarea.style.position = 'fixed'
@@ -390,24 +478,24 @@ function CopyCodeBlock({ deepLink }: { deepLink: string }) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-400 font-medium">Transaction code</span>
+        <span className="text-xs text-gray-400 font-medium">{label}</span>
         <button
           onClick={handleCopy}
           className="text-xs text-purple-400 hover:text-purple-300 font-medium transition-colors"
         >
-          {copied ? 'Copied!' : 'Copy code'}
+          {copied ? 'Copied!' : 'Copy'}
         </button>
       </div>
       <div
         onClick={handleCopy}
-        className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 cursor-pointer hover:border-gray-600 transition-colors"
+        className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 cursor-pointer hover:border-purple-500/40 transition-colors text-center"
       >
-        <p className="text-xs text-gray-300 font-mono break-all line-clamp-3">
+        <p className="text-lg text-white font-mono tracking-wider select-all">
           {code}
         </p>
       </div>
       <p className="text-[11px] text-gray-500 text-center">
-        Open Axiome Wallet → Scan/Paste → Confirm
+        Open Axiome Wallet → Axiome Connect → Enter this code
       </p>
     </div>
   )
