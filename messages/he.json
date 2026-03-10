@@ -509,13 +509,20 @@
   },
   "docs": {
     "sidebar": {
-      "onThisPage": "בעמוד זה",
-      "overview": "סקירה",
-      "headsOrTails": "עץ או פלי",
-      "token": "טוקן LAUNCH",
-      "staking": "סטייקינג",
-      "vision": "חזון",
-      "disclaimer": "הצהרת אחריות"
+      "title": "תיעוד",
+      "nav": { "overview": "על Launch", "coinflip": "עץ או פלי" },
+      "sections": {
+        "overview": "סקירה", "projects": "פרויקטים", "token": "טוקן LAUNCH", "staking": "סטייקינג", "vision": "חזון",
+        "gettingStarted": "תחילת עבודה", "mainPage": "עמוד ראשי", "createBet": "יצירת הימור", "acceptBet": "קבלת הימור",
+        "myBets": "ההימורים שלי", "history": "היסטוריה", "leaderboard": "דירוג", "wallet": "ארנק", "shop": "חנות",
+        "stakingLaunch": "סטייקינג LAUNCH", "vip": "VIP", "jackpot": "ג'קפוט", "events": "אירועים", "news": "חדשות",
+        "social": "חברתי", "referral": "הפניה", "profile": "פרופיל", "faq": "FAQ"
+      }
+    },
+    "projects": {
+      "title": "Ecosystem Projects",
+      "subtitle": "Each project is an independent product with its own token and economy. Revenue is distributed to LAUNCH stakers.",
+      "readGuide": "Read guide"
     },
     "overview": {
       "badge": "תיעוד",
@@ -597,6 +604,29 @@
     },
     "disclaimer": {
       "text": "LAUNCH הוא טוקן המערכת. COIN הוא טוקן שירות (utility) לתכונות משחק — חנות, קוסמטיקה, הגרלות. ההימורים הם ב-AXM. משחק כרוך בסיכון — הימר רק מה שאתה יכול להרשות לעצמך להפסיד. אנחנו לא מבטיחים תשואות. שחק באחריות."
+    },
+    "guide": {
+      "hero": { "badge": "User Guide", "title": "Heads or Tails", "subtitle": "PvP game on Axiome blockchain. Two players bet AXM. Winner takes 90%.", "desc": "Complete game guide.", "cta": "Play Now" },
+      "divider": { "gameplay": "Gameplay", "economy": "Economy", "features": "Features", "account": "Account" },
+      "gettingStarted": { "title": "Getting Started", "subtitle": "Everything you need.", "reqTitle": "Requirements", "req1": "Axiome seed phrase", "req2": "AXM for gameplay", "req3": "COIN for features", "connectTitle": "Connect", "connectStep1": "Click Connect", "connectStep2": "Enter seed phrase", "connectStep3": "Done!", "firstTitle": "First steps", "first1": "Fund balance", "first2": "Activate 1-Click Play", "first3": "Create or accept bet", "note": "Gas via feegrant." },
+      "mainPage": { "title": "Main Page", "subtitle": "Four tabs.", "tabHeader": "Tab", "descHeader": "Shows", "tab1": "Bets", "tabDesc1": "Open bets", "tab2": "My Bets", "tabDesc2": "Your bets", "tab3": "History", "tabDesc3": "History", "tab4": "Leaderboard", "tabDesc4": "Top players", "elementsTitle": "Elements", "element1": "Winner banner", "element2": "Jackpot banner", "element3": "Staking banner", "element4": "Bet form", "note": "Swipe on mobile." },
+      "createBet": { "title": "Create Bet", "howTitle": "How to", "step1": "Tap +", "step2": "Choose amount", "step3": "Tap Bet", "step4": "See winnings", "step5": "Confirm", "step6": "Wait 10-50s", "exampleTitle": "Example", "valueHeader": "Value", "exLabel1": "Your bet", "exValue1": "100 AXM", "exLabel2": "Opponent", "exValue2": "100 AXM", "exLabel3": "Total", "exValue3": "200 AXM", "exLabel4": "Commission", "exValue4": "20 AXM", "exLabel5": "Winner", "exValue5": "180 AXM", "limitsTitle": "Limits", "limit1": "Min 1 AXM", "limit2": "Max 20", "limit3": "3h cancel" },
+      "acceptBet": { "title": "Accept Bet", "howTitle": "How to", "step1": "Bets tab", "step2": "Choose", "step3": "Accept", "step4": "Need balance", "step5": "Wait 10-50s", "techTitle": "Technical", "tech1": "Secret generated", "tech2": "Hash on-chain", "tech3": "Atomic tx", "tech4": "Verified", "tech5": "Transparent", "filterTitle": "Filters", "filter1": "All", "filter2": "1-10", "filter3": "10-100", "filter4": "100+" },
+      "myBets": { "title": "My Bets", "subtitle": "Three sections.", "openTitle": "Open", "openDesc": "Waiting.", "inGameTitle": "In Game", "inGameDesc": "Playing now.", "resultsTitle": "Results", "resultsDesc": "Recent games." },
+      "history": { "title": "History", "subtitle": "Game history.", "item1": "Win rate", "item2": "P&L", "item3": "Opponent", "item4": "Result", "item5": "Time", "item6": "TX link" },
+      "leaderboard": { "title": "Leaderboard", "subtitle": "Top players.", "modeHeader": "Mode", "descHeader": "Shows", "mode1": "Wins", "modeDesc1": "Won", "mode2": "Volume", "modeDesc2": "Total", "mode3": "Win Rate", "modeDesc3": "%" },
+      "wallet": { "title": "Wallet", "subtitle": "Manage funds.", "balanceTitle": "Balances", "balance1": "AXM", "balance2": "COIN", "balance3": "Game balance", "depositTitle": "Deposit", "depositStep1": "Deposit", "depositStep2": "Amount", "depositStep3": "Confirm", "depositStep4": "To vault", "withdrawTitle": "Withdraw", "withdrawStep1": "Withdraw", "withdrawStep2": "Amount", "withdrawStep3": "Confirm", "withdrawStep4": "To wallet", "note": "Low AXM warning." },
+      "shop": { "title": "Shop", "subtitle": "Buy COIN.", "howTitle": "How to", "step1": "Go to Shop", "step2": "Choose chest", "step3": "Confirm", "step4": "Credited", "bonus": "x2 first purchase!", "note": "Prices on page." },
+      "stakingLaunch": { "title": "Staking", "subtitle": "Earn AXM.", "howTitle": "How", "how1": "20% to pool", "how2": "More = more", "how3": "Auto rewards", "stakeTitle": "Stake", "stakeStep1": "Click icon", "stakeStep2": "Stake tab", "stakeStep3": "Amount", "stakeStep4": "Stake", "stakeStep5": "Confirm", "claimTitle": "Claim", "claimStep1": "See rewards", "claimStep2": "Claim", "claimStep3": "Sent", "unstakeTitle": "Unstake", "unstakeStep1": "Tab", "unstakeStep2": "Amount", "unstakeStep3": "Confirm", "statsTitle": "Stats", "stat1": "Staked", "stat2": "Rewards", "stat3": "Paid", "stat4": "Total", "stat5": "Stakers" },
+      "vip": { "title": "VIP", "subtitle": "Privileges.", "featureHeader": "Feature", "feature1": "Price", "feature2": "Badge", "feature3": "Frame", "feature4": "Boosts", "feature5": "JP L", "feature6": "JP M", "feature7": "JP SM", "feature8": "Custom", "silver1": "50 COIN", "silver2": "Silver", "silver3": "+", "silver4": "10", "silver5": "+", "silver6": "—", "silver7": "—", "silver8": "—", "gold1": "100 COIN", "gold2": "Gold", "gold3": "+", "gold4": "Unlimited", "gold5": "+", "gold6": "+", "gold7": "—", "gold8": "—", "diamond1": "200 COIN", "diamond2": "Diamond", "diamond3": "+", "diamond4": "Unlimited", "diamond5": "+", "diamond6": "+", "diamond7": "+", "diamond8": "Full", "note": "30/365 days.", "diamondTitle": "Custom", "diamondCustom1": "Gradients", "diamondCustom2": "Frames", "diamondCustom3": "Icons" },
+      "jackpot": { "title": "Jackpot", "subtitle": "Auto draws.", "howTitle": "How", "how1": "1% to pools", "how2": "Threshold draw", "how3": "Random winner", "how4": "Instant", "levelsTitle": "Levels", "levelHeader": "Level", "accessHeader": "Access", "level1": "Mini", "access1": "All", "level2": "Medium", "access2": "All", "level3": "Large", "access3": "Silver+", "level4": "Mega", "access4": "Gold+", "level5": "Super Mega", "access5": "Diamond+", "note": "Min games." },
+      "events": { "title": "Events", "subtitle": "Contests & raffles.", "contestTitle": "Contests", "contestDesc": "Auto.", "contest1": "Ranked", "contest2": "Prizes", "contest3": "Free", "raffleTitle": "Raffles", "raffleDesc": "Join & pay.", "raffle1": "Random", "raffle2": "Bigger pool", "raffle3": "Transparent", "sponsorTitle": "Sponsored", "sponsorStep1": "Create", "sponsorStep2": "Details", "sponsorStep3": "Pay", "sponsorStep4": "Listed" },
+      "news": { "title": "News", "subtitle": "Updates.", "filterHeader": "Filter", "contentHeader": "Shows", "filter1": "All", "filterDesc1": "All", "filter2": "Updates", "filterDesc2": "Patches", "filter3": "Posts", "filterDesc3": "Players", "filter4": "Wins", "filterDesc4": "Big", "filter5": "Jackpots", "filterDesc5": "JP", "note": "Post for COIN." },
+      "social": { "title": "Social", "subtitle": "Chat & transfers.", "chatTitle": "Chat", "chat1": "Global", "chat2": "Pinned", "chat3": "Paid styles", "chat4": "Effects", "chat5": "COIN Drop", "transferTitle": "Transfers", "transferStep1": "Profile", "transferStep2": "Transfer", "transferStep3": "Currency", "transferStep4": "Confirm", "favTitle": "Favorites", "favDesc": "Add favorites." },
+      "referral": { "title": "Referral", "subtitle": "Earn from friends.", "howTitle": "Invite", "howStep1": "Menu", "howStep2": "Copy link", "howStep3": "Send", "howStep4": "Earn", "rewardsTitle": "Rewards", "levelHeader": "Level", "rewardHeader": "Reward", "level1": "L1", "reward1": "3%", "level2": "L2", "reward2": "1.5%", "level3": "L3", "reward3": "0.5%", "note": "Max 5%." },
+      "profile": { "title": "Profile", "subtitle": "Stats.", "sectionsTitle": "Sections", "section1": "Nickname", "section2": "Stats", "section3": "Achievements", "section4": "VIP", "section5": "Telegram", "section6": "Settings", "section7": "Wallet", "achieveTitle": "Achievements", "achieve1": "Winner", "achieve2": "Warrior", "achieve3": "High Roller", "achieve4": "Volume King", "achieve5": "Streak", "achieve6": "Profit Master", "achieve7": "Social", "achieve8": "Loyal", "achieve9": "Champion", "achieve10": "Lucky", "achieve11": "Jackpot Hunter", "achieveNote": "Claim rewards." },
+      "faq": { "title": "FAQ", "q1": "Fund?", "a1": "Deposit AXM.", "q2": "AXM?", "a2": "Exchange.", "q3": "Fair?", "a3": "Commit-reveal.", "q4": "Locked?", "a4": "Until done.", "q5": "Canceled?", "a5": "3h.", "q6": "Commission?", "a6": "Staking, jackpot, referrals.", "q7": "Safe?", "a7": "Yes.", "q8": "LAUNCH?", "a8": "Staking token.", "q9": "COIN?", "a9": "Utility." },
+      "footer": { "text": "Heads or Tails — fair PvP on Axiome." }
     }
   },
   "lock": {
