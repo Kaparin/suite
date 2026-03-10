@@ -12,12 +12,13 @@ import {
   TransactionPayload,
   AxiomeConnectFunds
 } from './transaction-builder'
-import { submitSigningRequest } from './axiome-connect'
+import { useAxiomeConnect } from './useAxiomeConnect'
 
 export interface TransactionState {
   isOpen: boolean
   deepLink: string
-  transactionId: string | null
+  signingCode: string | null
+  connectToken: string | null
   title: string
   description: string
   onSuccess?: (txHash: string) => void
@@ -26,10 +27,12 @@ export interface TransactionState {
 
 export function useTransaction() {
   const { address } = useWallet()
+  const axiomeConnect = useAxiomeConnect()
   const [state, setState] = useState<TransactionState>({
     isOpen: false,
     deepLink: '',
-    transactionId: null,
+    signingCode: null,
+    connectToken: null,
     title: '',
     description: ''
   })
@@ -48,26 +51,35 @@ export function useTransaction() {
   }) => {
     const deepLink = buildAxiomeSignLink(params.payload)
 
-    // Open the modal immediately with deep link (for QR code)
+    // Open modal immediately with QR/deep link
     setState({
       isOpen: true,
       deepLink,
-      transactionId: null,
+      signingCode: null,
+      connectToken: null,
       title: params.title,
       description: params.description,
       onSuccess: params.onSuccess,
       checkTransaction: params.checkTransaction
     })
 
-    // Submit to Axiome Connect API in background to get transaction ID
+    // Try to get auth token and submit signing request in background
     try {
-      const txId = await submitSigningRequest(deepLink)
-      setState(prev => prev.isOpen ? { ...prev, transactionId: txId } : prev)
+      const token = await axiomeConnect.startConnect()
+      if (token) {
+        setState(prev => prev.isOpen ? { ...prev, connectToken: token } : prev)
+
+        // Try to submit signing request
+        const signingId = await axiomeConnect.submitSigningRequest(deepLink, token)
+        if (signingId) {
+          setState(prev => prev.isOpen ? { ...prev, signingCode: signingId } : prev)
+        }
+      }
     } catch (err) {
-      console.error('Failed to submit signing request to API:', err)
+      console.error('Failed to get Axiome Connect auth:', err)
       // Continue with deep link only — QR code still works
     }
-  }, [])
+  }, [axiomeConnect])
 
   // Create CW20 token
   const createToken = useCallback((params: {

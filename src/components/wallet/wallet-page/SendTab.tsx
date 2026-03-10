@@ -261,7 +261,8 @@ export function SendTab() {
           isOpen={transactionState.isOpen}
           onClose={closeTransaction}
           deepLink={transactionState.deepLink}
-          transactionId={transactionState.transactionId}
+          signingCode={transactionState.signingCode}
+          connectToken={transactionState.connectToken}
           title={transactionState.title}
           description={transactionState.description}
           onSuccess={transactionState.onSuccess}

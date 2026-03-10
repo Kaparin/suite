@@ -5,11 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { QRCodeSVG } from 'qrcode.react'
 import {
   isMobileDevice,
-  openAxiomeConnect,
   AXIOME_WALLET_IOS,
   AXIOME_WALLET_ANDROID,
   pollSigningStatus,
-  cancelSigningRequest,
   extractTxHash,
   type SigningStatus,
 } from '@/lib/wallet/axiome-connect'
@@ -21,7 +19,8 @@ interface SignTransactionFlowProps {
   onClose: () => void
   onSuccess?: (txHash: string) => void
   deepLink: string
-  transactionId?: string | null
+  signingCode?: string | null
+  connectToken?: string | null
   title: string
   description: string
   checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
@@ -33,7 +32,8 @@ export function SignTransactionFlow({
   onClose,
   onSuccess,
   deepLink,
-  transactionId,
+  signingCode,
+  connectToken,
   title,
   description,
   checkTransaction,
@@ -45,14 +45,14 @@ export function SignTransactionFlow({
   const [isChecking, setIsChecking] = useState(false)
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-  const transactionIdRef = useRef<string | null>(null)
+  const signingCodeRef = useRef<string | null>(null)
 
   const isMobile = isMobileDevice()
 
   // Keep ref in sync
   useEffect(() => {
-    transactionIdRef.current = transactionId ?? null
-  }, [transactionId])
+    signingCodeRef.current = signingCode ?? null
+  }, [signingCode])
 
   // Stop polling
   const stopPolling = useCallback(() => {
@@ -78,22 +78,21 @@ export function SignTransactionFlow({
     return () => stopPolling()
   }, [isOpen, stopPolling])
 
-  // Poll Axiome Connect API for status when in signing step
+  // Poll for transaction status when in signing step
   useEffect(() => {
     if (step !== 'signing') {
       stopPolling()
       return
     }
 
-    // Start polling after 3s delay
     const startDelay = setTimeout(() => {
       pollRef.current = setInterval(async () => {
-        const txId = transactionIdRef.current
+        const code = signingCodeRef.current
 
-        // Poll Axiome Connect API if we have a transaction ID
-        if (txId) {
+        // Poll Axiome Connect API if we have a signing code
+        if (code) {
           try {
-            const result = await pollSigningStatus(txId)
+            const result = await pollSigningStatus(code)
             setApiStatus(result.status)
 
             if (result.status === 'result') {
@@ -117,11 +116,11 @@ export function SignTransactionFlow({
               return
             }
           } catch {
-            // Ignore poll errors, continue polling
+            // Ignore poll errors
           }
         }
 
-        // Also try the legacy checkTransaction callback (blockchain polling)
+        // Also try blockchain polling
         if (checkTransaction) {
           try {
             const result = await checkTransaction()
@@ -130,20 +129,18 @@ export function SignTransactionFlow({
               setTxHash(result.txHash || null)
               setStep('success')
               if (result.txHash && onSuccess) onSuccess(result.txHash)
-              return
             }
           } catch {
             // Ignore
           }
         }
-      }, 10_000) // Poll every 10 seconds (matching official app)
+      }, 10_000)
 
-      // Timeout after 5 minutes
       timeoutRef.current = setTimeout(() => {
         stopPolling()
         setApiStatus('pulling_timeout')
       }, 300_000)
-    }, 3000)
+    }, 5000)
 
     return () => {
       clearTimeout(startDelay)
@@ -151,21 +148,43 @@ export function SignTransactionFlow({
     }
   }, [step, checkTransaction, onSuccess, stopPolling])
 
+  // Open the wallet app
+  const openWalletApp = useCallback(() => {
+    if (connectToken) {
+      // Use the official Axiome Connect URL (App Link / Universal Link)
+      const connectUrl = `https://axiome.pro/app/connect?token=${connectToken}`
+      window.location.href = connectUrl
+    } else {
+      // Fallback: try deep link directly
+      const isAndroid = /Android/i.test(navigator.userAgent)
+      if (isAndroid) {
+        const base64Part = deepLink.replace('axiomesign://', '')
+        const intentUrl = `intent://${base64Part}#Intent;scheme=axiomesign;package=club.relounge.axiomewallet;end`
+        const a = document.createElement('a')
+        a.href = intentUrl
+        a.style.display = 'none'
+        document.body.appendChild(a)
+        a.click()
+        setTimeout(() => document.body.removeChild(a), 100)
+      } else {
+        window.location.href = deepLink
+      }
+    }
+  }, [connectToken, deepLink])
+
   const handleOpenWallet = () => {
     setStep('signing')
-    if (isMobile) {
-      openAxiomeConnect(deepLink)
-    }
+    openWalletApp()
   }
 
   const handleCheckTransaction = useCallback(async () => {
     setIsChecking(true)
 
     // First try API check
-    const txId = transactionIdRef.current
-    if (txId) {
+    const code = signingCodeRef.current
+    if (code) {
       try {
-        const result = await pollSigningStatus(txId)
+        const result = await pollSigningStatus(code)
         if (result.status === 'result') {
           const hash = extractTxHash(result.payload)
           setTxHash(hash)
@@ -176,11 +195,11 @@ export function SignTransactionFlow({
           return
         }
       } catch {
-        // Fall through to legacy check
+        // Fall through
       }
     }
 
-    // Legacy blockchain check
+    // Blockchain check
     if (checkTransaction) {
       try {
         const result = await checkTransaction()
@@ -211,18 +230,12 @@ export function SignTransactionFlow({
   }
 
   const handleClose = () => {
-    // Cancel signing request if still pending
-    const txId = transactionIdRef.current
-    if (txId && (apiStatus === 'new' || apiStatus === null)) {
-      cancelSigningRequest(txId).catch(() => {})
-    }
     stopPolling()
     onClose()
   }
 
   if (!isOpen) return null
 
-  // Status label for API polling
   const getStatusLabel = () => {
     switch (apiStatus) {
       case 'new': return 'Waiting for wallet...'
@@ -271,29 +284,13 @@ export function SignTransactionFlow({
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="space-y-6"
+                className="space-y-4"
               >
                 <p className="text-gray-400 text-center">{description}</p>
 
-                <button
-                  onClick={handleOpenWallet}
-                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all"
-                >
-                  Continue to Sign
-                </button>
-              </motion.div>
-            )}
-
-            {/* Step: Signing */}
-            {step === 'signing' && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-4"
-              >
-                {/* Transaction Code — show the short ID from API */}
-                {transactionId ? (
-                  <CopyCodeBlock code={transactionId} label="Transaction code" />
+                {/* Signing code (if available) */}
+                {signingCode ? (
+                  <CopyCodeBlock code={signingCode} label="Transaction code" />
                 ) : (
                   <div className="space-y-2">
                     <span className="text-xs text-gray-400 font-medium">Transaction code</span>
@@ -306,25 +303,77 @@ export function SignTransactionFlow({
                   </div>
                 )}
 
-                {/* QR code — shown on ALL devices */}
+                {/* QR code */}
                 <div className="flex justify-center">
                   <div className="bg-white p-3 rounded-xl">
-                    <QRCodeSVG value={deepLink} size={isMobile ? 200 : 280} level="L" />
+                    <QRCodeSVG value={deepLink} size={isMobile ? 180 : 240} level="L" />
                   </div>
                 </div>
 
                 <div className="text-center space-y-1">
                   <p className="text-white font-medium">
-                    {transactionId ? 'Enter code or scan QR' : 'Scan QR with Axiome Wallet'}
+                    {signingCode ? 'Enter code or scan QR' : 'Scan QR with Axiome Wallet'}
                   </p>
                   <p className="text-sm text-gray-400">
-                    {transactionId
-                      ? 'Open Axiome Wallet → Axiome Connect → Enter the code above or scan QR'
-                      : 'Open Axiome Wallet → Scan this QR code'}
+                    Open Axiome Wallet → Axiome Connect → Enter code or scan QR
                   </p>
                 </div>
 
-                {/* Auto-detection indicator */}
+                <button
+                  onClick={handleOpenWallet}
+                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all"
+                >
+                  Open Axiome Wallet
+                </button>
+
+                <div className="flex gap-2">
+                  <a
+                    href={AXIOME_WALLET_IOS}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
+                  >
+                    App Store
+                  </a>
+                  <a
+                    href={AXIOME_WALLET_ANDROID}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
+                  >
+                    Google Play
+                  </a>
+                </div>
+              </motion.div>
+            )}
+
+            {/* Step: Signing (waiting for user to sign in wallet) */}
+            {step === 'signing' && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="space-y-4"
+              >
+                {/* Signing code */}
+                {signingCode && (
+                  <CopyCodeBlock code={signingCode} label="Transaction code" />
+                )}
+
+                {/* QR code */}
+                <div className="flex justify-center">
+                  <div className="bg-white p-3 rounded-xl">
+                    <QRCodeSVG value={deepLink} size={isMobile ? 180 : 240} level="L" />
+                  </div>
+                </div>
+
+                <div className="text-center space-y-1">
+                  <p className="text-white font-medium">Sign the transaction in Axiome Wallet</p>
+                  <p className="text-sm text-gray-400">
+                    Review and confirm the transaction in your wallet app
+                  </p>
+                </div>
+
+                {/* Status indicator */}
                 <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
                   <div className={`w-2 h-2 rounded-full animate-pulse ${
                     apiStatus === 'broadcast' ? 'bg-yellow-500' : 'bg-purple-500'
@@ -332,32 +381,14 @@ export function SignTransactionFlow({
                   {getStatusLabel()}
                 </div>
 
-                {/* Open wallet button — all devices */}
+                {/* Action buttons */}
                 <div className="space-y-2">
-                  <a
-                    href={deepLink}
-                    className="block w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
+                  <button
+                    onClick={openWalletApp}
+                    className="w-full py-2.5 text-center bg-purple-600 hover:bg-purple-500 text-white font-medium rounded-xl transition-colors text-sm"
                   >
                     Open Axiome Wallet
-                  </a>
-                  <div className="flex gap-2">
-                    <a
-                      href={AXIOME_WALLET_IOS}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
-                    >
-                      App Store
-                    </a>
-                    <a
-                      href={AXIOME_WALLET_ANDROID}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex-1 py-2 text-center bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-medium rounded-xl transition-colors"
-                    >
-                      Google Play
-                    </a>
-                  </div>
+                  </button>
                 </div>
 
                 {/* Manual check button */}
@@ -372,7 +403,7 @@ export function SignTransactionFlow({
                       Checking...
                     </>
                   ) : (
-                    "Check manually"
+                    "I've signed — check transaction"
                   )}
                 </button>
               </motion.div>

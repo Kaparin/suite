@@ -19,6 +19,7 @@ export {
 } from './axiome-connect'
 export type { TransactionPayload as AxiomeConnectPayload, SigningStatus, SigningStatusResponse } from './axiome-connect'
 export { useTransaction } from './useTransaction'
+export { useAxiomeConnect } from './useAxiomeConnect'
 export { useTokenBalances } from './useTokenBalances'
 export type { CW20TokenBalance } from './useTokenBalances'
 export { useTransactionHistory } from './useTransactionHistory'
