@@ -62,7 +62,15 @@
       "WebFetch(domain:www.coingecko.com)",
       "WebFetch(domain:coinmarketcap.com)",
       "WebFetch(domain:linktr.ee)",
-      "Bash(del:*)"
+      "Bash(del:*)",
+      "Bash(xargs ls:*)",
+      "Bash(xargs grep:*)",
+      "Bash(grep:*)",
+      "Bash(do echo:*)",
+      "Bash(do:*)",
+      "Bash(ls:*)",
+      "Bash(do if:*)",
+      "Bash(echo === FOUND in $chunk ===:*)"
     ]
   }
 }
