@@ -155,6 +155,10 @@ export function WalletProvider({ children }: { children: ReactNode }) {
     setState(initialState)
     setBalance(initialBalance)
     localStorage.removeItem(STORAGE_KEY)
+    // Also clear Axiome Connect session
+    localStorage.removeItem('axiome_connect_token')
+    localStorage.removeItem('axiome_connect_token_ts')
+    localStorage.removeItem('axiome_connect_wallet')
   }, [])
 
   return (

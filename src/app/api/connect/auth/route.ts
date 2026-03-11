@@ -3,12 +3,34 @@ import { NextResponse } from 'next/server'
 const AXIOME_IDX_API = 'https://api-idx.axiomechain.pro'
 
 /**
+ * Forward relevant client headers to the Axiome API
+ * so the wallet can display origin site info during authorization
+ */
+function getForwardHeaders(request: Request): Record<string, string> {
+  const headers: Record<string, string> = {}
+
+  const xff = request.headers.get('x-forwarded-for')
+  const origin = request.headers.get('origin')
+  const referer = request.headers.get('referer')
+  const userAgent = request.headers.get('user-agent')
+
+  if (xff) headers['X-Forwarded-For'] = xff
+  if (origin) headers['Origin'] = origin
+  if (referer) headers['Referer'] = referer
+  if (userAgent) headers['User-Agent'] = userAgent
+
+  return headers
+}
+
+/**
  * GET /api/connect/auth — Get a new connect token from Axiome
  * Returns: { token: "hex24chars", ... }
  */
-export async function GET() {
+export async function GET(request: Request) {
   try {
-    const res = await fetch(`${AXIOME_IDX_API}/connect/create_token`)
+    const res = await fetch(`${AXIOME_IDX_API}/connect/create_token`, {
+      headers: getForwardHeaders(request),
+    })
     const data = await res.json()
 
     if (!res.ok) {
@@ -44,7 +66,10 @@ export async function POST(request: Request) {
 
     const res = await fetch(`${AXIOME_IDX_API}/connect/get_token_info`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...getForwardHeaders(request),
+      },
       body: JSON.stringify({ token }),
     })
 

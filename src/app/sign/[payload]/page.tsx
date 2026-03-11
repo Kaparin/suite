@@ -32,15 +32,18 @@ export default function SignPage() {
   const payload = params.payload as string
 
   const [deepLink, setDeepLink] = useState('')
+  const [pageUrl, setPageUrl] = useState('')
   const [parsedPayload, setParsedPayload] = useState<ParsedPayload | null>(null)
   const [copied, setCopied] = useState(false)
   const [attemptedOpen, setAttemptedOpen] = useState(false)
 
   useEffect(() => {
     if (payload) {
-      // The payload is already base64 encoded
+      // Deep link for opening wallet app directly
       const link = `axiomesign://${payload}`
       setDeepLink(link)
+      // Web URL for QR code (scannable by any phone camera)
+      setPageUrl(window.location.href)
 
       // Try to parse the payload for display
       try {
@@ -200,7 +203,7 @@ export default function SignPage() {
             {!isMobile && (
               <div className="flex justify-center py-4">
                 <div className="bg-white p-3 rounded-xl">
-                  <QRCodeSVG value={deepLink} size={180} level="L" />
+                  <QRCodeSVG value={pageUrl} size={180} level="L" />
                 </div>
               </div>
             )}

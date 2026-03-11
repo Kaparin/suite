@@ -7,7 +7,7 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getLocale, getMessages } from 'next-intl/server';
 import { isRtl, type Locale } from '@/i18n/config';
 import { WalletProvider } from '@/lib/wallet';
-import { ConnectWalletModal } from '@/components/wallet';
+import { ConnectWalletSheet } from '@/components/wallet';
 import { AuthProviderWrapper } from '@/components/providers';
 
 const inter = Inter({
@@ -67,7 +67,7 @@ export default async function RootLayout({
                 {children}
               </main>
               <Footer />
-              <ConnectWalletModal />
+              <ConnectWalletSheet />
             </WalletProvider>
           </AuthProviderWrapper>
         </NextIntlClientProvider>

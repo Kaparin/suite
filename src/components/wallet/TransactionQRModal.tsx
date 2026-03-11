@@ -9,6 +9,7 @@ interface TransactionQRModalProps {
   isOpen: boolean
   onClose: () => void
   deepLink: string
+  connectToken?: string | null
   title?: string
   description?: string
 }
@@ -17,6 +18,7 @@ export function TransactionQRModal({
   isOpen,
   onClose,
   deepLink,
+  connectToken,
   title = 'Sign Transaction',
   description = 'Scan this QR code with Axiome Wallet to sign the transaction.',
 }: TransactionQRModalProps) {
@@ -35,8 +37,17 @@ export function TransactionQRModal({
     }
   }
 
+  // Universal link for QR (scannable by any camera) vs deep link for button
+  const qrValue = connectToken
+    ? `https://axiome.pro/app/connect?token=${connectToken}`
+    : deepLink
+
   const handleOpenWallet = () => {
-    openAxiomeConnect(deepLink)
+    if (connectToken) {
+      window.location.href = `https://axiome.pro/app/connect?token=${connectToken}`
+    } else {
+      openAxiomeConnect(deepLink)
+    }
   }
 
   return (
@@ -80,7 +91,7 @@ export function TransactionQRModal({
               <div className="flex justify-center">
                 <div className="bg-white p-4 rounded-xl">
                   <QRCodeSVG
-                    value={deepLink}
+                    value={qrValue}
                     size={200}
                     level="M"
                     includeMargin={false}

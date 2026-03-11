@@ -45,10 +45,26 @@
     },
     "ecosystem": {
       "title": "Ökosystem-Projekte",
-      "headsOrTails": { "title": "Kopf oder Zahl", "status": "Live", "desc": "PvP-Münzwurf mit AXM. Nachweisbar fair. 50/50. Gewinner nimmt 90%." },
-      "tournaments": { "title": "Events & Verlosungen", "status": "Live", "desc": "Wettbewerbe und Verlosungen mit echten AXM-Preisen für aktive Spieler." },
-      "communityProjects": { "title": "Community-Projekte", "status": "Geplant", "desc": "Community-Ideen und Builds." },
-      "tbd": { "title": "Nächstes Projekt", "status": "Geplant", "desc": "Nächstes Produkt in Entwicklung. Jedes Projekt hat seinen eigenen Token." }
+      "headsOrTails": {
+        "title": "Kopf oder Zahl",
+        "status": "Live",
+        "desc": "PvP-Münzwurf mit AXM. Nachweisbar fair. 50/50. Gewinner nimmt 90%."
+      },
+      "tournaments": {
+        "title": "Events & Verlosungen",
+        "status": "Live",
+        "desc": "Wettbewerbe und Verlosungen mit echten AXM-Preisen für aktive Spieler."
+      },
+      "communityProjects": {
+        "title": "Community-Projekte",
+        "status": "Geplant",
+        "desc": "Community-Ideen und Builds."
+      },
+      "tbd": {
+        "title": "Nächstes Projekt",
+        "status": "Geplant",
+        "desc": "Nächstes Produkt in Entwicklung. Jedes Projekt hat seinen eigenen Token."
+      }
     },
     "launchToken": {
       "title": "LAUNCH — Ökosystem-Ertrags-Token",
@@ -69,9 +85,21 @@
     "stakingSection": {
       "title": "Stake LAUNCH, verdiene AXM",
       "subtitle": "Jedes Projekt sendet einen Anteil der Einnahmen an den Staking-Vertrag. Dein Anteil ist proportional zu deinem Stake.",
-      "stake": { "icon": "📥", "title": "Staken", "desc": "LAUNCH-Token an den Staking-Vertrag senden. Keine Sperrfrist." },
-      "earn": { "icon": "💰", "title": "Verdienen", "desc": "Projekte verteilen AXM an alle Staker. 20% jeder Kommission fließen an Staker." },
-      "claim": { "icon": "🎁", "title": "Abholen", "desc": "AXM-Belohnungen jederzeit abholen. Je mehr du stakst, desto mehr verdienst du." },
+      "stake": {
+        "icon": "📥",
+        "title": "Staken",
+        "desc": "LAUNCH-Token an den Staking-Vertrag senden. Keine Sperrfrist."
+      },
+      "earn": {
+        "icon": "💰",
+        "title": "Verdienen",
+        "desc": "Projekte verteilen AXM an alle Staker. 20% jeder Kommission fließen an Staker."
+      },
+      "claim": {
+        "icon": "🎁",
+        "title": "Abholen",
+        "desc": "AXM-Belohnungen jederzeit abholen. Je mehr du stakst, desto mehr verdienst du."
+      },
       "cta": "Staking starten"
     },
     "community": {
@@ -80,9 +108,21 @@
       "submitIdea": "Projektidee einreichen",
       "joinCommunity": "Community beitreten",
       "cta": "Zur Diskussion im Explorer",
-      "comment1": { "user": "alex_dev", "text": "Solides Projekt, der Fahrplan sieht realistisch aus. Links verifiziert.", "badge": "Builder" },
-      "comment2": { "user": "crypto_guard", "text": "Verdächtige Link-Änderung gemeldet — vom Team innerhalb von 2h gelöst.", "badge": "Explorer" },
-      "comment3": { "user": "dao_whale", "text": "Tolle Community-Diskussion vor dem Launch. Vertrauensscore wächst.", "badge": "Governor" }
+      "comment1": {
+        "user": "alex_dev",
+        "text": "Solides Projekt, der Fahrplan sieht realistisch aus. Links verifiziert.",
+        "badge": "Builder"
+      },
+      "comment2": {
+        "user": "crypto_guard",
+        "text": "Verdächtige Link-Änderung gemeldet — vom Team innerhalb von 2h gelöst.",
+        "badge": "Explorer"
+      },
+      "comment3": {
+        "user": "dao_whale",
+        "text": "Tolle Community-Diskussion vor dem Launch. Vertrauensscore wächst.",
+        "badge": "Governor"
+      }
     },
     "vision": {
       "title": "Langfristige Vision",
@@ -163,17 +203,38 @@
     },
     "steps": {
       "title": "So funktioniert es",
-      "step1": { "title": "Erstellen oder Entdecken", "desc": "Erstelle eine Projektseite (Pre-Launch) oder erkunde bestehende Token." },
-      "step2": { "title": "Verifizieren & Anreichern", "desc": "Token-Eigentümer beanspruchen die Seite und fügen verifizierte Links + Infos hinzu." },
-      "step3": { "title": "Community-Feedback", "desc": "Kommentare, Reaktionen und Bewertungsvorlagen heben Qualität hervor." },
-      "step4": { "title": "Starten & Wachsen", "desc": "Wenn du on-chain startest, hat dein Token bereits Kontext und Reputation." }
+      "step1": {
+        "title": "Erstellen oder Entdecken",
+        "desc": "Erstelle eine Projektseite (Pre-Launch) oder erkunde bestehende Token."
+      },
+      "step2": {
+        "title": "Verifizieren & Anreichern",
+        "desc": "Token-Eigentümer beanspruchen die Seite und fügen verifizierte Links + Infos hinzu."
+      },
+      "step3": {
+        "title": "Community-Feedback",
+        "desc": "Kommentare, Reaktionen und Bewertungsvorlagen heben Qualität hervor."
+      },
+      "step4": {
+        "title": "Starten & Wachsen",
+        "desc": "Wenn du on-chain startest, hat dein Token bereits Kontext und Reputation."
+      }
     },
     "utility": {
       "title": "LAUNCH Token Nutzen",
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Halte LAUNCH, um an jedem Projekt mitzuverdienen und an der Governance teilzunehmen.",
-      "access": { "title": "Ertragsanteil", "desc": "Verdiene AXM aus jedem gestarteten Projekt: AXM von Kopf oder Zahl und Einnahmen von zukünftigen Projekten." },
-      "reputation": { "title": "Zugang & Stufen", "desc": "Sperre LAUNCH, um Plattform-Features freizuschalten: Projekte veröffentlichen, abstimmen und Pro-Tools nutzen." },
-      "rewards": { "title": "Governance", "desc": "Schlage neue Projekte vor, stimme über Ökosystem-Entscheidungen ab und gestalte die Zukunft der Plattform." },
+      "access": {
+        "title": "Ertragsanteil",
+        "desc": "Verdiene AXM aus jedem gestarteten Projekt: AXM von Kopf oder Zahl und Einnahmen von zukünftigen Projekten."
+      },
+      "reputation": {
+        "title": "Zugang & Stufen",
+        "desc": "Sperre LAUNCH, um Plattform-Features freizuschalten: Projekte veröffentlichen, abstimmen und Pro-Tools nutzen."
+      },
+      "rewards": {
+        "title": "Governance",
+        "desc": "Schlage neue Projekte vor, stimme über Ökosystem-Entscheidungen ab und gestalte die Zukunft der Plattform."
+      },
       "readMore": "Tokenomics lesen"
     },
     "tiers": {
@@ -325,6 +386,50 @@
       "slippage": "Slippage-Toleranz",
       "networkFee": "Netzwerkgebühr",
       "swap": "Tauschen"
+    },
+    "axiomeConnect": {
+      "title": "Axiome Connect",
+      "close": "Schließen",
+      "step1Title": "Axiome Wallet öffnen",
+      "step1Desc": "Starten Sie die Axiome Wallet App auf Ihrem Gerät",
+      "step2Title": "Zu Axiome Connect navigieren",
+      "step2Desc": "Finden und öffnen Sie den Axiome Connect Bereich in der App",
+      "step3TitleDesktop": "QR-Code scannen und bestätigen",
+      "step3DescDesktop": "Richten Sie die Kamera auf den QR-Code, um Ihr Wallet zu verbinden",
+      "step3TitleMobile": "Code eingeben und bestätigen",
+      "step3DescMobile": "Fügen Sie den Autorisierungscode ein und bestätigen Sie die Verbindung",
+      "testflightHint": "Wenn Sie Axiome Wallet über TestFlight installiert haben, öffnen Sie Axiome Connect und geben Sie den Autorisierungscode ein:",
+      "generatingCode": "Code wird generiert...",
+      "tapToCopy": "Tippen zum Kopieren",
+      "copied": "Kopiert!",
+      "connectButton": "Verbinden",
+      "waiting": "Warte auf Wallet-Verbindung...",
+      "downloadWallet": "Axiome Wallet herunterladen"
+    },
+    "signTransaction": {
+      "gettingCode": "Code wird geladen...",
+      "transactionCode": "Transaktionscode",
+      "enterCodeOrScan": "Code eingeben oder QR-Code in Axiome Wallet scannen",
+      "scanQR": "QR-Code in Axiome Wallet scannen",
+      "enterCodeMobile": "Axiome Wallet öffnen und Code oben eingeben",
+      "scanHint": "Axiome Wallet → Axiome Connect → Code eingeben oder QR scannen",
+      "codeHint": "Axiome Wallet → Axiome Connect → Diesen Code eingeben",
+      "openWallet": "Axiome Wallet öffnen",
+      "signInWallet": "Im Wallet signieren",
+      "checkTransaction": "Ich habe signiert — Transaktion prüfen",
+      "checking": "Prüfe...",
+      "checkingTransaction": "Transaktion wird geprüft...",
+      "mayTakeMoments": "Dies kann einen Moment dauern",
+      "success": "Transaktion erfolgreich!",
+      "failed": "Transaktion fehlgeschlagen",
+      "tryAgain": "Erneut versuchen",
+      "cancel": "Abbrechen",
+      "done": "Fertig",
+      "copy": "Kopieren",
+      "statusWaiting": "Warte auf Wallet...",
+      "statusBroadcast": "Transaktion wird gesendet...",
+      "statusTimeout": "Zeitüberschreitung — bitte manuell prüfen",
+      "statusConfirming": "Warte auf Bestätigung..."
     }
   },
   "createToken": {
@@ -498,13 +603,34 @@
   "docs": {
     "sidebar": {
       "title": "Dokumentation",
-      "nav": { "overview": "Über Launch", "coinflip": "Kopf oder Zahl" },
+      "nav": {
+        "overview": "Über Launch",
+        "coinflip": "Kopf oder Zahl"
+      },
       "sections": {
-        "overview": "Überblick", "projects": "Projekte", "token": "LAUNCH Token", "staking": "Staking", "vision": "Vision",
-        "gettingStarted": "Erste Schritte", "mainPage": "Hauptseite", "createBet": "Wette erstellen", "acceptBet": "Wette annehmen",
-        "myBets": "Meine Wetten", "history": "Verlauf", "leaderboard": "Rangliste", "wallet": "Wallet", "shop": "Shop",
-        "stakingLaunch": "Staking LAUNCH", "vip": "VIP", "jackpot": "Jackpot", "events": "Events", "news": "News",
-        "social": "Sozial", "referral": "Empfehlung", "profile": "Profil", "faq": "FAQ"
+        "overview": "Überblick",
+        "projects": "Projekte",
+        "token": "LAUNCH Token",
+        "staking": "Staking",
+        "vision": "Vision",
+        "gettingStarted": "Erste Schritte",
+        "mainPage": "Hauptseite",
+        "createBet": "Wette erstellen",
+        "acceptBet": "Wette annehmen",
+        "myBets": "Meine Wetten",
+        "history": "Verlauf",
+        "leaderboard": "Rangliste",
+        "wallet": "Wallet",
+        "shop": "Shop",
+        "stakingLaunch": "Staking LAUNCH",
+        "vip": "VIP",
+        "jackpot": "Jackpot",
+        "events": "Events",
+        "news": "News",
+        "social": "Sozial",
+        "referral": "Empfehlung",
+        "profile": "Profil",
+        "faq": "FAQ"
       }
     },
     "projects": {
@@ -566,9 +692,18 @@
       "subtitle": "LAUNCH ist der Ökosystem-Ertrags-Token. Jedes Projekt, das wir bauen (wie Kopf oder Zahl), hat seinen eigenen Token — und LAUNCH-Inhaber verdienen einen Anteil der Einnahmen aus jedem Projekt im Ökosystem.",
       "totalSupply": "Angebot & Verteilung:",
       "supplyTbd": "100.000.000 LAUNCH",
-      "allProducts": { "title": "Ertragsanteil", "desc": "20% der Kommission werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag." },
-      "governance": { "title": "Governance", "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab." },
-      "ecosystem": { "title": "Staking-Modell", "desc": "Synthetix reward_per_token: fair, proportional, gas-effizient. Keine Sperrfrist." }
+      "allProducts": {
+        "title": "Ertragsanteil",
+        "desc": "20% der Kommission werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag."
+      },
+      "governance": {
+        "title": "Governance",
+        "desc": "Stimme über neue Projekte, Förderungen und Ökosystem-Entscheidungen ab."
+      },
+      "ecosystem": {
+        "title": "Staking-Modell",
+        "desc": "Synthetix reward_per_token: fair, proportional, gas-effizient. Keine Sperrfrist."
+      }
     },
     "staking": {
       "title": "LAUNCH Staking",
@@ -594,27 +729,378 @@
       "text": "LAUNCH ist ein Ökosystem-Token. COIN ist ein Utility-Token für In-Game-Features (Shop, Kosmetik, Lotterie). Einsätze bei Kopf oder Zahl werden in AXM platziert. Spielen birgt Risiken — setze nur das, was du dir leisten kannst zu verlieren. Wir versprechen keine Rendite. Spiele verantwortungsvoll."
     },
     "guide": {
-      "hero": { "badge": "User Guide", "title": "Heads or Tails", "subtitle": "PvP game on Axiome blockchain. Two players bet AXM on heads or tails. Winner takes 90% of the pot.", "desc": "Complete game guide: from placing bets to VIP subscriptions, staking, and social features.", "cta": "Play Now" },
-      "divider": { "gameplay": "Gameplay", "economy": "Economy", "features": "Features", "account": "Account" },
-      "gettingStarted": { "title": "Getting Started", "subtitle": "Everything you need to start.", "reqTitle": "What you need", "req1": "Seed phrase from Axiome wallet — encrypted locally", "req2": "Some AXM for gameplay and gas", "req3": "COIN for extra features — buy or earn", "connectTitle": "Connect wallet", "connectStep1": "Open site and click Connect Wallet", "connectStep2": "Enter your Axiome seed phrase — encrypted locally", "connectStep3": "Done! See your balance in the header", "firstTitle": "First steps", "first1": "Fund game balance — deposit AXM to vault", "first2": "Activate 1-Click Play — one-time setup", "first3": "Create or accept a bet!", "note": "Gas is paid via feegrant. AXM needed for deposits, shop, staking." },
-      "mainPage": { "title": "Main Page", "subtitle": "Four tabs with full game control.", "tabHeader": "Tab", "descHeader": "Shows", "tab1": "Bets", "tabDesc1": "Open bets to accept", "tab2": "My Bets", "tabDesc2": "Your active bets", "tab3": "History", "tabDesc3": "Game history", "tab4": "Leaderboard", "tabDesc4": "Top players", "elementsTitle": "Page elements", "element1": "Top winner banner", "element2": "Jackpot banner", "element3": "Staking banner", "element4": "Bet creation form", "note": "Swipe to switch tabs on mobile." },
-      "createBet": { "title": "Create Bet", "howTitle": "How to create", "step1": "Tap + button", "step2": "Choose amount in AXM", "step3": "Tap Bet X AXM", "step4": "See potential winnings", "step5": "Confirm bet", "step6": "Confirmation takes 10-50s", "exampleTitle": "Example", "valueHeader": "Value", "exLabel1": "Your bet", "exValue1": "100 AXM", "exLabel2": "Opponent", "exValue2": "100 AXM", "exLabel3": "Total pot", "exValue3": "200 AXM", "exLabel4": "Commission", "exValue4": "20 AXM", "exLabel5": "Winner gets", "exValue5": "180 AXM", "limitsTitle": "Limits", "limit1": "Min bet: 1 AXM", "limit2": "Max 20 open bets", "limit3": "Auto-cancel after 3 hours" },
-      "acceptBet": { "title": "Accept Bet", "howTitle": "How to accept", "step1": "Go to Bets tab", "step2": "Choose a bet", "step3": "Tap Accept & Play", "step4": "Need sufficient balance", "step5": "Wait 10-50s for result", "techTitle": "Technical details", "tech1": "Server generates secret", "tech2": "Hash recorded on-chain", "tech3": "accept_and_reveal atomic tx", "tech4": "Contract verifies and distributes", "tech5": "Transparent and verifiable", "filterTitle": "Filters", "filter1": "All bets", "filter2": "1-10 small", "filter3": "10-100 medium", "filter4": "100+ large" },
-      "myBets": { "title": "My Bets", "subtitle": "Three sections.", "openTitle": "Open", "openDesc": "Waiting for opponent. Cancel, boost, or pin.", "inGameTitle": "In Game", "inGameDesc": "Currently playing with 3D coin animation.", "resultsTitle": "Results", "resultsDesc": "Recent games with win/loss." },
-      "history": { "title": "History & Stats", "subtitle": "Complete game history.", "item1": "Win rate", "item2": "P&L", "item3": "Opponent and amount", "item4": "Result", "item5": "Timestamps", "item6": "Blockchain link" },
-      "leaderboard": { "title": "Leaderboard", "subtitle": "Top players in three modes.", "modeHeader": "Mode", "descHeader": "Shows", "mode1": "Wins", "modeDesc1": "Games won", "mode2": "Volume", "modeDesc2": "Total bets", "mode3": "Win Rate", "modeDesc3": "Win %" },
-      "wallet": { "title": "Wallet & Balance", "subtitle": "Manage funds.", "balanceTitle": "Balances", "balance1": "AXM — native tokens", "balance2": "COIN — utility token", "balance3": "Game balance in contract", "depositTitle": "Deposit", "depositStep1": "Tap Deposit", "depositStep2": "Enter AXM amount", "depositStep3": "Confirm", "depositStep4": "AXM transfers to vault", "withdrawTitle": "Withdraw", "withdrawStep1": "Tap Withdraw", "withdrawStep2": "Enter amount", "withdrawStep3": "Confirm", "withdrawStep4": "AXM returns to wallet", "note": "Low AXM indicator pulses." },
-      "shop": { "title": "Shop — Buy COIN", "subtitle": "COIN for VIP, chat, events. Buy with AXM.", "howTitle": "How to buy", "step1": "Go to Shop", "step2": "Choose a chest", "step3": "Confirm purchase", "step4": "COIN credited", "bonus": "First purchase x2 bonus!", "note": "Prices shown on shop page." },
-      "stakingLaunch": { "title": "Staking LAUNCH", "subtitle": "Earn passive AXM income.", "howTitle": "How it works", "how1": "20% of commission to staking pool", "how2": "More LAUNCH = bigger share", "how3": "Auto rewards in real-time", "stakeTitle": "How to stake", "stakeStep1": "Click staking icon", "stakeStep2": "Go to Stake tab", "stakeStep3": "Enter LAUNCH amount", "stakeStep4": "Click Stake LAUNCH", "stakeStep5": "Confirm transaction", "claimTitle": "Claim rewards", "claimStep1": "See Pending Rewards", "claimStep2": "Click Claim", "claimStep3": "AXM sent to wallet", "unstakeTitle": "Unstake", "unstakeStep1": "Go to Unstake tab", "unstakeStep2": "Enter amount", "unstakeStep3": "Confirm", "statsTitle": "Stats", "stat1": "Your staked LAUNCH", "stat2": "Current AXM rewards", "stat3": "Total AXM paid", "stat4": "Total LAUNCH staked", "stat5": "Staker count" },
-      "vip": { "title": "VIP", "subtitle": "VIP privileges. Paid in COIN.", "featureHeader": "Feature", "feature1": "Price", "feature2": "Badge", "feature3": "Frame", "feature4": "Boosts", "feature5": "Jackpot L", "feature6": "Jackpot M", "feature7": "Jackpot SM", "feature8": "Custom", "silver1": "50 COIN", "silver2": "Silver", "silver3": "+", "silver4": "10", "silver5": "+", "silver6": "—", "silver7": "—", "silver8": "—", "gold1": "100 COIN", "gold2": "Gold", "gold3": "+", "gold4": "Unlimited", "gold5": "+", "gold6": "+", "gold7": "—", "gold8": "—", "diamond1": "200 COIN", "diamond2": "Diamond", "diamond3": "+", "diamond4": "Unlimited", "diamond5": "+", "diamond6": "+", "diamond7": "+", "diamond8": "Full", "note": "30 or 365 days. No auto-renewal.", "diamondTitle": "Diamond custom", "diamondCustom1": "Name gradients", "diamondCustom2": "Frame styles", "diamondCustom3": "Badge icons" },
-      "jackpot": { "title": "Jackpot", "subtitle": "Auto prize draws.", "howTitle": "How it works", "how1": "1% to jackpot pools", "how2": "Draw at threshold", "how3": "Random winner", "how4": "Instant payout", "levelsTitle": "Levels", "levelHeader": "Level", "accessHeader": "Access", "level1": "Mini", "access1": "All", "level2": "Medium", "access2": "All", "level3": "Large", "access3": "Silver+", "level4": "Mega", "access4": "Gold+", "level5": "Super Mega", "access5": "Diamond+", "note": "Min games required." },
-      "events": { "title": "Events", "subtitle": "Contests and raffles with AXM prizes.", "contestTitle": "Contests", "contestDesc": "Auto participation.", "contest1": "Ranked by volume, wins, P&L", "contest2": "Prizes for top players", "contest3": "Free", "raffleTitle": "Raffles", "raffleDesc": "Click Join and pay fee.", "raffle1": "Random winner", "raffle2": "More players = bigger pool", "raffle3": "Transparent seed", "sponsorTitle": "Sponsored raffles", "sponsorStep1": "Click Create Raffle", "sponsorStep2": "Set details", "sponsorStep3": "Pay fee", "sponsorStep4": "Listed for all" },
-      "news": { "title": "News", "subtitle": "Platform updates feed.", "filterHeader": "Filter", "contentHeader": "Shows", "filter1": "All", "filterDesc1": "Everything", "filter2": "Updates", "filterDesc2": "Patch notes", "filter3": "Announcements", "filterDesc3": "Player announcements", "filter4": "Big Wins", "filterDesc4": "Big payouts", "filter5": "Jackpots", "filterDesc5": "Jackpot wins", "note": "Post announcements for COIN." },
-      "social": { "title": "Social", "subtitle": "Chat, transfers, favorites.", "chatTitle": "Chat", "chat1": "Global chat", "chat2": "Pinned messages", "chat3": "Paid styles for COIN", "chat4": "Effects for COIN", "chat5": "COIN Drop", "transferTitle": "Transfers", "transferStep1": "Open profile", "transferStep2": "Tap Transfer", "transferStep3": "Choose currency and amount", "transferStep4": "Confirm", "favTitle": "Favorites", "favDesc": "Add favorites. See online status." },
-      "referral": { "title": "Referral", "subtitle": "Earn from friends' bets.", "howTitle": "How to invite", "howStep1": "Open profile menu", "howStep2": "Copy referral link", "howStep3": "Send to friend", "howStep4": "Earn when they play", "rewardsTitle": "Rewards", "levelHeader": "Level", "rewardHeader": "Reward", "level1": "Level 1", "reward1": "3%", "level2": "Level 2", "reward2": "1.5%", "level3": "Level 3", "reward3": "0.5%", "note": "Max 5% per bet." },
-      "profile": { "title": "Profile", "subtitle": "Stats, achievements, settings.", "sectionsTitle": "Sections", "section1": "Nickname", "section2": "Stats", "section3": "Achievements", "section4": "VIP status", "section5": "Telegram", "section6": "Settings", "section7": "Wallet", "achieveTitle": "Achievements", "achieve1": "Winner", "achieve2": "Warrior", "achieve3": "High Roller", "achieve4": "Volume King", "achieve5": "Streak", "achieve6": "Profit Master", "achieve7": "Social", "achieve8": "Loyal", "achieve9": "Champion", "achieve10": "Lucky", "achieve11": "Jackpot Hunter", "achieveNote": "Claim rewards for achievements." },
-      "faq": { "title": "FAQ", "q1": "How to fund balance?", "a1": "Wallet → Deposit AXM to vault.", "q2": "Where to get AXM?", "a2": "Exchange or transfer from other users.", "q3": "How is fairness ensured?", "a3": "Commit-reveal on-chain. Verifiable.", "q4": "What is locked in bets?", "a4": "Amount locked until game ends.", "q5": "Why was my bet canceled?", "a5": "Auto-cancel after 3 hours.", "q6": "Where does 10% go?", "a6": "Staking, jackpot, referrals, treasury.", "q7": "Is 1-Click Play safe?", "a7": "Yes, limited to game contract only.", "q8": "What is LAUNCH?", "a8": "Staking token. Earn AXM.", "q9": "What is COIN for?", "a9": "VIP, chat, announcements, raffles." },
-      "footer": { "text": "Heads or Tails — fair PvP on Axiome blockchain." }
+      "hero": {
+        "badge": "User Guide",
+        "title": "Heads or Tails",
+        "subtitle": "PvP game on Axiome blockchain. Two players bet AXM on heads or tails. Winner takes 90% of the pot.",
+        "desc": "Complete game guide: from placing bets to VIP subscriptions, staking, and social features.",
+        "cta": "Play Now"
+      },
+      "divider": {
+        "gameplay": "Gameplay",
+        "economy": "Economy",
+        "features": "Features",
+        "account": "Account"
+      },
+      "gettingStarted": {
+        "title": "Getting Started",
+        "subtitle": "Everything you need to start.",
+        "reqTitle": "What you need",
+        "req1": "Seed phrase from Axiome wallet — encrypted locally",
+        "req2": "Some AXM for gameplay and gas",
+        "req3": "COIN for extra features — buy or earn",
+        "connectTitle": "Connect wallet",
+        "connectStep1": "Open site and click Connect Wallet",
+        "connectStep2": "Enter your Axiome seed phrase — encrypted locally",
+        "connectStep3": "Done! See your balance in the header",
+        "firstTitle": "First steps",
+        "first1": "Fund game balance — deposit AXM to vault",
+        "first2": "Activate 1-Click Play — one-time setup",
+        "first3": "Create or accept a bet!",
+        "note": "Gas is paid via feegrant. AXM needed for deposits, shop, staking."
+      },
+      "mainPage": {
+        "title": "Main Page",
+        "subtitle": "Four tabs with full game control.",
+        "tabHeader": "Tab",
+        "descHeader": "Shows",
+        "tab1": "Bets",
+        "tabDesc1": "Open bets to accept",
+        "tab2": "My Bets",
+        "tabDesc2": "Your active bets",
+        "tab3": "History",
+        "tabDesc3": "Game history",
+        "tab4": "Leaderboard",
+        "tabDesc4": "Top players",
+        "elementsTitle": "Page elements",
+        "element1": "Top winner banner",
+        "element2": "Jackpot banner",
+        "element3": "Staking banner",
+        "element4": "Bet creation form",
+        "note": "Swipe to switch tabs on mobile."
+      },
+      "createBet": {
+        "title": "Create Bet",
+        "howTitle": "How to create",
+        "step1": "Tap + button",
+        "step2": "Choose amount in AXM",
+        "step3": "Tap Bet X AXM",
+        "step4": "See potential winnings",
+        "step5": "Confirm bet",
+        "step6": "Confirmation takes 10-50s",
+        "exampleTitle": "Example",
+        "valueHeader": "Value",
+        "exLabel1": "Your bet",
+        "exValue1": "100 AXM",
+        "exLabel2": "Opponent",
+        "exValue2": "100 AXM",
+        "exLabel3": "Total pot",
+        "exValue3": "200 AXM",
+        "exLabel4": "Commission",
+        "exValue4": "20 AXM",
+        "exLabel5": "Winner gets",
+        "exValue5": "180 AXM",
+        "limitsTitle": "Limits",
+        "limit1": "Min bet: 1 AXM",
+        "limit2": "Max 20 open bets",
+        "limit3": "Auto-cancel after 3 hours"
+      },
+      "acceptBet": {
+        "title": "Accept Bet",
+        "howTitle": "How to accept",
+        "step1": "Go to Bets tab",
+        "step2": "Choose a bet",
+        "step3": "Tap Accept & Play",
+        "step4": "Need sufficient balance",
+        "step5": "Wait 10-50s for result",
+        "techTitle": "Technical details",
+        "tech1": "Server generates secret",
+        "tech2": "Hash recorded on-chain",
+        "tech3": "accept_and_reveal atomic tx",
+        "tech4": "Contract verifies and distributes",
+        "tech5": "Transparent and verifiable",
+        "filterTitle": "Filters",
+        "filter1": "All bets",
+        "filter2": "1-10 small",
+        "filter3": "10-100 medium",
+        "filter4": "100+ large"
+      },
+      "myBets": {
+        "title": "My Bets",
+        "subtitle": "Three sections.",
+        "openTitle": "Open",
+        "openDesc": "Waiting for opponent. Cancel, boost, or pin.",
+        "inGameTitle": "In Game",
+        "inGameDesc": "Currently playing with 3D coin animation.",
+        "resultsTitle": "Results",
+        "resultsDesc": "Recent games with win/loss."
+      },
+      "history": {
+        "title": "History & Stats",
+        "subtitle": "Complete game history.",
+        "item1": "Win rate",
+        "item2": "P&L",
+        "item3": "Opponent and amount",
+        "item4": "Result",
+        "item5": "Timestamps",
+        "item6": "Blockchain link"
+      },
+      "leaderboard": {
+        "title": "Leaderboard",
+        "subtitle": "Top players in three modes.",
+        "modeHeader": "Mode",
+        "descHeader": "Shows",
+        "mode1": "Wins",
+        "modeDesc1": "Games won",
+        "mode2": "Volume",
+        "modeDesc2": "Total bets",
+        "mode3": "Win Rate",
+        "modeDesc3": "Win %"
+      },
+      "wallet": {
+        "title": "Wallet & Balance",
+        "subtitle": "Manage funds.",
+        "balanceTitle": "Balances",
+        "balance1": "AXM — native tokens",
+        "balance2": "COIN — utility token",
+        "balance3": "Game balance in contract",
+        "depositTitle": "Deposit",
+        "depositStep1": "Tap Deposit",
+        "depositStep2": "Enter AXM amount",
+        "depositStep3": "Confirm",
+        "depositStep4": "AXM transfers to vault",
+        "withdrawTitle": "Withdraw",
+        "withdrawStep1": "Tap Withdraw",
+        "withdrawStep2": "Enter amount",
+        "withdrawStep3": "Confirm",
+        "withdrawStep4": "AXM returns to wallet",
+        "note": "Low AXM indicator pulses."
+      },
+      "shop": {
+        "title": "Shop — Buy COIN",
+        "subtitle": "COIN for VIP, chat, events. Buy with AXM.",
+        "howTitle": "How to buy",
+        "step1": "Go to Shop",
+        "step2": "Choose a chest",
+        "step3": "Confirm purchase",
+        "step4": "COIN credited",
+        "bonus": "First purchase x2 bonus!",
+        "note": "Prices shown on shop page."
+      },
+      "stakingLaunch": {
+        "title": "Staking LAUNCH",
+        "subtitle": "Earn passive AXM income.",
+        "howTitle": "How it works",
+        "how1": "20% of commission to staking pool",
+        "how2": "More LAUNCH = bigger share",
+        "how3": "Auto rewards in real-time",
+        "stakeTitle": "How to stake",
+        "stakeStep1": "Click staking icon",
+        "stakeStep2": "Go to Stake tab",
+        "stakeStep3": "Enter LAUNCH amount",
+        "stakeStep4": "Click Stake LAUNCH",
+        "stakeStep5": "Confirm transaction",
+        "claimTitle": "Claim rewards",
+        "claimStep1": "See Pending Rewards",
+        "claimStep2": "Click Claim",
+        "claimStep3": "AXM sent to wallet",
+        "unstakeTitle": "Unstake",
+        "unstakeStep1": "Go to Unstake tab",
+        "unstakeStep2": "Enter amount",
+        "unstakeStep3": "Confirm",
+        "statsTitle": "Stats",
+        "stat1": "Your staked LAUNCH",
+        "stat2": "Current AXM rewards",
+        "stat3": "Total AXM paid",
+        "stat4": "Total LAUNCH staked",
+        "stat5": "Staker count"
+      },
+      "vip": {
+        "title": "VIP",
+        "subtitle": "VIP privileges. Paid in COIN.",
+        "featureHeader": "Feature",
+        "feature1": "Price",
+        "feature2": "Badge",
+        "feature3": "Frame",
+        "feature4": "Boosts",
+        "feature5": "Jackpot L",
+        "feature6": "Jackpot M",
+        "feature7": "Jackpot SM",
+        "feature8": "Custom",
+        "silver1": "50 COIN",
+        "silver2": "Silver",
+        "silver3": "+",
+        "silver4": "10",
+        "silver5": "+",
+        "silver6": "—",
+        "silver7": "—",
+        "silver8": "—",
+        "gold1": "100 COIN",
+        "gold2": "Gold",
+        "gold3": "+",
+        "gold4": "Unlimited",
+        "gold5": "+",
+        "gold6": "+",
+        "gold7": "—",
+        "gold8": "—",
+        "diamond1": "200 COIN",
+        "diamond2": "Diamond",
+        "diamond3": "+",
+        "diamond4": "Unlimited",
+        "diamond5": "+",
+        "diamond6": "+",
+        "diamond7": "+",
+        "diamond8": "Full",
+        "note": "30 or 365 days. No auto-renewal.",
+        "diamondTitle": "Diamond custom",
+        "diamondCustom1": "Name gradients",
+        "diamondCustom2": "Frame styles",
+        "diamondCustom3": "Badge icons"
+      },
+      "jackpot": {
+        "title": "Jackpot",
+        "subtitle": "Auto prize draws.",
+        "howTitle": "How it works",
+        "how1": "1% to jackpot pools",
+        "how2": "Draw at threshold",
+        "how3": "Random winner",
+        "how4": "Instant payout",
+        "levelsTitle": "Levels",
+        "levelHeader": "Level",
+        "accessHeader": "Access",
+        "level1": "Mini",
+        "access1": "All",
+        "level2": "Medium",
+        "access2": "All",
+        "level3": "Large",
+        "access3": "Silver+",
+        "level4": "Mega",
+        "access4": "Gold+",
+        "level5": "Super Mega",
+        "access5": "Diamond+",
+        "note": "Min games required."
+      },
+      "events": {
+        "title": "Events",
+        "subtitle": "Contests and raffles with AXM prizes.",
+        "contestTitle": "Contests",
+        "contestDesc": "Auto participation.",
+        "contest1": "Ranked by volume, wins, P&L",
+        "contest2": "Prizes for top players",
+        "contest3": "Free",
+        "raffleTitle": "Raffles",
+        "raffleDesc": "Click Join and pay fee.",
+        "raffle1": "Random winner",
+        "raffle2": "More players = bigger pool",
+        "raffle3": "Transparent seed",
+        "sponsorTitle": "Sponsored raffles",
+        "sponsorStep1": "Click Create Raffle",
+        "sponsorStep2": "Set details",
+        "sponsorStep3": "Pay fee",
+        "sponsorStep4": "Listed for all"
+      },
+      "news": {
+        "title": "News",
+        "subtitle": "Platform updates feed.",
+        "filterHeader": "Filter",
+        "contentHeader": "Shows",
+        "filter1": "All",
+        "filterDesc1": "Everything",
+        "filter2": "Updates",
+        "filterDesc2": "Patch notes",
+        "filter3": "Announcements",
+        "filterDesc3": "Player announcements",
+        "filter4": "Big Wins",
+        "filterDesc4": "Big payouts",
+        "filter5": "Jackpots",
+        "filterDesc5": "Jackpot wins",
+        "note": "Post announcements for COIN."
+      },
+      "social": {
+        "title": "Social",
+        "subtitle": "Chat, transfers, favorites.",
+        "chatTitle": "Chat",
+        "chat1": "Global chat",
+        "chat2": "Pinned messages",
+        "chat3": "Paid styles for COIN",
+        "chat4": "Effects for COIN",
+        "chat5": "COIN Drop",
+        "transferTitle": "Transfers",
+        "transferStep1": "Open profile",
+        "transferStep2": "Tap Transfer",
+        "transferStep3": "Choose currency and amount",
+        "transferStep4": "Confirm",
+        "favTitle": "Favorites",
+        "favDesc": "Add favorites. See online status."
+      },
+      "referral": {
+        "title": "Referral",
+        "subtitle": "Earn from friends' bets.",
+        "howTitle": "How to invite",
+        "howStep1": "Open profile menu",
+        "howStep2": "Copy referral link",
+        "howStep3": "Send to friend",
+        "howStep4": "Earn when they play",
+        "rewardsTitle": "Rewards",
+        "levelHeader": "Level",
+        "rewardHeader": "Reward",
+        "level1": "Level 1",
+        "reward1": "3%",
+        "level2": "Level 2",
+        "reward2": "1.5%",
+        "level3": "Level 3",
+        "reward3": "0.5%",
+        "note": "Max 5% per bet."
+      },
+      "profile": {
+        "title": "Profile",
+        "subtitle": "Stats, achievements, settings.",
+        "sectionsTitle": "Sections",
+        "section1": "Nickname",
+        "section2": "Stats",
+        "section3": "Achievements",
+        "section4": "VIP status",
+        "section5": "Telegram",
+        "section6": "Settings",
+        "section7": "Wallet",
+        "achieveTitle": "Achievements",
+        "achieve1": "Winner",
+        "achieve2": "Warrior",
+        "achieve3": "High Roller",
+        "achieve4": "Volume King",
+        "achieve5": "Streak",
+        "achieve6": "Profit Master",
+        "achieve7": "Social",
+        "achieve8": "Loyal",
+        "achieve9": "Champion",
+        "achieve10": "Lucky",
+        "achieve11": "Jackpot Hunter",
+        "achieveNote": "Claim rewards for achievements."
+      },
+      "faq": {
+        "title": "FAQ",
+        "q1": "How to fund balance?",
+        "a1": "Wallet → Deposit AXM to vault.",
+        "q2": "Where to get AXM?",
+        "a2": "Exchange or transfer from other users.",
+        "q3": "How is fairness ensured?",
+        "a3": "Commit-reveal on-chain. Verifiable.",
+        "q4": "What is locked in bets?",
+        "a4": "Amount locked until game ends.",
+        "q5": "Why was my bet canceled?",
+        "a5": "Auto-cancel after 3 hours.",
+        "q6": "Where does 10% go?",
+        "a6": "Staking, jackpot, referrals, treasury.",
+        "q7": "Is 1-Click Play safe?",
+        "a7": "Yes, limited to game contract only.",
+        "q8": "What is LAUNCH?",
+        "a8": "Staking token. Earn AXM.",
+        "q9": "What is COIN for?",
+        "a9": "VIP, chat, announcements, raffles."
+      },
+      "footer": {
+        "text": "Heads or Tails — fair PvP on Axiome blockchain."
+      }
     }
   },
   "lock": {

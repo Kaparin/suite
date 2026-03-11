@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useWallet } from './WalletProvider'
 import { AXIOME_CHAIN } from './chain'
 import {
@@ -27,7 +27,7 @@ export interface TransactionState {
 
 export function useTransaction() {
   const { address } = useWallet()
-  const axiomeConnect = useAxiomeConnect()
+  const { startConnect, submitSigningRequest } = useAxiomeConnect()
   const [state, setState] = useState<TransactionState>({
     isOpen: false,
     deepLink: '',
@@ -37,7 +37,11 @@ export function useTransaction() {
     description: ''
   })
 
+  // Guard against double-open while async work is in progress
+  const pendingRef = useRef(false)
+
   const close = useCallback(() => {
+    pendingRef.current = false
     setState(prev => ({ ...prev, isOpen: false }))
   }, [])
 
@@ -49,9 +53,13 @@ export function useTransaction() {
     onSuccess?: (txHash: string) => void
     checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
   }) => {
+    // Prevent double-open
+    if (pendingRef.current) return
+    pendingRef.current = true
+
     const deepLink = buildAxiomeSignLink(params.payload)
 
-    // Open modal immediately with QR/deep link
+    // Open modal immediately with deep link
     setState({
       isOpen: true,
       deepLink,
@@ -65,21 +73,35 @@ export function useTransaction() {
 
     // Try to get auth token and submit signing request in background
     try {
-      const token = await axiomeConnect.startConnect()
-      if (token) {
-        setState(prev => prev.isOpen ? { ...prev, connectToken: token } : prev)
+      const result = await startConnect()
+      if (!result?.token) {
+        pendingRef.current = false
+        return
+      }
 
-        // Try to submit signing request
-        const signingId = await axiomeConnect.submitSigningRequest(deepLink, token)
+      // Check if modal is still open (user might have closed it)
+      setState(prev => {
+        if (!prev.isOpen) return prev
+        return { ...prev, connectToken: result.token }
+      })
+
+      // Only submit signing request if token is associated with a wallet
+      if (result.walletAddress) {
+        const signingId = await submitSigningRequest(deepLink, result.token)
         if (signingId) {
-          setState(prev => prev.isOpen ? { ...prev, signingCode: signingId } : prev)
+          setState(prev => {
+            if (!prev.isOpen) return prev
+            return { ...prev, signingCode: signingId }
+          })
         }
       }
     } catch (err) {
-      console.error('Failed to get Axiome Connect auth:', err)
+      console.error('[useTransaction] Failed to get Axiome Connect auth:', err)
       // Continue with deep link only — QR code still works
     }
-  }, [axiomeConnect])
+
+    pendingRef.current = false
+  }, [startConnect, submitSigningRequest])
 
   // Create CW20 token
   const createToken = useCallback((params: {

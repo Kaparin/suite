@@ -91,6 +91,8 @@ export default function TestQRPage() {
   const jsonString = JSON.stringify(payload)
   const base64 = btoa(jsonString)
   const deepLink = `axiomesign://${base64}`
+  // Web URL for QR code — scannable by any phone camera, opens sign page with "Open Wallet" button
+  const qrUrl = typeof window !== 'undefined' ? `${window.location.origin}/sign/${encodeURIComponent(base64)}` : ''
 
   return (
     <div className="min-h-screen bg-gray-950 p-8">
@@ -125,7 +127,7 @@ export default function TestQRPage() {
             <div className="bg-gray-900 rounded-xl p-6 mb-6">
               <div className="flex justify-center mb-4">
                 <div className="bg-white p-4 rounded-xl">
-                  <QRCodeSVG value={deepLink} size={250} level="L" />
+                  <QRCodeSVG value={qrUrl || deepLink} size={250} level="L" />
                 </div>
               </div>
               <p className="text-center text-gray-400 text-sm">

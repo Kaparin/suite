@@ -45,10 +45,26 @@
     },
     "ecosystem": {
       "title": "Ecosystem Projects",
-      "headsOrTails": { "title": "Heads or Tails", "status": "Live", "desc": "PvP coin flip on AXM. Provably fair. 50/50. Winner takes 90%." },
-      "tournaments": { "title": "Events & Raffles", "status": "Live", "desc": "Contests and raffles with real AXM prizes for active players." },
-      "communityProjects": { "title": "Community Projects", "status": "Future", "desc": "Community-proposed ideas and builds." },
-      "tbd": { "title": "Next Project", "status": "Planned", "desc": "Next product in development. Each project has its own token." }
+      "headsOrTails": {
+        "title": "Heads or Tails",
+        "status": "Live",
+        "desc": "PvP coin flip on AXM. Provably fair. 50/50. Winner takes 90%."
+      },
+      "tournaments": {
+        "title": "Events & Raffles",
+        "status": "Live",
+        "desc": "Contests and raffles with real AXM prizes for active players."
+      },
+      "communityProjects": {
+        "title": "Community Projects",
+        "status": "Future",
+        "desc": "Community-proposed ideas and builds."
+      },
+      "tbd": {
+        "title": "Next Project",
+        "status": "Planned",
+        "desc": "Next product in development. Each project has its own token."
+      }
     },
     "launchToken": {
       "title": "LAUNCH — Ecosystem Revenue Token",
@@ -69,9 +85,21 @@
     "stakingSection": {
       "title": "Stake LAUNCH, Earn AXM",
       "subtitle": "Every project in the ecosystem sends a share of revenue to the staking contract. Your share is proportional to your staked LAUNCH — claim AXM anytime.",
-      "stake": { "icon": "📥", "title": "Stake", "desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake whenever you want." },
-      "earn": { "icon": "💰", "title": "Earn", "desc": "Projects distribute AXM to all stakers. 20% of each commission goes to the staking pool." },
-      "claim": { "icon": "🎁", "title": "Claim", "desc": "Accumulated AXM rewards can be claimed at any time. The more you stake, the bigger your share." },
+      "stake": {
+        "icon": "📥",
+        "title": "Stake",
+        "desc": "Send LAUNCH tokens to the staking contract. No lock period — unstake whenever you want."
+      },
+      "earn": {
+        "icon": "💰",
+        "title": "Earn",
+        "desc": "Projects distribute AXM to all stakers. 20% of each commission goes to the staking pool."
+      },
+      "claim": {
+        "icon": "🎁",
+        "title": "Claim",
+        "desc": "Accumulated AXM rewards can be claimed at any time. The more you stake, the bigger your share."
+      },
       "cta": "Start Staking"
     },
     "community": {
@@ -80,9 +108,21 @@
       "submitIdea": "Submit Project Idea",
       "joinCommunity": "Join Community",
       "cta": "Join discussion in Explorer",
-      "comment1": { "user": "alex_dev", "text": "Solid project, the roadmap looks realistic. Links verified.", "badge": "Builder" },
-      "comment2": { "user": "crypto_guard", "text": "Flagged a suspicious link change — resolved by the team within 2h.", "badge": "Explorer" },
-      "comment3": { "user": "dao_whale", "text": "Great community discussion before launch. Trust score growing.", "badge": "Governor" }
+      "comment1": {
+        "user": "alex_dev",
+        "text": "Solid project, the roadmap looks realistic. Links verified.",
+        "badge": "Builder"
+      },
+      "comment2": {
+        "user": "crypto_guard",
+        "text": "Flagged a suspicious link change — resolved by the team within 2h.",
+        "badge": "Explorer"
+      },
+      "comment3": {
+        "user": "dao_whale",
+        "text": "Great community discussion before launch. Trust score growing.",
+        "badge": "Governor"
+      }
     },
     "vision": {
       "title": "Long-Term Vision",
@@ -163,17 +203,38 @@
     },
     "steps": {
       "title": "How it works",
-      "step1": { "title": "Create or Discover", "desc": "Create a project page (pre-launch) or explore existing tokens." },
-      "step2": { "title": "Verify & Enrich", "desc": "Token owners claim the page and add verified links + info." },
-      "step3": { "title": "Community Feedback", "desc": "Comments, reactions, and review templates surface quality." },
-      "step4": { "title": "Launch & Grow", "desc": "When you launch on-chain, your token already has context and reputation." }
+      "step1": {
+        "title": "Create or Discover",
+        "desc": "Create a project page (pre-launch) or explore existing tokens."
+      },
+      "step2": {
+        "title": "Verify & Enrich",
+        "desc": "Token owners claim the page and add verified links + info."
+      },
+      "step3": {
+        "title": "Community Feedback",
+        "desc": "Comments, reactions, and review templates surface quality."
+      },
+      "step4": {
+        "title": "Launch & Grow",
+        "desc": "When you launch on-chain, your token already has context and reputation."
+      }
     },
     "utility": {
       "title": "LAUNCH token utility",
       "subtitle": "LAUNCH is the ecosystem revenue token. Hold LAUNCH to earn from every project we build and participate in governance.",
-      "access": { "title": "Revenue Share", "desc": "Earn AXM from every project. 20% of commission is distributed to LAUNCH stakers." },
-      "reputation": { "title": "Access & Tiers", "desc": "Lock LAUNCH to unlock platform features: publish projects, vote, and use pro tools." },
-      "rewards": { "title": "Governance", "desc": "Propose new projects, vote on ecosystem decisions, and shape the future of the platform." },
+      "access": {
+        "title": "Revenue Share",
+        "desc": "Earn AXM from every project. 20% of commission is distributed to LAUNCH stakers."
+      },
+      "reputation": {
+        "title": "Access & Tiers",
+        "desc": "Lock LAUNCH to unlock platform features: publish projects, vote, and use pro tools."
+      },
+      "rewards": {
+        "title": "Governance",
+        "desc": "Propose new projects, vote on ecosystem decisions, and shape the future of the platform."
+      },
       "readMore": "Read tokenomics"
     },
     "tiers": {
@@ -325,6 +386,50 @@
       "slippage": "Slippage Tolerance",
       "networkFee": "Network Fee",
       "swap": "Swap"
+    },
+    "axiomeConnect": {
+      "title": "Axiome Connect",
+      "close": "Close",
+      "step1Title": "Open Axiome Wallet",
+      "step1Desc": "Launch the Axiome Wallet app on your device",
+      "step2Title": "Go to Axiome Connect",
+      "step2Desc": "Find and open the Axiome Connect section in the app",
+      "step3TitleDesktop": "Scan the QR code and confirm",
+      "step3DescDesktop": "Point your camera at the QR code to link your wallet",
+      "step3TitleMobile": "Enter the code and confirm",
+      "step3DescMobile": "Paste the authorization code below and approve the connection",
+      "testflightHint": "If you installed Axiome Wallet via TestFlight, open Axiome Connect and enter this authorization code:",
+      "generatingCode": "Generating code...",
+      "tapToCopy": "Tap to copy",
+      "copied": "Copied!",
+      "connectButton": "Connect",
+      "waiting": "Waiting for wallet connection...",
+      "downloadWallet": "Download Axiome Wallet"
+    },
+    "signTransaction": {
+      "gettingCode": "Getting code...",
+      "transactionCode": "Transaction code",
+      "enterCodeOrScan": "Enter the code or scan the QR with Axiome Wallet",
+      "scanQR": "Scan the QR code with Axiome Wallet",
+      "enterCodeMobile": "Open Axiome Wallet and enter the code above",
+      "scanHint": "Open Axiome Wallet → Axiome Connect → Enter code or scan QR",
+      "codeHint": "Open Axiome Wallet → Axiome Connect → Enter this code",
+      "openWallet": "Open Axiome Wallet",
+      "signInWallet": "Sign in Wallet",
+      "checkTransaction": "I've signed — check transaction",
+      "checking": "Checking...",
+      "checkingTransaction": "Checking transaction...",
+      "mayTakeMoments": "This may take a few moments",
+      "success": "Transaction Successful!",
+      "failed": "Transaction Failed",
+      "tryAgain": "Try Again",
+      "cancel": "Cancel",
+      "done": "Done",
+      "copy": "Copy",
+      "statusWaiting": "Waiting for wallet...",
+      "statusBroadcast": "Broadcasting transaction...",
+      "statusTimeout": "Timeout — please check manually",
+      "statusConfirming": "Waiting for confirmation..."
     }
   },
   "createToken": {
@@ -498,7 +603,10 @@
   "docs": {
     "sidebar": {
       "title": "Documentation",
-      "nav": { "overview": "About Launch", "coinflip": "Heads or Tails" },
+      "nav": {
+        "overview": "About Launch",
+        "coinflip": "Heads or Tails"
+      },
       "sections": {
         "overview": "Overview",
         "projects": "Projects",
@@ -584,9 +692,18 @@
       "subtitle": "LAUNCH is the ecosystem revenue token. Stake LAUNCH to earn AXM from all project commissions. 100M total supply, CW20 on Axiome blockchain.",
       "totalSupply": "Total Supply:",
       "supplyTbd": "100,000,000 LAUNCH",
-      "allProducts": { "title": "Revenue share", "desc": "20% of commission distributed to stakers as AXM. More projects = more revenue." },
-      "governance": { "title": "Governance", "desc": "Vote on new projects, grants, and ecosystem decisions." },
-      "ecosystem": { "title": "Staking model", "desc": "Synthetix reward_per_token: fair, proportional, gas-efficient. No lock period — unstake anytime." }
+      "allProducts": {
+        "title": "Revenue share",
+        "desc": "20% of commission distributed to stakers as AXM. More projects = more revenue."
+      },
+      "governance": {
+        "title": "Governance",
+        "desc": "Vote on new projects, grants, and ecosystem decisions."
+      },
+      "ecosystem": {
+        "title": "Staking model",
+        "desc": "Synthetix reward_per_token: fair, proportional, gas-efficient. No lock period — unstake anytime."
+      }
     },
     "staking": {
       "title": "LAUNCH Staking",
@@ -619,7 +736,12 @@
         "desc": "Complete game guide: from placing bets to VIP subscriptions, staking, and social features.",
         "cta": "Play Now"
       },
-      "divider": { "gameplay": "Gameplay", "economy": "Economy", "features": "Features", "account": "Account" },
+      "divider": {
+        "gameplay": "Gameplay",
+        "economy": "Economy",
+        "features": "Features",
+        "account": "Account"
+      },
       "gettingStarted": {
         "title": "Getting Started",
         "subtitle": "Everything you need to start — connect your wallet, fund your balance, and place your first bet.",
@@ -640,11 +762,16 @@
       "mainPage": {
         "title": "Main Page — Game",
         "subtitle": "The heart of the app. Four tabs with full control over your game.",
-        "tabHeader": "Tab", "descHeader": "What it shows",
-        "tab1": "Bets", "tabDesc1": "Open bets from other players that you can accept",
-        "tab2": "My Bets", "tabDesc2": "Your active bets (open, in-game, results)",
-        "tab3": "History", "tabDesc3": "Complete history of your games and transactions",
-        "tab4": "Leaderboard", "tabDesc4": "Top players by wins, volume, and win rate",
+        "tabHeader": "Tab",
+        "descHeader": "What it shows",
+        "tab1": "Bets",
+        "tabDesc1": "Open bets from other players that you can accept",
+        "tab2": "My Bets",
+        "tabDesc2": "Your active bets (open, in-game, results)",
+        "tab3": "History",
+        "tabDesc3": "Complete history of your games and transactions",
+        "tab4": "Leaderboard",
+        "tabDesc4": "Top players by wins, volume, and win rate",
         "elementsTitle": "Page elements",
         "element1": "Top winner banner — latest big win",
         "element2": "Jackpot banner — current prize pool and progress",
@@ -661,12 +788,18 @@
         "step4": "Confirmation screen shows potential winnings, odds (50/50), and commission",
         "step5": "Tap \"Confirm Bet\"",
         "step6": "Bet sent! Blockchain confirmation takes 10–50 seconds",
-        "exampleTitle": "Example calculation", "valueHeader": "Value",
-        "exLabel1": "Your bet", "exValue1": "100 AXM",
-        "exLabel2": "Opponent's bet", "exValue2": "100 AXM",
-        "exLabel3": "Total pot", "exValue3": "200 AXM",
-        "exLabel4": "Commission (10%)", "exValue4": "20 AXM",
-        "exLabel5": "Winner gets", "exValue5": "180 AXM",
+        "exampleTitle": "Example calculation",
+        "valueHeader": "Value",
+        "exLabel1": "Your bet",
+        "exValue1": "100 AXM",
+        "exLabel2": "Opponent's bet",
+        "exValue2": "100 AXM",
+        "exLabel3": "Total pot",
+        "exValue3": "200 AXM",
+        "exLabel4": "Commission (10%)",
+        "exValue4": "20 AXM",
+        "exLabel5": "Winner gets",
+        "exValue5": "180 AXM",
         "limitsTitle": "Limits",
         "limit1": "Minimum bet: 1 AXM",
         "limit2": "Maximum open bets at once: 20",
@@ -715,10 +848,14 @@
       "leaderboard": {
         "title": "Leaderboard",
         "subtitle": "Top players in three sorting modes. Click a player to view their profile.",
-        "modeHeader": "Mode", "descHeader": "What it shows",
-        "mode1": "Wins", "modeDesc1": "Number of games won",
-        "mode2": "Volume", "modeDesc2": "Total amount of all bets",
-        "mode3": "Win Rate", "modeDesc3": "Win percentage"
+        "modeHeader": "Mode",
+        "descHeader": "What it shows",
+        "mode1": "Wins",
+        "modeDesc1": "Number of games won",
+        "mode2": "Volume",
+        "modeDesc2": "Total amount of all bets",
+        "mode3": "Win Rate",
+        "modeDesc3": "Win percentage"
       },
       "wallet": {
         "title": "Wallet & Balance",
@@ -782,14 +919,38 @@
         "title": "VIP Subscriptions",
         "subtitle": "VIP gives in-game privileges. Paid in COIN. Access via crown icon in header.",
         "featureHeader": "Feature",
-        "feature1": "Price (monthly)", "feature2": "Badge", "feature3": "Avatar frame", "feature4": "Boosts per day",
-        "feature5": "Jackpot Large", "feature6": "Jackpot Mega", "feature7": "Jackpot Super Mega", "feature8": "Customization",
-        "silver1": "50 COIN", "silver2": "Silver", "silver3": "+", "silver4": "10",
-        "silver5": "+", "silver6": "—", "silver7": "—", "silver8": "—",
-        "gold1": "100 COIN", "gold2": "Gold", "gold3": "+", "gold4": "Unlimited",
-        "gold5": "+", "gold6": "+", "gold7": "—", "gold8": "—",
-        "diamond1": "200 COIN", "diamond2": "Diamond", "diamond3": "+", "diamond4": "Unlimited",
-        "diamond5": "+", "diamond6": "+", "diamond7": "+", "diamond8": "Full",
+        "feature1": "Price (monthly)",
+        "feature2": "Badge",
+        "feature3": "Avatar frame",
+        "feature4": "Boosts per day",
+        "feature5": "Jackpot Large",
+        "feature6": "Jackpot Mega",
+        "feature7": "Jackpot Super Mega",
+        "feature8": "Customization",
+        "silver1": "50 COIN",
+        "silver2": "Silver",
+        "silver3": "+",
+        "silver4": "10",
+        "silver5": "+",
+        "silver6": "—",
+        "silver7": "—",
+        "silver8": "—",
+        "gold1": "100 COIN",
+        "gold2": "Gold",
+        "gold3": "+",
+        "gold4": "Unlimited",
+        "gold5": "+",
+        "gold6": "+",
+        "gold7": "—",
+        "gold8": "—",
+        "diamond1": "200 COIN",
+        "diamond2": "Diamond",
+        "diamond3": "+",
+        "diamond4": "Unlimited",
+        "diamond5": "+",
+        "diamond6": "+",
+        "diamond7": "+",
+        "diamond8": "Full",
         "note": "Subscription lasts 30 days (monthly) or 365 days (annual, ~15% discount). No auto-renewal.",
         "diamondTitle": "Diamond customization",
         "diamondCustom1": "Name gradient — fire, ocean, aurora, sunset, neon, cosmic",
@@ -805,22 +966,30 @@
         "how3": "Winner is chosen randomly among eligible players",
         "how4": "Prize is instantly credited to the winner's balance",
         "levelsTitle": "Jackpot levels",
-        "levelHeader": "Level", "accessHeader": "Availability",
-        "level1": "Mini", "access1": "All players",
-        "level2": "Medium", "access2": "All players",
-        "level3": "Large", "access3": "Silver VIP+",
-        "level4": "Mega", "access4": "Gold VIP+",
-        "level5": "Super Mega", "access5": "Diamond VIP+",
+        "levelHeader": "Level",
+        "accessHeader": "Availability",
+        "level1": "Mini",
+        "access1": "All players",
+        "level2": "Medium",
+        "access2": "All players",
+        "level3": "Large",
+        "access3": "Silver VIP+",
+        "level4": "Mega",
+        "access4": "Gold VIP+",
+        "level5": "Super Mega",
+        "access5": "Diamond VIP+",
         "note": "Minimum number of games played is required for eligibility."
       },
       "events": {
         "title": "Events — Contests & Raffles",
         "subtitle": "Regular contests and raffles with real AXM prizes.",
-        "contestTitle": "Contests", "contestDesc": "Participation is automatic — just play during the contest period.",
+        "contestTitle": "Contests",
+        "contestDesc": "Participation is automatic — just play during the contest period.",
         "contest1": "Ranked by: bet volume, number of wins, P&L",
         "contest2": "Prizes for top-N players",
         "contest3": "Free, no registration needed",
-        "raffleTitle": "Raffles", "raffleDesc": "Click \"Join\" and pay the entry fee.",
+        "raffleTitle": "Raffles",
+        "raffleDesc": "Click \"Join\" and pay the entry fee.",
         "raffle1": "Winner is chosen randomly",
         "raffle2": "More participants = bigger prize pool",
         "raffle3": "Raffle seed is published for transparency",
@@ -833,12 +1002,18 @@
       "news": {
         "title": "News",
         "subtitle": "Unified feed of platform updates.",
-        "filterHeader": "Filter", "contentHeader": "What it shows",
-        "filter1": "All", "filterDesc1": "Everything together",
-        "filter2": "Updates", "filterDesc2": "Patch notes and platform news",
-        "filter3": "Announcements", "filterDesc3": "Sponsored announcements from players",
-        "filter4": "Big Wins", "filterDesc4": "When someone hits a big payout",
-        "filter5": "Jackpots", "filterDesc5": "Jackpot wins",
+        "filterHeader": "Filter",
+        "contentHeader": "What it shows",
+        "filter1": "All",
+        "filterDesc1": "Everything together",
+        "filter2": "Updates",
+        "filterDesc2": "Patch notes and platform news",
+        "filter3": "Announcements",
+        "filterDesc3": "Sponsored announcements from players",
+        "filter4": "Big Wins",
+        "filterDesc4": "When someone hits a big payout",
+        "filter5": "Jackpots",
+        "filterDesc5": "Jackpot wins",
         "note": "Any user can place a sponsored announcement for COIN."
       },
       "social": {
@@ -867,10 +1042,14 @@
         "howStep3": "Send the link to your friend",
         "howStep4": "When your friend starts playing — you'll receive rewards",
         "rewardsTitle": "Reward structure",
-        "levelHeader": "Level", "rewardHeader": "Reward",
-        "level1": "Level 1 (direct)", "reward1": "3% of commission",
-        "level2": "Level 2", "reward2": "1.5% of commission",
-        "level3": "Level 3", "reward3": "0.5% of commission",
+        "levelHeader": "Level",
+        "rewardHeader": "Reward",
+        "level1": "Level 1 (direct)",
+        "reward1": "3% of commission",
+        "level2": "Level 2",
+        "reward2": "1.5% of commission",
+        "level3": "Level 3",
+        "reward3": "0.5% of commission",
         "note": "Maximum 5% of commission per bet goes to referral rewards."
       },
       "profile": {
@@ -885,10 +1064,17 @@
         "section6": "Settings — language, sound, vibration",
         "section7": "Wallet management",
         "achieveTitle": "Achievement categories",
-        "achieve1": "Winner", "achieve2": "Warrior", "achieve3": "High Roller",
-        "achieve4": "Volume King", "achieve5": "Streak", "achieve6": "Profit Master",
-        "achieve7": "Social", "achieve8": "Loyal", "achieve9": "Champion",
-        "achieve10": "Lucky", "achieve11": "Jackpot Hunter",
+        "achieve1": "Winner",
+        "achieve2": "Warrior",
+        "achieve3": "High Roller",
+        "achieve4": "Volume King",
+        "achieve5": "Streak",
+        "achieve6": "Profit Master",
+        "achieve7": "Social",
+        "achieve8": "Loyal",
+        "achieve9": "Champion",
+        "achieve10": "Lucky",
+        "achieve11": "Jackpot Hunter",
         "achieveNote": "Claim rewards for unlocked achievements by tapping \"Claim\"."
       },
       "faq": {
@@ -912,7 +1098,9 @@
         "q9": "What is COIN for?",
         "a9": "Utility token: VIP subscription, paid chat features, announcements, raffles, and changing referral branch."
       },
-      "footer": { "text": "Heads or Tails — a fair PvP game on Axiome blockchain. Play, earn, stake!" }
+      "footer": {
+        "text": "Heads or Tails — a fair PvP game on Axiome blockchain. Play, earn, stake!"
+      }
     }
   },
   "lock": {
@@ -1019,10 +1207,30 @@
       "title": "Tier Comparison",
       "subtitle": "Higher tiers unlock more features. Lock more LAUNCH for longer to reach higher tiers.",
       "lockButton": "Lock LAUNCH",
-      "explorer": { "name": "Explorer", "perk1": "Comments & discussions", "perk2": "Community voting", "perk3": "Profile badge" },
-      "builder": { "name": "Builder", "perk1": "Publish projects & pre-launch cards", "perk2": "Pro-light analytics access", "perk3": "Priority in explorer" },
-      "founder": { "name": "Founder", "perk1": "Extended project profile", "perk2": "Showcase priority", "perk3": "Dedicated support" },
-      "governor": { "name": "Governor", "perk1": "Grants participation", "perk2": "Governance decisions", "perk3": "Full feature access" }
+      "explorer": {
+        "name": "Explorer",
+        "perk1": "Comments & discussions",
+        "perk2": "Community voting",
+        "perk3": "Profile badge"
+      },
+      "builder": {
+        "name": "Builder",
+        "perk1": "Publish projects & pre-launch cards",
+        "perk2": "Pro-light analytics access",
+        "perk3": "Priority in explorer"
+      },
+      "founder": {
+        "name": "Founder",
+        "perk1": "Extended project profile",
+        "perk2": "Showcase priority",
+        "perk3": "Dedicated support"
+      },
+      "governor": {
+        "name": "Governor",
+        "perk1": "Grants participation",
+        "perk2": "Governance decisions",
+        "perk3": "Full feature access"
+      }
     }
   },
   "trust": {
