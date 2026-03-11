@@ -194,24 +194,12 @@ export function SignTransactionFlow({
       return
     }
 
-    // Already connected — open wallet app so user can confirm the signing request
-    const isAndroid = /Android/i.test(navigator.userAgent)
-    if (isAndroid) {
-      // Android: intent URL reliably opens the wallet package
-      const base64Part = deepLink.replace('axiomesign://', '')
-      const intentUrl = `intent://${base64Part}#Intent;scheme=axiomesign;package=club.relounge.axiomewallet;end`
-      const a = document.createElement('a')
-      a.href = intentUrl
-      a.style.display = 'none'
-      document.body.appendChild(a)
-      a.click()
-      setTimeout(() => document.body.removeChild(a), 100)
-    } else {
-      // iOS + desktop: axiomesign:// opens the wallet app
-      // On iOS: opens app, Safari stays in background (page state preserved)
-      // On desktop: browser may show "can't open" — user opens wallet on phone
-      window.location.href = deepLink
-    }
+    // Already connected — open wallet app via custom scheme deep link
+    // axiomesign:// is registered by Axiome Wallet on both iOS and Android
+    // On iOS: opens app, Safari stays in background (page state preserved)
+    // On Android: opens app directly via scheme handler
+    // On desktop: browser may show "can't open" — user opens wallet on phone
+    window.location.href = deepLink
   }, [connectToken, deepLink])
 
   const handleOpenWallet = () => { setStep('signing'); openWalletApp() }
@@ -289,7 +277,7 @@ export function SignTransactionFlow({
           </div>
           <p className="text-xl font-medium text-white">{t('success')}</p>
           {txHash && (
-            <a href={`https://axiomechain.pro/transactions/${txHash}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://axiomechain.org/transactions/${txHash}`} target="_blank" rel="noopener noreferrer"
               className="text-sm text-purple-400 hover:text-purple-300 font-mono break-all transition-colors">
               TX: {txHash.slice(0, 16)}...{txHash.slice(-8)}
             </a>

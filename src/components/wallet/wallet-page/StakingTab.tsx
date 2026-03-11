@@ -9,7 +9,7 @@ import { SignTransactionFlow } from '@/components/wallet'
 import { STAKING_CONTRACT, LAUNCH_CW20, LAUNCH_DECIMALS } from '@/lib/staking/constants'
 import { useStakingStore, type OpType } from '@/stores/staking-store'
 
-const EXPLORER_URL = 'https://explorer.axiome.pro'
+const EXPLORER_URL = 'https://axiomechain.org'
 
 interface StakingStats {
   totalStaked: number

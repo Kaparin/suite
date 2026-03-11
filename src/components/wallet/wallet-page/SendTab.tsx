@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { motion } from 'framer-motion'
 import { useWallet, useTokenBalances, useTransaction, isValidAxiomeAddress } from '@/lib/wallet'
 import { SignTransactionFlow } from '@/components/wallet'
@@ -23,8 +23,17 @@ interface FormErrors {
 
 export function SendTab() {
   const { address, refreshBalance } = useWallet()
-  const { tokens, isLoading: tokensLoading } = useTokenBalances(address)
+  const { tokens, isLoading: tokensLoading, refresh: refreshTokens } = useTokenBalances(address)
   const { transactionState, closeTransaction, transferToken } = useTransaction()
+
+  const handleCloseTransaction = useCallback(() => {
+    closeTransaction()
+    // Always refresh after closing — balances may have changed
+    setTimeout(() => {
+      refreshBalance()
+      refreshTokens()
+    }, 500)
+  }, [closeTransaction, refreshBalance, refreshTokens])
 
   const [step, setStep] = useState<SendStep>('input')
   const [formData, setFormData] = useState<SendFormData>({
@@ -102,12 +111,16 @@ export function SendTab() {
   }
 
   const handleSend = () => {
-    if (!selectedToken) return
+    if (!selectedToken || !address) return
 
     // Convert to micro units
     const amount = parseFloat(formData.amount)
     const decimals = selectedToken.decimals || 6
     const amountInMicro = Math.floor(amount * Math.pow(10, decimals)).toString()
+
+    // Snapshot current balance for on-chain verification
+    const balanceBefore = parseFloat(selectedToken.displayBalance.replace(/,/g, ''))
+    const contractAddr = formData.tokenAddress
 
     const onSuccess = (hash: string) => {
       setTxHash(hash)
@@ -116,11 +129,25 @@ export function SendTab() {
     }
 
     transferToken({
-      contractAddress: formData.tokenAddress,
+      contractAddress: contractAddr,
       recipient: formData.recipient,
       amount: amountInMicro,
       tokenSymbol: selectedToken.symbol,
-      onSuccess
+      onSuccess,
+      checkTransaction: async () => {
+        try {
+          const res = await fetch(`/api/wallet/tokens?address=${address}`)
+          if (!res.ok) return { success: false, error: 'Failed to check balance' }
+          const data = await res.json()
+          const token = data.tokens?.find((t: { contractAddress: string }) => t.contractAddress === contractAddr)
+          if (!token) return { success: true } // Token disappeared = balance went to 0
+          const currentBalance = parseFloat(token.displayBalance?.replace(/,/g, '') ?? '0')
+          if (currentBalance < balanceBefore) return { success: true }
+          return { success: false, error: 'Transaction not confirmed yet. Please wait and try again.' }
+        } catch {
+          return { success: false, error: 'Failed to check balance' }
+        }
+      },
     })
   }
 
@@ -186,7 +213,7 @@ export function SendTab() {
 
             {txHash && (
               <a
-                href={`https://axiomechain.org/tx/${txHash}`}
+                href={`https://axiomechain.org/transactions/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 mb-6"
@@ -259,7 +286,7 @@ export function SendTab() {
 
         <SignTransactionFlow
           isOpen={transactionState.isOpen}
-          onClose={closeTransaction}
+          onClose={handleCloseTransaction}
           deepLink={transactionState.deepLink}
           signingCode={transactionState.signingCode}
           connectToken={transactionState.connectToken}

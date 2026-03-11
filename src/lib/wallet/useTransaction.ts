@@ -193,6 +193,7 @@ export function useTransaction() {
     amount: string
     tokenSymbol: string
     onSuccess?: (txHash: string) => void
+    checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
   }) => {
     if (!address) {
       throw new Error('Wallet not connected')
@@ -209,7 +210,8 @@ export function useTransaction() {
       payload,
       title: 'Transfer Tokens',
       description: `Send ${params.amount} ${params.tokenSymbol} to ${params.recipient.slice(0, 12)}...`,
-      onSuccess: params.onSuccess
+      onSuccess: params.onSuccess,
+      checkTransaction: params.checkTransaction
     })
   }, [address, openTransaction])
 
@@ -218,6 +220,7 @@ export function useTransaction() {
     recipient: string
     amount: string
     onSuccess?: (txHash: string) => void
+    checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
   }) => {
     if (!address) {
       throw new Error('Wallet not connected')
@@ -233,7 +236,8 @@ export function useTransaction() {
       payload,
       title: 'Send AXM',
       description: `Send ${Number(params.amount) / 1_000_000} AXM to ${params.recipient.slice(0, 12)}...`,
-      onSuccess: params.onSuccess
+      onSuccess: params.onSuccess,
+      checkTransaction: params.checkTransaction
     })
   }, [address, openTransaction])
 

@@ -88,7 +88,7 @@ type TokenData = {
   } | null
 }
 
-const EXPLORER_URL = 'https://explorer.axiome.pro'
+const EXPLORER_URL = 'https://axiomechain.org'
 
 function formatSupply(supply: string, decimals: number): string {
   if (decimals === 0) {

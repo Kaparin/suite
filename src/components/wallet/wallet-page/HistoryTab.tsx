@@ -2,9 +2,32 @@
 
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import {
+  ArrowUpRight,
+  ArrowDownLeft,
+  Code2,
+  Plus,
+  Lock,
+  Unlock,
+  RefreshCw,
+  ExternalLink,
+  Loader2,
+  FileText,
+  Flame,
+  Coins,
+  Award,
+  Repeat,
+  Vote,
+  Dices,
+  Ban,
+  Timer,
+  Shield,
+  ShieldOff,
+} from 'lucide-react'
 import { useWallet, useTransactionHistory, truncateAddress } from '@/lib/wallet'
 import type { Transaction, TransactionType } from '@/lib/wallet'
-import { Card, CardContent, Button } from '@/components/ui'
+
+const EXPLORER_URL = 'https://axiomechain.org'
 
 type FilterType = 'all' | TransactionType
 
@@ -12,7 +35,7 @@ const filterOptions: { id: FilterType; label: string }[] = [
   { id: 'all', label: 'All' },
   { id: 'send', label: 'Sent' },
   { id: 'receive', label: 'Received' },
-  { id: 'contract', label: 'Contracts' }
+  { id: 'contract', label: 'Contracts' },
 ]
 
 export function HistoryTab() {
@@ -26,370 +49,349 @@ export function HistoryTab() {
     isLoadingMore,
     error,
     loadMore,
-    refresh
+    refresh,
   } = useTransactionHistory({
     address,
     type: filter === 'all' ? undefined : filter,
-    limit: 20
+    limit: 20,
   })
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="space-y-4"
+      className="space-y-3"
     >
-      {/* Filter Bar */}
-      <div className="flex gap-2 overflow-x-auto pb-2">
-        {filterOptions.map((option) => (
-          <motion.button
-            key={option.id}
-            onClick={() => setFilter(option.id)}
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            className={`px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap transition-all ${
-              filter === option.id
-                ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white'
-                : 'bg-gray-800 text-gray-400 hover:text-white hover:bg-gray-700'
+      {/* Filter Pills */}
+      <div className="flex items-center gap-1.5">
+        {filterOptions.map((opt) => (
+          <button
+            key={opt.id}
+            onClick={() => setFilter(opt.id)}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              filter === opt.id
+                ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25'
+                : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60'
             }`}
           >
-            {option.label}
-          </motion.button>
+            {opt.label}
+          </button>
         ))}
-
-        <motion.button
+        <button
           onClick={refresh}
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
           disabled={isLoading}
-          className="ml-auto px-3 py-2 rounded-lg text-gray-400 hover:text-white hover:bg-gray-800 transition-colors"
+          className="ml-auto rounded-lg p-1.5 text-gray-500 hover:text-white hover:bg-gray-800 transition-colors disabled:opacity-30"
         >
-          <svg
-            className={`w-5 h-5 ${isLoading ? 'animate-spin' : ''}`}
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-          </svg>
-        </motion.button>
+          <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
+        </button>
       </div>
 
       {/* Transaction List */}
-      <Card className="bg-gray-900/50 border-gray-800">
-        <CardContent className="p-0">
-          {isLoading && transactions.length === 0 ? (
-            <div className="p-4 space-y-3">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="animate-pulse flex items-center gap-4 py-3 px-4">
-                  <div className="w-12 h-12 bg-gray-700 rounded-full" />
-                  <div className="flex-1">
-                    <div className="h-4 bg-gray-700 rounded w-32 mb-2" />
-                    <div className="h-3 bg-gray-700 rounded w-48" />
-                  </div>
-                  <div className="text-right">
-                    <div className="h-4 bg-gray-700 rounded w-20 mb-2" />
-                    <div className="h-3 bg-gray-700 rounded w-12 ml-auto" />
-                  </div>
-                </div>
-              ))}
+      {isLoading && transactions.length === 0 ? (
+        <div className="space-y-2">
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div key={i} className="animate-pulse rounded-xl bg-gray-900/50 border border-gray-800/50 px-3 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 bg-gray-800 rounded-full" />
+              <div className="flex-1">
+                <div className="h-3.5 bg-gray-800 rounded w-28 mb-1.5" />
+                <div className="h-3 bg-gray-800 rounded w-40" />
+              </div>
+              <div className="h-3.5 bg-gray-800 rounded w-16" />
             </div>
-          ) : error ? (
-            <div className="p-8 text-center">
-              <svg className="w-12 h-12 mx-auto text-red-500 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-              </svg>
-              <p className="text-red-400 mb-3">{error}</p>
-              <Button variant="outline" size="sm" onClick={refresh}>
-                Try Again
-              </Button>
-            </div>
-          ) : transactions.length === 0 ? (
-            <div className="p-8 text-center">
-              <svg className="w-12 h-12 mx-auto text-gray-600 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <p className="text-gray-400">No transactions found</p>
-              {filter !== 'all' && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setFilter('all')}
-                  className="mt-2 text-purple-400"
-                >
-                  Show all transactions
-                </Button>
-              )}
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-800">
-              {transactions.map((tx, index) => (
-                <motion.div
-                  key={tx.hash}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.05 }}
-                >
-                  <TransactionRow
-                    transaction={tx}
-                    address={address || ''}
-                  />
-                </motion.div>
-              ))}
-            </div>
+          ))}
+        </div>
+      ) : error ? (
+        <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.05] py-10 text-center">
+          <p className="text-sm text-red-400 mb-3">{error}</p>
+          <button
+            onClick={refresh}
+            className="text-xs font-bold text-violet-400 hover:text-violet-300 transition-colors"
+          >
+            Try again
+          </button>
+        </div>
+      ) : transactions.length === 0 ? (
+        <div className="rounded-2xl border border-gray-800/50 bg-gray-900/30 py-12 text-center">
+          <FileText size={32} className="mx-auto text-gray-700 mb-3" />
+          <p className="text-sm text-gray-500">No transactions found</p>
+          {filter !== 'all' && (
+            <button
+              onClick={() => setFilter('all')}
+              className="mt-2 text-xs font-bold text-violet-400 hover:text-violet-300 transition-colors"
+            >
+              Show all transactions
+            </button>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      ) : (
+        <div className="space-y-1.5">
+          {transactions.map((tx, i) => (
+            <motion.div
+              key={tx.hash}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: Math.min(i * 0.03, 0.3) }}
+            >
+              <TransactionCard tx={tx} userAddress={address || ''} />
+            </motion.div>
+          ))}
+        </div>
+      )}
 
       {/* Load More */}
       {pagination?.hasMore && (
-        <div className="text-center">
-          <Button
-            variant="outline"
+        <div className="text-center pt-1">
+          <button
             onClick={loadMore}
-            isLoading={isLoadingMore}
+            disabled={isLoadingMore}
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gray-800/60 text-sm font-medium text-gray-300 hover:bg-gray-700/60 hover:text-white transition-colors disabled:opacity-50"
           >
-            Load More
-          </Button>
+            {isLoadingMore ? (
+              <><Loader2 size={14} className="animate-spin" /> Loading...</>
+            ) : (
+              'Load more'
+            )}
+          </button>
         </div>
       )}
     </motion.div>
   )
 }
 
-// Map of contract action → human-readable label + color override
-const ACTION_CONFIG: Record<string, { label: string; color?: string; icon?: string }> = {
-  // CW20 token actions
-  transfer: { label: 'Transfer' },
-  send: { label: 'Send' },
-  mint: { label: 'Mint', color: 'text-purple-400 bg-purple-500/10' },
-  burn: { label: 'Burn', color: 'text-orange-400 bg-orange-500/10' },
-  approve: { label: 'Approve' },
-  increase_allowance: { label: 'Approve Allowance' },
-  decrease_allowance: { label: 'Revoke Allowance' },
-  update_marketing: { label: 'Update Token Info' },
-  update_minter: { label: 'Update Minter' },
+// ─── Action Config ───────────────────────────────────────────────
+
+interface ActionCfg {
+  label: string
+  icon: React.ReactNode
+  color: string // tailwind text + bg classes
+}
+
+const ACTION_MAP: Record<string, ActionCfg> = {
+  // CW20
+  transfer: { label: 'Transfer', icon: <ArrowUpRight size={14} />, color: 'text-blue-400 bg-blue-500/10' },
+  send: { label: 'Send', icon: <ArrowUpRight size={14} />, color: 'text-red-400 bg-red-500/10' },
+  mint: { label: 'Mint', icon: <Plus size={14} />, color: 'text-purple-400 bg-purple-500/10' },
+  burn: { label: 'Burn', icon: <Flame size={14} />, color: 'text-orange-400 bg-orange-500/10' },
+  approve: { label: 'Approve', icon: <Shield size={14} />, color: 'text-sky-400 bg-sky-500/10' },
+  increase_allowance: { label: 'Approve', icon: <Shield size={14} />, color: 'text-sky-400 bg-sky-500/10' },
+  decrease_allowance: { label: 'Revoke', icon: <ShieldOff size={14} />, color: 'text-gray-400 bg-gray-500/10' },
+  update_marketing: { label: 'Update Info', icon: <Code2 size={14} />, color: 'text-gray-400 bg-gray-500/10' },
+  update_minter: { label: 'Update Minter', icon: <Code2 size={14} />, color: 'text-gray-400 bg-gray-500/10' },
   // Staking
-  stake: { label: 'Stake', color: 'text-violet-400 bg-violet-500/10' },
-  unstake: { label: 'Unstake', color: 'text-orange-400 bg-orange-500/10' },
-  claim: { label: 'Claim Rewards', color: 'text-emerald-400 bg-emerald-500/10' },
-  withdraw: { label: 'Withdraw', color: 'text-emerald-400 bg-emerald-500/10' },
-  distribute: { label: 'Distribute Rewards', color: 'text-cyan-400 bg-cyan-500/10' },
-  // Presale / swap
-  buy: { label: 'Buy', color: 'text-green-400 bg-green-500/10' },
-  swap: { label: 'Swap', color: 'text-blue-400 bg-blue-500/10' },
+  stake: { label: 'Stake', icon: <Coins size={14} />, color: 'text-violet-400 bg-violet-500/10' },
+  unstake: { label: 'Unstake', icon: <Coins size={14} />, color: 'text-orange-400 bg-orange-500/10' },
+  claim: { label: 'Claim', icon: <Award size={14} />, color: 'text-emerald-400 bg-emerald-500/10' },
+  withdraw: { label: 'Withdraw', icon: <Award size={14} />, color: 'text-emerald-400 bg-emerald-500/10' },
+  distribute: { label: 'Distribute', icon: <Award size={14} />, color: 'text-cyan-400 bg-cyan-500/10' },
+  // Trade
+  buy: { label: 'Buy', icon: <ArrowDownLeft size={14} />, color: 'text-green-400 bg-green-500/10' },
+  swap: { label: 'Swap', icon: <Repeat size={14} />, color: 'text-blue-400 bg-blue-500/10' },
   // Governance
-  propose: { label: 'Create Proposal', color: 'text-purple-400 bg-purple-500/10' },
-  vote: { label: 'Vote', color: 'text-blue-400 bg-blue-500/10' },
-  // Authz
-  grant: { label: 'Grant Permission' },
-  revoke: { label: 'Revoke Permission' },
-  execute: { label: 'Execute' },
-  // CoinFlip game
-  create_bet: { label: 'Create Bet', color: 'text-amber-400 bg-amber-500/10' },
-  accept_bet: { label: 'Accept Bet', color: 'text-blue-400 bg-blue-500/10' },
-  reveal: { label: 'Reveal Result', color: 'text-emerald-400 bg-emerald-500/10' },
-  cancel_bet: { label: 'Cancel Bet', color: 'text-gray-400 bg-gray-500/10' },
-  claim_timeout: { label: 'Claim Timeout', color: 'text-orange-400 bg-orange-500/10' },
+  propose: { label: 'Propose', icon: <FileText size={14} />, color: 'text-purple-400 bg-purple-500/10' },
+  vote: { label: 'Vote', icon: <Vote size={14} />, color: 'text-blue-400 bg-blue-500/10' },
+  // Auth
+  grant: { label: 'Grant', icon: <Shield size={14} />, color: 'text-sky-400 bg-sky-500/10' },
+  revoke: { label: 'Revoke', icon: <ShieldOff size={14} />, color: 'text-gray-400 bg-gray-500/10' },
+  execute: { label: 'Execute', icon: <Code2 size={14} />, color: 'text-blue-400 bg-blue-500/10' },
+  // CoinFlip
+  create_bet: { label: 'Create Bet', icon: <Dices size={14} />, color: 'text-amber-400 bg-amber-500/10' },
+  accept_bet: { label: 'Accept Bet', icon: <Dices size={14} />, color: 'text-blue-400 bg-blue-500/10' },
+  reveal: { label: 'Reveal', icon: <Dices size={14} />, color: 'text-emerald-400 bg-emerald-500/10' },
+  cancel_bet: { label: 'Cancel Bet', icon: <Ban size={14} />, color: 'text-gray-400 bg-gray-500/10' },
+  claim_timeout: { label: 'Timeout', icon: <Timer size={14} />, color: 'text-orange-400 bg-orange-500/10' },
 }
 
-const TYPE_CONFIG: Record<string, { color: string; icon: React.ReactNode; label: string }> = {
-  send: {
-    color: 'text-red-400 bg-red-500/10',
-    icon: <ArrowUpIcon />,
-    label: 'Sent',
-  },
-  receive: {
-    color: 'text-green-400 bg-green-500/10',
-    icon: <ArrowDownIcon />,
-    label: 'Received',
-  },
-  contract: {
-    color: 'text-blue-400 bg-blue-500/10',
-    icon: <CodeIcon />,
-    label: 'Contract Call',
-  },
-  instantiate: {
-    color: 'text-purple-400 bg-purple-500/10',
-    icon: <PlusIcon />,
-    label: 'Deploy Contract',
-  },
-  delegate: {
-    color: 'text-yellow-400 bg-yellow-500/10',
-    icon: <LockIcon />,
-    label: 'Delegate',
-  },
-  undelegate: {
-    color: 'text-orange-400 bg-orange-500/10',
-    icon: <UnlockIcon />,
-    label: 'Undelegate',
-  },
+const TYPE_MAP: Record<string, ActionCfg> = {
+  send: { label: 'Sent', icon: <ArrowUpRight size={15} />, color: 'text-red-400 bg-red-500/10' },
+  receive: { label: 'Received', icon: <ArrowDownLeft size={15} />, color: 'text-green-400 bg-green-500/10' },
+  contract: { label: 'Contract', icon: <Code2 size={15} />, color: 'text-blue-400 bg-blue-500/10' },
+  instantiate: { label: 'Deploy', icon: <Plus size={15} />, color: 'text-purple-400 bg-purple-500/10' },
+  delegate: { label: 'Delegate', icon: <Lock size={15} />, color: 'text-yellow-400 bg-yellow-500/10' },
+  undelegate: { label: 'Undelegate', icon: <Unlock size={15} />, color: 'text-orange-400 bg-orange-500/10' },
 }
 
-function TransactionRow({
-  transaction: tx,
-  address
-}: {
-  transaction: Transaction
-  address: string
-}) {
-  const isOutgoing = tx.from.toLowerCase() === address.toLowerCase()
-  const txWithAction = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
+// ─── Helpers ─────────────────────────────────────────────────────
 
-  const baseConfig = TYPE_CONFIG[tx.type] || TYPE_CONFIG.contract
+function relativeTime(ts: string): string {
+  const diff = Date.now() - new Date(ts).getTime()
+  const sec = Math.floor(diff / 1000)
+  if (sec < 60) return 'just now'
+  const min = Math.floor(sec / 60)
+  if (min < 60) return `${min}m ago`
+  const hrs = Math.floor(min / 60)
+  if (hrs < 24) return `${hrs}h ago`
+  const days = Math.floor(hrs / 24)
+  if (days < 7) return `${days}d ago`
+  return new Date(ts).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
+}
 
-  // Build label and potentially override color based on contract action
-  let label = baseConfig.label
-  let color = baseConfig.color
-  const icon = baseConfig.icon
+function formatDisplayAmount(val: string): string {
+  const n = parseFloat(val)
+  if (isNaN(n) || n === 0) return '0'
+  if (n >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M`
+  if (n >= 1_000) return `${(n / 1_000).toFixed(2)}K`
+  if (n >= 1) return n.toFixed(2)
+  // Small amounts: up to 6 decimals, strip trailing zeros
+  return n.toFixed(6).replace(/\.?0+$/, '')
+}
 
-  if (tx.type === 'contract' && txWithAction.contractAction) {
-    const action = txWithAction.contractAction
-    const actionConfig = ACTION_CONFIG[action]
-    if (actionConfig) {
-      label = actionConfig.label
-      if (actionConfig.color) color = actionConfig.color
+// ─── Transaction Card ────────────────────────────────────────────
+
+function TransactionCard({ tx, userAddress }: { tx: Transaction; userAddress: string }) {
+  const isOutgoing = tx.from.toLowerCase() === userAddress.toLowerCase()
+  const txExt = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
+
+  // Resolve config
+  let cfg = TYPE_MAP[tx.type] || TYPE_MAP.contract
+  let label = cfg.label
+  let icon = cfg.icon
+  let color = cfg.color
+
+  if (tx.type === 'contract' && txExt.contractAction) {
+    const aCfg = ACTION_MAP[txExt.contractAction]
+    if (aCfg) {
+      label = aCfg.label
+      icon = aCfg.icon
+      color = aCfg.color
     } else {
-      // Unknown action — format it nicely
-      label = action.charAt(0).toUpperCase() + action.slice(1).replace(/_/g, ' ')
+      label = txExt.contractAction.charAt(0).toUpperCase() + txExt.contractAction.slice(1).replace(/_/g, ' ')
     }
   }
 
-  // Append token symbol if known
-  if (txWithAction.tokenSymbol) {
-    label = `${label} ${txWithAction.tokenSymbol}`
-  }
+  // Token symbol badge
+  const tokenSymbol = txExt.tokenSymbol
 
-  // Build description line
-  let description = ''
+  // Counterparty
+  let counterparty = ''
   if (tx.type === 'send' || tx.type === 'receive') {
-    description = isOutgoing
-      ? `To ${truncateAddress(tx.to, 8, 6)}`
-      : `From ${truncateAddress(tx.from, 8, 6)}`
+    counterparty = isOutgoing ? tx.to : tx.from
   } else if (tx.type === 'contract') {
-    // For contract calls, show the contract address or counterparty
-    const counterparty = isOutgoing ? tx.to : tx.from
-    if (counterparty) {
-      description = `Contract ${truncateAddress(counterparty, 6, 4)}`
-    }
+    counterparty = tx.to || tx.from
   } else if (tx.type === 'delegate' || tx.type === 'undelegate') {
-    description = `Validator ${truncateAddress(tx.to, 6, 4)}`
+    counterparty = tx.to
   } else if (tx.type === 'instantiate') {
-    if (tx.to) {
-      description = `New contract ${truncateAddress(tx.to, 6, 4)}`
-    }
+    counterparty = tx.to
   }
 
-  // Format date
-  const date = new Date(tx.timestamp)
-  const formattedDate = date.toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-
-  // Amount display — check for non-zero numeric value
-  const numericValue = parseFloat(tx.amount.displayValue)
-  const hasAmount = !isNaN(numericValue) && numericValue > 0
+  const numVal = parseFloat(tx.amount.displayValue)
+  const hasAmount = !isNaN(numVal) && numVal > 0
 
   return (
     <a
-      href={`https://axiomechain.org/tx/${tx.hash}`}
+      href={`${EXPLORER_URL}/transactions/${tx.hash}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-4 py-4 px-4 hover:bg-gray-800/50 transition-colors"
+      className="group flex items-center gap-3 rounded-xl bg-gray-900/40 border border-gray-800/40 hover:border-gray-700/60 hover:bg-gray-800/30 px-3 py-2.5 transition-all"
     >
       {/* Icon */}
-      <div className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${color}`}>
+      <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${color}`}>
         {icon}
       </div>
 
-      {/* Details */}
+      {/* Info */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-0.5">
-          <span className="font-medium text-white text-sm">{label}</span>
+        <div className="flex items-center gap-1.5">
+          <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
+          {tokenSymbol && (
+            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide bg-gray-800 text-gray-400 rounded">
+              {tokenSymbol}
+            </span>
+          )}
           {tx.status === 'failed' && (
-            <span className="px-2 py-0.5 text-xs bg-red-500/20 text-red-400 rounded">
+            <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-500/15 text-red-400 rounded">
               Failed
             </span>
           )}
         </div>
-        {description && (
-          <p className="text-sm text-gray-500 truncate">{description}</p>
-        )}
-        <p className="text-xs text-gray-600 mt-0.5">{formattedDate}</p>
+        <div className="flex items-center gap-1.5 mt-0.5">
+          {counterparty && (
+            <span className="text-[11px] text-gray-500 font-mono truncate">
+              {truncateAddress(counterparty, 6, 4)}
+            </span>
+          )}
+          <span className="text-[10px] text-gray-600">{relativeTime(tx.timestamp)}</span>
+        </div>
       </div>
 
       {/* Amount */}
-      <div className="text-right flex-shrink-0">
+      <div className="text-right shrink-0">
         {hasAmount ? (
           <>
-            <p className={`font-mono font-medium text-sm ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
-              {isOutgoing ? '-' : '+'}{tx.amount.displayValue}
+            <p className={`text-[13px] font-bold tabular-nums leading-tight ${
+              isOutgoing ? 'text-red-400' : 'text-green-400'
+            }`}>
+              {isOutgoing ? '\u2212' : '+'}{formatDisplayAmount(tx.amount.displayValue)}
             </p>
-            <p className="text-xs text-gray-500">{tx.amount.displayDenom}</p>
+            <p className="text-[10px] text-gray-500 font-medium">{tx.amount.displayDenom}</p>
           </>
         ) : tx.fee?.displayValue && parseFloat(tx.fee.displayValue) > 0 ? (
-          <p className="text-xs text-gray-600">Fee {tx.fee.displayValue} AXM</p>
-        ) : (
-          <p className="text-xs text-gray-600">—</p>
-        )}
+          <p className="text-[10px] text-gray-600">Fee {formatDisplayAmount(tx.fee.displayValue)} AXM</p>
+        ) : null}
       </div>
 
       {/* Arrow */}
-      <svg className="w-4 h-4 text-gray-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-      </svg>
+      <ExternalLink size={12} className="text-gray-700 group-hover:text-gray-500 shrink-0 transition-colors" />
     </a>
   )
 }
 
-// Icon components
-function ArrowUpIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-    </svg>
-  )
-}
+// ─── Compact TransactionRow (for OverviewTab) ────────────────────
 
-function ArrowDownIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
-    </svg>
-  )
-}
+export function TransactionRowCompact({ tx, userAddress }: { tx: Transaction; userAddress: string }) {
+  const isOutgoing = tx.from.toLowerCase() === userAddress.toLowerCase()
+  const txExt = tx as Transaction & { contractAction?: string; tokenSymbol?: string }
 
-function CodeIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
-    </svg>
-  )
-}
+  let cfg = TYPE_MAP[tx.type] || TYPE_MAP.contract
+  let label = cfg.label
+  let icon = cfg.icon
+  let color = cfg.color
 
-function PlusIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-    </svg>
-  )
-}
+  if (tx.type === 'contract' && txExt.contractAction) {
+    const aCfg = ACTION_MAP[txExt.contractAction]
+    if (aCfg) {
+      label = aCfg.label
+      icon = aCfg.icon
+      color = aCfg.color
+    } else {
+      label = txExt.contractAction.charAt(0).toUpperCase() + txExt.contractAction.slice(1).replace(/_/g, ' ')
+    }
+  }
+  if (txExt.tokenSymbol) label = `${label} ${txExt.tokenSymbol}`
 
-function LockIcon() {
-  return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-    </svg>
-  )
-}
+  const numVal = parseFloat(tx.amount.displayValue)
+  const hasAmount = !isNaN(numVal) && numVal > 0
 
-function UnlockIcon() {
   return (
-    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 11V7a4 4 0 118 0m-4 8v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2z" />
-    </svg>
+    <a
+      href={`${EXPLORER_URL}/transactions/${tx.hash}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-gray-800/40 -mx-1 transition-colors"
+    >
+      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${color}`}>
+        {icon}
+      </div>
+      <div className="flex-1 min-w-0">
+        <div className="flex items-center gap-1.5">
+          <span className="text-[12px] font-semibold text-white">{label}</span>
+          {tx.status === 'failed' && (
+            <span className="px-1 py-0.5 text-[8px] font-bold bg-red-500/15 text-red-400 rounded">Failed</span>
+          )}
+        </div>
+        <p className="text-[10px] text-gray-500">{relativeTime(tx.timestamp)}</p>
+      </div>
+      <div className="text-right shrink-0">
+        {hasAmount ? (
+          <>
+            <p className={`text-[12px] font-bold tabular-nums ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
+              {isOutgoing ? '\u2212' : '+'}{formatDisplayAmount(tx.amount.displayValue)}
+            </p>
+            <p className="text-[9px] text-gray-500">{tx.amount.displayDenom}</p>
+          </>
+        ) : (
+          <p className="text-[10px] text-gray-600">\u2014</p>
+        )}
+      </div>
+    </a>
   )
 }
