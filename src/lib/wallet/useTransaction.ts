@@ -13,6 +13,7 @@ import {
 } from './transaction-builder'
 import { AXIOME_CHAIN } from './chain'
 import { useAxiomeConnect } from './useAxiomeConnect'
+import { cancelSigningRequest } from './axiome-connect'
 
 export interface TransactionState {
   isOpen: boolean
@@ -41,6 +42,8 @@ export function useTransaction() {
   const pendingRef = useRef(false)
   // Abort controller for cancelling waitForAssociation when modal closes
   const abortRef = useRef<AbortController | null>(null)
+  // Track last signing ID to cancel it before creating a new one
+  const lastSigningIdRef = useRef<string | null>(null)
 
   const close = useCallback(() => {
     pendingRef.current = false
@@ -70,6 +73,12 @@ export function useTransaction() {
 
     const deepLink = buildAxiomeSignLink(params.payload)
 
+    // Cancel any previous signing request to prevent stale requests in wallet
+    if (lastSigningIdRef.current) {
+      cancelSigningRequest(lastSigningIdRef.current).catch(() => {})
+      lastSigningIdRef.current = null
+    }
+
     // Open modal immediately
     setState({
       isOpen: true,
@@ -90,6 +99,7 @@ export function useTransaction() {
       if (existingToken && existingWallet) {
         const signingId = await submitSigningRequest(deepLink, existingToken)
         if (signingId && !abortCtrl.signal.aborted) {
+          lastSigningIdRef.current = signingId
           setState(prev => {
             if (!prev.isOpen) return prev
             return { ...prev, signingCode: signingId }
@@ -123,6 +133,7 @@ export function useTransaction() {
       // User authenticated — submit signing request
       const signingId = await submitSigningRequest(deepLink, freshToken)
       if (signingId && !abortCtrl.signal.aborted) {
+        lastSigningIdRef.current = signingId
         setState(prev => {
           if (!prev.isOpen) return prev
           return { ...prev, signingCode: signingId }

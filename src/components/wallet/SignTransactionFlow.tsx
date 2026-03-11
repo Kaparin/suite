@@ -97,6 +97,8 @@ export function SignTransactionFlow({
             setApiStatus(result.status)
             if (result.status === 'result') {
               stopPolling()
+              // Cancel immediately so wallet doesn't re-show this request
+              cancelSigningRequest(code).catch(() => {})
               const hash = extractTxHash(result.payload)
               setTxHash(hash)
               setStep('success')
@@ -112,6 +114,8 @@ export function SignTransactionFlow({
             const result = await checkTransactionRef.current()
             if (result.success) {
               stopPolling()
+              // Cancel signing request to prevent re-showing in wallet
+              if (code) cancelSigningRequest(code).catch(() => {})
               setTxHash(result.txHash || null)
               setStep('success')
               if (result.txHash && onSuccessRef.current) onSuccessRef.current(result.txHash)
@@ -137,6 +141,8 @@ export function SignTransactionFlow({
         const result = await pollSigningStatus(code)
         if (result.status === 'result') {
           stopPolling()
+          // Cancel immediately so wallet doesn't re-show this request
+          cancelSigningRequest(code).catch(() => {})
           const hash = extractTxHash(result.payload)
           setTxHash(hash)
           setStep('success')
@@ -176,6 +182,7 @@ export function SignTransactionFlow({
         if (result.status === 'result') {
           const hash = extractTxHash(result.payload)
           setTxHash(hash); setStep('success'); stopPolling()
+          cancelSigningRequest(code).catch(() => {})
           if (hash && onSuccessRef.current) onSuccessRef.current(hash)
           setIsChecking(false); return
         }
@@ -186,6 +193,7 @@ export function SignTransactionFlow({
         const result = await checkTransactionRef.current()
         if (result.success) {
           setTxHash(result.txHash || null); setStep('success'); stopPolling()
+          if (code) cancelSigningRequest(code).catch(() => {})
           if (result.txHash && onSuccessRef.current) onSuccessRef.current(result.txHash)
         } else {
           setError(result.error || 'Transaction not found yet'); setStep('error')
@@ -199,16 +207,16 @@ export function SignTransactionFlow({
 
   const handleRetry = () => { setStep('signing'); setError(null); setApiStatus(null) }
 
-  // Cancel signing request and close
+  // ALWAYS cancel signing request on close — even after success.
+  // If not cancelled, Axiome wallet keeps showing it on refresh, causing repeated contract calls.
   const handleClose = useCallback(() => {
     stopPolling()
-    // Cancel the signing request on Axiome API to prevent stale requests in wallet
     const code = signingCodeRef.current
-    if (code && step !== 'success') {
+    if (code) {
       cancelSigningRequest(code).catch(() => { /* ignore */ })
     }
     onClose()
-  }, [stopPolling, onClose, step])
+  }, [stopPolling, onClose])
 
   if (!isOpen) return null
 
