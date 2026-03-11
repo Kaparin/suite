@@ -268,13 +268,31 @@ export async function cancelSigningRequest(transactionId: string): Promise<void>
 
 /**
  * Extract transaction hash from signing result payload.
+ * Handles various response formats from Axiome API.
  */
 export function extractTxHash(payload: string | undefined): string | null {
   if (!payload) return null
+
+  // Try parsing as JSON (may be double-escaped)
   try {
-    const parsed = JSON.parse(payload.replace(/\\"/g, '"'))
-    return parsed?.transactionHash || null
+    let data = payload
+    // Handle double-escaped JSON
+    if (data.startsWith('"') && data.endsWith('"')) {
+      data = JSON.parse(data)
+    }
+    const parsed = typeof data === 'string' ? JSON.parse(data.replace(/\\"/g, '"')) : data
+    // Check common field names
+    return parsed?.transactionHash
+      || parsed?.txHash
+      || parsed?.tx_hash
+      || parsed?.hash
+      || null
   } catch {
+    // If it looks like a hex hash (64 chars), return it directly
+    const trimmed = payload.trim().replace(/^["']|["']$/g, '')
+    if (/^[a-fA-F0-9]{64}$/.test(trimmed)) {
+      return trimmed
+    }
     return null
   }
 }

@@ -26,6 +26,23 @@ interface SignTransactionFlowProps {
   checkTransaction?: () => Promise<{ success: boolean; txHash?: string; error?: string }>
 }
 
+/** Handle success: extract hash, cancel request, call onSuccess ALWAYS */
+function handleSuccessResult(
+  code: string,
+  payload: string | undefined,
+  stopPolling: () => void,
+  setTxHash: (h: string | null) => void,
+  setStep: (s: FlowStep) => void,
+  onSuccessRef: React.RefObject<((txHash: string) => void) | undefined>,
+) {
+  stopPolling()
+  cancelSigningRequest(code).catch(() => {})
+  const hash = extractTxHash(payload)
+  setTxHash(hash)
+  setStep('success')
+  // Always call onSuccess — even with empty hash, so balances refresh
+  if (onSuccessRef.current) onSuccessRef.current(hash || '')
+}
 
 export function SignTransactionFlow({
   isOpen,
@@ -84,10 +101,10 @@ export function SignTransactionFlow({
   }, [isOpen, signingCode, connectToken, step])
 
   // Poll for transaction status when in signing step
-  // Dependencies: only step and stopPolling (callbacks via refs)
   useEffect(() => {
     if (step !== 'signing') { stopPolling(); return }
 
+    // Start fast: first poll after 2s, then every 5s
     const startDelay = setTimeout(() => {
       pollRef.current = setInterval(async () => {
         const code = signingCodeRef.current
@@ -96,13 +113,7 @@ export function SignTransactionFlow({
             const result = await pollSigningStatus(code)
             setApiStatus(result.status)
             if (result.status === 'result') {
-              stopPolling()
-              // Cancel immediately so wallet doesn't re-show this request
-              cancelSigningRequest(code).catch(() => {})
-              const hash = extractTxHash(result.payload)
-              setTxHash(hash)
-              setStep('success')
-              if (hash && onSuccessRef.current) onSuccessRef.current(hash)
+              handleSuccessResult(code, result.payload, stopPolling, setTxHash, setStep, onSuccessRef)
               return
             }
             if (result.status === 'cancel') { stopPolling(); setError('Transaction cancelled'); setStep('error'); return }
@@ -114,41 +125,45 @@ export function SignTransactionFlow({
             const result = await checkTransactionRef.current()
             if (result.success) {
               stopPolling()
-              // Cancel signing request to prevent re-showing in wallet
               if (code) cancelSigningRequest(code).catch(() => {})
               setTxHash(result.txHash || null)
               setStep('success')
-              if (result.txHash && onSuccessRef.current) onSuccessRef.current(result.txHash)
+              if (onSuccessRef.current) onSuccessRef.current(result.txHash || '')
             }
           } catch { /* ignore */ }
         }
-      }, 10_000)
+      }, 5_000)
 
       timeoutRef.current = setTimeout(() => { stopPolling(); setApiStatus('pulling_timeout') }, 300_000)
-    }, 5000)
+    }, 2_000)
 
     return () => { clearTimeout(startDelay); stopPolling() }
   }, [step, stopPolling])
 
-  // Resume check on visibility change
+  // Resume check on visibility change — retry multiple times with short intervals
   useEffect(() => {
     if (step !== 'signing') return
     const handleVisibility = async () => {
       if (document.visibilityState !== 'visible') return
       const code = signingCodeRef.current
       if (!code) return
-      try {
-        const result = await pollSigningStatus(code)
-        if (result.status === 'result') {
-          stopPolling()
-          // Cancel immediately so wallet doesn't re-show this request
-          cancelSigningRequest(code).catch(() => {})
-          const hash = extractTxHash(result.payload)
-          setTxHash(hash)
-          setStep('success')
-          if (hash && onSuccessRef.current) onSuccessRef.current(hash)
-        }
-      } catch { /* ignore */ }
+
+      // Retry up to 3 times with 2s intervals (API might not have updated yet)
+      for (let attempt = 0; attempt < 3; attempt++) {
+        if (attempt > 0) await new Promise(r => setTimeout(r, 2000))
+        try {
+          const result = await pollSigningStatus(code)
+          if (result.status === 'result') {
+            handleSuccessResult(code, result.payload, stopPolling, setTxHash, setStep, onSuccessRef)
+            return
+          }
+          if (result.status === 'broadcast') {
+            setApiStatus('broadcast')
+            // Keep retrying — broadcast means it's coming soon
+            continue
+          }
+        } catch { /* ignore, retry */ }
+      }
     }
     document.addEventListener('visibilitychange', handleVisibility)
     return () => document.removeEventListener('visibilitychange', handleVisibility)
@@ -158,18 +173,17 @@ export function SignTransactionFlow({
     if (connectToken) {
       // Need to connect first — open Axiome Connect URL
       window.location.href = `https://axiome.pro/app/connect?token=${connectToken}`
-    } else {
-      // Already connected — just open the wallet app
-      // On iOS: universal link
-      // On Android: intent
-      const isAndroid = /Android/i.test(navigator.userAgent)
-      if (isAndroid) {
-        window.location.href = 'https://axiome.pro/app'
-      } else {
-        window.location.href = 'https://axiome.pro/app'
-      }
+    } else if (isMobile) {
+      // Already connected — open wallet app via deep link without navigating away
+      const link = document.createElement('a')
+      link.href = deepLink
+      link.style.display = 'none'
+      document.body.appendChild(link)
+      link.click()
+      setTimeout(() => document.body.removeChild(link), 100)
     }
-  }, [connectToken])
+    // On desktop: user opens wallet on phone manually, no action needed
+  }, [connectToken, deepLink, isMobile])
 
   const handleOpenWallet = () => { setStep('signing'); openWalletApp() }
 
@@ -180,10 +194,7 @@ export function SignTransactionFlow({
       try {
         const result = await pollSigningStatus(code)
         if (result.status === 'result') {
-          const hash = extractTxHash(result.payload)
-          setTxHash(hash); setStep('success'); stopPolling()
-          cancelSigningRequest(code).catch(() => {})
-          if (hash && onSuccessRef.current) onSuccessRef.current(hash)
+          handleSuccessResult(code, result.payload, stopPolling, setTxHash, setStep, onSuccessRef)
           setIsChecking(false); return
         }
       } catch { /* fall through */ }
@@ -192,23 +203,27 @@ export function SignTransactionFlow({
       try {
         const result = await checkTransactionRef.current()
         if (result.success) {
-          setTxHash(result.txHash || null); setStep('success'); stopPolling()
+          stopPolling()
           if (code) cancelSigningRequest(code).catch(() => {})
-          if (result.txHash && onSuccessRef.current) onSuccessRef.current(result.txHash)
+          setTxHash(result.txHash || null); setStep('success')
+          if (onSuccessRef.current) onSuccessRef.current(result.txHash || '')
         } else {
           setError(result.error || 'Transaction not found yet'); setStep('error')
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to check'); setStep('error')
       }
-    } else { setStep('success') }
+    } else {
+      // No checkTransaction and no API result yet — tell user to wait
+      setError('Transaction not confirmed yet. Please wait a moment and try again.')
+      setStep('error')
+    }
     setIsChecking(false)
   }, [stopPolling])
 
   const handleRetry = () => { setStep('signing'); setError(null); setApiStatus(null) }
 
   // ALWAYS cancel signing request on close — even after success.
-  // If not cancelled, Axiome wallet keeps showing it on refresh, causing repeated contract calls.
   const handleClose = useCallback(() => {
     stopPolling()
     const code = signingCodeRef.current
@@ -302,7 +317,7 @@ export function SignTransactionFlow({
           </div>
         )}
 
-        {/* QR — desktop only, use universal link so any phone camera can scan */}
+        {/* QR — desktop only, only when connecting (has connectToken) */}
         {!isMobile && connectToken && (
           <div className="flex justify-center">
             <div className="bg-white p-3 rounded-xl">

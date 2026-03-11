@@ -192,14 +192,15 @@ export function StakingTab() {
     })
   }
 
-  // Handle modal close — clear op if not successful
+  // Handle modal close — always refresh data, clear op if not successful
   const handleCloseTransaction = useCallback(() => {
     closeTransaction()
-    // If op is in signing phase (user closed without completing), clear it
     if (store.op?.phase === 'signing') {
       store.setError('Cancelled')
     }
-  }, [closeTransaction, store])
+    // Always refresh after closing — balances may have changed
+    setTimeout(() => refreshData(true), 500)
+  }, [closeTransaction, store, refreshData])
 
   const setPercent = (pct: number) => {
     if (maxAmount <= 0) return
