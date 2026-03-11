@@ -73,9 +73,10 @@ export function useTransaction() {
 
     const deepLink = buildAxiomeSignLink(params.payload)
 
-    // Cancel any previous signing request to prevent stale requests in wallet
+    // Cancel any previous signing request to prevent stale requests in wallet.
+    // MUST await — if not awaited, old request may still be visible when new one arrives.
     if (lastSigningIdRef.current) {
-      cancelSigningRequest(lastSigningIdRef.current).catch(() => {})
+      try { await cancelSigningRequest(lastSigningIdRef.current) } catch { /* ignore */ }
       lastSigningIdRef.current = null
     }
 

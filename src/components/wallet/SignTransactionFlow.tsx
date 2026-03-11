@@ -253,11 +253,11 @@ export function SignTransactionFlow({
   const handleRetry = () => { setStep('signing'); setError(null); setApiStatus(null) }
 
   // ALWAYS cancel signing request on close — even after success.
-  const handleClose = useCallback(() => {
+  const handleClose = useCallback(async () => {
     stopPolling()
     const code = signingCodeRef.current
     if (code) {
-      cancelSigningRequest(code).catch(() => { /* ignore */ })
+      try { await cancelSigningRequest(code) } catch { /* ignore */ }
     }
     onClose()
   }, [stopPolling, onClose])
