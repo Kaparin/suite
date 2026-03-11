@@ -173,17 +173,28 @@ export function SignTransactionFlow({
     if (connectToken) {
       // Need to connect first — open Axiome Connect URL
       window.location.href = `https://axiome.pro/app/connect?token=${connectToken}`
-    } else if (isMobile) {
-      // Already connected — open wallet app via deep link without navigating away
-      const link = document.createElement('a')
-      link.href = deepLink
-      link.style.display = 'none'
-      document.body.appendChild(link)
-      link.click()
-      setTimeout(() => document.body.removeChild(link), 100)
+      return
     }
-    // On desktop: user opens wallet on phone manually, no action needed
-  }, [connectToken, deepLink, isMobile])
+
+    // Already connected — open wallet app so user can confirm the signing request
+    const isAndroid = /Android/i.test(navigator.userAgent)
+    if (isAndroid) {
+      // Android: intent URL reliably opens the wallet package
+      const base64Part = deepLink.replace('axiomesign://', '')
+      const intentUrl = `intent://${base64Part}#Intent;scheme=axiomesign;package=club.relounge.axiomewallet;end`
+      const a = document.createElement('a')
+      a.href = intentUrl
+      a.style.display = 'none'
+      document.body.appendChild(a)
+      a.click()
+      setTimeout(() => document.body.removeChild(a), 100)
+    } else {
+      // iOS + desktop: axiomesign:// opens the wallet app
+      // On iOS: opens app, Safari stays in background (page state preserved)
+      // On desktop: browser may show "can't open" — user opens wallet on phone
+      window.location.href = deepLink
+    }
+  }, [connectToken, deepLink])
 
   const handleOpenWallet = () => { setStep('signing'); openWalletApp() }
 
