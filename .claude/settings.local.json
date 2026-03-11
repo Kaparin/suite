@@ -70,7 +70,8 @@
       "Bash(do:*)",
       "Bash(ls:*)",
       "Bash(do if:*)",
-      "Bash(echo === FOUND in $chunk ===:*)"
+      "Bash(echo === FOUND in $chunk ===:*)",
+      "Bash(python3:*)"
     ]
   }
 }
