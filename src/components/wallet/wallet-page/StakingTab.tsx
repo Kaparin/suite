@@ -123,6 +123,9 @@ export function StakingTab() {
 
     store.startOp('stake', num)
 
+    // Snapshot current staked amount for on-chain verification
+    const stakedBefore = userStaking?.staked ?? 0
+
     const payload = buildExecutePayload({
       contractAddress: LAUNCH_CW20,
       sender: address,
@@ -143,6 +146,17 @@ export function StakingTab() {
         setAmount('')
         applyOptimistic('stake', num)
       },
+      checkTransaction: async () => {
+        try {
+          const res = await fetch(`/api/staking/${address}`)
+          if (!res.ok) return { success: false, error: 'Failed to check staking status' }
+          const data = await res.json()
+          if (data.staked > stakedBefore) return { success: true }
+          return { success: false, error: 'Transaction not confirmed yet. Please wait and try again.' }
+        } catch {
+          return { success: false, error: 'Failed to check staking status' }
+        }
+      },
     })
   }
 
@@ -153,6 +167,9 @@ export function StakingTab() {
     const microAmount = (num * 10 ** LAUNCH_DECIMALS).toFixed(0)
 
     store.startOp('unstake', num)
+
+    // Snapshot current staked amount for on-chain verification
+    const stakedBefore = userStaking?.staked ?? 0
 
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
@@ -168,6 +185,17 @@ export function StakingTab() {
         setAmount('')
         applyOptimistic('unstake', num)
       },
+      checkTransaction: async () => {
+        try {
+          const res = await fetch(`/api/staking/${address}`)
+          if (!res.ok) return { success: false, error: 'Failed to check staking status' }
+          const data = await res.json()
+          if (data.staked < stakedBefore) return { success: true }
+          return { success: false, error: 'Transaction not confirmed yet. Please wait and try again.' }
+        } catch {
+          return { success: false, error: 'Failed to check staking status' }
+        }
+      },
     })
   }
 
@@ -175,6 +203,9 @@ export function StakingTab() {
     if (!address || !contractReady || store.isLocked) return
 
     store.startOp('claim')
+
+    // Snapshot current rewards for on-chain verification
+    const rewardsBefore = userStaking?.pendingRewards ?? 0
 
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
@@ -188,6 +219,17 @@ export function StakingTab() {
       onSuccess: (txHash) => {
         store.setPending(txHash)
         applyOptimistic('claim')
+      },
+      checkTransaction: async () => {
+        try {
+          const res = await fetch(`/api/staking/${address}`)
+          if (!res.ok) return { success: false, error: 'Failed to check claim status' }
+          const data = await res.json()
+          if (data.pendingRewards < rewardsBefore) return { success: true }
+          return { success: false, error: 'Transaction not confirmed yet. Please wait and try again.' }
+        } catch {
+          return { success: false, error: 'Failed to check claim status' }
+        }
       },
     })
   }

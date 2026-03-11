@@ -146,23 +146,41 @@ export function SignTransactionFlow({
     const handleVisibility = async () => {
       if (document.visibilityState !== 'visible') return
       const code = signingCodeRef.current
-      if (!code) return
 
-      // Retry up to 3 times with 2s intervals (API might not have updated yet)
-      for (let attempt = 0; attempt < 3; attempt++) {
-        if (attempt > 0) await new Promise(r => setTimeout(r, 2000))
-        try {
-          const result = await pollSigningStatus(code)
-          if (result.status === 'result') {
-            handleSuccessResult(code, result.payload, stopPolling, setTxHash, setStep, onSuccessRef)
-            return
-          }
-          if (result.status === 'broadcast') {
-            setApiStatus('broadcast')
-            // Keep retrying — broadcast means it's coming soon
-            continue
-          }
-        } catch { /* ignore, retry */ }
+      // 1. Try API polling first (works when wallet signs via API push notification)
+      if (code) {
+        for (let attempt = 0; attempt < 3; attempt++) {
+          if (attempt > 0) await new Promise(r => setTimeout(r, 2000))
+          try {
+            const result = await pollSigningStatus(code)
+            if (result.status === 'result') {
+              handleSuccessResult(code, result.payload, stopPolling, setTxHash, setStep, onSuccessRef)
+              return
+            }
+            if (result.status === 'broadcast') {
+              setApiStatus('broadcast')
+              continue
+            }
+          } catch { /* ignore, retry */ }
+        }
+      }
+
+      // 2. Fallback: on-chain verification (works when wallet signs via deep link directly)
+      if (checkTransactionRef.current) {
+        for (let attempt = 0; attempt < 3; attempt++) {
+          if (attempt > 0) await new Promise(r => setTimeout(r, 2000))
+          try {
+            const result = await checkTransactionRef.current()
+            if (result.success) {
+              stopPolling()
+              if (code) cancelSigningRequest(code).catch(() => {})
+              setTxHash(result.txHash || null)
+              setStep('success')
+              if (onSuccessRef.current) onSuccessRef.current(result.txHash || '')
+              return
+            }
+          } catch { /* ignore, retry */ }
+        }
       }
     }
     document.addEventListener('visibilitychange', handleVisibility)
@@ -201,6 +219,8 @@ export function SignTransactionFlow({
   const handleCheckTransaction = useCallback(async () => {
     setIsChecking(true)
     const code = signingCodeRef.current
+
+    // 1. Try API polling
     if (code) {
       try {
         const result = await pollSigningStatus(code)
@@ -210,6 +230,8 @@ export function SignTransactionFlow({
         }
       } catch { /* fall through */ }
     }
+
+    // 2. Try on-chain verification (main method when wallet signs via deep link)
     if (checkTransactionRef.current) {
       try {
         const result = await checkTransactionRef.current()
@@ -218,14 +240,14 @@ export function SignTransactionFlow({
           if (code) cancelSigningRequest(code).catch(() => {})
           setTxHash(result.txHash || null); setStep('success')
           if (onSuccessRef.current) onSuccessRef.current(result.txHash || '')
+          setIsChecking(false); return
         } else {
-          setError(result.error || 'Transaction not found yet'); setStep('error')
+          setError(result.error || 'Transaction not confirmed yet. Please wait and try again.'); setStep('error')
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to check'); setStep('error')
       }
     } else {
-      // No checkTransaction and no API result yet — tell user to wait
       setError('Transaction not confirmed yet. Please wait a moment and try again.')
       setStep('error')
     }
