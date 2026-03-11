@@ -76,6 +76,13 @@ export function SignTransactionFlow({
     return () => stopPolling()
   }, [isOpen, stopPolling])
 
+  // Auto-advance to signing step when signing code arrives (no QR = direct signing)
+  useEffect(() => {
+    if (isOpen && signingCode && !connectToken && step === 'preview') {
+      setStep('signing')
+    }
+  }, [isOpen, signingCode, connectToken, step])
+
   // Poll for transaction status when in signing step
   // Dependencies: only step and stopPolling (callbacks via refs)
   useEffect(() => {
@@ -143,23 +150,20 @@ export function SignTransactionFlow({
 
   const openWalletApp = useCallback(() => {
     if (connectToken) {
+      // Need to connect first — open Axiome Connect URL
       window.location.href = `https://axiome.pro/app/connect?token=${connectToken}`
     } else {
+      // Already connected — just open the wallet app
+      // On iOS: universal link
+      // On Android: intent
       const isAndroid = /Android/i.test(navigator.userAgent)
       if (isAndroid) {
-        const base64Part = deepLink.replace('axiomesign://', '')
-        const intentUrl = `intent://${base64Part}#Intent;scheme=axiomesign;package=club.relounge.axiomewallet;end`
-        const a = document.createElement('a')
-        a.href = intentUrl
-        a.style.display = 'none'
-        document.body.appendChild(a)
-        a.click()
-        setTimeout(() => document.body.removeChild(a), 100)
+        window.location.href = 'https://axiome.pro/app'
       } else {
-        window.location.href = deepLink
+        window.location.href = 'https://axiome.pro/app'
       }
     }
-  }, [connectToken, deepLink])
+  }, [connectToken])
 
   const handleOpenWallet = () => { setStep('signing'); openWalletApp() }
 
@@ -301,9 +305,15 @@ export function SignTransactionFlow({
 
         <div className="text-center space-y-1">
           <p className="text-white font-medium text-sm">
-            {isMobile ? t('enterCodeMobile') : signingCode ? t('enterCodeOrScan') : t('scanQR')}
+            {connectToken
+              ? (isMobile ? t('enterCodeMobile') : signingCode ? t('enterCodeOrScan') : t('scanQR'))
+              : (signingCode ? t('enterCodeMobile') : t('gettingCode'))
+            }
           </p>
-          {!isMobile && <p className="text-xs text-gray-400">{t('scanHint')}</p>}
+          {!isMobile && connectToken && <p className="text-xs text-gray-400">{t('scanHint')}</p>}
+          {!connectToken && signingCode && (
+            <p className="text-xs text-gray-400">Open Axiome Wallet and enter the transaction code</p>
+          )}
         </div>
 
         {isSigning && (

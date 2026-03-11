@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
-import { Loader2, ExternalLink, RefreshCw, Coins, TrendingUp, Users } from 'lucide-react'
+import { Loader2, ExternalLink, RefreshCw, Coins, TrendingUp, Users, CheckCircle2, AlertCircle, X } from 'lucide-react'
 import { useWallet, useTransaction } from '@/lib/wallet'
 import { buildExecutePayload } from '@/lib/wallet/transaction-builder'
 import { SignTransactionFlow } from '@/components/wallet'
 import { STAKING_CONTRACT, LAUNCH_CW20, LAUNCH_DECIMALS } from '@/lib/staking/constants'
+import { useStakingStore, type OpType } from '@/stores/staking-store'
 
 const EXPLORER_URL = 'https://explorer.axiome.pro'
 
@@ -36,13 +37,16 @@ function formatNumber(n: number, decimals = 2): string {
 export function StakingTab() {
   const { isConnected, address } = useWallet()
   const { transactionState, closeTransaction, openTransaction } = useTransaction()
+  const store = useStakingStore()
+
   const [stats, setStats] = useState<StakingStats | null>(null)
   const [userStaking, setUserStaking] = useState<UserStaking | null>(null)
   const [amount, setAmount] = useState('')
   const [activeTab, setActiveTab] = useState<TabMode>('stake')
   const [isLoading, setIsLoading] = useState(true)
 
-  const snapshotRef = useRef<UserStaking | null>(null)
+  // Track previous op to detect completion (op → null transition)
+  const prevOpRef = useRef(store.op)
 
   const fetchStats = useCallback(async () => {
     try {
@@ -64,50 +68,61 @@ export function StakingTab() {
     return null
   }, [address])
 
-  const refreshData = useCallback(async () => {
-    await Promise.all([fetchStats(), fetchUserStaking()])
+  const refreshData = useCallback(async (silent = false) => {
+    if (!silent) setIsLoading(true)
+    try {
+      await Promise.all([fetchStats(), fetchUserStaking()])
+    } finally {
+      if (!silent) setIsLoading(false)
+    }
   }, [fetchStats, fetchUserStaking])
 
+  // Initial load
   useEffect(() => {
     setIsLoading(true)
     refreshData().finally(() => setIsLoading(false))
   }, [refreshData])
 
+  // When op clears (pending/error → null), wait 2s then silent refresh
+  useEffect(() => {
+    const prevOp = prevOpRef.current
+    prevOpRef.current = store.op
+
+    if (prevOp && !store.op) {
+      const timer = setTimeout(() => refreshData(true), 2_000)
+      return () => clearTimeout(timer)
+    }
+  }, [store.op, refreshData])
+
+  // Optimistic updates
+  const applyOptimistic = (type: OpType, amt?: number) => {
+    setUserStaking((prev) => {
+      if (!prev) return prev
+      if (type === 'claim') return { ...prev, pendingRewards: 0 }
+      if (type === 'stake' && amt) {
+        return { ...prev, launchBalance: Math.max(0, prev.launchBalance - amt), staked: prev.staked + amt }
+      }
+      if (type === 'unstake' && amt) {
+        return { ...prev, staked: Math.max(0, prev.staked - amt), launchBalance: prev.launchBalance + amt }
+      }
+      return prev
+    })
+  }
+
   const contractReady = !!STAKING_CONTRACT
 
-  const makeCheckTransaction = useCallback((
-    type: 'stake' | 'unstake' | 'claim'
-  ) => {
-    return async (): Promise<{ success: boolean; txHash?: string; error?: string }> => {
-      if (!address) return { success: false, error: 'No address' }
-      try {
-        const res = await fetch(`/api/staking/${address}`)
-        if (!res.ok) return { success: false }
-        const current = await res.json() as UserStaking
-        const prev = snapshotRef.current
-        if (!prev) return { success: false }
-        switch (type) {
-          case 'stake':
-            if (current.staked > prev.staked) { setUserStaking(current); return { success: true } }
-            break
-          case 'unstake':
-            if (current.staked < prev.staked) { setUserStaking(current); return { success: true } }
-            break
-          case 'claim':
-            if (current.totalClaimed > prev.totalClaimed || current.pendingRewards < prev.pendingRewards) { setUserStaking(current); return { success: true } }
-            break
-        }
-        return { success: false }
-      } catch { return { success: false } }
-    }
-  }, [address])
+  const maxAmount = activeTab === 'stake' ? userStaking?.launchBalance ?? 0 : userStaking?.staked ?? 0
+  const canSubmit = !store.isLocked && amount && parseFloat(amount) > 0 && parseFloat(amount) <= maxAmount && contractReady
+  const canClaim = !store.isLocked && !!userStaking && userStaking.pendingRewards > 0
 
   const handleStake = () => {
-    if (!address || !amount || !contractReady) return
+    if (!address || !amount || !contractReady || store.isLocked) return
     const num = parseFloat(amount)
     if (num <= 0 || (userStaking && num > userStaking.launchBalance)) return
     const microAmount = (num * 10 ** LAUNCH_DECIMALS).toFixed(0)
-    snapshotRef.current = userStaking ? { ...userStaking } : null
+
+    store.startOp('stake', num)
+
     const payload = buildExecutePayload({
       contractAddress: LAUNCH_CW20,
       sender: address,
@@ -123,17 +138,22 @@ export function StakingTab() {
       payload,
       title: 'Stake LAUNCH',
       description: `Stake ${amount} LAUNCH tokens`,
-      onSuccess: () => { setAmount(''); refreshData() },
-      checkTransaction: makeCheckTransaction('stake'),
+      onSuccess: (txHash) => {
+        store.setPending(txHash)
+        setAmount('')
+        applyOptimistic('stake', num)
+      },
     })
   }
 
   const handleUnstake = () => {
-    if (!address || !amount || !contractReady) return
+    if (!address || !amount || !contractReady || store.isLocked) return
     const num = parseFloat(amount)
     if (num <= 0 || (userStaking && num > userStaking.staked)) return
     const microAmount = (num * 10 ** LAUNCH_DECIMALS).toFixed(0)
-    snapshotRef.current = userStaking ? { ...userStaking } : null
+
+    store.startOp('unstake', num)
+
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
       sender: address,
@@ -143,14 +163,19 @@ export function StakingTab() {
       payload,
       title: 'Unstake LAUNCH',
       description: `Unstake ${amount} LAUNCH tokens`,
-      onSuccess: () => { setAmount(''); refreshData() },
-      checkTransaction: makeCheckTransaction('unstake'),
+      onSuccess: (txHash) => {
+        store.setPending(txHash)
+        setAmount('')
+        applyOptimistic('unstake', num)
+      },
     })
   }
 
   const handleClaim = () => {
-    if (!address || !contractReady) return
-    snapshotRef.current = userStaking ? { ...userStaking } : null
+    if (!address || !contractReady || store.isLocked) return
+
+    store.startOp('claim')
+
     const payload = buildExecutePayload({
       contractAddress: STAKING_CONTRACT,
       sender: address,
@@ -160,20 +185,27 @@ export function StakingTab() {
       payload,
       title: 'Claim Rewards',
       description: `Claim ${userStaking ? formatNumber(userStaking.pendingRewards, 4) : ''} AXM rewards`,
-      onSuccess: () => { refreshData() },
-      checkTransaction: makeCheckTransaction('claim'),
+      onSuccess: (txHash) => {
+        store.setPending(txHash)
+        applyOptimistic('claim')
+      },
     })
   }
 
-  const maxAmount = activeTab === 'stake' ? userStaking?.launchBalance ?? 0 : userStaking?.staked ?? 0
+  // Handle modal close — clear op if not successful
+  const handleCloseTransaction = useCallback(() => {
+    closeTransaction()
+    // If op is in signing phase (user closed without completing), clear it
+    if (store.op?.phase === 'signing') {
+      store.setError('Cancelled')
+    }
+  }, [closeTransaction, store])
 
   const setPercent = (pct: number) => {
     if (maxAmount <= 0) return
     const val = maxAmount * pct
     setAmount(pct === 1 ? maxAmount.toString() : Math.floor(val).toString())
   }
-
-  const canSubmit = amount && parseFloat(amount) > 0 && parseFloat(amount) <= maxAmount && contractReady
 
   if (!isConnected) {
     return (
@@ -212,6 +244,9 @@ export function StakingTab() {
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
+      {/* === Operation Status Banner === */}
+      <OperationBanner store={store} />
+
       {/* === Rewards Card === */}
       {userStaking && userStaking.pendingRewards > 0 ? (
         <div className="relative overflow-hidden rounded-2xl p-[1px]">
@@ -228,9 +263,14 @@ export function StakingTab() {
               <button
                 type="button"
                 onClick={handleClaim}
-                className="shrink-0 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold transition-all shadow-lg shadow-emerald-500/20"
+                disabled={!canClaim}
+                className="shrink-0 px-5 py-2.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-sm font-bold transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-emerald-500/20"
               >
-                Claim Rewards
+                {store.op?.type === 'claim' && store.op.phase !== 'error' ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  'Claim Rewards'
+                )}
               </button>
             </div>
           </div>
@@ -246,8 +286,9 @@ export function StakingTab() {
         <div className="rounded-2xl border border-gray-700/50 bg-gray-900/50 overflow-hidden">
           <div className="flex items-center justify-between px-4 pt-3 pb-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Your Position</p>
-            <button type="button" onClick={() => { setIsLoading(true); refreshData().finally(() => setIsLoading(false)) }}
-              className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-800 transition-colors">
+            <button type="button" onClick={() => { if (!store.isLocked) refreshData(true) }}
+              disabled={store.isLocked}
+              className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-800 transition-colors disabled:opacity-30">
               <RefreshCw size={12} />
             </button>
           </div>
@@ -269,7 +310,7 @@ export function StakingTab() {
       )}
 
       {/* === Stake / Unstake === */}
-      <div className="rounded-2xl border border-gray-700/50 bg-gray-900/50 overflow-hidden">
+      <div className={`rounded-2xl border border-gray-700/50 bg-gray-900/50 overflow-hidden transition-opacity ${store.isLocked ? 'opacity-50 pointer-events-none' : ''}`}>
         {/* Tab Pills */}
         <div className="flex gap-1 p-1.5 bg-gray-800/50">
           <button
@@ -408,7 +449,7 @@ export function StakingTab() {
       {/* Sign Transaction Modal */}
       <SignTransactionFlow
         isOpen={transactionState.isOpen}
-        onClose={closeTransaction}
+        onClose={handleCloseTransaction}
         deepLink={transactionState.deepLink}
         signingCode={transactionState.signingCode}
         connectToken={transactionState.connectToken}
@@ -419,4 +460,96 @@ export function StakingTab() {
       />
     </motion.div>
   )
+}
+
+// === Operation Status Banner ===
+// Shows current operation phase with live elapsed timer
+
+function OperationBanner({ store }: { store: ReturnType<typeof useStakingStore> }) {
+  const { op } = store
+
+  // Force re-render every second while op is active (for elapsed timer)
+  const [, setTick] = useState(0)
+  useEffect(() => {
+    if (!op) return
+    const interval = setInterval(() => setTick((n) => n + 1), 1_000)
+    return () => clearInterval(interval)
+  }, [op])
+
+  if (!op) return null
+
+  const typeLabel =
+    op.type === 'stake' ? 'Stake' :
+    op.type === 'unstake' ? 'Unstake' :
+    'Claim'
+
+  const elapsed = Math.floor((Date.now() - op.startedAt) / 1000)
+
+  // Signing phase — waiting for user to confirm in wallet
+  if (op.phase === 'signing') {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl bg-violet-500/[0.08] border border-violet-500/20 px-4 py-3">
+        <Loader2 size={18} className="animate-spin text-violet-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-semibold text-violet-300">
+            {typeLabel}{op.amount ? ` ${op.amount} LAUNCH` : ''}
+          </p>
+          <p className="text-[10px] text-violet-400/60">
+            Waiting for wallet confirmation...
+            {elapsed > 2 && <span className="ml-1 tabular-nums">{elapsed}s</span>}
+          </p>
+        </div>
+      </div>
+    )
+  }
+
+  // Pending — tx in mempool, waiting for chain confirmation
+  if (op.phase === 'pending') {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl bg-emerald-500/[0.08] border border-emerald-500/20 px-4 py-3">
+        <CheckCircle2 size={18} className="text-emerald-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-semibold text-emerald-300">
+            {typeLabel}{op.amount ? ` ${op.amount} LAUNCH` : ''} — Confirmed
+          </p>
+          {op.txHash && (
+            <a
+              href={`${EXPLORER_URL}/transactions/${op.txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[10px] text-emerald-400/50 hover:text-emerald-400 inline-flex items-center gap-1 transition-colors"
+            >
+              {op.txHash.slice(0, 12)}...
+              <ExternalLink size={9} />
+            </a>
+          )}
+        </div>
+        <Loader2 size={14} className="animate-spin text-emerald-400/40 shrink-0" />
+      </div>
+    )
+  }
+
+  // Error
+  if (op.phase === 'error') {
+    return (
+      <div className="flex items-center gap-3 rounded-2xl bg-red-500/[0.08] border border-red-500/20 px-4 py-3">
+        <AlertCircle size={18} className="text-red-400 shrink-0" />
+        <div className="flex-1 min-w-0">
+          <p className="text-[12px] font-semibold text-red-300">
+            {typeLabel} — Error
+          </p>
+          <p className="text-[10px] text-red-400/70">{op.error}</p>
+        </div>
+        <button
+          type="button"
+          onClick={() => store.clearOp()}
+          className="rounded-lg p-1.5 text-red-400/50 hover:text-red-400 hover:bg-red-500/10 transition-colors shrink-0"
+        >
+          <X size={16} />
+        </button>
+      </div>
+    )
+  }
+
+  return null
 }

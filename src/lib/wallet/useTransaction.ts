@@ -2,7 +2,6 @@
 
 import { useState, useCallback, useRef } from 'react'
 import { useWallet } from './WalletProvider'
-import { AXIOME_CHAIN } from './chain'
 import {
   buildAxiomeSignLink,
   buildCW20InstantiatePayload,
@@ -12,6 +11,7 @@ import {
   TransactionPayload,
   AxiomeConnectFunds
 } from './transaction-builder'
+import { AXIOME_CHAIN } from './chain'
 import { useAxiomeConnect } from './useAxiomeConnect'
 
 export interface TransactionState {
@@ -70,7 +70,7 @@ export function useTransaction() {
 
     const deepLink = buildAxiomeSignLink(params.payload)
 
-    // Open modal immediately with deep link (QR appears after token is created)
+    // Open modal immediately
     setState({
       isOpen: true,
       deepLink,
@@ -83,29 +83,45 @@ export function useTransaction() {
     })
 
     try {
-      // Always create a FRESH token for each signing session.
-      // Old tokens are invalidated by Axiome after first use in wallet app.
-      const token = await createFreshToken()
-      if (!token || abortCtrl.signal.aborted) {
+      // 1. Try existing connected token (no QR, no waiting)
+      const existingToken = typeof window !== 'undefined' ? localStorage.getItem('axiome_connect_token') : null
+      const existingWallet = typeof window !== 'undefined' ? localStorage.getItem('axiome_connect_wallet') : null
+
+      if (existingToken && existingWallet) {
+        const signingId = await submitSigningRequest(deepLink, existingToken)
+        if (signingId && !abortCtrl.signal.aborted) {
+          setState(prev => {
+            if (!prev.isOpen) return prev
+            return { ...prev, signingCode: signingId }
+          })
+          pendingRef.current = false
+          return
+        }
+        // signingId is null → token rejected, fall through to fresh token flow
+      }
+
+      // 2. Fallback: create fresh token, show QR, wait for association
+      const freshToken = await createFreshToken()
+      if (!freshToken || abortCtrl.signal.aborted) {
         pendingRef.current = false
         return
       }
 
-      // Show QR / button with fresh token
+      // Show QR with fresh token
       setState(prev => {
         if (!prev.isOpen) return prev
-        return { ...prev, connectToken: token }
+        return { ...prev, connectToken: freshToken }
       })
 
-      // Wait for user to authenticate this token in wallet app
-      const walletAddress = await waitForAssociation(token, abortCtrl.signal)
+      // Wait for user to authenticate in wallet app
+      const walletAddress = await waitForAssociation(freshToken, abortCtrl.signal)
       if (!walletAddress || abortCtrl.signal.aborted) {
         pendingRef.current = false
         return
       }
 
-      // User authenticated! Submit signing request with this token
-      const signingId = await submitSigningRequest(deepLink, token)
+      // User authenticated — submit signing request
+      const signingId = await submitSigningRequest(deepLink, freshToken)
       if (signingId && !abortCtrl.signal.aborted) {
         setState(prev => {
           if (!prev.isOpen) return prev
