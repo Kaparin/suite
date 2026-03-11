@@ -188,17 +188,25 @@ export function SignTransactionFlow({
   }, [step, stopPolling])
 
   const openWalletApp = useCallback(() => {
+    // Use universal link (https://axiome.pro/app/connect?token=...) to open wallet app.
+    // Custom scheme (axiomesign://) is blocked by mobile browsers,
+    // but universal links reliably open the app on both iOS and Android.
+
     if (connectToken) {
-      // Need to connect first — open Axiome Connect URL
+      // Fresh token flow — open with the fresh connect token
       window.location.href = `https://axiome.pro/app/connect?token=${connectToken}`
       return
     }
 
-    // Already connected — open wallet app via custom scheme deep link
-    // axiomesign:// is registered by Axiome Wallet on both iOS and Android
-    // On iOS: opens app, Safari stays in background (page state preserved)
-    // On Android: opens app directly via scheme handler
-    // On desktop: browser may show "can't open" — user opens wallet on phone
+    // Already connected — open wallet using the existing connected token.
+    // The wallet app opens, sees the associated token, and shows pending signing requests.
+    const existingToken = typeof window !== 'undefined' ? localStorage.getItem('axiome_connect_token') : null
+    if (existingToken) {
+      window.location.href = `https://axiome.pro/app/connect?token=${existingToken}`
+      return
+    }
+
+    // Last resort: try custom scheme deep link (may not work on all browsers)
     window.location.href = deepLink
   }, [connectToken, deepLink])
 
