@@ -233,6 +233,70 @@ export function useAxiomeConnect() {
     return false
   }, [state.authToken, pollTokenInfo])
 
+  /**
+   * Create a fresh token (always new, ignores localStorage).
+   * Used for signing sessions — each signing needs a fresh token because
+   * Axiome invalidates tokens after first use in the wallet app.
+   */
+  const createFreshToken = useCallback(async (): Promise<string | null> => {
+    try {
+      const res = await fetch(`${AXIOME_IDX_API}/connect/create_token`)
+      if (!res.ok) return null
+
+      const data = await res.json()
+      const token = data.token
+      if (!token) return null
+
+      // Register token with Axiome API
+      await pollTokenInfo(token)
+
+      // Store as current token
+      localStorage.setItem(AUTH_TOKEN_KEY, token)
+      localStorage.setItem(AUTH_TOKEN_TS_KEY, String(Date.now()))
+      localStorage.removeItem(AUTH_WALLET_KEY)
+
+      setState(prev => ({ ...prev, authToken: token, walletAddress: null, isConnected: false }))
+      return token
+    } catch (err) {
+      console.error('[AxiomeConnect] createFreshToken error:', err)
+      return null
+    }
+  }, [pollTokenInfo])
+
+  /**
+   * Wait for a token to become associated with a wallet.
+   * Returns wallet address on success, null on timeout/abort.
+   * Polls every 5s for up to 5 minutes.
+   */
+  const waitForAssociation = useCallback(async (token: string, signal?: AbortSignal): Promise<string | null> => {
+    const POLL_INTERVAL = 5000
+    const MAX_DURATION = 300_000
+    let elapsed = 0
+
+    while (elapsed < MAX_DURATION) {
+      if (signal?.aborted) return null
+
+      await new Promise(r => setTimeout(r, POLL_INTERVAL))
+      elapsed += POLL_INTERVAL
+
+      if (signal?.aborted) return null
+
+      const info = await pollTokenInfo(token)
+      if (info?.account) {
+        localStorage.setItem(AUTH_WALLET_KEY, info.account)
+        setState({
+          authToken: token,
+          walletAddress: info.account,
+          isConnecting: false,
+          isConnected: true,
+        })
+        return info.account
+      }
+    }
+
+    return null
+  }, [pollTokenInfo])
+
   // Submit a signing request (requires connected auth token)
   const submitSigningRequest = useCallback(async (axiomeSignPayload: string, token: string): Promise<string | null> => {
     try {
@@ -282,11 +346,13 @@ export function useAxiomeConnect() {
   return useMemo(() => ({
     ...state,
     startConnect,
+    createFreshToken,
+    waitForAssociation,
     checkTokenStatus,
     submitSigningRequest,
     getConnectUrl,
     getConnectQrValue,
     disconnect,
     stopPolling,
-  }), [state, startConnect, checkTokenStatus, submitSigningRequest, getConnectUrl, getConnectQrValue, disconnect, stopPolling])
+  }), [state, startConnect, createFreshToken, waitForAssociation, checkTokenStatus, submitSigningRequest, getConnectUrl, getConnectQrValue, disconnect, stopPolling])
 }

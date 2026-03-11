@@ -27,7 +27,7 @@ export interface TransactionState {
 
 export function useTransaction() {
   const { address } = useWallet()
-  const { startConnect, submitSigningRequest } = useAxiomeConnect()
+  const { createFreshToken, waitForAssociation, submitSigningRequest } = useAxiomeConnect()
   const [state, setState] = useState<TransactionState>({
     isOpen: false,
     deepLink: '',
@@ -39,9 +39,15 @@ export function useTransaction() {
 
   // Guard against double-open while async work is in progress
   const pendingRef = useRef(false)
+  // Abort controller for cancelling waitForAssociation when modal closes
+  const abortRef = useRef<AbortController | null>(null)
 
   const close = useCallback(() => {
     pendingRef.current = false
+    if (abortRef.current) {
+      abortRef.current.abort()
+      abortRef.current = null
+    }
     setState(prev => ({ ...prev, isOpen: false }))
   }, [])
 
@@ -57,9 +63,14 @@ export function useTransaction() {
     if (pendingRef.current) return
     pendingRef.current = true
 
+    // Abort any previous waiting
+    if (abortRef.current) abortRef.current.abort()
+    const abortCtrl = new AbortController()
+    abortRef.current = abortCtrl
+
     const deepLink = buildAxiomeSignLink(params.payload)
 
-    // Open modal immediately with deep link
+    // Open modal immediately with deep link (QR appears after token is created)
     setState({
       isOpen: true,
       deepLink,
@@ -71,37 +82,44 @@ export function useTransaction() {
       checkTransaction: params.checkTransaction
     })
 
-    // Try to get auth token and submit signing request in background
     try {
-      const result = await startConnect()
-      if (!result?.token) {
+      // Always create a FRESH token for each signing session.
+      // Old tokens are invalidated by Axiome after first use in wallet app.
+      const token = await createFreshToken()
+      if (!token || abortCtrl.signal.aborted) {
         pendingRef.current = false
         return
       }
 
-      // Check if modal is still open (user might have closed it)
+      // Show QR / button with fresh token
       setState(prev => {
         if (!prev.isOpen) return prev
-        return { ...prev, connectToken: result.token }
+        return { ...prev, connectToken: token }
       })
 
-      // Only submit signing request if token is associated with a wallet
-      if (result.walletAddress) {
-        const signingId = await submitSigningRequest(deepLink, result.token)
-        if (signingId) {
-          setState(prev => {
-            if (!prev.isOpen) return prev
-            return { ...prev, signingCode: signingId }
-          })
-        }
+      // Wait for user to authenticate this token in wallet app
+      const walletAddress = await waitForAssociation(token, abortCtrl.signal)
+      if (!walletAddress || abortCtrl.signal.aborted) {
+        pendingRef.current = false
+        return
+      }
+
+      // User authenticated! Submit signing request with this token
+      const signingId = await submitSigningRequest(deepLink, token)
+      if (signingId && !abortCtrl.signal.aborted) {
+        setState(prev => {
+          if (!prev.isOpen) return prev
+          return { ...prev, signingCode: signingId }
+        })
       }
     } catch (err) {
-      console.error('[useTransaction] Failed to get Axiome Connect auth:', err)
-      // Continue with deep link only — QR code still works
+      if (!(err instanceof Error && err.name === 'AbortError')) {
+        console.error('[useTransaction] Failed to set up signing session:', err)
+      }
     }
 
     pendingRef.current = false
-  }, [startConnect, submitSigningRequest])
+  }, [createFreshToken, waitForAssociation, submitSigningRequest])
 
   // Create CW20 token
   const createToken = useCallback((params: {
