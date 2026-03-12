@@ -351,7 +351,7 @@ export default function TokenPage() {
                 </Button>
               </a>
               <a
-                href={`${EXPLORER_URL}/cosmwasm/code`}
+                href={`${EXPLORER_URL}/contract/${tokenAddress}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
