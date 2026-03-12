@@ -1,11 +1,11 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import { RefreshCw, ArrowUpRight, ArrowDownLeft, Lock, Loader2 } from 'lucide-react'
+import { RefreshCw, Lock, Loader2 } from 'lucide-react'
 import { useWallet, useTokenBalances, useTransactionHistory } from '@/lib/wallet'
 import { TransactionRowCompact } from './HistoryTab'
 
-type TabId = 'overview' | 'history' | 'send' | 'receive' | 'staking'
+type TabId = 'overview' | 'history' | 'staking'
 
 interface OverviewTabProps {
   onNavigate: (tab: TabId) => void
@@ -81,25 +81,17 @@ export function OverviewTab({ onNavigate }: OverviewTabProps) {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-3 gap-2">
+      <div className="grid grid-cols-2 gap-2">
         <button
-          onClick={() => onNavigate('send')}
+          onClick={() => onNavigate('history')}
           className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-violet-500/30 hover:bg-gray-800/40 transition-all"
         >
           <div className="w-9 h-9 bg-violet-500/10 rounded-full flex items-center justify-center">
-            <ArrowUpRight size={16} className="text-violet-400" />
+            <svg className="w-4 h-4 text-violet-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
           </div>
-          <span className="text-[11px] font-bold text-gray-300">Send</span>
-        </button>
-
-        <button
-          onClick={() => onNavigate('receive')}
-          className="flex flex-col items-center gap-1.5 py-3 rounded-xl bg-gray-900/50 border border-gray-800/50 hover:border-emerald-500/30 hover:bg-gray-800/40 transition-all"
-        >
-          <div className="w-9 h-9 bg-emerald-500/10 rounded-full flex items-center justify-center">
-            <ArrowDownLeft size={16} className="text-emerald-400" />
-          </div>
-          <span className="text-[11px] font-bold text-gray-300">Receive</span>
+          <span className="text-[11px] font-bold text-gray-300">History</span>
         </button>
 
         <button

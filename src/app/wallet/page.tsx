@@ -5,9 +5,9 @@ import { useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { useWallet, truncateAddress } from '@/lib/wallet'
 import { Button, Tabs } from '@/components/ui'
-import { OverviewTab, HistoryTab, SendTab, ReceiveTab, StakingTab } from '@/components/wallet/wallet-page'
+import { OverviewTab, HistoryTab, StakingTab } from '@/components/wallet/wallet-page'
 
-type TabId = 'overview' | 'history' | 'send' | 'receive' | 'staking'
+type TabId = 'overview' | 'history' | 'staking'
 
 const tabs = [
   {
@@ -25,24 +25,6 @@ const tabs = [
     icon: (
       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    )
-  },
-  {
-    id: 'send',
-    label: 'Send',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 11l5-5m0 0l5 5m-5-5v12" />
-      </svg>
-    )
-  },
-  {
-    id: 'receive',
-    label: 'Receive',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 13l-5 5m0 0l-5-5m5 5V6" />
       </svg>
     )
   },
@@ -154,8 +136,6 @@ function WalletContent() {
         <div className="min-h-[400px]">
           {activeTab === 'overview' && <OverviewTab onNavigate={handleNavigate} />}
           {activeTab === 'history' && <HistoryTab />}
-          {activeTab === 'send' && <SendTab />}
-          {activeTab === 'receive' && <ReceiveTab />}
           {activeTab === 'staking' && <StakingTab />}
         </div>
       </div>
