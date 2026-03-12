@@ -500,9 +500,6 @@ export default function CoinFlipGuidePage() {
         <Steps items={[1, 2, 3, 4].map((i) => g(`shop.step${i}`))} />
 
         <div className="mt-6">
-          <InfoBox type="tip">{g('shop.bonus')}</InfoBox>
-        </div>
-        <div className="mt-3">
           <InfoBox type="info">{g('shop.note')}</InfoBox>
         </div>
       </Section>

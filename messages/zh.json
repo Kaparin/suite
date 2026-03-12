@@ -68,7 +68,7 @@
     },
     "launchToken": {
       "title": "LAUNCH — 生态系统收益代币",
-      "subtitle": "LAUNCH 是生态系统的主代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得每笔佣金的20%。项目越多，流向 LAUNCH 的价值就越大。",
+      "subtitle": "LAUNCH 是生态系统的主代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得国库的20%。项目越多，流向 LAUNCH 的价值就越大。",
       "tokenomics": "代币经济学",
       "tokenomicsTbd": "供应与分配 TBD — 即将公布",
       "features": {
@@ -93,7 +93,7 @@
       "earn": {
         "icon": "💰",
         "title": "赚取",
-        "desc": "项目将 AXM 分配给所有质押者。每笔佣金的20%进入质押池。"
+        "desc": "项目将 AXM 分配给所有质押者。国库的20%进入质押池。"
       },
       "claim": {
         "icon": "🎁",
@@ -225,7 +225,7 @@
       "subtitle": "LAUNCH 是生态系统收益代币。持有 LAUNCH 可从我们构建的每个项目中获得收益，并参与治理。",
       "access": {
         "title": "收益分成",
-        "desc": "从每个已启动项目中赚取 AXM：佣金的20%分配给 LAUNCH 质押者。"
+        "desc": "从每个已启动项目中赚取 AXM：国库的20%分配给 LAUNCH 质押者。"
       },
       "reputation": {
         "title": "访问与等级",
@@ -651,7 +651,7 @@
       "badge": "文档",
       "title": "Axiome Startup Ecosystem",
       "subtitle": "Axiome 区块链上的多项目 Web3 生态系统。每个项目都有自己的代币 — LAUNCH 将它们联系在一起。",
-      "description": "我们在 Axiome 生态系统中构建独立产品。我们的第一个上线项目是猜正反 — 基于 AXM 原生代币的 PvP 游戏。LAUNCH 是生态系统代币：质押者获得佣金的20%。代币发现、社区和治理 — 一站式体验。",
+      "description": "我们在 Axiome 生态系统中构建独立产品。我们的第一个上线项目是猜正反 — 基于 AXM 原生代币的 PvP 游戏。LAUNCH 是生态系统代币：质押者获得国库的20%。代币发现、社区和治理 — 一站式体验。",
       "card1Title": "猜正反",
       "card1Desc": "基于 AXM 原生代币的实时 PvP 游戏 — 50/50，即时结果",
       "card2Title": "LAUNCH 代币",
@@ -698,12 +698,12 @@
     },
     "token": {
       "title": "LAUNCH 代币",
-      "subtitle": "LAUNCH 是生态系统收益代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得佣金的20%。",
+      "subtitle": "LAUNCH 是生态系统收益代币。我们构建的每个项目（如猜正反使用 AXM）都会产生收益 — LAUNCH 质押者获得国库的20%。",
       "totalSupply": "供应与分配：",
       "supplyTbd": "100,000,000 LAUNCH",
       "allProducts": {
         "title": "收益分成",
-        "desc": "佣金的20%以 AXM 分配给质押者。更多项目 = 更多收入。"
+        "desc": "国库的20%以 AXM 分配给质押者。更多项目 = 更多收入。"
       },
       "governance": {
         "title": "治理",
@@ -716,16 +716,16 @@
     },
     "staking": {
       "title": "LAUNCH 质押",
-      "subtitle": "质押 LAUNCH 代币，赚取佣金的20%。奖励以原生 AXM 分发。",
+      "subtitle": "质押 LAUNCH 代币，赚取国库的20%。奖励以原生 AXM 分发。",
       "howTitle": "质押如何运作",
       "step1Title": "质押 LAUNCH 代币",
       "step1Desc": "将 LAUNCH 代币发送到质押合约。无锁仓期 — 随时取回。",
       "step2Title": "项目分配收入",
-      "step2Desc": "佣金的20%以 AXM 形式发送到质押合约。",
+      "step2Desc": "国库的20%以 AXM 形式发送到质押合约。",
       "step3Title": "领取 AXM 奖励",
       "step3Desc": "奖励按质押比例累积。随时领取 — 无归属期，无延迟。",
       "revenueTitle": "收入来源",
-      "revenueDesc": "目前：正反面游戏佣金的20%。随着更多项目上线，收入成比例增长。",
+      "revenueDesc": "目前：正反面游戏国库的20%。随着更多项目上线，收入成比例增长。",
       "modelTitle": "公平分配",
       "modelDesc": "使用 Synthetix reward_per_token 模型 — O(1) gas，按比例，透明，链上。",
       "cta": "质押 LAUNCH"
@@ -893,7 +893,6 @@
         "step2": "Choose chest",
         "step3": "Confirm",
         "step4": "COIN credited",
-        "bonus": "First purchase x2!",
         "note": "Prices on shop page."
       },
       "stakingLaunch": {

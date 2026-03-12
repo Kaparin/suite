@@ -93,7 +93,7 @@
       "earn": {
         "icon": "💰",
         "title": "Verdienen",
-        "desc": "Projekte verteilen AXM an alle Staker. 20% jeder Kommission fließen an Staker."
+        "desc": "Projekte verteilen AXM an alle Staker. 20% der Treasury fließen an Staker."
       },
       "claim": {
         "icon": "🎁",
@@ -703,7 +703,7 @@
       "supplyTbd": "100.000.000 LAUNCH",
       "allProducts": {
         "title": "Ertragsanteil",
-        "desc": "20% der Kommission werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag."
+        "desc": "20% der Treasury werden als AXM an Staker verteilt. Mehr Projekte = mehr Ertrag."
       },
       "governance": {
         "title": "Governance",
@@ -721,11 +721,11 @@
       "step1Title": "LAUNCH-Token staken",
       "step1Desc": "Senden Sie LAUNCH-Token an den Staking-Vertrag. Keine Sperrfrist — jederzeit abheben.",
       "step2Title": "Projekte verteilen Einnahmen",
-      "step2Desc": "20% der Kommission werden als AXM an den Staking-Vertrag gesendet.",
+      "step2Desc": "20% der Treasury werden als AXM an den Staking-Vertrag gesendet.",
       "step3Title": "AXM-Belohnungen abholen",
       "step3Desc": "Belohnungen sammeln sich proportional zu Ihrem Stake an. Jederzeit abholen.",
       "revenueTitle": "Einnahmequellen",
-      "revenueDesc": "Aktuell: 20% der Kommission aus Kopf oder Zahl fließen an Staker. Mit neuen Projekten wächst der Ertrag.",
+      "revenueDesc": "Aktuell: 20% der Treasury aus Kopf oder Zahl fließen an Staker. Mit neuen Projekten wächst der Ertrag.",
       "modelTitle": "Faire Verteilung",
       "modelDesc": "Synthetix reward_per_token Modell — O(1) Gas, proportional, transparent, on-chain.",
       "cta": "LAUNCH staken"
@@ -893,14 +893,13 @@
         "step2": "Choose a chest",
         "step3": "Confirm purchase",
         "step4": "COIN credited",
-        "bonus": "First purchase x2 bonus!",
         "note": "Prices shown on shop page."
       },
       "stakingLaunch": {
         "title": "Staking LAUNCH",
         "subtitle": "Earn passive AXM income.",
         "howTitle": "How it works",
-        "how1": "20% of commission to staking pool",
+        "how1": "20% der Treasury fließen in den Staking-Pool",
         "how2": "More LAUNCH = bigger share",
         "how3": "Auto rewards in real-time",
         "stakeTitle": "How to stake",
