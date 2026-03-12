@@ -13,6 +13,7 @@ import {
 } from '@/lib/wallet/axiome-connect'
 
 type FlowStep = 'preview' | 'signing' | 'checking' | 'success' | 'error'
+type QrMode = 'camera' | 'wallet'
 
 interface SignTransactionFlowProps {
   isOpen: boolean
@@ -61,6 +62,7 @@ export function SignTransactionFlow({
   const [txHash, setTxHash] = useState<string | null>(null)
   const [apiStatus, setApiStatus] = useState<SigningStatus | null>(null)
   const [isChecking, setIsChecking] = useState(false)
+  const [qrMode, setQrMode] = useState<QrMode>('wallet')
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
@@ -348,10 +350,49 @@ export function SignTransactionFlow({
 
         {/* QR — desktop only, only when connecting (has connectToken) */}
         {!isMobile && connectToken && (
-          <div className="flex justify-center">
-            <div className="bg-white p-3 rounded-xl">
-              <QRCodeSVG value={`https://axiome.pro/app/connect?token=${connectToken}`} size={220} level="L" />
+          <div className="space-y-3">
+            {/* QR mode toggle */}
+            <div className="flex bg-gray-800 rounded-xl p-1">
+              <button
+                onClick={() => setQrMode('wallet')}
+                className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                  qrMode === 'wallet'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                {t('qrModeWallet')}
+              </button>
+              <button
+                onClick={() => setQrMode('camera')}
+                className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                  qrMode === 'camera'
+                    ? 'bg-purple-600 text-white shadow-sm'
+                    : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                {t('qrModeCamera')}
+              </button>
             </div>
+
+            {/* QR code */}
+            <div className="flex justify-center">
+              <div className="bg-white p-3 rounded-xl">
+                <QRCodeSVG
+                  value={qrMode === 'wallet'
+                    ? `axm:auth:token:${connectToken}`
+                    : `https://axiome.pro/app/connect?token=${connectToken}`
+                  }
+                  size={220}
+                  level="L"
+                />
+              </div>
+            </div>
+
+            {/* Hint for selected mode */}
+            <p className="text-xs text-gray-400 text-center">
+              {qrMode === 'wallet' ? t('qrHintWallet') : t('qrHintCamera')}
+            </p>
           </div>
         )}
 
@@ -362,7 +403,6 @@ export function SignTransactionFlow({
               : (signingCode ? t('enterCodeMobile') : t('gettingCode'))
             }
           </p>
-          {!isMobile && connectToken && <p className="text-xs text-gray-400">{t('scanHint')}</p>}
           {!connectToken && signingCode && (
             <p className="text-xs text-gray-400">Open Axiome Wallet and enter the transaction code</p>
           )}

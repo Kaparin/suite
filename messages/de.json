@@ -244,7 +244,7 @@
     },
     "feeSplit": {
       "title": "Transparente Wirtschaft",
-      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl). 20% der Kommission fließen an LAUNCH-Staker. Das Team verdient als LAUNCH-Token-Inhaber.",
+      "subtitle": "Jedes Projekt generiert Einnahmen (z.B. 10% Kommission von Kopf oder Zahl gehen in die Treasury). Treasury-Verteilung: 25% Empfehlungen, 20% LAUNCH-Staker, 10% Jackpots, 45% Betrieb.",
       "operations": "Betrieb",
       "buyback": "LAUNCH-Inhaber-Belohnungen",
       "rewards": "Projektentwicklung",
@@ -404,7 +404,11 @@
       "copied": "Kopiert!",
       "connectButton": "Verbinden",
       "waiting": "Warte auf Wallet-Verbindung...",
-      "downloadWallet": "Axiome Wallet herunterladen"
+      "downloadWallet": "Axiome Wallet herunterladen",
+      "qrModeCamera": "Normale Kamera",
+      "qrModeWallet": "Axiome Wallet Scanner",
+      "qrHintCamera": "Mit der Handykamera scannen — die Wallet öffnet sich automatisch",
+      "qrHintWallet": "Axiome Wallet öffnen → QR im App scannen"
     },
     "signTransaction": {
       "gettingCode": "Code wird geladen...",
@@ -429,7 +433,11 @@
       "statusWaiting": "Warte auf Wallet...",
       "statusBroadcast": "Transaktion wird gesendet...",
       "statusTimeout": "Zeitüberschreitung — bitte manuell prüfen",
-      "statusConfirming": "Warte auf Bestätigung..."
+      "statusConfirming": "Warte auf Bestätigung...",
+      "qrModeCamera": "Normale Kamera",
+      "qrModeWallet": "Axiome Wallet Scanner",
+      "qrHintCamera": "Mit der Handykamera scannen — die Wallet öffnet sich automatisch",
+      "qrHintWallet": "Axiome Wallet öffnen → QR im App scannen"
     }
   },
   "createToken": {
@@ -666,7 +674,7 @@
       "step4Title": "Gewinner erhält 90%",
       "step4Desc": "Der Gewinner erhält 90% des Gesamtpots. 10% gehen an die Plattform.",
       "step5Title": "Empfehlungs-Belohnungen",
-      "step5Desc": "Lade Freunde ein — verdiene 3%, 1,5% oder 0,5% des Pots für 3 Empfehlungsstufen.",
+      "step5Desc": "Lade Freunde über deinen Empfehlungslink ein — verdiene bis zu 25% der Treasury aus den Spielen deiner Empfehlungen über 3 Stufen.",
       "commissionTitle": "Kommission",
       "commissionDesc": "10% jedes Pots gehen an die Plattform. Der Gewinner erhält 90% der Gesamtsumme.",
       "securityTitle": "Sicherheit & Fairness",
@@ -679,12 +687,12 @@
       "coinTokenTitle": "COIN Token",
       "coinTokenDesc": "COIN ist ein Utility-Token für In-Game-Features: Shop, Kosmetik, Lotterie-Teilnahme und mehr. Einsätze bei Kopf oder Zahl werden in AXM (nativem Token) platziert.",
       "referralTitle": "Empfehlungsprogramm",
-      "referralDesc": "Verdiene einen Anteil des Pots, wenn deine Empfehlungen spielen. 3-Stufen-System:",
-      "referralL1": "Stufe 1 (direkte Einladung): 3% des Pots",
-      "referralL2": "Stufe 2: 1,5% des Pots",
-      "referralL3": "Stufe 3: 0,5% des Pots",
+      "referralDesc": "Verdiene einen Anteil der Treasury, wenn deine Empfehlungen spielen. 3-Stufen-System (% der 10% Kommission):",
+      "referralL1": "Stufe 1 (direkte Einladung): 15% der Treasury",
+      "referralL2": "Stufe 2: 7% der Treasury",
+      "referralL3": "Stufe 3: 3% der Treasury",
       "eventsTitle": "Events & Verlosungen",
-      "eventsDesc": "Die Plattform veranstaltet regelmäßig Wettbewerbe und Verlosungen mit echten AXM-Preisen. Wettbewerbe zählen deine Wetten automatisch — einfach spielen. Bei Verlosungen musst du auf 'Teilnehmen' klicken. Die Preise werden aus der 10%-Kommission finanziert.",
+      "eventsDesc": "Die Plattform veranstaltet regelmäßig Wettbewerbe und Verlosungen mit echten AXM-Preisen. Wettbewerbe zählen deine Wetten automatisch — einfach spielen. Bei Verlosungen musst du auf 'Teilnehmen' klicken. Die Preise werden aus der Treasury finanziert (10% Kommission).",
       "playNow": "Projekte erkunden"
     },
     "token": {
@@ -961,7 +969,7 @@
         "title": "Jackpot",
         "subtitle": "Auto prize draws.",
         "howTitle": "How it works",
-        "how1": "1% to jackpot pools",
+        "how1": "10% of treasury (10% commission) to jackpot pools",
         "how2": "Draw at threshold",
         "how3": "Random winner",
         "how4": "Instant payout",
@@ -1045,12 +1053,12 @@
         "levelHeader": "Level",
         "rewardHeader": "Reward",
         "level1": "Level 1",
-        "reward1": "3%",
+        "reward1": "15% of treasury",
         "level2": "Level 2",
-        "reward2": "1.5%",
+        "reward2": "7% of treasury",
         "level3": "Level 3",
-        "reward3": "0.5%",
-        "note": "Max 5% per bet."
+        "reward3": "3% of treasury",
+        "note": "Maximum 25% of treasury per bet."
       },
       "profile": {
         "title": "Profile",
@@ -1090,7 +1098,7 @@
         "q5": "Why was my bet canceled?",
         "a5": "Auto-cancel after 3 hours.",
         "q6": "Where does 10% go?",
-        "a6": "Staking, jackpot, referrals, treasury.",
+        "a6": "10% of each pot goes to the treasury. Treasury breakdown: 20% staking pool, 10% jackpot, 25% referral rewards, 45% platform operations.",
         "q7": "Is 1-Click Play safe?",
         "a7": "Yes, limited to game contract only.",
         "q8": "What is LAUNCH?",

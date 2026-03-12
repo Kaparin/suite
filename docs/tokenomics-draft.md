@@ -4,19 +4,21 @@
 
 - **Token:** LAUNCH (CW20 on Axiome blockchain)
 - **Total Supply:** 100,000,000
-- **Purpose:** Ecosystem revenue token — stakers earn 2% of every pot from all projects
+- **Purpose:** Ecosystem revenue token — stakers earn 20% of the treasury from all projects
 
-## Revenue Model (10% commission per pot)
+## Revenue Model (10% commission per pot → treasury)
 
-| Recipient | Share | Description |
+10% of each pot goes to the platform treasury. The treasury is then distributed as follows:
+
+| Recipient | % of Treasury | Description |
 |---|---|---|
-| Referrals | 2% | 3-level referral program |
-| LAUNCH Stakers | 2% | Distributed proportionally via staking contract |
-| Jackpots | 1% | Prize pools for events & raffles |
-| Team / Operations | 5% | Development, infrastructure, growth |
-| **Total** | **10%** | |
+| Referrals | 25% | 3-level referral program (L1: 15%, L2: 7%, L3: 3%) |
+| LAUNCH Stakers | 20% | Distributed proportionally via staking contract |
+| Jackpots | 10% | Prize pools for events & raffles |
+| Team / Operations | 45% | Development, infrastructure, growth |
+| **Total** | **100%** | |
 
-Distribution to stakers is proportional: `Your reward = 2% × (Your stake / Total staked)`
+Distribution to stakers is proportional: `Your reward = 20% of treasury × (Your stake / Total staked)`
 
 ## Token Distribution
 
@@ -40,11 +42,11 @@ Distribution to stakers is proportional: `Your reward = 2% × (Your stake / Tota
 ## Staker Revenue Example
 
 At 1,000 AXM daily betting volume:
-- Commission: 100 AXM
-- To stakers: 20 AXM
-- To referrals: 20 AXM
-- To jackpots: 10 AXM
-- To team: 50 AXM
+- Treasury (10% commission): 100 AXM
+- To stakers (20% of treasury): 20 AXM
+- To referrals (25% of treasury): 25 AXM
+- To jackpots (10% of treasury): 10 AXM
+- To team (45% of treasury): 45 AXM
 
 ## Key Properties
 

@@ -328,9 +328,14 @@ export function useAxiomeConnect() {
     return `https://axiome.pro/app/connect?token=${token}`
   }, [])
 
-  // Get the QR code value for scanning (universal link)
+  // Get the QR code value for scanning (universal link — works with any camera)
   const getConnectQrValue = useCallback((token: string) => {
     return `https://axiome.pro/app/connect?token=${token}`
+  }, [])
+
+  // Get the QR code value for Axiome Wallet's built-in scanner (native protocol)
+  const getConnectQrValueNative = useCallback((token: string) => {
+    return `axm:auth:token:${token}`
   }, [])
 
   // Disconnect
@@ -352,7 +357,8 @@ export function useAxiomeConnect() {
     submitSigningRequest,
     getConnectUrl,
     getConnectQrValue,
+    getConnectQrValueNative,
     disconnect,
     stopPolling,
-  }), [state, startConnect, createFreshToken, waitForAssociation, checkTokenStatus, submitSigningRequest, getConnectUrl, getConnectQrValue, disconnect, stopPolling])
+  }), [state, startConnect, createFreshToken, waitForAssociation, checkTokenStatus, submitSigningRequest, getConnectUrl, getConnectQrValue, getConnectQrValueNative, disconnect, stopPolling])
 }

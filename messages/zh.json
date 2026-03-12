@@ -244,7 +244,7 @@
     },
     "feeSplit": {
       "title": "透明经济",
-      "subtitle": "每个项目都会产生收益（例如猜正反的 10% 佣金）。佣金分配：20% 推荐，20% LAUNCH 质押者，10% 奖池，50% 运营。",
+      "subtitle": "每个项目都会产生收益（例如猜正反的 10% 佣金进入国库）。国库分配：25% 推荐，20% LAUNCH 质押者，10% 奖池，45% 运营。",
       "operations": "运营",
       "buyback": "LAUNCH 持有者奖励",
       "rewards": "项目开发",
@@ -404,7 +404,11 @@
       "copied": "已复制！",
       "connectButton": "连接",
       "waiting": "等待钱包连接...",
-      "downloadWallet": "下载 Axiome Wallet"
+      "downloadWallet": "下载 Axiome Wallet",
+      "qrModeCamera": "普通相机",
+      "qrModeWallet": "Axiome Wallet 扫描器",
+      "qrHintCamera": "用手机相机扫描 — 钱包将自动打开",
+      "qrHintWallet": "打开 Axiome Wallet → 在应用内扫描二维码"
     },
     "signTransaction": {
       "gettingCode": "正在获取代码...",
@@ -429,7 +433,11 @@
       "statusWaiting": "等待钱包...",
       "statusBroadcast": "正在广播交易...",
       "statusTimeout": "超时 — 请手动检查",
-      "statusConfirming": "等待确认..."
+      "statusConfirming": "等待确认...",
+      "qrModeCamera": "普通相机",
+      "qrModeWallet": "Axiome Wallet 扫描器",
+      "qrHintCamera": "用手机相机扫描 — 钱包将自动打开",
+      "qrHintWallet": "打开 Axiome Wallet → 在应用内扫描二维码"
     }
   },
   "createToken": {
@@ -666,7 +674,7 @@
       "step4Title": "赢家获得 90%",
       "step4Desc": "赢家获得总奖池的 90%。10% 归平台。",
       "step5Title": "推荐奖励",
-      "step5Desc": "邀请好友 — 3 个推荐等级可获得奖池的 3%、1.5% 或 0.5%。",
+      "step5Desc": "通过推荐链接邀请好友 — 3 个推荐等级可从推荐人的游戏中获得最高 25% 的国库份额。",
       "commissionTitle": "佣金",
       "commissionDesc": "每个奖池的 10% 归平台。赢家获得总额的 90%。",
       "securityTitle": "安全与公平",
@@ -679,12 +687,12 @@
       "coinTokenTitle": "COIN 代币",
       "coinTokenDesc": "COIN 是 Axiome 区块链上的实用代币，用于游戏内功能（商店、装饰品、抽奖参与等）。游戏投注使用 AXM 原生代币。",
       "referralTitle": "推荐计划",
-      "referralDesc": "当你的推荐人游戏时获得奖池份额。3 级系统：",
-      "referralL1": "一级（直接邀请）：奖池的 3%",
-      "referralL2": "二级：奖池的 1.5%",
-      "referralL3": "三级：奖池的 0.5%",
+      "referralDesc": "当你的推荐人游戏时获得国库份额。3 级系统（占 10% 佣金的百分比）：",
+      "referralL1": "一级（直接邀请）：国库的 15%",
+      "referralL2": "二级：国库的 7%",
+      "referralL3": "三级：国库的 3%",
       "eventsTitle": "活动与抽奖",
-      "eventsDesc": "平台定期举办竞赛和抽奖活动，提供真实 AXM 奖品。竞赛会自动统计你的投注 — 只需游戏即可。抽奖需要点击'加入'。奖品来自 10% 佣金。",
+      "eventsDesc": "平台定期举办竞赛和抽奖活动，提供真实 AXM 奖品。竞赛会自动统计你的投注 — 只需游戏即可。抽奖需要点击'加入'。奖品来自国库（10% 佣金）。",
       "playNow": "探索项目"
     },
     "token": {
@@ -961,7 +969,7 @@
         "title": "Jackpot",
         "subtitle": "Auto draws.",
         "howTitle": "How it works",
-        "how1": "1% to pools",
+        "how1": "10% of treasury (10% commission) to pools",
         "how2": "Draw at threshold",
         "how3": "Random winner",
         "how4": "Instant payout",
@@ -1045,12 +1053,12 @@
         "levelHeader": "Level",
         "rewardHeader": "Reward",
         "level1": "L1",
-        "reward1": "3%",
+        "reward1": "15% of treasury",
         "level2": "L2",
-        "reward2": "1.5%",
+        "reward2": "7% of treasury",
         "level3": "L3",
-        "reward3": "0.5%",
-        "note": "Max 5%."
+        "reward3": "3% of treasury",
+        "note": "Maximum 25% of treasury."
       },
       "profile": {
         "title": "Profile",
@@ -1090,7 +1098,7 @@
         "q5": "Canceled?",
         "a5": "3h auto-cancel.",
         "q6": "Commission?",
-        "a6": "Staking, jackpot, referrals.",
+        "a6": "10% of each pot goes to the treasury. Treasury: 20% staking, 10% jackpot, 25% referrals, 45% operations.",
         "q7": "1-Click safe?",
         "a7": "Yes, limited.",
         "q8": "LAUNCH?",

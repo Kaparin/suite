@@ -20,6 +20,7 @@ export function ConnectWalletSheet() {
 
   const axiomeConnect = useAxiomeConnect()
   const [copied, setCopied] = useState(false)
+  const [qrMode, setQrMode] = useState<'camera' | 'wallet'>('wallet')
   const isMobile = isMobileDevice()
 
   // Start connect flow when sheet opens
@@ -87,7 +88,9 @@ export function ConnectWalletSheet() {
   }
 
   const qrValue = axiomeConnect.authToken
-    ? axiomeConnect.getConnectQrValue(axiomeConnect.authToken)
+    ? (qrMode === 'wallet'
+        ? axiomeConnect.getConnectQrValueNative(axiomeConnect.authToken)
+        : axiomeConnect.getConnectQrValue(axiomeConnect.authToken))
     : ''
 
   const steps = [
@@ -225,6 +228,30 @@ export function ConnectWalletSheet() {
 
               {/* Content */}
               <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+                {/* QR mode toggle */}
+                <div className="flex bg-gray-800 rounded-xl p-1">
+                  <button
+                    onClick={() => setQrMode('wallet')}
+                    className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                      qrMode === 'wallet'
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    {t('qrModeWallet')}
+                  </button>
+                  <button
+                    onClick={() => setQrMode('camera')}
+                    className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                      qrMode === 'camera'
+                        ? 'bg-purple-600 text-white shadow-sm'
+                        : 'text-gray-400 hover:text-gray-300'
+                    }`}
+                  >
+                    {t('qrModeCamera')}
+                  </button>
+                </div>
+
                 <div className="flex justify-center">
                   {qrValue ? (
                     <div className="bg-white p-4 rounded-2xl shadow-lg">
@@ -236,6 +263,11 @@ export function ConnectWalletSheet() {
                     </div>
                   )}
                 </div>
+
+                {/* Hint for selected mode */}
+                <p className="text-xs text-gray-400 text-center">
+                  {qrMode === 'wallet' ? t('qrHintWallet') : t('qrHintCamera')}
+                </p>
 
                 <Stepper steps={steps} />
 

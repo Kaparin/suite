@@ -244,7 +244,7 @@
     },
     "feeSplit": {
       "title": "כלכלה שקופה",
-      "subtitle": "כל פרויקט מייצר הכנסות (למשל 10% עמלה מעץ או פלי). חלק זורם למחזיקי LAUNCH, חלק לפיתוח ולצמיחת המערכת.",
+      "subtitle": "כל פרויקט מייצר הכנסות (למשל 10% עמלה מעץ או פלי הולכים לאוצר). חלוקת האוצר: 25% הפניות, 20% סטייקרים של LAUNCH, 10% ג'קפוטים, 45% תפעול.",
       "operations": "תפעול",
       "buyback": "תגמולי מחזיקי LAUNCH",
       "rewards": "פיתוח פרויקטים",
@@ -404,7 +404,11 @@
       "copied": "הועתק!",
       "connectButton": "חבר",
       "waiting": "ממתין לחיבור ארנק...",
-      "downloadWallet": "הורד Axiome Wallet"
+      "downloadWallet": "הורד Axiome Wallet",
+      "qrModeCamera": "מצלמה רגילה",
+      "qrModeWallet": "סורק Axiome Wallet",
+      "qrHintCamera": "סרוק עם מצלמת הטלפון — הארנק ייפתח אוטומטית",
+      "qrHintWallet": "פתח Axiome Wallet → סרוק QR בתוך האפליקציה"
     },
     "signTransaction": {
       "gettingCode": "מקבל קוד...",
@@ -429,7 +433,11 @@
       "statusWaiting": "ממתין לארנק...",
       "statusBroadcast": "שולח עסקה...",
       "statusTimeout": "זמן המתנה — בדוק ידנית",
-      "statusConfirming": "ממתין לאישור..."
+      "statusConfirming": "ממתין לאישור...",
+      "qrModeCamera": "מצלמה רגילה",
+      "qrModeWallet": "סורק Axiome Wallet",
+      "qrHintCamera": "סרוק עם מצלמת הטלפון — הארנק ייפתח אוטומטית",
+      "qrHintWallet": "פתח Axiome Wallet → סרוק QR בתוך האפליקציה"
     }
   },
   "createToken": {
@@ -666,7 +674,7 @@
       "step4Title": "המנצח מקבל 90%",
       "step4Desc": "המנצח מקבל 90% מהסיר הכולל. 10% הולכים לפלטפורמה.",
       "step5Title": "תגמולי הפניה",
-      "step5Desc": "הזמן חברים — הרווח 3%, 1.5% או 0.5% מהסיר עבור 3 רמות הפניה.",
+      "step5Desc": "הזמן חברים דרך קישור ההפניה שלך — הרווח עד 25% מהאוצר ממשחקי המופנים שלך ב-3 רמות.",
       "commissionTitle": "עמלה",
       "commissionDesc": "10% מכל סיר הולכים לפלטפורמה. המנצח מקבל 90% מהסכום הכולל.",
       "securityTitle": "אבטחה והוגנות",
@@ -679,12 +687,12 @@
       "coinTokenTitle": "טוקן COIN",
       "coinTokenDesc": "COIN הוא טוקן שירות (utility) CW20 על בלוקצ'יין Axiome. הוא משמש לתכונות משחק: חנות, קוסמטיקה, השתתפות בהגרלות ועוד. ההימורים עצמם הם ב-AXM.",
       "referralTitle": "תוכנית הפניה",
-      "referralDesc": "הרווח חלק מהסיר כשהמופנים שלך משחקים. מערכת 3 רמות:",
-      "referralL1": "רמה 1 (הזמנה ישירה): 3% מהסיר",
-      "referralL2": "רמה 2: 1.5% מהסיר",
-      "referralL3": "רמה 3: 0.5% מהסיר",
+      "referralDesc": "הרווח חלק מהאוצר כשהמופנים שלך משחקים. מערכת 3 רמות (% מעמלת 10%):",
+      "referralL1": "רמה 1 (הזמנה ישירה): 15% מהאוצר",
+      "referralL2": "רמה 2: 7% מהאוצר",
+      "referralL3": "רמה 3: 3% מהאוצר",
       "eventsTitle": "אירועים והגרלות",
-      "eventsDesc": "הפלטפורמה מארחת תחרויות והגרלות קבועות עם פרסי AXM אמיתיים. תחרויות סופרות את ההימורים שלך אוטומטית — פשוט שחק. הגרלות דורשות לחיצה על 'הצטרף'. הפרסים ממומנים מעמלת ה-10%.",
+      "eventsDesc": "הפלטפורמה מארחת תחרויות והגרלות קבועות עם פרסי AXM אמיתיים. תחרויות סופרות את ההימורים שלך אוטומטית — פשוט שחק. הגרלות דורשות לחיצה על 'הצטרף'. הפרסים ממומנים מהאוצר (עמלת 10%).",
       "playNow": "חקור פרויקטים"
     },
     "token": {
@@ -961,7 +969,7 @@
         "title": "Jackpot",
         "subtitle": "Auto draws.",
         "howTitle": "How",
-        "how1": "1% to pools",
+        "how1": "10% of treasury (10% commission) to pools",
         "how2": "Threshold draw",
         "how3": "Random winner",
         "how4": "Instant",
@@ -1045,12 +1053,12 @@
         "levelHeader": "Level",
         "rewardHeader": "Reward",
         "level1": "L1",
-        "reward1": "3%",
+        "reward1": "15% of treasury",
         "level2": "L2",
-        "reward2": "1.5%",
+        "reward2": "7% of treasury",
         "level3": "L3",
-        "reward3": "0.5%",
-        "note": "Max 5%."
+        "reward3": "3% of treasury",
+        "note": "Maximum 25% of treasury."
       },
       "profile": {
         "title": "Profile",
@@ -1090,7 +1098,7 @@
         "q5": "Canceled?",
         "a5": "3h.",
         "q6": "Commission?",
-        "a6": "Staking, jackpot, referrals.",
+        "a6": "10% of each pot goes to the treasury. Treasury: 20% staking, 10% jackpot, 25% referrals, 45% operations.",
         "q7": "Safe?",
         "a7": "Yes.",
         "q8": "LAUNCH?",

@@ -244,7 +244,7 @@
     },
     "feeSplit": {
       "title": "Transparent economics",
-      "subtitle": "Each project generates revenue (e.g. 10% commission from Heads or Tails). From commission: 20% referrals, 20% LAUNCH stakers, 10% jackpots, 50% operations.",
+      "subtitle": "Each project generates revenue (e.g. 10% commission from Heads or Tails goes to the treasury). Treasury distribution: 25% referrals, 20% LAUNCH stakers, 10% jackpots, 45% operations.",
       "operations": "Operations",
       "buyback": "LAUNCH holder rewards",
       "rewards": "Project development",
@@ -404,7 +404,11 @@
       "copied": "Copied!",
       "connectButton": "Connect",
       "waiting": "Waiting for wallet connection...",
-      "downloadWallet": "Download Axiome Wallet"
+      "downloadWallet": "Download Axiome Wallet",
+      "qrModeCamera": "Regular camera",
+      "qrModeWallet": "Axiome Wallet scanner",
+      "qrHintCamera": "Scan with your phone camera — the wallet will open automatically",
+      "qrHintWallet": "Open Axiome Wallet → Scan QR inside the app"
     },
     "signTransaction": {
       "gettingCode": "Getting code...",
@@ -429,7 +433,11 @@
       "statusWaiting": "Waiting for wallet...",
       "statusBroadcast": "Broadcasting transaction...",
       "statusTimeout": "Timeout — please check manually",
-      "statusConfirming": "Waiting for confirmation..."
+      "statusConfirming": "Waiting for confirmation...",
+      "qrModeCamera": "Regular camera",
+      "qrModeWallet": "Axiome Wallet scanner",
+      "qrHintCamera": "Scan with your phone camera — the wallet will open automatically",
+      "qrHintWallet": "Open Axiome Wallet → Scan QR inside the app"
     }
   },
   "createToken": {
@@ -666,7 +674,7 @@
       "step4Title": "Winner takes 90%",
       "step4Desc": "Winner receives 90% of the total pot. 10% goes as platform commission.",
       "step5Title": "Referral rewards",
-      "step5Desc": "Invite friends via referral link — earn up to 3% of each pot from your referrals' games across 3 levels.",
+      "step5Desc": "Invite friends via referral link — earn up to 25% of treasury from your referrals' games across 3 levels.",
       "commissionTitle": "Commission",
       "commissionDesc": "10% of each pot goes as platform commission. Winner gets 90% of the total.",
       "securityTitle": "Security & Fairness",
@@ -679,12 +687,12 @@
       "coinTokenTitle": "COIN — Utility Token",
       "coinTokenDesc": "COIN is a CW20 utility token on Axiome blockchain. Use COIN for in-game features: shop purchases, cosmetics, lottery and contest participation, creating giveaways, and more. Bets are placed in native AXM.",
       "referralTitle": "Referral program",
-      "referralDesc": "Earn a share of the pot when your referrals play. 3-level system:",
-      "referralL1": "Level 1 (direct invite): 3% of pot",
-      "referralL2": "Level 2: 1.5% of pot",
-      "referralL3": "Level 3: 0.5% of pot",
+      "referralDesc": "Earn a share of the treasury when your referrals play. 3-level system (% of 10% commission):",
+      "referralL1": "Level 1 (direct invite): 15% of treasury",
+      "referralL2": "Level 2: 7% of treasury",
+      "referralL3": "Level 3: 3% of treasury",
       "eventsTitle": "Events & Raffles",
-      "eventsDesc": "The platform hosts regular contests and raffles with real AXM prizes. Contests count your bets automatically — just play. Raffles require clicking 'Join'. Prizes are funded from the 10% commission.",
+      "eventsDesc": "The platform hosts regular contests and raffles with real AXM prizes. Contests count your bets automatically — just play. Raffles require clicking 'Join'. Prizes are funded from the treasury (10% commission).",
       "playNow": "Play Heads or Tails"
     },
     "token": {
@@ -961,7 +969,7 @@
         "title": "Jackpot",
         "subtitle": "Automatic prize draws from pools accumulated with every bet.",
         "howTitle": "How it works",
-        "how1": "1% of every bet automatically goes to jackpot pools",
+        "how1": "10% of the treasury (10% commission) from every bet automatically goes to jackpot pools",
         "how2": "When a pool reaches its threshold — a draw happens",
         "how3": "Winner is chosen randomly among eligible players",
         "how4": "Prize is instantly credited to the winner's balance",
@@ -1045,12 +1053,12 @@
         "levelHeader": "Level",
         "rewardHeader": "Reward",
         "level1": "Level 1 (direct)",
-        "reward1": "3% of commission",
+        "reward1": "15% of treasury",
         "level2": "Level 2",
-        "reward2": "1.5% of commission",
+        "reward2": "7% of treasury",
         "level3": "Level 3",
-        "reward3": "0.5% of commission",
-        "note": "Maximum 5% of commission per bet goes to referral rewards."
+        "reward3": "3% of treasury",
+        "note": "Maximum 25% of treasury per bet goes to referral rewards."
       },
       "profile": {
         "title": "Profile & Achievements",
@@ -1090,7 +1098,7 @@
         "q5": "Why was my bet canceled?",
         "a5": "If no one accepts your bet within 3 hours, it auto-cancels and AXM is returned.",
         "q6": "Where does the 10% commission go?",
-        "a6": "20% → staking pool. 1% of bet → jackpot. Up to 5% → referral rewards. Rest → platform treasury.",
+        "a6": "10% of each pot goes to the treasury. Treasury breakdown: 20% → staking pool, 10% → jackpot, 25% → referral rewards, 45% → platform operations.",
         "q7": "Is 1-Click Play safe?",
         "a7": "Yes. Permission is only for the CoinFlip contract with a limited set of game actions. The relayer cannot transfer your funds elsewhere.",
         "q8": "What is LAUNCH?",

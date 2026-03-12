@@ -23,6 +23,7 @@ export function TransactionQRModal({
   description = 'Scan this QR code with Axiome Wallet to sign the transaction.',
 }: TransactionQRModalProps) {
   const [copied, setCopied] = useState(false)
+  const [qrMode, setQrMode] = useState<'camera' | 'wallet'>('wallet')
   const isMobile = isMobileDevice()
 
   if (!isOpen) return null
@@ -37,9 +38,11 @@ export function TransactionQRModal({
     }
   }
 
-  // Universal link for QR (scannable by any camera) vs deep link for button
+  // QR value depends on selected mode
   const qrValue = connectToken
-    ? `https://axiome.pro/app/connect?token=${connectToken}`
+    ? (qrMode === 'wallet'
+        ? `axm:auth:token:${connectToken}`
+        : `https://axiome.pro/app/connect?token=${connectToken}`)
     : deepLink
 
   const handleOpenWallet = () => {
@@ -88,15 +91,48 @@ export function TransactionQRModal({
 
             {/* QR Code */}
             {!isMobile && (
-              <div className="flex justify-center">
-                <div className="bg-white p-4 rounded-xl">
-                  <QRCodeSVG
-                    value={qrValue}
-                    size={200}
-                    level="M"
-                    includeMargin={false}
-                  />
+              <div className="space-y-3">
+                {connectToken && (
+                  <div className="flex bg-gray-800 rounded-xl p-1">
+                    <button
+                      onClick={() => setQrMode('wallet')}
+                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                        qrMode === 'wallet'
+                          ? 'bg-purple-600 text-white shadow-sm'
+                          : 'text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      Axiome Wallet scanner
+                    </button>
+                    <button
+                      onClick={() => setQrMode('camera')}
+                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                        qrMode === 'camera'
+                          ? 'bg-purple-600 text-white shadow-sm'
+                          : 'text-gray-400 hover:text-gray-300'
+                      }`}
+                    >
+                      Regular camera
+                    </button>
+                  </div>
+                )}
+                <div className="flex justify-center">
+                  <div className="bg-white p-4 rounded-xl">
+                    <QRCodeSVG
+                      value={qrValue}
+                      size={200}
+                      level="M"
+                      includeMargin={false}
+                    />
+                  </div>
                 </div>
+                {connectToken && (
+                  <p className="text-xs text-gray-400 text-center">
+                    {qrMode === 'wallet'
+                      ? 'Open Axiome Wallet → Scan QR inside the app'
+                      : 'Scan with your phone camera — the wallet will open automatically'}
+                  </p>
+                )}
               </div>
             )}
 

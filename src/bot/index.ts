@@ -70,7 +70,7 @@ const i18n = {
     gameComm: 'Commission: 10%',
     gameFair: 'Fairness: commit-reveal, fully on-chain',
     gameRef: 'Referral program:',
-    gameRefDesc: 'Invite friends and earn up to 3% from their games!\nLevel 1: 3% | Level 2: 1.5% | Level 3: 0.5%',
+    gameRefDesc: 'Invite friends and earn from the treasury (10% commission)!\nLevel 1: 15% | Level 2: 7% | Level 3: 3% of treasury',
     // /login
     loginTitle: 'Login to Axiome Launch Suite',
     loginClick: 'Click the button below to log in with your Telegram account.',
@@ -124,7 +124,7 @@ const i18n = {
     gameComm: 'Комиссия: 10%',
     gameFair: 'Честность: commit-reveal, полностью ончейн',
     gameRef: 'Реферальная программа:',
-    gameRefDesc: 'Приглашай друзей и зарабатывай до 3% с их игр!\nУровень 1: 3% | Уровень 2: 1.5% | Уровень 3: 0.5%',
+    gameRefDesc: 'Приглашай друзей и зарабатывай из казны (10% комиссия)!\nУровень 1: 15% | Уровень 2: 7% | Уровень 3: 3% от казны',
     loginTitle: 'Вход в Axiome Launch Suite',
     loginClick: 'Нажмите кнопку ниже, чтобы войти через Telegram.',
     loginVerified: 'Ваш кошелёк верифицирован.',
