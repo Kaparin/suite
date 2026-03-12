@@ -61,9 +61,9 @@
         "desc": "Community-Ideen und Builds."
       },
       "tbd": {
-        "title": "Nächstes Projekt",
-        "status": "Geplant",
-        "desc": "Nächstes Produkt in Entwicklung. Jedes Projekt hat seinen eigenen Token."
+        "title": "Dame",
+        "status": "In Entwicklung",
+        "desc": "PvP-Dame auf der Axiome-Blockchain. Spielen Sie um AXM, verdienen Sie bei jeder Partie."
       }
     },
     "launchToken": {

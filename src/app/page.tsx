@@ -134,9 +134,9 @@ function ProjectSlider({ t }: { t: any }) {
                               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                             </motion.span>
                           </a>
-                          <a href="https://coinflip.axiome-launch.com" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-amber-400 transition-colors py-3">
+                          <Link href="/docs/coinflip" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-amber-400 transition-colors py-3">
                             {t('coinflip.viewMechanics')} <span aria-hidden="true">&rarr;</span>
-                          </a>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -144,25 +144,37 @@ function ProjectSlider({ t }: { t: any }) {
                 </div>
               </div>
 
-              {/* Slide 2 — Coming Soon */}
+              {/* Slide 2 — Checkers (in development) */}
               <div className="flex-[0_0_100%] min-w-0">
-                <div className="relative overflow-hidden rounded-2xl border border-violet-500/15">
+                <div className="relative overflow-hidden rounded-2xl border border-violet-500/20">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-950/40 via-gray-950 to-blue-950/30" />
-                  <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-500/6 rounded-full blur-[100px]" />
+                  <div className="absolute top-0 right-0 w-96 h-96 bg-violet-500/8 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3" />
+                  <div className="absolute bottom-0 left-0 w-72 h-72 bg-blue-500/8 rounded-full blur-[80px] translate-y-1/2 -translate-x-1/4" />
 
-                  <div className="relative z-10 p-6 md:p-10 min-h-[320px] flex flex-col items-center justify-center text-center">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/20 mb-6">
-                      {t('ecosystem.tbd.status')}
-                    </span>
+                  <div className="relative z-10 p-6 md:p-10">
+                    <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
+                      <div className="shrink-0 self-center md:self-start">
+                        <Image
+                          src="/checkers-logo-with-text.png"
+                          alt="Checkers"
+                          width={200}
+                          height={200}
+                          className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48 object-contain opacity-90"
+                        />
+                      </div>
 
-                    <div className="w-20 h-20 mx-auto mb-6 bg-gradient-to-br from-violet-500/15 to-blue-500/15 rounded-2xl border border-violet-500/15 flex items-center justify-center backdrop-blur-sm">
-                      <svg className="w-10 h-10 text-violet-400/50" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                      </svg>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-3 mb-4">
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold rounded-full bg-violet-500/15 text-violet-400 border border-violet-500/25">
+                            {t('ecosystem.tbd.status')}
+                          </span>
+                          <span className="text-xs text-gray-500 font-medium">#2 Project</span>
+                        </div>
+
+                        <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{t('ecosystem.tbd.title')}</h3>
+                        <p className="text-gray-400 text-sm md:text-base max-w-xl">{t('ecosystem.tbd.desc')}</p>
+                      </div>
                     </div>
-
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">{t('ecosystem.tbd.title')}</h3>
-                    <p className="text-gray-400 max-w-lg text-base">{t('ecosystem.tbd.desc')}</p>
                   </div>
                 </div>
               </div>

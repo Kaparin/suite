@@ -61,9 +61,9 @@
         "desc": "Community-proposed ideas and builds."
       },
       "tbd": {
-        "title": "Next Project",
-        "status": "Planned",
-        "desc": "Next product in development. Each project has its own token."
+        "title": "Checkers",
+        "status": "In Development",
+        "desc": "PvP checkers on the Axiome blockchain. Play for AXM, earn from every match."
       }
     },
     "launchToken": {
