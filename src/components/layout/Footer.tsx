@@ -50,7 +50,7 @@ export function Footer() {
               Docs
             </Link>
             <Link
-              href="https://t.me/axiome"
+              href="https://t.me/axiome_launch"
               target="_blank"
               rel="noopener noreferrer"
               className="text-gray-400 hover:text-white text-sm transition-colors"

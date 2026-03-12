@@ -25,8 +25,8 @@
       "title": "Axiome Startup Ecosystem",
       "subtitle": "We build independent Web3 products inside the Axiome ecosystem — each with its own token and economy.",
       "subtitle2": "LAUNCH token holders earn revenue from every project we create.",
-      "cta1": "Explore Projects",
-      "cta2": "Explore Ecosystem",
+      "cta1": "Our Projects",
+      "cta2": "Explore Tokens",
       "docsLink": "Read Docs",
       "poweredBy": "Powered by Axiome blockchain"
     },
@@ -253,8 +253,8 @@
     "cta": {
       "title": "We build real products.",
       "subtitle": "Heads or Tails is live. LAUNCH holders earn from every project. More products coming soon.",
-      "cta1": "Explore Projects",
-      "cta2": "Explore Ecosystem",
+      "cta1": "Our Projects",
+      "cta2": "Explore Tokens",
       "docsLink": "Read Docs"
     }
   },
