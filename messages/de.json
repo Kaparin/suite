@@ -437,7 +437,8 @@
       "qrModeCamera": "Normale Kamera",
       "qrModeWallet": "Axiome Wallet Scanner",
       "qrHintCamera": "Mit der Handykamera scannen — die Wallet öffnet sich automatisch",
-      "qrHintWallet": "Axiome Wallet öffnen → QR im App scannen"
+      "qrHintWallet": "Axiome Wallet öffnen → QR im App scannen",
+      "walletHint": "Nach dem Öffnen der Wallet, wenn die Transaktion nicht erscheint — aktualisieren Sie die Seite. Sie sollte automatisch ankommen. Falls nicht, versuchen Sie den Code manuell einzugeben."
     }
   },
   "createToken": {

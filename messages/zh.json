@@ -437,7 +437,8 @@
       "qrModeCamera": "普通相机",
       "qrModeWallet": "Axiome Wallet 扫描器",
       "qrHintCamera": "用手机相机扫描 — 钱包将自动打开",
-      "qrHintWallet": "打开 Axiome Wallet → 在应用内扫描二维码"
+      "qrHintWallet": "打开 Axiome Wallet → 在应用内扫描二维码",
+      "walletHint": "打开钱包后，如果交易未出现——请刷新页面。交易应自动到达。如果仍未到达，请尝试手动输入代码。"
     }
   },
   "createToken": {

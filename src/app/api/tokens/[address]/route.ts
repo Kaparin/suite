@@ -103,7 +103,7 @@ async function getChainMarketingInfo(contractAddress: string): Promise<{
   return null
 }
 
-// GET /api/tokens/[address] - получить токен по адресу или ID
+// GET /api/tokens/[address] - get token by contract address or project ID
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
@@ -111,64 +111,58 @@ export async function GET(
   try {
     const { address } = await params
 
-    // Сначала ищем по tokenAddress, потом по ID
-    const includeConfig = {
-      owner: {
-        select: {
-          id: true,
-          username: true,
-          wallets: {
-            where: { isPrimary: true },
-            select: { address: true },
-            take: 1,
-          },
-        },
-      },
-      metrics: {
-        orderBy: { date: 'desc' as const },
-        take: 30,
-      },
-      riskFlags: {
-        where: { isActive: true },
-      },
-      changes: {
-        orderBy: { createdAt: 'desc' as const },
-        take: 20,
-      },
-    }
-
+    // Look up by tokenAddress first, then by ID (for backwards compat with comments/reactions)
     let project = await prisma.project.findUnique({
       where: { tokenAddress: address },
-      include: includeConfig,
+      include: {
+        metrics: {
+          orderBy: { date: 'desc' as const },
+          take: 30,
+        },
+        riskFlags: {
+          where: { isActive: true },
+        },
+        changes: {
+          orderBy: { createdAt: 'desc' as const },
+          take: 20,
+        },
+      },
     })
 
-    // Если не найден по адресу, ищем по ID
     if (!project) {
       project = await prisma.project.findUnique({
         where: { id: address },
-        include: includeConfig,
+        include: {
+          metrics: {
+            orderBy: { date: 'desc' as const },
+            take: 30,
+          },
+          riskFlags: {
+            where: { isActive: true },
+          },
+          changes: {
+            orderBy: { createdAt: 'desc' as const },
+            take: 20,
+          },
+        },
       })
     }
 
-    // Get chain minter for ownership verification
+    // Get chain data
     const contractAddr = project?.tokenAddress || address
     let chainMinter: string | null = null
-    if (contractAddr.startsWith('axm')) {
-      chainMinter = await getChainMinter(contractAddr)
-    }
-
-    // Always try to get chain data for on-chain tokens
     let chainTokenInfo: Awaited<ReturnType<typeof getChainTokenInfo>> = null
     let chainMarketingInfo: Awaited<ReturnType<typeof getChainMarketingInfo>> = null
+
     if (contractAddr.startsWith('axm')) {
-      ;[chainTokenInfo, chainMarketingInfo] = await Promise.all([
+      ;[chainMinter, chainTokenInfo, chainMarketingInfo] = await Promise.all([
+        getChainMinter(contractAddr),
         getChainTokenInfo(contractAddr),
         getChainMarketingInfo(contractAddr),
       ])
     }
 
     if (!project) {
-
       // Check if it's a known token
       const knownToken = KNOWN_TOKENS.find(
         t => t.contractAddress.toLowerCase() === address.toLowerCase()
@@ -193,7 +187,7 @@ export async function GET(
             isVerified: knownToken?.verified || false,
             createdAt: null,
             riskFlags: [],
-            owner: chainMinter ? { wallets: [{ address: chainMinter }] } : null,
+            changes: [],
           },
           chainData: {
             tokenInfo: chainTokenInfo,
@@ -217,7 +211,13 @@ export async function GET(
     const trustScore = await getProjectTrustScore(project.id)
 
     return NextResponse.json({
-      project,
+      project: {
+        ...project,
+        // Override name/ticker/logo with chain data when available
+        name: chainTokenInfo?.name || project.name,
+        ticker: chainTokenInfo?.symbol || project.ticker,
+        logo: chainMarketingInfo?.logo?.url || project.logo,
+      },
       chainData: {
         tokenInfo: chainTokenInfo,
         marketingInfo: chainMarketingInfo,
@@ -240,8 +240,7 @@ export async function GET(
   }
 }
 
-// PATCH /api/tokens/[address] - обновить данные токена (только для владельца)
-// Requires JWT authentication via Authorization header
+// PATCH /api/tokens/[address] - update custom token data (owner only, verified via chain minter)
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ address: string }> }
@@ -249,18 +248,16 @@ export async function PATCH(
   try {
     const { address } = await params
 
-    // Verify JWT token from Authorization header (supports both old wallet auth and new Telegram auth)
+    // Verify JWT token
     const authHeader = request.headers.get('Authorization')
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return NextResponse.json(
-        { error: 'Authentication required. Please verify your wallet first.' },
+        { error: 'Authentication required.' },
         { status: 401 }
       )
     }
 
     const token = authHeader.substring(7)
-
-    // Verify V2 session token
     const decoded = verifySessionTokenV2(token)
     if (!decoded) {
       return NextResponse.json(
@@ -276,121 +273,46 @@ export async function PATCH(
     })
     const userWalletAddresses = userWallets.map(w => w.address.toLowerCase())
 
-    const body = await request.json()
-    const {
-      name,
-      descriptionShort,
-      descriptionLong,
-      links,
-      logo,
-    } = body
-
-    // Find project by token address
-    let project = await prisma.project.findUnique({
-      where: { tokenAddress: address },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            wallets: {
-              where: { isPrimary: true },
-              select: { address: true },
-              take: 1
-            }
-          }
-        }
-      },
-    })
-
-    // Also try by ID
-    if (!project) {
-      project = await prisma.project.findUnique({
-        where: { id: address },
-        include: {
-          owner: {
-            select: {
-              id: true,
-              wallets: {
-                where: { isPrimary: true },
-                select: { address: true },
-                take: 1
-              }
-            }
-          }
-        },
-      })
-    }
-
-    // Get chain minter for verification
-    const chainMinter = await getChainMinter(project?.tokenAddress || address)
-
-    // Check ownership: either DB owner or user owns a wallet that is the chain minter
-    const ownerWalletAddress = project?.owner?.wallets?.[0]?.address?.toLowerCase()
-    const isOwner =
-      project?.ownerId === decoded.userId ||
-      (ownerWalletAddress && userWalletAddresses.includes(ownerWalletAddress)) ||
-      (chainMinter && userWalletAddresses.includes(chainMinter.toLowerCase()))
-
-    if (!isOwner) {
+    // Ownership check: user's wallet must match the on-chain minter
+    const chainMinter = await getChainMinter(address)
+    if (!chainMinter || !userWalletAddresses.includes(chainMinter.toLowerCase())) {
       return NextResponse.json(
-        { error: 'Not authorized to edit this token' },
+        { error: 'Not authorized. Only the token minter can edit this token.' },
         { status: 403 }
       )
     }
 
-    // If project doesn't exist but caller is chain minter, create it
-    const minterWallet = chainMinter ? userWalletAddresses.find(w => w === chainMinter.toLowerCase()) : null
-    if (!project && minterWallet) {
-      const user = await prisma.user.findUnique({
-        where: { id: decoded.userId },
-      })
+    const body = await request.json()
+    const { descriptionShort, descriptionLong, links } = body
 
-      if (!user) {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 })
-      }
+    // Find existing project record
+    let project = await prisma.project.findUnique({
+      where: { tokenAddress: address },
+    })
 
-      // Create project
+    // Auto-create project record if none exists
+    if (!project) {
+      // Fetch chain data for initial record
+      const chainTokenInfo = await getChainTokenInfo(address)
+
       project = await prisma.project.create({
         data: {
-          ownerId: user.id,
+          ownerId: decoded.userId,
           tokenAddress: address,
-          name: name || 'Unnamed Token',
-          ticker: body.ticker || 'TOKEN',
+          name: chainTokenInfo?.name || 'Token',
+          ticker: chainTokenInfo?.symbol || 'TOKEN',
           descriptionShort,
           descriptionLong,
           links,
-          logo,
           status: 'LAUNCHED',
-        },
-        include: {
-          owner: {
-            select: {
-              id: true,
-              wallets: {
-                where: { isPrimary: true },
-                select: { address: true },
-                take: 1
-              }
-            }
-          }
         },
       })
 
       return NextResponse.json({ project, created: true })
     }
 
-    if (!project) {
-      return NextResponse.json(
-        { error: 'Token not found' },
-        { status: 404 }
-      )
-    }
-
     // Track changes before updating
     const changes: { changeType: string; oldValue: unknown; newValue: unknown }[] = []
-    if (name && name !== project.name) {
-      changes.push({ changeType: 'name', oldValue: project.name, newValue: name })
-    }
     if (descriptionShort !== undefined && descriptionShort !== project.descriptionShort) {
       changes.push({ changeType: 'descriptionShort', oldValue: project.descriptionShort, newValue: descriptionShort })
     }
@@ -399,9 +321,6 @@ export async function PATCH(
     }
     if (links !== undefined && JSON.stringify(links) !== JSON.stringify(project.links)) {
       changes.push({ changeType: 'links', oldValue: project.links, newValue: links })
-    }
-    if (logo !== undefined && logo !== project.logo) {
-      changes.push({ changeType: 'logo', oldValue: project.logo, newValue: logo })
     }
 
     // Save change records
@@ -417,28 +336,13 @@ export async function PATCH(
       })
     }
 
-    // Update project
+    // Update only custom fields (chain fields are read-only)
     const updatedProject = await prisma.project.update({
       where: { id: project.id },
       data: {
-        ...(name && { name }),
         ...(descriptionShort !== undefined && { descriptionShort }),
         ...(descriptionLong !== undefined && { descriptionLong }),
         ...(links !== undefined && { links }),
-        ...(logo !== undefined && { logo }),
-      },
-      include: {
-        owner: {
-          select: {
-            id: true,
-            username: true,
-            wallets: {
-              where: { isPrimary: true },
-              select: { address: true },
-              take: 1
-            },
-          },
-        },
       },
     })
 

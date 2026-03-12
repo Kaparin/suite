@@ -428,6 +428,14 @@ export function SignTransactionFlow({
             ) : t('checkTransaction')}
           </button>
         )}
+
+        {isSigning && !isMobile && (
+          <div className="rounded-xl bg-gray-800/50 border border-gray-700/50 px-4 py-3">
+            <p className="text-xs text-gray-400 leading-relaxed">
+              {t('walletHint')}
+            </p>
+          </div>
+        )}
       </motion.div>
     )
   }

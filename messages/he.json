@@ -437,7 +437,8 @@
       "qrModeCamera": "מצלמה רגילה",
       "qrModeWallet": "סורק Axiome Wallet",
       "qrHintCamera": "סרוק עם מצלמת הטלפון — הארנק ייפתח אוטומטית",
-      "qrHintWallet": "פתח Axiome Wallet → סרוק QR בתוך האפליקציה"
+      "qrHintWallet": "פתח Axiome Wallet → סרוק QR בתוך האפליקציה",
+      "walletHint": "לאחר פתיחת הארנק, אם העסקה לא מופיעה — רענן את הדף. היא אמורה להגיע אוטומטית. אם לא הגיעה, נסה להזין את הקוד ידנית."
     }
   },
   "createToken": {
