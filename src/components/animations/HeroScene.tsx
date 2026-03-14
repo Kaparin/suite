@@ -240,31 +240,36 @@ export function HeroScene({ className = '' }: { className?: string }) {
 
       {/* ── CENTRAL TOKEN ── */}
       <motion.div
-        className="absolute inset-[12%] flex items-center justify-center"
+        className="absolute inset-[25%] flex items-center justify-center"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
       >
-        <motion.div className="absolute inset-[-15%] rounded-full pointer-events-none"
+        {/* Glow */}
+        <motion.div className="absolute inset-[-20%] rounded-full pointer-events-none"
           style={{ background: 'radial-gradient(circle, rgba(32, 129, 226, 0.35) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%)', filter: 'blur(25px)' }}
           animate={{ scale: [1, 1.15, 1], opacity: [0.5, 0.85, 0.5] }}
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
+        {/* Token circle */}
         <motion.div className="relative w-full h-full rounded-full overflow-hidden"
           style={{ background: 'linear-gradient(135deg, var(--surface-2) 0%, var(--surface-1) 50%, var(--surface-2) 100%)', border: '2px solid rgba(32, 129, 226, 0.3)', boxShadow: '0 0 60px rgba(32, 129, 226, 0.2), inset 0 0 40px rgba(32, 129, 226, 0.06)' }}
           animate={{ rotate: [0, 2, -2, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         >
+          {/* Shine sweep */}
           <motion.div className="absolute inset-0 pointer-events-none"
             style={{ background: 'linear-gradient(105deg, transparent 30%, rgba(255,255,255,0.04) 42%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.04) 58%, transparent 70%)' }}
             animate={{ x: ['-100%', '200%'] }}
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
           />
-          <div className="absolute inset-0 flex items-center justify-center p-[8%]">
-            <Image src="/axiome-launch-suite-logo.png" alt="Axiome Launch Suite" width={500} height={500}
-              className="w-full h-full object-contain drop-shadow-[0_0_15px_rgba(32,129,226,0.25)]" priority
+          {/* Logo — no padding, fills the circle */}
+          <div className="absolute inset-0 flex items-center justify-center">
+            <Image src="/axiome-launch-suite-logo.png" alt="Axiome Launch Suite" width={500} height={333}
+              className="w-[90%] object-contain drop-shadow-[0_0_15px_rgba(32,129,226,0.25)]" priority
             />
           </div>
         </motion.div>
-        <motion.div className="absolute inset-[0%] rounded-full border border-accent/8 pointer-events-none"
+        {/* Inner orbit ring — tight to token edge */}
+        <motion.div className="absolute inset-[-3px] rounded-full border border-accent/10 pointer-events-none"
           animate={{ rotate: -360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
         >
