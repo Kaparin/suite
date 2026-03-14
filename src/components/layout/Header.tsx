@@ -64,7 +64,7 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-background/90 backdrop-blur-md border-b border-border">
+      <header className="sticky top-0 z-50 glass border-b-0" style={{ background: 'rgba(4, 17, 29, 0.7)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
         <div className="container-page">
           <div className="flex items-center gap-4 h-[72px]">
 
@@ -113,7 +113,7 @@ export function Header() {
                   <>
                     <button
                       onClick={() => setIsWalletMenuOpen(!isWalletMenuOpen)}
-                      className="flex items-center gap-2.5 px-3.5 py-2 bg-surface-1 hover:bg-surface-2 border border-border hover:border-border-hover rounded-[var(--radius-md)] transition-all duration-200"
+                      className="flex items-center gap-2.5 px-3.5 py-2 glass-chip"
                     >
                       <div className="w-2 h-2 bg-[var(--success)] rounded-full" />
                       <span className="text-sm font-medium text-text-primary font-mono">{truncateAddress(address)}</span>
@@ -138,7 +138,7 @@ export function Header() {
                           animate={{ opacity: 1, y: 0 }}
                           exit={{ opacity: 0, y: -4 }}
                           transition={{ duration: 0.12 }}
-                          className="absolute right-0 mt-2 w-72 dropdown-menu"
+                          className="absolute right-0 mt-2 w-72 glass-dropdown"
                         >
                           {/* Balance */}
                           <div className="p-4 border-b border-border">
@@ -240,7 +240,7 @@ export function Header() {
                   <button
                     onClick={handleConnect}
                     disabled={isConnecting}
-                    className="flex items-center gap-2 px-4 py-2.5 bg-accent hover:bg-accent-hover disabled:opacity-50 disabled:cursor-not-allowed text-white text-sm font-semibold rounded-[var(--radius-md)] transition-all duration-200 shadow-sm hover:shadow-md active:scale-[0.97]"
+                    className="glass-btn flex items-center gap-2 px-4 py-2.5 text-sm disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.97]"
                   >
                     {isConnecting ? (
                       <>

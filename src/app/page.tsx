@@ -78,7 +78,7 @@ function ProjectSlider({ t }: { t: any }) {
             <div className="flex">
               {/* Slide 1 — Heads or Tails */}
               <div className="flex-[0_0_100%] min-w-0">
-                <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-border bg-surface-1">
+                <div className="relative overflow-hidden rounded-[var(--radius-xl)] glass-card">
                   <div className="absolute inset-0 bg-gradient-to-br from-amber-900/15 via-transparent to-blue-900/10" />
 
                   <div className="relative z-10 p-6 md:p-10">
@@ -107,7 +107,7 @@ function ProjectSlider({ t }: { t: any }) {
 
                         <div className="flex flex-wrap gap-2 mb-5">
                           {(['pvp', 'realStakes', 'platformFee', 'instantMatch', 'tournaments'] as const).map(key => (
-                            <span key={key} className="chip text-xs">
+                            <span key={key} className="glass-chip text-xs">
                               {t(`coinflip.features.${key}`)}
                             </span>
                           ))}
@@ -115,7 +115,7 @@ function ProjectSlider({ t }: { t: any }) {
 
                         <div className="flex flex-col sm:flex-row items-start gap-3">
                           <a href={COINFLIP_URL} target="_blank" rel="noopener noreferrer"
-                            className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-hover text-white font-semibold rounded-[var(--radius-md)] shadow-sm hover:shadow-md transition-all duration-200 text-sm active:scale-[0.97]"
+                            className="glass-btn inline-flex items-center gap-2 px-5 py-2.5 text-sm active:scale-[0.97]"
                           >
                             {t('coinflip.playNow')}
                             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
@@ -132,7 +132,7 @@ function ProjectSlider({ t }: { t: any }) {
 
               {/* Slide 2 — Checkers */}
               <div className="flex-[0_0_100%] min-w-0">
-                <div className="relative overflow-hidden rounded-[var(--radius-xl)] border border-border bg-surface-1">
+                <div className="relative overflow-hidden rounded-[var(--radius-xl)] glass-card">
                   <div className="absolute inset-0 bg-gradient-to-br from-violet-900/15 via-transparent to-blue-900/10" />
 
                   <div className="relative z-10 p-6 md:p-10">
@@ -185,7 +185,7 @@ function ProjectSlider({ t }: { t: any }) {
 /* ── Stat Card ── */
 function StatCard({ icon, value, label }: { icon: React.ReactNode; value: string; label: string }) {
   return (
-    <motion.div variants={staggerItem} className="bg-surface-1 border border-border rounded-[var(--radius-lg)] p-5 text-center">
+    <motion.div variants={staggerItem} className="glass-card p-5 text-center">
       <div className="flex justify-center mb-3 text-accent">{icon}</div>
       <p className="text-2xl font-bold text-text-primary mb-1">{value}</p>
       <p className="text-sm text-text-secondary">{label}</p>
@@ -223,7 +223,7 @@ export default function HomePage() {
             <motion.div variants={stagger} initial="hidden" animate="visible" className="text-center lg:text-left order-2 lg:order-1">
               <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start gap-2 mb-5">
                 {(['ecosystem', 'launchToken', 'liveProduct'] as const).map(badgeKey => (
-                  <span key={badgeKey} className="chip text-xs">
+                  <span key={badgeKey} className="glass-chip text-xs">
                     <svg className="w-3 h-3 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
                     {t(`badges.${badgeKey}`)}
                   </span>
@@ -243,12 +243,12 @@ export default function HomePage() {
 
               <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-5">
                 <Link href="#projects"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm sm:text-base font-semibold rounded-[var(--radius-md)] shadow-md shadow-accent/20 hover:shadow-lg hover:shadow-accent/30 transition-all duration-200 active:scale-[0.97]"
+                  className="glass-btn inline-flex items-center gap-2 px-7 py-3.5 text-sm sm:text-base active:scale-[0.97]"
                 >
                   {t('hero.cta1')}
                 </Link>
                 <Link href="/explorer"
-                  className="inline-flex items-center gap-2 px-7 py-3.5 border border-border hover:border-border-hover text-text-primary text-sm sm:text-base font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2 active:scale-[0.97]"
+                  className="glass-btn-secondary inline-flex items-center gap-2 px-7 py-3.5 text-sm sm:text-base active:scale-[0.97]"
                 >
                   {t('hero.cta2')}
                 </Link>
@@ -278,7 +278,7 @@ export default function HomePage() {
 
           {/* AXM ticker */}
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-8 flex justify-center">
-            <div className="bg-surface-1/80 backdrop-blur-sm border border-border rounded-full px-6 py-3">
+            <div className="glass-pill px-6 py-3">
               <AXMPriceTicker showVolume showHighLow />
             </div>
           </motion.div>
@@ -291,7 +291,7 @@ export default function HomePage() {
       </div>
 
       {/* ════ LAUNCH TOKEN ════ */}
-      <section className="py-16 md:py-20 border-t border-border">
+      <section className="py-16 md:py-20 glass-section">
         <div className="container-page max-w-5xl">
           <motion.h2 {...fadeInUp} className="text-2xl md:text-3xl font-bold text-center mb-2 text-text-primary">
             {t('launchToken.title')}
@@ -302,13 +302,13 @@ export default function HomePage() {
 
           <motion.div variants={stagger} initial="hidden" whileInView="visible" viewport={{ once: true }} className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-10">
             {(['allProducts', 'governance', 'community', 'utility'] as const).map(key => (
-              <motion.div key={key} variants={staggerItem} className="bg-surface-1 border border-border rounded-[var(--radius-lg)] p-5 text-center">
+              <motion.div key={key} variants={staggerItem} className="glass-card p-5 text-center">
                 <p className="text-sm text-text-secondary">{t(`launchToken.features.${key}`)}</p>
               </motion.div>
             ))}
           </motion.div>
 
-          <motion.div {...fadeInUp} className="bg-surface-1 border border-border rounded-[var(--radius-xl)] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <motion.div {...fadeInUp} className="glass-card rounded-[var(--radius-xl)] p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-4">
               <img src="https://image2url.com/r2/default/images/1770220782157-0e2ab4ed-cb61-46aa-a681-b50a302b1254.png" alt="LAUNCH" className="w-14 h-14 rounded-[var(--radius-md)]" />
               <div>
@@ -316,7 +316,7 @@ export default function HomePage() {
                 <p className="text-lg font-bold text-text-primary">{t('launchToken.tokenomicsTbd')}</p>
               </div>
             </div>
-            <Link href="/wallet?tab=staking" className="px-5 py-2.5 bg-accent hover:bg-accent-hover text-white text-sm font-semibold rounded-[var(--radius-md)] transition-all duration-200 shadow-sm hover:shadow-md">
+            <Link href="/wallet?tab=staking" className="glass-btn px-5 py-2.5 text-sm">
               {t('launchToken.viewExplorer')}
             </Link>
           </motion.div>
@@ -324,7 +324,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ STAKING ════ */}
-      <section className="py-16 md:py-20 border-t border-border">
+      <section className="py-16 md:py-20 glass-section">
         <div className="container-page max-w-5xl">
           <motion.div {...fadeInUp} className="text-center mb-10">
             <span className="chip text-xs mb-4 inline-flex">Staking</span>
@@ -349,7 +349,7 @@ export default function HomePage() {
 
           <motion.div {...fadeInUp} className="flex justify-center">
             <Link href="/wallet?tab=staking"
-              className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent hover:bg-accent-hover text-white text-base font-semibold rounded-[var(--radius-md)] shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.97]"
+              className="glass-btn inline-flex items-center gap-2 px-8 py-3.5 text-base active:scale-[0.97]"
             >
               {t('stakingSection.cta')}
             </Link>
@@ -358,7 +358,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ COMMUNITY ════ */}
-      <section className="py-16 md:py-20 border-t border-border">
+      <section className="py-16 md:py-20 glass-section">
         <div className="container-page max-w-5xl">
           <motion.h2 {...fadeInUp} className="text-2xl md:text-3xl font-bold text-center mb-2 text-text-primary">
             {t('community.title')}
@@ -369,12 +369,12 @@ export default function HomePage() {
 
           <motion.div {...fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-3">
             <a href="https://t.me/Pompario" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-[var(--radius-md)] transition-all duration-200"
+              className="glass-btn inline-flex items-center gap-2 px-6 py-3"
             >
               {t('community.submitIdea')}
             </a>
             <a href="https://t.me/axiome_launch" target="_blank" rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-border-hover text-text-primary font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2"
+              className="glass-btn-secondary inline-flex items-center gap-2 px-6 py-3"
             >
               {t('community.joinCommunity')}
             </a>
@@ -383,7 +383,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ VISION ════ */}
-      <section className="py-16 md:py-20 border-t border-border">
+      <section className="py-16 md:py-20 glass-section">
         <div className="container-page max-w-3xl text-center">
           <motion.h2 {...fadeInUp} className="text-2xl md:text-3xl font-bold mb-5 text-text-primary">
             {t('vision.title')}
@@ -395,7 +395,7 @@ export default function HomePage() {
       </section>
 
       {/* ════ FINAL CTA ════ */}
-      <section className="py-16 md:py-20 border-t border-border">
+      <section className="py-16 md:py-20 glass-section">
         <div className="container-page max-w-5xl">
           <motion.div
             initial={{ opacity: 0, scale: 0.98 }}
@@ -403,7 +403,7 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
           >
-            <div className="relative bg-surface-1 border border-border rounded-[var(--radius-xl)] p-8 md:p-14 text-center overflow-hidden">
+            <div className="relative glass-card rounded-[var(--radius-xl)] p-8 md:p-14 text-center">
               {/* Subtle bg accent */}
               <div className="absolute inset-0 bg-gradient-to-br from-accent/5 via-transparent to-accent/3 pointer-events-none" />
 
@@ -416,12 +416,12 @@ export default function HomePage() {
                 </p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                   <Link href="#projects"
-                    className="inline-flex items-center gap-2 px-8 py-3.5 bg-accent hover:bg-accent-hover text-white text-base font-semibold rounded-[var(--radius-md)] shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.97]"
+                    className="glass-btn inline-flex items-center gap-2 px-8 py-3.5 text-base active:scale-[0.97]"
                   >
                     {t('hero.cta1')}
                   </Link>
                   <Link href="/explorer"
-                    className="inline-flex items-center gap-2 px-8 py-3.5 border border-border hover:border-border-hover text-text-primary text-base font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2 active:scale-[0.97]"
+                    className="glass-btn-secondary inline-flex items-center gap-2 px-8 py-3.5 text-base active:scale-[0.97]"
                   >
                     {t('hero.cta2')}
                   </Link>
