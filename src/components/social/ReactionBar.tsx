@@ -23,11 +23,7 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
   const reactionTypes: ReactionType[] = ['ROCKET', 'FIRE', 'HEART', 'EYES', 'WARNING']
 
   const handleReaction = (type: ReactionType) => {
-    if (!isAuthenticated) {
-      // Could show a login prompt here
-      window.location.href = '/login'
-      return
-    }
+    if (!isAuthenticated) return
     toggleReaction(type)
   }
 
@@ -42,8 +38,11 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
             <button
               key={type}
               onClick={() => handleReaction(type)}
+              disabled={!isAuthenticated}
               className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-colors ${
-                hasReacted(type)
+                !isAuthenticated
+                  ? 'bg-surface-2 text-text-secondary opacity-60 cursor-not-allowed'
+                  : hasReacted(type)
                   ? 'bg-accent/10 text-accent'
                   : 'bg-surface-2 text-text-secondary hover:bg-surface-3'
               }`}
@@ -66,12 +65,14 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
           {reactionTypes.map((type) => (
             <motion.button
               key={type}
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
+              whileHover={isAuthenticated ? { scale: 1.1 } : {}}
+              whileTap={isAuthenticated ? { scale: 0.9 } : {}}
               onClick={() => handleReaction(type)}
-              disabled={isLoading}
+              disabled={isLoading || !isAuthenticated}
               className={`relative p-2 rounded-[var(--radius-sm)] transition-colors ${
-                hasReacted(type)
+                !isAuthenticated
+                  ? 'bg-surface-2 opacity-60 cursor-not-allowed'
+                  : hasReacted(type)
                   ? 'bg-accent/10 ring-1 ring-accent/30'
                   : 'bg-surface-2 hover:bg-surface-3'
               }`}

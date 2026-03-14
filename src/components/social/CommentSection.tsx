@@ -63,7 +63,7 @@ export function CommentSection({ projectId }: CommentSectionProps) {
         </h3>
       </div>
 
-      {/* Comment form */}
+      {/* Comment form — only for authenticated users */}
       {isAuthenticated ? (
         <motion.form
           onSubmit={handleSubmit}
@@ -167,18 +167,9 @@ export function CommentSection({ projectId }: CommentSectionProps) {
           </div>
         </motion.form>
       ) : (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="p-6 bg-accent/5 rounded-[var(--radius-md)] border border-accent/20 text-center"
-        >
-          <div className="w-12 h-12 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-            </svg>
-          </div>
-          <p className="text-text-secondary">Comments coming soon</p>
-        </motion.div>
+        <div className="p-4 bg-surface-2/50 rounded-[var(--radius-md)] border border-border text-center">
+          <p className="text-text-secondary text-sm">Log in via Telegram to leave a comment</p>
+        </div>
       )}
 
       {/* Error */}
