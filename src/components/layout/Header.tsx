@@ -16,8 +16,6 @@ export function Header() {
   const tCommon = useTranslations('common')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isWalletMenuOpen, setIsWalletMenuOpen] = useState(false)
-  const [isSearchFocused, setIsSearchFocused] = useState(false)
-  const [searchQuery, setSearchQuery] = useState('')
   const [copied, setCopied] = useState(false)
   const walletRef = useRef<HTMLDivElement>(null)
 
@@ -82,33 +80,8 @@ export function Header() {
               />
             </Link>
 
-            {/* Search — desktop */}
-            <div className="hidden md:flex flex-1 max-w-xl mx-4">
-              <div className={`relative w-full transition-all duration-200 ${isSearchFocused ? 'scale-[1.02]' : ''}`}>
-                <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                <input
-                  type="text"
-                  placeholder="Search tokens, collections..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setIsSearchFocused(true)}
-                  onBlur={() => setIsSearchFocused(false)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-surface-1 border border-border rounded-[var(--radius-md)] text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all duration-200"
-                />
-                {searchQuery && (
-                  <button
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-tertiary hover:text-text-secondary"
-                  >
-                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  </button>
-                )}
-              </div>
-            </div>
+            {/* Spacer */}
+            <div className="flex-1" />
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex items-center gap-1">
@@ -348,18 +321,6 @@ export function Header() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     </svg>
                   </button>
-                </div>
-
-                {/* Mobile Search */}
-                <div className="relative mb-6">
-                  <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                  </svg>
-                  <input
-                    type="text"
-                    placeholder="Search..."
-                    className="w-full pl-10 pr-4 py-3 bg-surface-1 border border-border rounded-[var(--radius-md)] text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent"
-                  />
                 </div>
 
                 {/* Mobile Nav Links */}

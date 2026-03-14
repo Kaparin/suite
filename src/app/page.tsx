@@ -3,6 +3,7 @@
 import { useState, useCallback, useEffect } from 'react'
 import { AXMPriceTicker } from '@/components/price/AXMPriceTicker'
 import { MeshGradient } from '@/components/animations/MeshGradient'
+import { HeroScene } from '@/components/animations/HeroScene'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -204,50 +205,22 @@ export default function HomePage() {
       <MeshGradient />
 
       {/* ════ HERO ════ */}
-      <section className="relative pt-10 sm:pt-14 md:pt-20 pb-16 sm:pb-24 overflow-hidden">
-        {/* Hero-specific glow — brighter accent blob behind logo area */}
+      <section className="relative pt-8 sm:pt-12 md:pt-16 pb-12 sm:pb-20 overflow-hidden">
+        {/* Hero glow */}
         <motion.div
-          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[500px] sm:w-[700px] md:w-[900px] h-[400px] sm:h-[500px] md:h-[600px] pointer-events-none"
+          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[600px] sm:w-[800px] md:w-[1000px] h-[500px] sm:h-[600px] md:h-[700px] pointer-events-none"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.15) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%)',
+            background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.12) 0%, rgba(139, 92, 246, 0.06) 35%, transparent 70%)',
             filter: 'blur(60px)',
           }}
-          animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+          animate={{ scale: [1, 1.05, 1], opacity: [0.7, 1, 0.7] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
         />
 
         <div className="container-page relative z-10">
-          {/* Logo — large, with animated glow underneath */}
-          <motion.div
-            initial={{ opacity: 0, y: -20, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
-            className="text-center mb-6 sm:mb-10 relative"
-          >
-            {/* Glow layer beneath logo */}
-            <motion.div
-              className="absolute left-1/2 -translate-x-1/2 top-[55%] w-[300px] sm:w-[500px] md:w-[700px] h-[120px] sm:h-[180px] md:h-[220px] pointer-events-none"
-              style={{
-                background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.25) 0%, rgba(139, 92, 246, 0.15) 30%, transparent 70%)',
-                filter: 'blur(40px)',
-              }}
-              animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.08, 1] }}
-              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-            />
-
-            <Image
-              src="/axiome-launch-suite-logo.png"
-              alt="Axiome Launch Suite"
-              width={800}
-              height={288}
-              className="h-28 sm:h-40 md:h-56 lg:h-64 w-auto object-contain mx-auto relative z-10 drop-shadow-[0_0_30px_rgba(32,129,226,0.2)]"
-              priority
-            />
-          </motion.div>
-
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center min-h-[480px] lg:min-h-[560px]">
             {/* Left — copy */}
-            <motion.div variants={stagger} initial="hidden" animate="visible" className="text-center lg:text-left">
+            <motion.div variants={stagger} initial="hidden" animate="visible" className="text-center lg:text-left order-2 lg:order-1">
               <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start gap-2 mb-5">
                 {(['ecosystem', 'launchToken', 'liveProduct'] as const).map(badgeKey => (
                   <span key={badgeKey} className="chip text-xs">
@@ -257,13 +230,13 @@ export default function HomePage() {
                 ))}
               </motion.div>
 
-              <motion.h1 variants={staggerItem} className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold leading-[1.1] mb-5">
+              <motion.h1 variants={staggerItem} className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold leading-[1.08] mb-5">
                 <span className="bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent">
                   {t('hero.title')}
                 </span>
               </motion.h1>
 
-              <motion.p variants={staggerItem} className="text-base sm:text-lg text-text-secondary max-w-xl mx-auto lg:mx-0 leading-relaxed mb-4">
+              <motion.p variants={staggerItem} className="text-base sm:text-lg text-text-secondary max-w-xl mx-auto lg:mx-0 leading-relaxed mb-6">
                 {t('hero.subtitle')}<br />
                 <span className="text-text-primary font-medium">{t('hero.subtitle2')}</span>
               </motion.p>
@@ -281,80 +254,31 @@ export default function HomePage() {
                 </Link>
               </motion.div>
 
-              <motion.div variants={staggerItem} className="flex justify-center lg:justify-start items-center gap-4">
+              <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start items-center gap-4">
                 <Link href="/docs" className="text-sm text-accent hover:text-accent-hover transition-colors flex items-center gap-1 font-medium">
                   {t('hero.docsLink')} <span aria-hidden="true">&rarr;</span>
                 </Link>
-              </motion.div>
-
-              <motion.div variants={staggerItem} className="mt-5 inline-flex items-center gap-2 text-xs text-text-tertiary">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
-                {t('hero.poweredBy')}
+                <span className="hidden sm:inline-flex items-center gap-2 text-xs text-text-tertiary">
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+                  {t('hero.poweredBy')}
+                </span>
               </motion.div>
             </motion.div>
 
-            {/* Right — mock token preview card */}
+            {/* Right — 3D Interactive Scene */}
             <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="hidden lg:block"
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
+              className="order-1 lg:order-2"
             >
-              <div className="relative">
-                <motion.div
-                  className="absolute -inset-4 rounded-[var(--radius-xl)]"
-                  style={{ background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.12) 0%, rgba(139, 92, 246, 0.06) 50%, transparent 70%)' }}
-                  animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.02, 1] }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                />
-
-                <div className="relative bg-surface-1 border border-border rounded-[var(--radius-xl)] p-6 shadow-lg">
-                  {/* Header row */}
-                  <div className="flex items-center gap-4 mb-5">
-                    <img src="https://image2url.com/r2/default/images/1770220782157-0e2ab4ed-cb61-46aa-a681-b50a302b1254.png" alt="LAUNCH" className="w-14 h-14 rounded-[var(--radius-md)] shadow-md" />
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <span className="text-text-primary font-bold text-lg">LAUNCH</span>
-                        <span className="chip text-[10px] py-0.5">{t('mockCard.utility')}</span>
-                      </div>
-                      <span className="text-sm text-text-secondary">$LAUNCH</span>
-                    </div>
-                  </div>
-
-                  {/* TBD notice */}
-                  <div className="flex items-center gap-2 mb-5 p-3 bg-[var(--warning-bg)] border border-[var(--warning)]/15 rounded-[var(--radius-sm)]">
-                    <svg className="w-4 h-4 text-[var(--warning)] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-                    <span className="text-sm text-[var(--warning)]">{t('mockCard.tokenomicsTbd')}</span>
-                  </div>
-
-                  {/* Utility items */}
-                  <div className="space-y-2.5 mb-5">
-                    {([
-                      { labelKey: 'utilityAccess' as const, icon: '🔑' },
-                      { labelKey: 'utilityReputation' as const, icon: '⭐' },
-                      { labelKey: 'utilityGovernance' as const, icon: '🗳️' },
-                      { labelKey: 'utilityRewards' as const, icon: '🎁' },
-                    ]).map(item => (
-                      <div key={item.labelKey} className="flex items-center gap-2.5 text-sm">
-                        <span className="text-base">{item.icon}</span>
-                        <span className="text-text-secondary">{t(`mockCard.${item.labelKey}`)}</span>
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Tags */}
-                  <div className="flex flex-wrap gap-2">
-                    <span className="chip text-[10px] py-0.5">{t('mockCard.platformToken')}</span>
-                    <span className="chip text-[10px] py-0.5">{t('mockCard.axiomeChain')}</span>
-                  </div>
-                </div>
-              </div>
+              <HeroScene />
             </motion.div>
           </div>
 
           {/* AXM ticker */}
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-10 flex justify-center">
-            <div className="bg-surface-1 border border-border rounded-full px-6 py-3">
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="mt-8 flex justify-center">
+            <div className="bg-surface-1/80 backdrop-blur-sm border border-border rounded-full px-6 py-3">
               <AXMPriceTicker showVolume showHighLow />
             </div>
           </motion.div>
