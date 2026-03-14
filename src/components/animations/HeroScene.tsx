@@ -106,9 +106,9 @@ export function HeroScene({ className = '' }: { className?: string }) {
 
       {/* ── Project orbit rings — each project gets its own ring ── */}
 
-      {/* Ring 1 — Heads or Tails (outermost) */}
+      {/* Ring 1 — Heads or Tails (outermost, z-30 to stay above central token) */}
       <motion.div
-        className="absolute inset-[4%]"
+        className="absolute inset-[4%] z-30"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d', pointerEvents: 'none' }}
       >
         <motion.div
@@ -150,19 +150,20 @@ export function HeroScene({ className = '' }: { className?: string }) {
                   )}
                 </motion.button>
 
-                {/* Expanded info card */}
+                {/* Expanded info card — opens OUTWARD (above the coin, away from center) */}
                 <AnimatePresence>
                   {expandedProject === project.id && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.8, y: -5 }}
+                      initial={{ opacity: 0, scale: 0.8, y: 5 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: -5 }}
+                      exit={{ opacity: 0, scale: 0.8, y: 5 }}
                       transition={{ duration: 0.25, ease: 'easeOut' }}
-                      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-20"
+                      className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 z-50"
                       style={{ pointerEvents: 'auto' }}
                     >
                       <div className="glass-card rounded-[var(--radius-md)] p-3.5 w-[200px] sm:w-[220px] text-center relative">
-                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[rgba(10,25,41,0.5)] border-l border-t border-[rgba(255,255,255,0.08)]" />
+                        {/* Arrow pointing down */}
+                        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[rgba(10,25,41,0.5)] border-r border-b border-[rgba(255,255,255,0.08)]" />
 
                         <div className="flex items-center justify-center gap-1.5 mb-2">
                           <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full ${project.statusBg} ${project.statusColor} border border-current/20`}>
@@ -342,7 +343,7 @@ export function HeroScene({ className = '' }: { className?: string }) {
         </motion.div>
 
         <motion.div
-          className="absolute inset-[-2%] rounded-full border border-accent/8 pointer-events-none"
+          className="absolute inset-[0%] rounded-full border border-accent/8 pointer-events-none"
           animate={{ rotate: -360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
         >
