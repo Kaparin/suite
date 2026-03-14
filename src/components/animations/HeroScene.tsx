@@ -6,7 +6,27 @@ import Image from 'next/image'
 import Link from 'next/link'
 
 /* ── Project data for orbiting items ── */
-const PROJECTS = [
+type Project = {
+  id: string
+  name: string
+  status: string
+  statusColor: string
+  statusBg: string
+  description: string
+  logo: string
+  logoBack?: string
+  href: string
+  external: boolean
+  glowColor: string
+  borderColor: string
+  ringBorder: string
+  ringInset: string
+  ringDuration: number
+  ringDirection: 1 | -1
+  comingSoon?: boolean
+}
+
+const PROJECTS: Project[] = [
   {
     id: 'heads-or-tails',
     name: 'Heads or Tails',
@@ -21,6 +41,28 @@ const PROJECTS = [
     glowColor: 'rgba(245, 158, 11, 0.4)',
     borderColor: 'border-amber-400/30',
     ringBorder: 'border-amber-400/10',
+    ringInset: '4%',
+    ringDuration: 24,
+    ringDirection: 1,
+  },
+  {
+    id: 'checkers',
+    name: 'Checkers',
+    status: 'Coming soon',
+    statusColor: 'text-text-tertiary',
+    statusBg: 'bg-surface-2',
+    description: 'On-chain PvP checkers with AXM wagers',
+    logo: '/black-checker.png',
+    logoBack: '/white-checker.png',
+    href: '#',
+    external: false,
+    glowColor: 'rgba(138, 145, 158, 0.25)',
+    borderColor: 'border-gray-500/20',
+    ringBorder: 'border-gray-500/8',
+    ringInset: '16%',
+    ringDuration: 20,
+    ringDirection: -1,
+    comingSoon: true,
   },
 ]
 
@@ -91,56 +133,74 @@ export function HeroScene({ className = '' }: { className?: string }) {
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* ── Project orbit ring — Heads or Tails ── */}
-      <motion.div
-        className="absolute inset-[4%] z-30"
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d', pointerEvents: 'none' }}
-      >
+      {/* ── Project orbit rings — each project on its own ring ── */}
+      {PROJECTS.map((project) => (
         <motion.div
-          className={`w-full h-full rounded-full ${PROJECTS[0].ringBorder} border`}
-          animate={{ rotate: 360 }}
-          transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
+          key={project.id}
+          className="absolute z-30"
+          style={{
+            inset: project.ringInset,
+            rotateX,
+            rotateY,
+            transformStyle: 'preserve-3d',
+            pointerEvents: 'none',
+          }}
         >
-          {PROJECTS.map((project) => (
-            <div key={project.id} className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ pointerEvents: 'auto' }}>
-              {/* Coin — clickable, self-rotating like a planet */}
+          <motion.div
+            className={`w-full h-full rounded-full ${project.ringBorder} border`}
+            animate={{ rotate: 360 * project.ringDirection }}
+            transition={{ duration: project.ringDuration, repeat: Infinity, ease: 'linear' }}
+          >
+            {/* Orbiting project coin */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ pointerEvents: 'auto' }}>
               <motion.button
                 onClick={() => setSelectedProject(prev => prev === project.id ? null : project.id)}
-                className="relative w-12 h-12 sm:w-14 sm:h-14 cursor-pointer z-10 focus:outline-none"
+                className={`relative w-12 h-12 sm:w-14 sm:h-14 cursor-pointer z-10 focus:outline-none ${project.comingSoon ? 'opacity-50' : ''}`}
                 style={{ transformStyle: 'preserve-3d' }}
                 whileHover={{ scale: 1.2 }}
                 whileTap={{ scale: 0.9 }}
               >
-                {/* Self-rotation wrapper — spins on Y (coin flip) + Z (face spin) like a planet */}
+                {/* Self-rotation — Y (flip) + Z (face spin) */}
                 <motion.div
                   className="w-full h-full"
-                  animate={{
-                    rotateY: [0, 360],
-                    rotateZ: [0, 360],
-                  }}
+                  animate={{ rotateY: [0, 360], rotateZ: [0, 360] }}
                   transition={{
-                    rotateY: { duration: 3, repeat: Infinity, ease: 'easeInOut' },
-                    rotateZ: { duration: 12, repeat: Infinity, ease: 'linear' },
+                    rotateY: { duration: project.comingSoon ? 5 : 3, repeat: Infinity, ease: 'easeInOut' },
+                    rotateZ: { duration: project.comingSoon ? 16 : 12, repeat: Infinity, ease: 'linear' },
                   }}
                   style={{ transformStyle: 'preserve-3d' }}
                 >
-                  {/* Front side */}
+                  {/* Front */}
                   <div
                     className={`absolute inset-0 rounded-full overflow-hidden border-2 ${project.borderColor}`}
-                    style={{ backfaceVisibility: 'hidden', boxShadow: `0 0 ${selectedProject === project.id ? '30' : '20'}px ${project.glowColor}` }}
+                    style={{ backfaceVisibility: 'hidden', boxShadow: `0 0 ${selectedProject === project.id ? '30' : '16'}px ${project.glowColor}` }}
                   >
                     <Image src={project.logo} alt={project.name} width={56} height={56} className="w-full h-full object-cover" />
+                    {/* Darken overlay for coming soon */}
+                    {project.comingSoon && <div className="absolute inset-0 bg-black/40" />}
                   </div>
-                  {/* Back side */}
+                  {/* Back */}
                   {project.logoBack && (
                     <div
                       className={`absolute inset-0 rounded-full overflow-hidden border-2 ${project.borderColor}`}
-                      style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', boxShadow: `0 0 ${selectedProject === project.id ? '30' : '20'}px ${project.glowColor}` }}
+                      style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', boxShadow: `0 0 ${selectedProject === project.id ? '30' : '16'}px ${project.glowColor}` }}
                     >
                       <Image src={project.logoBack} alt={`${project.name} back`} width={56} height={56} className="w-full h-full object-cover" />
+                      {project.comingSoon && <div className="absolute inset-0 bg-black/40" />}
                     </div>
                   )}
                 </motion.div>
+
+                {/* "Coming soon" label — orbits with coin, stays readable via counter-rotate */}
+                {project.comingSoon && (
+                  <motion.div
+                    className="absolute -bottom-5 left-1/2 -translate-x-1/2 whitespace-nowrap pointer-events-none"
+                    animate={{ rotate: project.ringDirection === -1 ? [0, 360] : [0, -360] }}
+                    transition={{ duration: project.ringDuration, repeat: Infinity, ease: 'linear' }}
+                  >
+                    <span className="text-[9px] text-text-tertiary font-medium tracking-wide uppercase">Soon</span>
+                  </motion.div>
+                )}
 
                 {/* Selected glow ring */}
                 <AnimatePresence>
@@ -149,48 +209,21 @@ export function HeroScene({ className = '' }: { className?: string }) {
                       initial={{ opacity: 0, scale: 0.8 }}
                       animate={{ opacity: 1, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.8 }}
-                      className="absolute inset-[-6px] rounded-full border-2 border-amber-400/40 pointer-events-none"
-                      style={{ boxShadow: `0 0 25px ${project.glowColor}` }}
+                      className={`absolute inset-[-6px] rounded-full border-2 pointer-events-none ${project.comingSoon ? 'border-gray-400/30' : 'border-amber-400/40'}`}
+                      style={{ boxShadow: `0 0 20px ${project.glowColor}` }}
                     />
                   )}
                 </AnimatePresence>
               </motion.button>
             </div>
-          ))}
 
-          {/* Opposite accent dot */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
-            <div className="w-2.5 h-2.5 rounded-full bg-amber-400/40 shadow-[0_0_10px_rgba(245,158,11,0.3)]" />
-          </div>
+            {/* Opposite dot */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
+              <div className="w-2 h-2 rounded-full" style={{ background: project.glowColor, boxShadow: `0 0 8px ${project.glowColor}` }} />
+            </div>
+          </motion.div>
         </motion.div>
-      </motion.div>
-
-      {/* ── Decorative orbit ring ── */}
-      <motion.div
-        className="absolute inset-[16%] pointer-events-none"
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
-      >
-        <motion.div
-          className="w-full h-full rounded-full border border-purple-500/8"
-          animate={{ rotate: -360 }}
-          transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
-        >
-          <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              className="w-5 h-5 rounded-[3px] bg-gradient-to-br from-accent/15 to-purple-500/15 border border-accent/15"
-              animate={{ rotate: [0, 90, 180, 270, 360] }}
-              transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
-            />
-          </div>
-          <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              className="w-3 h-3 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-500/10 border border-cyan-400/15"
-              animate={{ scale: [1, 1.3, 1] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-            />
-          </div>
-        </motion.div>
-      </motion.div>
+      ))}
 
       {/* ── Floating geometric shapes (layer 3) ── */}
       <motion.div className="absolute inset-0 pointer-events-none" style={{ x: layer3X, y: layer3Y }}>
@@ -310,7 +343,11 @@ export function HeroScene({ className = '' }: { className?: string }) {
               </div>
 
               {/* CTA */}
-              {selectedData.external ? (
+              {selectedData.comingSoon ? (
+                <span className="px-3 py-1.5 text-xs flex-shrink-0 text-text-tertiary font-medium">
+                  Coming soon
+                </span>
+              ) : selectedData.external ? (
                 <a href={selectedData.href} target="_blank" rel="noopener noreferrer"
                   className="glass-btn px-3 py-1.5 text-xs flex-shrink-0 inline-flex items-center gap-1"
                   onClick={(e) => e.stopPropagation()}
