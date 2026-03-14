@@ -62,7 +62,7 @@ export function TransactionQRModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+          className="absolute inset-0 bg-black/60"
         />
 
         {/* Modal */}
@@ -70,16 +70,16 @@ export function TransactionQRModal({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-sm bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden"
+          className="relative w-full max-w-sm bg-surface-1 border border-border rounded-[var(--radius-lg)] shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="flex items-center justify-between p-6 border-b border-gray-800">
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-2 rounded-[var(--radius-sm)] transition-colors"
             >
-              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-5 h-5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -87,29 +87,29 @@ export function TransactionQRModal({
 
           {/* Content */}
           <div className="p-6 space-y-6">
-            <p className="text-sm text-gray-400 text-center">{description}</p>
+            <p className="text-sm text-text-secondary text-center">{description}</p>
 
             {/* QR Code */}
             {!isMobile && (
               <div className="space-y-3">
                 {connectToken && (
-                  <div className="flex bg-gray-800 rounded-xl p-1">
+                  <div className="flex bg-surface-2 rounded-[var(--radius-md)] p-1">
                     <button
                       onClick={() => setQrMode('wallet')}
-                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-[var(--radius-sm)] transition-all ${
                         qrMode === 'wallet'
-                          ? 'bg-purple-600 text-white shadow-sm'
-                          : 'text-gray-400 hover:text-gray-300'
+                          ? 'bg-purple-600 text-text-primary shadow-sm'
+                          : 'text-text-secondary hover:text-text-secondary'
                       }`}
                     >
                       Axiome Wallet scanner
                     </button>
                     <button
                       onClick={() => setQrMode('camera')}
-                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                      className={`flex-1 py-2 px-3 text-xs font-medium rounded-[var(--radius-sm)] transition-all ${
                         qrMode === 'camera'
-                          ? 'bg-purple-600 text-white shadow-sm'
-                          : 'text-gray-400 hover:text-gray-300'
+                          ? 'bg-purple-600 text-text-primary shadow-sm'
+                          : 'text-text-secondary hover:text-text-secondary'
                       }`}
                     >
                       Regular camera
@@ -117,7 +117,7 @@ export function TransactionQRModal({
                   </div>
                 )}
                 <div className="flex justify-center">
-                  <div className="bg-white p-4 rounded-xl">
+                  <div className="bg-white p-4 rounded-[var(--radius-md)]">
                     <QRCodeSVG
                       value={qrValue}
                       size={200}
@@ -127,7 +127,7 @@ export function TransactionQRModal({
                   </div>
                 </div>
                 {connectToken && (
-                  <p className="text-xs text-gray-400 text-center">
+                  <p className="text-xs text-text-secondary text-center">
                     {qrMode === 'wallet'
                       ? 'Open Axiome Wallet → Scan QR inside the app'
                       : 'Scan with your phone camera — the wallet will open automatically'}
@@ -141,7 +141,7 @@ export function TransactionQRModal({
               {isMobile ? (
                 <button
                   onClick={handleOpenWallet}
-                  className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-accent hover:bg-accent-hover text-text-primary font-medium rounded-[var(--radius-md)] transition-all flex items-center justify-center gap-2"
                 >
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
@@ -151,11 +151,11 @@ export function TransactionQRModal({
               ) : (
                 <button
                   onClick={handleCopy}
-                  className="w-full py-3 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2"
+                  className="w-full py-3 bg-surface-2 hover:bg-surface-3 text-text-primary font-medium rounded-[var(--radius-md)] transition-all flex items-center justify-center gap-2"
                 >
                   {copied ? (
                     <>
-                      <svg className="w-5 h-5 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
                       Copied!
@@ -173,39 +173,39 @@ export function TransactionQRModal({
 
               <button
                 onClick={onClose}
-                className="w-full py-3 border border-gray-700 hover:border-gray-600 text-gray-300 font-medium rounded-xl transition-all"
+                className="w-full py-3 border border-border hover:border-gray-600 text-text-secondary font-medium rounded-[var(--radius-md)] transition-all"
               >
                 Cancel
               </button>
             </div>
 
             {/* Instructions */}
-            <div className="p-4 bg-gray-800/50 rounded-lg">
+            <div className="p-4 bg-surface-2 rounded-[var(--radius-sm)]">
               <div className="flex gap-3">
-                <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-purple-400 font-medium">1</span>
+                <div className="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs text-accent font-medium">1</span>
                 </div>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-secondary">
                   {isMobile
                     ? 'Tap the button above to open Axiome Wallet'
                     : 'Open Axiome Wallet on your phone'}
                 </p>
               </div>
               <div className="flex gap-3 mt-3">
-                <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-purple-400 font-medium">2</span>
+                <div className="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs text-accent font-medium">2</span>
                 </div>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-secondary">
                   {isMobile
                     ? 'Review and confirm the transaction'
                     : 'Scan the QR code with the wallet'}
                 </p>
               </div>
               <div className="flex gap-3 mt-3">
-                <div className="w-6 h-6 bg-purple-500/20 rounded-full flex items-center justify-center flex-shrink-0">
-                  <span className="text-xs text-purple-400 font-medium">3</span>
+                <div className="w-6 h-6 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                  <span className="text-xs text-accent font-medium">3</span>
                 </div>
-                <p className="text-sm text-gray-400">
+                <p className="text-sm text-text-secondary">
                   {isMobile
                     ? 'Return here after signing'
                     : 'Confirm the transaction in the app'}

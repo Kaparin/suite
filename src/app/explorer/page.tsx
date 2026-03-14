@@ -3,8 +3,8 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Card, Input, Button } from '@/components/ui'
 import { TrustScoreInline } from '@/components/trust/TrustScoreBadge'
+import { Skeleton } from '@/components/ui'
 
 interface TokenData {
   contractAddress: string
@@ -48,43 +48,11 @@ interface TokensResponse {
 
 type Category = 'all' | 'new' | 'verified' | 'trending'
 
-const categories: { id: Category; label: string; icon: React.ReactNode }[] = [
-  {
-    id: 'all',
-    label: 'All Tokens',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-      </svg>
-    )
-  },
-  {
-    id: 'new',
-    label: 'New',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-      </svg>
-    )
-  },
-  {
-    id: 'verified',
-    label: 'Verified',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
-    )
-  },
-  {
-    id: 'trending',
-    label: 'Trending',
-    icon: (
-      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-      </svg>
-    )
-  }
+const categories: { id: Category; label: string }[] = [
+  { id: 'all', label: 'All Tokens' },
+  { id: 'new', label: 'New' },
+  { id: 'verified', label: 'Verified' },
+  { id: 'trending', label: 'Trending' },
 ]
 
 export default function ExplorerPage() {
@@ -97,11 +65,7 @@ export default function ExplorerPage() {
   const fetchTokens = useCallback(async () => {
     setIsLoading(true)
     try {
-      const params = new URLSearchParams({
-        category,
-        search,
-        limit: '100'
-      })
+      const params = new URLSearchParams({ category, search, limit: '100' })
       const response = await fetch(`/api/tokens/live?${params}`)
       const data: TokensResponse = await response.json()
       setTokens(data.tokens)
@@ -119,9 +83,7 @@ export default function ExplorerPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      if (search !== '') {
-        fetchTokens()
-      }
+      if (search !== '') fetchTokens()
     }, 300)
     return () => clearTimeout(timer)
   }, [search, fetchTokens])
@@ -145,300 +107,323 @@ export default function ExplorerPage() {
   }
 
   return (
-    <div className="min-h-screen relative">
-      <div className="fixed inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 -z-10" />
-      <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/10 via-transparent to-transparent -z-10" />
-
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div className="min-h-screen">
+      <div className="container-page py-8">
         {/* Header */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-center mb-10"
+          className="mb-8"
         >
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+          <h1 className="text-3xl md:text-4xl font-bold text-text-primary mb-2">
             Token Explorer
           </h1>
-          <p className="text-gray-400 text-lg max-w-2xl mx-auto">
+          <p className="text-text-secondary text-base">
             Explore all tokens on Axiome. Discover new projects, verified tokens, and track trends.
           </p>
         </motion.div>
 
-        {/* Stats */}
+        {/* Stats Row */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8"
+          transition={{ delay: 0.05 }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6"
         >
-          <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-            <div className="p-4 text-center">
-              <p className="text-3xl font-bold text-white">{counts.all}</p>
-              <p className="text-sm text-gray-400">Total Tokens</p>
+          {[
+            { value: counts.all, label: 'Total Tokens', color: 'text-accent' },
+            { value: counts.verified, label: 'Verified', color: 'text-[var(--success)]' },
+            { value: counts.new, label: 'New (7d)', color: 'text-text-primary' },
+            { value: counts.trending, label: 'Trending', color: 'text-[var(--warning)]' },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-surface-1 border border-border rounded-[var(--radius-md)] p-4">
+              <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+              <p className="text-xs text-text-tertiary mt-0.5">{stat.label}</p>
             </div>
-          </Card>
-          <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
-            <div className="p-4 text-center">
-              <p className="text-3xl font-bold text-white">{counts.verified}</p>
-              <p className="text-sm text-gray-400">Verified</p>
-            </div>
-          </Card>
-          <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
-            <div className="p-4 text-center">
-              <p className="text-3xl font-bold text-white">{counts.new}</p>
-              <p className="text-sm text-gray-400">New (7d)</p>
-            </div>
-          </Card>
-          <Card className="bg-gradient-to-br from-orange-500/10 to-orange-600/5 border-orange-500/20">
-            <div className="p-4 text-center">
-              <p className="text-3xl font-bold text-white">{counts.trending}</p>
-              <p className="text-sm text-gray-400">Trending</p>
-            </div>
-          </Card>
+          ))}
         </motion.div>
 
-        {/* Search & Categories */}
+        {/* Search & Filters */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.15 }}
-          className="mb-8"
+          transition={{ delay: 0.1 }}
+          className="mb-6"
         >
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <Input
+          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+            <div className="relative flex-1">
+              <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-text-tertiary pointer-events-none" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input
+                type="text"
                 placeholder="Search by name, symbol, or address..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="bg-gray-900/50 border-gray-700/50 h-12"
+                className="w-full pl-10 pr-4 py-2.5 bg-surface-1 border border-border rounded-[var(--radius-md)] text-sm text-text-primary placeholder-text-tertiary focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent/30 transition-all duration-200"
               />
             </div>
-            <Button
+            <button
               onClick={() => fetchTokens()}
-              className="h-12 bg-gray-800/50 border border-gray-700/50 hover:bg-gray-700/50 text-gray-300"
+              className="px-4 py-2.5 bg-surface-1 border border-border hover:border-border-hover rounded-[var(--radius-md)] text-text-secondary hover:text-text-primary transition-all duration-200 flex items-center justify-center"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
               </svg>
-            </Button>
+            </button>
           </div>
 
-          {/* Category Tabs */}
-          <div className="flex flex-wrap gap-2 mt-4">
+          {/* Category Chips */}
+          <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
-              <motion.button
+              <button
                 key={cat.id}
                 onClick={() => setCategory(cat.id)}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium transition-all ${
-                  category === cat.id
-                    ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white shadow-lg shadow-purple-500/25'
-                    : 'bg-gray-800/50 text-gray-400 hover:text-white hover:bg-gray-700/50'
-                }`}
+                className={`chip ${category === cat.id ? 'chip-active' : ''}`}
               >
-                {cat.icon}
                 {cat.label}
                 <span className={`px-1.5 py-0.5 rounded-full text-xs ${
-                  category === cat.id ? 'bg-white/20' : 'bg-gray-700'
+                  category === cat.id ? 'bg-white/20' : 'bg-surface-3'
                 }`}>
                   {counts[cat.id]}
                 </span>
-              </motion.button>
+              </button>
             ))}
           </div>
         </motion.div>
 
-        {/* Token Grid */}
-        {isLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {[1, 2, 3, 4, 5, 6].map((i) => (
-              <Card key={i} className="bg-gray-900/50 border-gray-800 animate-pulse">
-                <div className="p-5">
-                  <div className="flex items-center gap-4 mb-4">
-                    <div className="w-14 h-14 bg-gray-700 rounded-full" />
-                    <div>
-                      <div className="h-5 bg-gray-700 rounded w-24 mb-2" />
-                      <div className="h-4 bg-gray-700 rounded w-16" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="h-4 bg-gray-700 rounded w-full" />
-                    <div className="h-4 bg-gray-700 rounded w-3/4" />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        ) : tokens.length === 0 ? (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="text-center py-20"
-          >
-            <div className="w-20 h-20 mx-auto mb-6 bg-gray-800 rounded-full flex items-center justify-center">
-              <svg className="w-10 h-10 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
+        {/* Token Table — Desktop */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.15 }}
+        >
+          {/* Table Container */}
+          <div className="bg-surface-1 border border-border rounded-[var(--radius-lg)] overflow-hidden">
+            {/* Table Header */}
+            <div className="hidden md:grid grid-cols-[40px_1fr_120px_120px_100px_80px_100px] gap-4 px-5 py-3 border-b border-border text-xs font-semibold text-text-tertiary uppercase tracking-wider">
+              <div>#</div>
+              <div>Token</div>
+              <div className="text-right">Price</div>
+              <div className="text-right">Liquidity</div>
+              <div className="text-right">Holders</div>
+              <div className="text-right">Trust</div>
+              <div className="text-right">Status</div>
             </div>
-            <h3 className="text-xl font-semibold text-white mb-2">No tokens found</h3>
-            <p className="text-gray-400">Try changing your search or category filter</p>
-          </motion.div>
-        ) : (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-          >
-            <AnimatePresence mode="popLayout">
-              {tokens.map((token, index) => (
-                <motion.div
-                  key={token.contractAddress}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95 }}
-                  transition={{ delay: index * 0.03 }}
-                  layout
-                >
-                  <Link href={`/t/${token.contractAddress}`}>
-                    <Card className={`transition-all group cursor-pointer h-full ${
-                      token.isOurToken
-                        ? 'bg-gradient-to-br from-purple-900/40 via-gray-900/80 to-blue-900/40 border-purple-500/40 hover:border-purple-400/70 shadow-lg shadow-purple-500/10'
-                        : 'bg-gray-900/50 border-gray-800 hover:border-purple-500/50'
-                    }`}>
-                      <div className="p-5">
-                        {token.isOurToken && (
-                          <div className="flex items-center gap-1.5 mb-3 -mt-1">
-                            <span className="px-2.5 py-1 bg-gradient-to-r from-purple-500/20 to-blue-500/20 border border-purple-500/30 text-purple-300 text-[10px] font-bold uppercase tracking-wider rounded-full">
-                              Launch Ecosystem
-                            </span>
-                          </div>
-                        )}
 
-                        <div className="flex items-start gap-4 mb-4">
+            {/* Loading State */}
+            {isLoading ? (
+              <div>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="grid grid-cols-[40px_1fr_120px_120px_100px_80px_100px] gap-4 px-5 py-4 border-b border-border last:border-b-0">
+                    <Skeleton height={14} className="w-6" rounded="sm" />
+                    <div className="flex items-center gap-3">
+                      <Skeleton width={36} height={36} rounded="full" />
+                      <div className="space-y-1.5">
+                        <Skeleton height={14} className="w-24" rounded="sm" />
+                        <Skeleton height={10} className="w-14" rounded="sm" />
+                      </div>
+                    </div>
+                    <Skeleton height={14} className="w-20 ml-auto" rounded="sm" />
+                    <Skeleton height={14} className="w-16 ml-auto" rounded="sm" />
+                    <Skeleton height={14} className="w-12 ml-auto" rounded="sm" />
+                    <Skeleton height={14} className="w-10 ml-auto" rounded="sm" />
+                    <Skeleton height={20} className="w-16 ml-auto" rounded="full" />
+                  </div>
+                ))}
+              </div>
+            ) : tokens.length === 0 ? (
+              /* Empty State */
+              <div className="py-20 text-center">
+                <div className="w-16 h-16 mx-auto mb-4 bg-surface-2 rounded-full flex items-center justify-center">
+                  <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                  </svg>
+                </div>
+                <h3 className="text-base font-semibold text-text-primary mb-1">No tokens found</h3>
+                <p className="text-sm text-text-secondary">Try changing your search or category filter</p>
+              </div>
+            ) : (
+              /* Table Rows */
+              <AnimatePresence mode="popLayout">
+                {tokens.map((token, index) => (
+                  <motion.div
+                    key={token.contractAddress}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ delay: index * 0.02 }}
+                    layout
+                  >
+                    <Link href={`/t/${token.contractAddress}`} className="block">
+                      {/* Desktop Row */}
+                      <div className={`hidden md:grid grid-cols-[40px_1fr_120px_120px_100px_80px_100px] gap-4 px-5 py-3.5 items-center border-b border-border last:border-b-0 table-row-hover group ${
+                        token.isOurToken ? 'bg-accent/[0.03]' : ''
+                      }`}>
+                        {/* Rank */}
+                        <div className="text-sm text-text-tertiary font-medium">{index + 1}</div>
+
+                        {/* Token Info */}
+                        <div className="flex items-center gap-3 min-w-0">
                           {token.logoUrl ? (
-                            <img
-                              src={token.logoUrl}
-                              alt={token.symbol}
-                              className={`w-14 h-14 rounded-full object-cover ${token.isOurToken ? 'ring-2 ring-purple-500/50' : ''}`}
-                            />
+                            <img src={token.logoUrl} alt={token.symbol} className="w-9 h-9 rounded-full object-cover flex-shrink-0" />
                           ) : (
-                            <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-white font-bold text-xl">
-                                {token.symbol.slice(0, 2)}
-                              </span>
+                            <div className="w-9 h-9 bg-accent/10 rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="text-accent font-bold text-sm">{token.symbol.slice(0, 2)}</span>
                             </div>
                           )}
-
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h3 className={`font-semibold transition-colors truncate ${
-                                token.isOurToken ? 'text-white group-hover:text-purple-200' : 'text-white group-hover:text-purple-300'
-                              }`}>
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-sm font-semibold text-text-primary group-hover:text-accent transition-colors truncate">
                                 {token.name}
-                              </h3>
+                              </span>
                               {token.isVerified && (
-                                <svg className="w-5 h-5 text-blue-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                <svg className="w-4 h-4 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                                </svg>
+                              )}
+                              {token.isOurToken && (
+                                <span className="px-1.5 py-0.5 bg-accent/10 text-accent text-[10px] font-semibold rounded-full border border-accent/20">ECO</span>
+                              )}
+                            </div>
+                            <span className="text-xs text-text-tertiary">${token.symbol}</span>
+                          </div>
+                        </div>
+
+                        {/* Price */}
+                        <div className="text-right">
+                          {token.priceInUsd ? (
+                            <span className="text-sm font-medium text-[var(--success)]">${formatPrice(token.priceInUsd)}</span>
+                          ) : token.priceInAxm ? (
+                            <span className="text-sm font-medium text-accent">{formatPrice(token.priceInAxm)} AXM</span>
+                          ) : (
+                            <span className="text-sm text-text-tertiary">&mdash;</span>
+                          )}
+                        </div>
+
+                        {/* Liquidity */}
+                        <div className="text-right">
+                          {token.liquidity ? (
+                            <span className="text-sm text-text-primary">{formatLiquidity(token.liquidity)} AXM</span>
+                          ) : (
+                            <span className="text-sm text-text-tertiary">&mdash;</span>
+                          )}
+                        </div>
+
+                        {/* Holders */}
+                        <div className="text-right text-sm text-text-secondary">
+                          {token.holderCount.toLocaleString()}
+                        </div>
+
+                        {/* Trust */}
+                        <div className="text-right">
+                          {token.trustRating && token.trustScore != null ? (
+                            <TrustScoreInline score={token.trustScore} rating={token.trustRating} />
+                          ) : (
+                            <span className="text-sm text-text-tertiary">&mdash;</span>
+                          )}
+                        </div>
+
+                        {/* Status badges */}
+                        <div className="flex justify-end gap-1.5">
+                          {token.isNew && (
+                            <span className="px-2 py-0.5 bg-[var(--success-bg)] text-[var(--success)] text-xs font-medium rounded-full">New</span>
+                          )}
+                          {token.isTrending && (
+                            <span className="px-2 py-0.5 bg-[var(--warning-bg)] text-[var(--warning)] text-xs font-medium rounded-full">Hot</span>
+                          )}
+                          {token.hasPool && !token.isTrending && !token.isNew && (
+                            <span className="px-2 py-0.5 bg-accent-light text-accent text-xs font-medium rounded-full">DEX</span>
+                          )}
+                        </div>
+                      </div>
+
+                      {/* Mobile Card */}
+                      <div className={`md:hidden p-4 border-b border-border last:border-b-0 table-row-hover ${
+                        token.isOurToken ? 'bg-accent/[0.03]' : ''
+                      }`}>
+                        <div className="flex items-start gap-3">
+                          {/* Rank + Avatar */}
+                          <div className="flex items-center gap-2.5">
+                            <span className="text-xs text-text-tertiary font-medium w-5">{index + 1}</span>
+                            {token.logoUrl ? (
+                              <img src={token.logoUrl} alt={token.symbol} className="w-10 h-10 rounded-full object-cover" />
+                            ) : (
+                              <div className="w-10 h-10 bg-accent/10 rounded-full flex items-center justify-center">
+                                <span className="text-accent font-bold text-sm">{token.symbol.slice(0, 2)}</span>
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1.5 mb-0.5">
+                              <span className="text-sm font-semibold text-text-primary truncate">{token.name}</span>
+                              {token.isVerified && (
+                                <svg className="w-3.5 h-3.5 text-accent flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                 </svg>
                               )}
                             </div>
-                            <p className="text-sm text-gray-400">${token.symbol}</p>
+                            <span className="text-xs text-text-tertiary">${token.symbol}</span>
                           </div>
 
-                          <div className="flex flex-col gap-1">
-                            {token.isNew && (
-                              <span className="px-2 py-0.5 bg-green-500/20 text-green-400 text-xs rounded-full">
-                                New
-                              </span>
-                            )}
-                            {token.isTrending && (
-                              <span className="px-2 py-0.5 bg-orange-500/20 text-orange-400 text-xs rounded-full">
-                                Trending
-                              </span>
-                            )}
-                            {token.trustRating && token.trustScore != null && (
-                              <TrustScoreInline score={token.trustScore} rating={token.trustRating} />
-                            )}
-                            {token.hasPool && !token.isTrending && (
-                              <span className="px-2 py-0.5 bg-blue-500/20 text-blue-400 text-xs rounded-full">
-                                DEX
-                              </span>
-                            )}
-                          </div>
-                        </div>
-
-                        {token.description && (
-                          <p className="text-sm text-gray-500 mb-4 line-clamp-2">
-                            {token.description}
-                          </p>
-                        )}
-
-                        <div className="grid grid-cols-2 gap-3 pt-3 border-t border-gray-800">
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Price</p>
+                          {/* Price + badges */}
+                          <div className="text-right">
                             {token.priceInUsd ? (
-                              <p className="text-sm font-medium text-green-400">
-                                ${formatPrice(token.priceInUsd)}
-                              </p>
+                              <p className="text-sm font-medium text-[var(--success)]">${formatPrice(token.priceInUsd)}</p>
                             ) : token.priceInAxm ? (
-                              <p className="text-sm font-medium text-blue-400">
-                                {formatPrice(token.priceInAxm)} AXM
-                              </p>
+                              <p className="text-sm font-medium text-accent">{formatPrice(token.priceInAxm)} AXM</p>
                             ) : (
-                              <p className="text-sm font-medium text-gray-500">&mdash;</p>
+                              <p className="text-sm text-text-tertiary">&mdash;</p>
                             )}
-                          </div>
-                          <div>
-                            <p className="text-xs text-gray-500 mb-1">Liquidity</p>
-                            {token.liquidity ? (
-                              <p className="text-sm font-medium text-white">
-                                {formatLiquidity(token.liquidity)} AXM
-                              </p>
-                            ) : (
-                              <p className="text-sm font-medium text-gray-500">&mdash;</p>
-                            )}
+                            <div className="flex justify-end gap-1 mt-1">
+                              {token.isNew && <span className="px-1.5 py-0.5 bg-[var(--success-bg)] text-[var(--success)] text-[10px] font-medium rounded-full">New</span>}
+                              {token.isTrending && <span className="px-1.5 py-0.5 bg-[var(--warning-bg)] text-[var(--warning)] text-[10px] font-medium rounded-full">Hot</span>}
+                            </div>
                           </div>
                         </div>
 
-                        <div className="mt-3 pt-3 border-t border-gray-800">
-                          <p className="text-xs text-gray-600 font-mono truncate">
-                            {token.contractAddress}
-                          </p>
+                        {/* Bottom row — mobile stats */}
+                        <div className="flex items-center gap-4 mt-2.5 ml-[62px] text-xs text-text-tertiary">
+                          {token.liquidity && (
+                            <span>Liq: <span className="text-text-secondary">{formatLiquidity(token.liquidity)} AXM</span></span>
+                          )}
+                          <span>Holders: <span className="text-text-secondary">{token.holderCount.toLocaleString()}</span></span>
+                          {token.trustRating && token.trustScore != null && (
+                            <TrustScoreInline score={token.trustScore} rating={token.trustRating} />
+                          )}
                         </div>
                       </div>
-                    </Card>
-                  </Link>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
-        )}
+                    </Link>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
+          </div>
+        </motion.div>
 
         {/* Staking CTA */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-12"
+          transition={{ delay: 0.3 }}
+          className="mt-10"
         >
-          <Card className="bg-gradient-to-r from-green-900/30 to-emerald-900/30 border-green-500/20">
-            <div className="p-8 text-center">
-              <h3 className="text-2xl font-bold text-white mb-2">Stake LAUNCH, Earn AXM</h3>
-              <p className="text-gray-400 mb-6 max-w-lg mx-auto">
-                Stake LAUNCH tokens and earn a share of fees from all ecosystem projects.
-              </p>
-              <Link href="/wallet?tab=staking">
-                <Button size="lg" className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500">
-                  Stake LAUNCH
-                  <svg className="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </Button>
-              </Link>
-            </div>
-          </Card>
+          <div className="bg-surface-1 border border-border rounded-[var(--radius-lg)] p-6 md:p-8 text-center">
+            <h3 className="text-xl font-bold text-text-primary mb-2">Stake LAUNCH, Earn AXM</h3>
+            <p className="text-text-secondary mb-5 max-w-lg mx-auto text-sm">
+              Stake LAUNCH tokens and earn a share of fees from all ecosystem projects.
+            </p>
+            <Link href="/wallet?tab=staking"
+              className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-[var(--radius-md)] shadow-sm hover:shadow-md transition-all duration-200"
+            >
+              Stake LAUNCH
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
+          </div>
         </motion.div>
       </div>
     </div>

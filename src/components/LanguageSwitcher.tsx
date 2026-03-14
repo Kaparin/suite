@@ -34,8 +34,8 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
   // Show a neutral placeholder during SSR to avoid hydration mismatch
   if (!mounted) {
     return (
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 border border-gray-700/50 h-10 w-[52px] sm:w-[120px]">
-        <div className="w-5 h-5 bg-gray-700 rounded animate-pulse" />
+      <div className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-sm)] bg-surface-2 border border-border h-10 w-[52px] sm:w-[120px]">
+        <div className="w-5 h-5 bg-surface-3 rounded animate-pulse" />
       </div>
     )
   }
@@ -44,12 +44,12 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gray-800/50 hover:bg-gray-700/50 border border-gray-700/50 transition-all duration-300"
+        className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-sm)] bg-surface-2 hover:bg-surface-2 border border-border transition-all duration-300"
       >
         <span className="text-lg">{localeFlags[currentLocale]}</span>
-        <span className="text-sm text-gray-300 hidden sm:inline">{localeNames[currentLocale]}</span>
+        <span className="text-sm text-text-secondary hidden sm:inline">{localeNames[currentLocale]}</span>
         <svg
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -59,13 +59,13 @@ export function LanguageSwitcher({ currentLocale }: { currentLocale: Locale }) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-gray-900 border border-gray-700 rounded-xl shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute right-0 mt-2 w-48 bg-surface-1 border border-border rounded-[var(--radius-md)] shadow-xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-200">
           {locales.map((locale) => (
             <button
               key={locale}
               onClick={() => handleLocaleChange(locale)}
-              className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-gray-800 transition-colors ${
-                locale === currentLocale ? 'bg-gray-800/50 text-blue-400' : 'text-gray-300'
+              className={`w-full flex items-center gap-3 px-4 py-3 text-left hover:bg-surface-2 transition-colors ${
+                locale === currentLocale ? 'bg-surface-2 text-accent' : 'text-text-secondary'
               }`}
             >
               <span className="text-lg">{localeFlags[locale]}</span>

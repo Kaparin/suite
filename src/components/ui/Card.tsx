@@ -1,21 +1,23 @@
 import { HTMLAttributes, forwardRef } from 'react'
 
 interface CardProps extends HTMLAttributes<HTMLDivElement> {
-  variant?: 'default' | 'outlined' | 'elevated'
+  variant?: 'default' | 'outlined' | 'elevated' | 'interactive'
+  noPadding?: boolean
 }
 
 export const Card = forwardRef<HTMLDivElement, CardProps>(
-  ({ className = '', variant = 'default', children, ...props }, ref) => {
+  ({ className = '', variant = 'default', noPadding, children, ...props }, ref) => {
     const variants = {
-      default: 'bg-gray-900 border border-gray-800',
-      outlined: 'border-2 border-gray-700 bg-transparent',
-      elevated: 'bg-gray-900 shadow-xl shadow-black/20',
+      default: 'bg-surface-1 border border-border rounded-[var(--radius-lg)]',
+      outlined: 'border border-border bg-transparent rounded-[var(--radius-lg)]',
+      elevated: 'bg-surface-1 rounded-[var(--radius-lg)] shadow-lg',
+      interactive: 'bg-surface-1 border border-border rounded-[var(--radius-lg)] card-hover cursor-pointer',
     }
 
     return (
       <div
         ref={ref}
-        className={`rounded-xl p-6 ${variants[variant]} ${className}`}
+        className={`${variants[variant]} ${noPadding ? '' : 'p-5'} ${className}`}
         {...props}
       >
         {children}
@@ -33,13 +35,13 @@ export const CardHeader = ({ className = '', children, ...props }: HTMLAttribute
 )
 
 export const CardTitle = ({ className = '', children, ...props }: HTMLAttributes<HTMLHeadingElement>) => (
-  <h3 className={`text-xl font-bold text-white ${className}`} {...props}>
+  <h3 className={`text-lg font-semibold text-text-primary ${className}`} {...props}>
     {children}
   </h3>
 )
 
 export const CardDescription = ({ className = '', children, ...props }: HTMLAttributes<HTMLParagraphElement>) => (
-  <p className={`text-gray-400 mt-1 ${className}`} {...props}>
+  <p className={`text-text-secondary text-sm mt-1 ${className}`} {...props}>
     {children}
   </p>
 )

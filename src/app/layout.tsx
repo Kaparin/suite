@@ -58,7 +58,7 @@ export default async function RootLayout({
 
   return (
     <html lang={locale} dir={rtl ? 'rtl' : 'ltr'} className="dark">
-      <body className={`${inter.className} bg-gray-950 text-white min-h-screen flex flex-col`}>
+      <body className={`${inter.className} bg-background text-text-primary min-h-screen flex flex-col`}>
         <NextIntlClientProvider messages={messages}>
           <AuthProviderWrapper>
             <WalletProvider>

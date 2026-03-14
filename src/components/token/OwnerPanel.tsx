@@ -105,19 +105,19 @@ export function OwnerPanel({
       animate={{ opacity: 1, y: 0 }}
       className="mb-8"
     >
-      <Card className="bg-gradient-to-br from-purple-500/10 via-gray-900 to-blue-500/10 border-purple-500/30">
+      <Card className="bg-gradient-to-br from-accent/10 via-surface-1 to-accent/5 border-accent/20">
         <CardContent className="p-6">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="w-10 h-10 bg-accent rounded-[var(--radius-sm)] flex items-center justify-center">
+                <svg className="w-5 h-5 text-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
                 </svg>
               </div>
               <div>
-                <h3 className="font-semibold text-white">Управление токеном</h3>
-                <p className="text-sm text-gray-400">
+                <h3 className="font-semibold text-text-primary">Управление токеном</h3>
+                <p className="text-sm text-text-secondary">
                   Вы владелец этого токена (minter)
                 </p>
               </div>
@@ -126,7 +126,7 @@ export function OwnerPanel({
             {!isEditing && (
               <Button
                 onClick={() => setIsEditing(true)}
-                className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500"
+                className="bg-accent hover:bg-accent-hover"
               >
                 <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
@@ -143,7 +143,7 @@ export function OwnerPanel({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 p-3 bg-green-500/20 border border-green-500/30 rounded-lg text-green-400 text-sm flex items-center gap-2"
+                className="mb-4 p-3 bg-[var(--success-bg)] border border-[var(--success)]/30 rounded-[var(--radius-sm)] text-[var(--success)] text-sm flex items-center gap-2"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -160,7 +160,7 @@ export function OwnerPanel({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
-                className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-400 text-sm"
+                className="mb-4 p-3 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-[var(--radius-sm)] text-[var(--danger)] text-sm"
               >
                 {error}
               </motion.div>
@@ -177,8 +177,8 @@ export function OwnerPanel({
                 className="space-y-6"
               >
                 {/* Note about chain fields */}
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
-                  <p className="text-xs text-blue-300">
+                <div className="p-3 bg-accent/10 border border-accent/20 rounded-[var(--radius-sm)]">
+                  <p className="text-xs text-accent">
                     Название, символ и логотип токена берутся из блокчейна и не могут быть изменены здесь.
                     Вы можете добавить дополнительную информацию ниже.
                   </p>
@@ -186,28 +186,28 @@ export function OwnerPanel({
 
                 {/* Descriptions */}
                 <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-gray-300 uppercase tracking-wide">Описание</h4>
+                  <h4 className="text-sm font-medium text-text-secondary uppercase tracking-wide">Описание</h4>
 
                   <div>
-                    <label className="block text-sm text-gray-400 mb-2">Краткое описание</label>
+                    <label className="block text-sm text-text-secondary mb-2">Краткое описание</label>
                     <input
                       type="text"
                       value={descriptionShort}
                       onChange={(e) => setDescriptionShort(e.target.value)}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                      className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
                       placeholder="Краткое описание токена (1-2 предложения)"
                       maxLength={200}
                     />
-                    <p className="text-xs text-gray-500 mt-1">{descriptionShort.length}/200</p>
+                    <p className="text-xs text-text-tertiary mt-1">{descriptionShort.length}/200</p>
                   </div>
 
                   <div>
-                    <label className="block text-sm text-gray-400 mb-2">Полное описание</label>
+                    <label className="block text-sm text-text-secondary mb-2">Полное описание</label>
                     <textarea
                       value={descriptionLong}
                       onChange={(e) => setDescriptionLong(e.target.value)}
                       rows={4}
-                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors resize-none"
+                      className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors resize-none"
                       placeholder="Подробное описание проекта, его цели, roadmap..."
                     />
                   </div>
@@ -215,11 +215,11 @@ export function OwnerPanel({
 
                 {/* Social Links */}
                 <div className="space-y-4">
-                  <h4 className="text-sm font-medium text-gray-300 uppercase tracking-wide">Социальные сети</h4>
+                  <h4 className="text-sm font-medium text-text-secondary uppercase tracking-wide">Социальные сети</h4>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm text-gray-400 mb-2">
+                      <label className="block text-sm text-text-secondary mb-2">
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161c-.18 1.897-.962 6.502-1.359 8.627-.168.9-.5 1.201-.82 1.23-.697.064-1.226-.461-1.901-.903-1.056-.692-1.653-1.123-2.678-1.799-1.185-.781-.417-1.21.258-1.911.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.139-5.062 3.345-.479.329-.913.489-1.302.481-.428-.008-1.252-.241-1.865-.44-.752-.244-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.831-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635.099-.002.321.023.465.141.121.099.154.232.17.327.015.095.034.311.019.478z"/>
@@ -231,13 +231,13 @@ export function OwnerPanel({
                         type="url"
                         value={telegram}
                         onChange={(e) => setTelegram(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
                         placeholder="https://t.me/channel"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm text-gray-400 mb-2">
+                      <label className="block text-sm text-text-secondary mb-2">
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
@@ -249,13 +249,13 @@ export function OwnerPanel({
                         type="url"
                         value={twitter}
                         onChange={(e) => setTwitter(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
                         placeholder="https://x.com/username"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm text-gray-400 mb-2">
+                      <label className="block text-sm text-text-secondary mb-2">
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
@@ -267,13 +267,13 @@ export function OwnerPanel({
                         type="url"
                         value={website}
                         onChange={(e) => setWebsite(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
                         placeholder="https://yourproject.com"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm text-gray-400 mb-2">
+                      <label className="block text-sm text-text-secondary mb-2">
                         <span className="flex items-center gap-2">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
@@ -285,7 +285,7 @@ export function OwnerPanel({
                         type="url"
                         value={discord}
                         onChange={(e) => setDiscord(e.target.value)}
-                        className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-colors"
+                        className="w-full px-4 py-3 bg-surface-2 border border-border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:border-accent focus:ring-1 focus:ring-accent/30 transition-colors"
                         placeholder="https://discord.gg/invite"
                       />
                     </div>
@@ -293,11 +293,11 @@ export function OwnerPanel({
                 </div>
 
                 {/* Action Buttons */}
-                <div className="flex items-center gap-3 pt-4 border-t border-gray-800">
+                <div className="flex items-center gap-3 pt-4 border-t border-border">
                   <Button
                     onClick={handleSave}
                     disabled={isSaving}
-                    className="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500"
+                    className="bg-[var(--success)] hover:opacity-90"
                   >
                     {isSaving ? (
                       <>
@@ -330,20 +330,20 @@ export function OwnerPanel({
 
           {/* Quick Info when not editing */}
           {!isEditing && (
-            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-gray-800">
+            <div className="grid grid-cols-3 gap-4 mt-4 pt-4 border-t border-border">
               <div className="text-center">
-                <p className="text-sm text-gray-400">Описание</p>
-                <p className="text-white font-medium">{descriptionShort ? 'Есть' : 'Нет'}</p>
+                <p className="text-sm text-text-secondary">Описание</p>
+                <p className="text-text-primary font-medium">{descriptionShort ? 'Есть' : 'Нет'}</p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-gray-400">Соцсети</p>
-                <p className="text-white font-medium">
+                <p className="text-sm text-text-secondary">Соцсети</p>
+                <p className="text-text-primary font-medium">
                   {[telegram, twitter, website, discord].filter(Boolean).length} / 4
                 </p>
               </div>
               <div className="text-center">
-                <p className="text-sm text-gray-400">Статус</p>
-                <p className="font-medium text-green-400">Владелец</p>
+                <p className="text-sm text-text-secondary">Статус</p>
+                <p className="font-medium text-[var(--success)]">Владелец</p>
               </div>
             </div>
           )}

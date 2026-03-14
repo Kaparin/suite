@@ -68,10 +68,10 @@ export function HistoryTab() {
           <button
             key={opt.id}
             onClick={() => setFilter(opt.id)}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-[var(--radius-sm)] text-xs font-bold transition-all ${
               filter === opt.id
-                ? 'bg-violet-600 text-white shadow-md shadow-violet-500/25'
-                : 'bg-gray-800/60 text-gray-400 hover:text-white hover:bg-gray-700/60'
+                ? 'bg-violet-600 text-text-primary shadow-md shadow-violet-500/25'
+                : 'bg-surface-2 text-text-secondary hover:text-text-primary hover:bg-surface-2'
             }`}
           >
             {opt.label}
@@ -80,7 +80,7 @@ export function HistoryTab() {
         <button
           onClick={refresh}
           disabled={isLoading}
-          className="ml-auto rounded-lg p-1.5 text-gray-500 hover:text-white hover:bg-gray-800 transition-colors disabled:opacity-30"
+          className="ml-auto rounded-[var(--radius-sm)] p-1.5 text-text-tertiary hover:text-text-primary hover:bg-surface-2 transition-colors disabled:opacity-30"
         >
           <RefreshCw size={14} className={isLoading ? 'animate-spin' : ''} />
         </button>
@@ -90,19 +90,19 @@ export function HistoryTab() {
       {isLoading && transactions.length === 0 ? (
         <div className="space-y-2">
           {[1, 2, 3, 4, 5].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl bg-gray-900/50 border border-gray-800/50 px-3 py-3 flex items-center gap-3">
-              <div className="w-9 h-9 bg-gray-800 rounded-full" />
+            <div key={i} className="animate-pulse rounded-[var(--radius-md)] bg-surface-1 border border-border px-3 py-3 flex items-center gap-3">
+              <div className="w-9 h-9 bg-surface-2 rounded-full" />
               <div className="flex-1">
-                <div className="h-3.5 bg-gray-800 rounded w-28 mb-1.5" />
-                <div className="h-3 bg-gray-800 rounded w-40" />
+                <div className="h-3.5 bg-surface-2 rounded w-28 mb-1.5" />
+                <div className="h-3 bg-surface-2 rounded w-40" />
               </div>
-              <div className="h-3.5 bg-gray-800 rounded w-16" />
+              <div className="h-3.5 bg-surface-2 rounded w-16" />
             </div>
           ))}
         </div>
       ) : error ? (
-        <div className="rounded-2xl border border-red-500/20 bg-red-500/[0.05] py-10 text-center">
-          <p className="text-sm text-red-400 mb-3">{error}</p>
+        <div className="rounded-[var(--radius-lg)] border border-red-500/20 bg-red-500/[0.05] py-10 text-center">
+          <p className="text-sm text-[var(--danger)] mb-3">{error}</p>
           <button
             onClick={refresh}
             className="text-xs font-bold text-violet-400 hover:text-violet-300 transition-colors"
@@ -111,9 +111,9 @@ export function HistoryTab() {
           </button>
         </div>
       ) : transactions.length === 0 ? (
-        <div className="rounded-2xl border border-gray-800/50 bg-gray-900/30 py-12 text-center">
-          <FileText size={32} className="mx-auto text-gray-700 mb-3" />
-          <p className="text-sm text-gray-500">No transactions found</p>
+        <div className="rounded-[var(--radius-lg)] border border-border bg-surface-1 py-12 text-center">
+          <FileText size={32} className="mx-auto text-text-tertiary mb-3" />
+          <p className="text-sm text-text-tertiary">No transactions found</p>
           {filter !== 'all' && (
             <button
               onClick={() => setFilter('all')}
@@ -144,7 +144,7 @@ export function HistoryTab() {
           <button
             onClick={loadMore}
             disabled={isLoadingMore}
-            className="inline-flex items-center gap-2 px-5 py-2 rounded-xl bg-gray-800/60 text-sm font-medium text-gray-300 hover:bg-gray-700/60 hover:text-white transition-colors disabled:opacity-50"
+            className="inline-flex items-center gap-2 px-5 py-2 rounded-[var(--radius-md)] bg-surface-2 text-sm font-medium text-text-secondary hover:bg-surface-2 hover:text-text-primary transition-colors disabled:opacity-50"
           >
             {isLoadingMore ? (
               <><Loader2 size={14} className="animate-spin" /> Loading...</>
@@ -281,7 +281,7 @@ function TransactionCard({ tx, userAddress }: { tx: Transaction; userAddress: st
       href={`${EXPLORER_URL}/transactions/${tx.hash}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center gap-3 rounded-xl bg-gray-900/40 border border-gray-800/40 hover:border-gray-700/60 hover:bg-gray-800/30 px-3 py-2.5 transition-all"
+      className="group flex items-center gap-3 rounded-[var(--radius-md)] bg-surface-1 border border-border hover:border-border hover:bg-surface-2 px-3 py-2.5 transition-all"
     >
       {/* Icon */}
       <div className={`w-9 h-9 rounded-full flex items-center justify-center shrink-0 ${color}`}>
@@ -291,25 +291,25 @@ function TransactionCard({ tx, userAddress }: { tx: Transaction; userAddress: st
       {/* Info */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
+          <span className="text-[13px] font-semibold text-text-primary leading-tight">{label}</span>
           {tokenSymbol && (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide bg-gray-800 text-gray-400 rounded">
+            <span className="px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide bg-surface-2 text-text-secondary rounded">
               {tokenSymbol}
             </span>
           )}
           {tx.status === 'failed' && (
-            <span className="px-1.5 py-0.5 text-[9px] font-bold bg-red-500/15 text-red-400 rounded">
+            <span className="px-1.5 py-0.5 text-[9px] font-bold bg-[var(--danger-bg)] text-[var(--danger)] rounded">
               Failed
             </span>
           )}
         </div>
         <div className="flex items-center gap-1.5 mt-0.5">
           {counterparty && (
-            <span className="text-[11px] text-gray-500 font-mono truncate">
+            <span className="text-[11px] text-text-tertiary font-mono truncate">
               {truncateAddress(counterparty, 6, 4)}
             </span>
           )}
-          <span className="text-[10px] text-gray-600">{relativeTime(tx.timestamp)}</span>
+          <span className="text-[10px] text-text-tertiary">{relativeTime(tx.timestamp)}</span>
         </div>
       </div>
 
@@ -318,19 +318,19 @@ function TransactionCard({ tx, userAddress }: { tx: Transaction; userAddress: st
         {hasAmount ? (
           <>
             <p className={`text-[13px] font-bold tabular-nums leading-tight ${
-              isOutgoing ? 'text-red-400' : 'text-green-400'
+              isOutgoing ? 'text-[var(--danger)]' : 'text-[var(--success)]'
             }`}>
               {isOutgoing ? '\u2212' : '+'}{formatDisplayAmount(tx.amount.displayValue)}
             </p>
-            <p className="text-[10px] text-gray-500 font-medium">{tx.amount.displayDenom}</p>
+            <p className="text-[10px] text-text-tertiary font-medium">{tx.amount.displayDenom}</p>
           </>
         ) : tx.fee?.displayValue && parseFloat(tx.fee.displayValue) > 0 ? (
-          <p className="text-[10px] text-gray-600">Fee {formatDisplayAmount(tx.fee.displayValue)} AXM</p>
+          <p className="text-[10px] text-text-tertiary">Fee {formatDisplayAmount(tx.fee.displayValue)} AXM</p>
         ) : null}
       </div>
 
       {/* Arrow */}
-      <ExternalLink size={12} className="text-gray-700 group-hover:text-gray-500 shrink-0 transition-colors" />
+      <ExternalLink size={12} className="text-text-tertiary group-hover:text-text-tertiary shrink-0 transition-colors" />
     </a>
   )
 }
@@ -366,30 +366,30 @@ export function TransactionRowCompact({ tx, userAddress }: { tx: Transaction; us
       href={`${EXPLORER_URL}/transactions/${tx.hash}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-3 py-2 px-1 rounded-lg hover:bg-gray-800/40 -mx-1 transition-colors"
+      className="flex items-center gap-3 py-2 px-1 rounded-[var(--radius-sm)] hover:bg-surface-2 -mx-1 transition-colors"
     >
       <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${color}`}>
         {icon}
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-1.5">
-          <span className="text-[12px] font-semibold text-white">{label}</span>
+          <span className="text-[12px] font-semibold text-text-primary">{label}</span>
           {tx.status === 'failed' && (
-            <span className="px-1 py-0.5 text-[8px] font-bold bg-red-500/15 text-red-400 rounded">Failed</span>
+            <span className="px-1 py-0.5 text-[8px] font-bold bg-[var(--danger-bg)] text-[var(--danger)] rounded">Failed</span>
           )}
         </div>
-        <p className="text-[10px] text-gray-500">{relativeTime(tx.timestamp)}</p>
+        <p className="text-[10px] text-text-tertiary">{relativeTime(tx.timestamp)}</p>
       </div>
       <div className="text-right shrink-0">
         {hasAmount ? (
           <>
-            <p className={`text-[12px] font-bold tabular-nums ${isOutgoing ? 'text-red-400' : 'text-green-400'}`}>
+            <p className={`text-[12px] font-bold tabular-nums ${isOutgoing ? 'text-[var(--danger)]' : 'text-[var(--success)]'}`}>
               {isOutgoing ? '\u2212' : '+'}{formatDisplayAmount(tx.amount.displayValue)}
             </p>
-            <p className="text-[9px] text-gray-500">{tx.amount.displayDenom}</p>
+            <p className="text-[9px] text-text-tertiary">{tx.amount.displayDenom}</p>
           </>
         ) : (
-          <p className="text-[10px] text-gray-600">\u2014</p>
+          <p className="text-[10px] text-text-tertiary">\u2014</p>
         )}
       </div>
     </a>

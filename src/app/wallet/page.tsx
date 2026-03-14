@@ -65,18 +65,18 @@ function WalletContent() {
           animate={{ opacity: 1, scale: 1 }}
           className="text-center max-w-md"
         >
-          <div className="w-20 h-20 mx-auto bg-purple-500/20 rounded-full flex items-center justify-center mb-6">
-            <svg className="w-10 h-10 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-20 h-20 mx-auto bg-accent/10 rounded-full flex items-center justify-center mb-6">
+            <svg className="w-10 h-10 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
           </div>
-          <h1 className="text-2xl font-bold text-white mb-2">Connect Wallet</h1>
-          <p className="text-gray-400 mb-6">
+          <h1 className="text-2xl font-bold text-text-primary mb-2">Connect Wallet</h1>
+          <p className="text-text-secondary mb-6">
             Connect your Axiome Wallet to view and manage your tokens
           </p>
           <Button
             onClick={connect}
-            className="bg-gradient-to-r from-purple-600 to-blue-600"
+            className="bg-accent"
             size="lg"
           >
             Connect Wallet
@@ -89,7 +89,7 @@ function WalletContent() {
   return (
     <div className="min-h-screen relative">
       {/* Background */}
-      <div className="fixed inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 -z-10" />
+      <div className="fixed inset-0 bg-gradient-to-b from-background via-surface-1 to-background -z-10" />
       <div className="fixed inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-purple-900/10 via-transparent to-transparent -z-10" />
 
       <div className="max-w-2xl mx-auto px-4 py-8">
@@ -101,14 +101,14 @@ function WalletContent() {
         >
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-white">Wallet</h1>
-              <p className="text-sm text-gray-400 font-mono">
+              <h1 className="text-2xl font-bold text-text-primary">Wallet</h1>
+              <p className="text-sm text-text-secondary font-mono">
                 {truncateAddress(address || '', 8, 6)}
               </p>
             </div>
             <button
               onClick={() => navigator.clipboard.writeText(address || '')}
-              className="p-2 hover:bg-gray-800 rounded-lg transition-colors text-gray-400 hover:text-white"
+              className="p-2 hover:bg-surface-2 rounded-[var(--radius-sm)] transition-colors text-text-secondary hover:text-text-primary"
               title="Copy address"
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -147,7 +147,7 @@ export default function WalletPage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center">
-        <div className="w-12 h-12 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+        <div className="w-12 h-12 border-4 border-accent/20 border-t-accent rounded-full animate-spin" />
       </div>
     }>
       <WalletContent />

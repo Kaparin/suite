@@ -128,8 +128,8 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-white">My Wallets</h3>
-          <p className="text-sm text-gray-400">
+          <h3 className="text-lg font-semibold text-text-primary">My Wallets</h3>
+          <p className="text-sm text-text-secondary">
             {wallets.length === 0
               ? 'No wallets connected'
               : `${wallets.length} wallet${wallets.length > 1 ? 's' : ''} connected`
@@ -138,7 +138,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
         </div>
         <button
           onClick={() => setIsAddingWallet(true)}
-          className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm font-medium rounded-xl transition-all"
+          className="flex items-center gap-2 px-4 py-2 bg-accent hover:bg-accent-hover text-text-primary text-sm font-medium rounded-[var(--radius-md)] transition-all"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -154,7 +154,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-sm"
+            className="p-3 bg-[var(--danger-bg)] border border-red-500/30 rounded-[var(--radius-md)] text-[var(--danger)] text-sm"
           >
             {error}
           </motion.div>
@@ -163,19 +163,19 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
 
       {/* Wallet List */}
       {wallets.length === 0 ? (
-        <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-8 text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-gray-700/50 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div className="bg-surface-2 border border-border rounded-[var(--radius-md)] p-8 text-center">
+          <div className="w-16 h-16 mx-auto mb-4 bg-surface-2 rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
           </div>
-          <h4 className="text-white font-medium mb-2">No Wallets Connected</h4>
-          <p className="text-gray-400 text-sm mb-4">
+          <h4 className="text-text-primary font-medium mb-2">No Wallets Connected</h4>
+          <p className="text-text-secondary text-sm mb-4">
             Connect your Axiome wallet to create and manage tokens
           </p>
           <button
             onClick={() => setIsAddingWallet(true)}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-500 text-white text-sm font-medium rounded-lg transition-colors"
+            className="px-4 py-2 bg-accent hover:bg-accent-hover text-text-primary text-sm font-medium rounded-[var(--radius-sm)] transition-colors"
           >
             Connect Wallet
           </button>
@@ -186,7 +186,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
             <motion.div
               key={wallet.id}
               layout
-              className="bg-gray-800/50 border border-gray-700 hover:border-gray-600 rounded-xl p-4 transition-colors"
+              className="bg-surface-2 border border-border hover:border-border rounded-[var(--radius-md)] p-4 transition-colors"
             >
               {/* Wallet Header */}
               <div className="flex items-start justify-between gap-4">
@@ -199,13 +199,13 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                         value={editLabel}
                         onChange={(e) => setEditLabel(e.target.value)}
                         placeholder="Enter label..."
-                        className="flex-1 px-3 py-1.5 bg-gray-700 border border-gray-600 rounded-lg text-white text-sm focus:border-purple-500 outline-none"
+                        className="flex-1 px-3 py-1.5 bg-surface-3 border border-border rounded-[var(--radius-sm)] text-text-primary text-sm focus:border-accent outline-none"
                         autoFocus
                       />
                       <button
                         onClick={() => handleUpdateLabel(wallet.id)}
                         disabled={isLoading === wallet.id}
-                        className="px-3 py-1.5 bg-purple-600 hover:bg-purple-500 text-white text-sm rounded-lg transition-colors disabled:opacity-50"
+                        className="px-3 py-1.5 bg-accent hover:bg-accent-hover text-text-primary text-sm rounded-[var(--radius-sm)] transition-colors disabled:opacity-50"
                       >
                         {isLoading === wallet.id ? '...' : 'Save'}
                       </button>
@@ -214,7 +214,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                           setEditingWallet(null)
                           setEditLabel('')
                         }}
-                        className="px-3 py-1.5 bg-gray-700 hover:bg-gray-600 text-gray-300 text-sm rounded-lg transition-colors"
+                        className="px-3 py-1.5 bg-surface-3 hover:bg-surface-3 text-text-secondary text-sm rounded-[var(--radius-sm)] transition-colors"
                       >
                         Cancel
                       </button>
@@ -223,13 +223,13 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                     <div className="flex items-center gap-2 mb-1">
                       {wallet.label ? (
                         <>
-                          <span className="text-white font-medium">{wallet.label}</span>
-                          <span className="text-gray-500">-</span>
+                          <span className="text-text-primary font-medium">{wallet.label}</span>
+                          <span className="text-text-tertiary">-</span>
                         </>
                       ) : null}
                       <button
                         onClick={() => copyAddress(wallet.address)}
-                        className="text-sm font-mono text-gray-400 hover:text-white transition-colors flex items-center gap-1 group"
+                        className="text-sm font-mono text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1 group"
                         title="Click to copy"
                       >
                         {truncateAddress(wallet.address)}
@@ -243,20 +243,20 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                   {/* Badges */}
                   <div className="flex items-center gap-2 flex-wrap">
                     {wallet.isPrimary && (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-purple-500/20 text-purple-400 text-xs font-medium rounded-full">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-accent/10 text-accent text-xs font-medium rounded-full">
                         <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                         </svg>
                         Primary
                       </span>
                     )}
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-green-500/20 text-green-400 text-xs font-medium rounded-full">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--success-bg)] text-[var(--success)] text-xs font-medium rounded-full">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                       Verified
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-text-tertiary">
                       Added {new Date(wallet.createdAt).toLocaleDateString()}
                     </span>
                   </div>
@@ -269,7 +269,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                       {/* Edit Label */}
                       <button
                         onClick={() => startEditing(wallet)}
-                        className="p-2 text-gray-400 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
+                        className="p-2 text-text-secondary hover:text-text-primary hover:bg-surface-3 rounded-[var(--radius-sm)] transition-colors"
                         title="Edit label"
                       >
                         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -282,7 +282,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                         <button
                           onClick={() => handleSetPrimary(wallet.id)}
                           disabled={isLoading === wallet.id}
-                          className="p-2 text-gray-400 hover:text-purple-400 hover:bg-purple-500/10 rounded-lg transition-colors disabled:opacity-50"
+                          className="p-2 text-text-secondary hover:text-accent hover:bg-accent/10 rounded-[var(--radius-sm)] transition-colors disabled:opacity-50"
                           title="Set as primary"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -297,13 +297,13 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                           <button
                             onClick={() => handleDelete(wallet.id)}
                             disabled={isLoading === wallet.id}
-                            className="px-2 py-1 bg-red-600 hover:bg-red-500 text-white text-xs font-medium rounded transition-colors disabled:opacity-50"
+                            className="px-2 py-1 bg-red-600 hover:bg-red-500 text-text-primary text-xs font-medium rounded transition-colors disabled:opacity-50"
                           >
                             {isLoading === wallet.id ? '...' : 'Delete'}
                           </button>
                           <button
                             onClick={() => setDeletingWallet(null)}
-                            className="px-2 py-1 bg-gray-700 hover:bg-gray-600 text-gray-300 text-xs font-medium rounded transition-colors"
+                            className="px-2 py-1 bg-surface-3 hover:bg-surface-3 text-text-secondary text-xs font-medium rounded transition-colors"
                           >
                             Cancel
                           </button>
@@ -311,7 +311,7 @@ export function WalletManager({ onWalletAdded }: WalletManagerProps) {
                       ) : (
                         <button
                           onClick={() => setDeletingWallet(wallet.id)}
-                          className="p-2 text-gray-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                          className="p-2 text-text-secondary hover:text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded-[var(--radius-sm)] transition-colors"
                           title="Remove wallet"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">

@@ -169,15 +169,15 @@ export function SendTab() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className="bg-gray-900/50 border-gray-800">
+        <Card className="bg-surface-1 border-border">
           <CardContent className="py-12 text-center">
-            <div className="w-16 h-16 mx-auto bg-gray-800 rounded-full flex items-center justify-center mb-4">
-              <svg className="w-8 h-8 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-16 h-16 mx-auto bg-surface-2 rounded-full flex items-center justify-center mb-4">
+              <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 12H4M12 4v16" />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-white mb-2">No Tokens</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-xl font-bold text-text-primary mb-2">No Tokens</h3>
+            <p className="text-text-secondary mb-6">
               You don't have any tokens to send. Create or receive tokens first.
             </p>
           </CardContent>
@@ -193,21 +193,21 @@ export function SendTab() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
       >
-        <Card className="bg-gray-900/50 border-gray-800">
+        <Card className="bg-surface-1 border-border">
           <CardContent className="py-12 text-center">
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: 'spring', damping: 15 }}
-              className="w-20 h-20 mx-auto bg-green-500/20 rounded-full flex items-center justify-center mb-6"
+              className="w-20 h-20 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center mb-6"
             >
-              <svg className="w-10 h-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="w-10 h-10 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </motion.div>
 
-            <h3 className="text-2xl font-bold text-white mb-2">Transaction Sent!</h3>
-            <p className="text-gray-400 mb-6">
+            <h3 className="text-2xl font-bold text-text-primary mb-2">Transaction Sent!</h3>
+            <p className="text-text-secondary mb-6">
               {formData.amount} {selectedToken?.symbol} sent successfully
             </p>
 
@@ -216,7 +216,7 @@ export function SendTab() {
                 href={`https://axiomechain.org/transactions/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-purple-400 hover:text-purple-300 mb-6"
+                className="inline-flex items-center gap-2 text-accent hover:text-accent mb-6"
               >
                 <span className="font-mono text-sm">
                   {txHash.slice(0, 16)}...{txHash.slice(-8)}
@@ -243,26 +243,26 @@ export function SendTab() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <Card className="bg-gray-900/50 border-gray-800">
+        <Card className="bg-surface-1 border-border">
           <CardContent className="p-6">
-            <h3 className="text-xl font-bold text-white mb-6 text-center">Confirm Transaction</h3>
+            <h3 className="text-xl font-bold text-text-primary mb-6 text-center">Confirm Transaction</h3>
 
             <div className="space-y-4 mb-6">
-              <div className="flex justify-between py-3 border-b border-gray-800">
-                <span className="text-gray-400">Amount</span>
-                <span className="text-white font-mono">
+              <div className="flex justify-between py-3 border-b border-border">
+                <span className="text-text-secondary">Amount</span>
+                <span className="text-text-primary font-mono">
                   {formData.amount} {selectedToken?.symbol}
                 </span>
               </div>
-              <div className="flex justify-between py-3 border-b border-gray-800">
-                <span className="text-gray-400">To</span>
-                <span className="text-white font-mono text-sm">
+              <div className="flex justify-between py-3 border-b border-border">
+                <span className="text-text-secondary">To</span>
+                <span className="text-text-primary font-mono text-sm">
                   {formData.recipient.slice(0, 12)}...{formData.recipient.slice(-8)}
                 </span>
               </div>
-              <div className="flex justify-between py-3 border-b border-gray-800">
-                <span className="text-gray-400">Network Fee</span>
-                <span className="text-white font-mono">~0.005 AXM</span>
+              <div className="flex justify-between py-3 border-b border-border">
+                <span className="text-text-secondary">Network Fee</span>
+                <span className="text-text-primary font-mono">~0.005 AXM</span>
               </div>
             </div>
 
@@ -276,7 +276,7 @@ export function SendTab() {
               </Button>
               <Button
                 onClick={handleSend}
-                className="flex-1 bg-gradient-to-r from-purple-600 to-blue-600"
+                className="flex-1 bg-accent"
               >
                 Sign & Send
               </Button>
@@ -305,7 +305,7 @@ export function SendTab() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
     >
-      <Card className="bg-gray-900/50 border-gray-800">
+      <Card className="bg-surface-1 border-border">
         <CardContent className="p-6 space-y-6">
           {/* Token Select */}
           <div>
@@ -317,7 +317,7 @@ export function SendTab() {
               placeholder="Select token"
             />
             {errors.token && (
-              <p className="mt-1 text-sm text-red-500">{errors.token}</p>
+              <p className="mt-1 text-sm text-[var(--danger)]">{errors.token}</p>
             )}
           </div>
 
@@ -332,7 +332,7 @@ export function SendTab() {
 
           {/* Amount */}
           <div>
-            <label className="block text-sm font-medium text-gray-300 mb-1.5">
+            <label className="block text-sm font-medium text-text-secondary mb-1.5">
               Amount
             </label>
             <div className="relative">
@@ -343,25 +343,25 @@ export function SendTab() {
                 placeholder="0.00"
                 value={formData.amount}
                 onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-                className={`w-full px-4 py-2.5 pr-20 bg-gray-800 border rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 transition-colors ${
+                className={`w-full px-4 py-2.5 pr-20 bg-surface-2 border rounded-[var(--radius-sm)] text-text-primary placeholder-text-tertiary focus:outline-none focus:ring-1 focus:ring-accent/30 transition-colors ${
                   errors.amount
-                    ? 'border-red-500 focus:ring-red-500'
-                    : 'border-gray-700 focus:ring-purple-500 focus:border-purple-500'
+                    ? 'border-[var(--danger)] focus:ring-[var(--danger)]'
+                    : 'border-border focus:border-accent'
                 }`}
               />
               <button
                 type="button"
                 onClick={handleMaxAmount}
-                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-xs font-medium text-purple-400 hover:text-purple-300 bg-purple-500/10 hover:bg-purple-500/20 rounded transition-colors"
+                className="absolute right-2 top-1/2 -translate-y-1/2 px-3 py-1 text-xs font-medium text-accent hover:text-accent bg-accent/10 hover:bg-accent/20 rounded transition-colors"
               >
                 MAX
               </button>
             </div>
             {errors.amount && (
-              <p className="mt-1 text-sm text-red-500">{errors.amount}</p>
+              <p className="mt-1 text-sm text-[var(--danger)]">{errors.amount}</p>
             )}
             {selectedToken && (
-              <p className="mt-1 text-sm text-gray-500">
+              <p className="mt-1 text-sm text-text-tertiary">
                 Available: {selectedToken.displayBalance} {selectedToken.symbol}
               </p>
             )}
@@ -370,7 +370,7 @@ export function SendTab() {
           {/* Submit */}
           <Button
             onClick={handlePreview}
-            className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+            className="w-full bg-accent"
             size="lg"
             disabled={tokensLoading}
           >

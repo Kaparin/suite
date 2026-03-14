@@ -257,7 +257,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
           initial={{ scale: 0.9, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
-          className="bg-gray-900 border border-gray-800 rounded-2xl p-6 max-w-md w-full shadow-2xl"
+          className="bg-surface-1 border border-border rounded-[var(--radius-lg)] p-6 max-w-md w-full shadow-2xl"
           onClick={(e) => e.stopPropagation()}
         >
           {/* Success State */}
@@ -267,14 +267,14 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 200, damping: 15 }}
-                className="w-20 h-20 bg-green-500/20 rounded-full mx-auto mb-6 flex items-center justify-center"
+                className="w-20 h-20 bg-[var(--success-bg)] rounded-full mx-auto mb-6 flex items-center justify-center"
               >
-                <svg className="w-10 h-10 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-10 h-10 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               </motion.div>
-              <h3 className="text-xl font-semibold text-white mb-2">Wallet Verified!</h3>
-              <p className="text-gray-400">Your wallet has been successfully linked</p>
+              <h3 className="text-xl font-semibold text-text-primary mb-2">Wallet Verified!</h3>
+              <p className="text-text-secondary">Your wallet has been successfully linked</p>
             </div>
           )}
 
@@ -283,21 +283,21 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-lg flex items-center justify-center">
-                    <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-10 h-10 bg-accent rounded-[var(--radius-sm)] flex items-center justify-center">
+                    <svg className="w-5 h-5 text-text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-white">Verify Wallet</h3>
-                    <p className="text-sm text-gray-400">Link your Axiome wallet</p>
+                    <h3 className="font-semibold text-text-primary">Verify Wallet</h3>
+                    <p className="text-sm text-text-secondary">Link your Axiome wallet</p>
                   </div>
                 </div>
                 <button
                   onClick={onClose}
-                  className="p-2 hover:bg-gray-800 rounded-lg transition-colors"
+                  className="p-2 hover:bg-surface-2 rounded-[var(--radius-sm)] transition-colors"
                 >
-                  <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <svg className="w-5 h-5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -305,9 +305,9 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
 
               {/* Error */}
               {error && (
-                <div className="mb-4 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
+                <div className="mb-4 p-3 bg-[var(--danger-bg)] border border-red-500/30 rounded-[var(--radius-sm)]">
                   <div className="flex items-center justify-between">
-                    <span className="text-red-400 text-sm">{error}</span>
+                    <span className="text-[var(--danger)] text-sm">{error}</span>
                     <button
                       onClick={handleRetry}
                       className="text-xs text-red-300 hover:text-red-200 underline ml-2"
@@ -321,19 +321,19 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
               {/* Step 1: Connect wallet */}
               {step === 'connect' && (
                 <div className="text-center py-8">
-                  <div className="w-20 h-20 bg-gray-800 rounded-2xl mx-auto mb-6 flex items-center justify-center">
-                    <svg className="w-10 h-10 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="w-20 h-20 bg-surface-2 rounded-[var(--radius-lg)] mx-auto mb-6 flex items-center justify-center">
+                    <svg className="w-10 h-10 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
-                  <h4 className="text-lg font-medium text-white mb-2">Connect your wallet</h4>
-                  <p className="text-gray-400 mb-6">
+                  <h4 className="text-lg font-medium text-text-primary mb-2">Connect your wallet</h4>
+                  <p className="text-text-secondary mb-6">
                     First, connect your Axiome Wallet to verify ownership.
                   </p>
                   <Button
                     onClick={connect}
                     disabled={isConnecting}
-                    className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+                    className="w-full bg-accent"
                     size="lg"
                   >
                     {isConnecting ? (
@@ -352,12 +352,12 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
               {step === 'verify' && (
                 <div className="space-y-4">
                   {/* Wallet connected */}
-                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-xl">
+                  <div className="p-3 bg-green-500/10 border border-green-500/20 rounded-[var(--radius-md)]">
                     <div className="flex items-center gap-3">
                       <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                       <div className="flex-1 min-w-0">
                         <p className="text-green-300 font-medium text-sm">Wallet Connected</p>
-                        <p className="text-xs text-gray-400 font-mono truncate">{truncateAddress(address || '')}</p>
+                        <p className="text-xs text-text-secondary font-mono truncate">{truncateAddress(address || '')}</p>
                       </div>
                     </div>
                   </div>
@@ -365,8 +365,8 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                   {/* Loading challenge */}
                   {isLoading && (
                     <div className="text-center py-4">
-                      <div className="w-8 h-8 border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin mx-auto mb-3" />
-                      <p className="text-gray-400 text-sm">Generating verification code...</p>
+                      <div className="w-8 h-8 border-4 border-accent/20 border-t-accent rounded-full animate-spin mx-auto mb-3" />
+                      <p className="text-text-secondary text-sm">Generating verification code...</p>
                     </div>
                   )}
 
@@ -375,12 +375,12 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                     <>
                       {/* Polling status */}
                       {isPolling && (
-                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
+                        <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-[var(--radius-md)]">
                           <div className="flex items-center gap-3">
                             <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin flex-shrink-0" />
                             <div>
                               <p className="text-blue-300 font-medium text-sm">Waiting for transaction...</p>
-                              <p className="text-xs text-gray-400">Confirm in Axiome Wallet</p>
+                              <p className="text-xs text-text-secondary">Confirm in Axiome Wallet</p>
                             </div>
                           </div>
                         </div>
@@ -388,21 +388,21 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
 
                       {/* Instructions */}
                       <div className="text-center py-2">
-                        <p className="text-gray-300 text-sm">
-                          Send <span className="text-purple-400 font-semibold">{challenge.amount} AXM</span> to verify
+                        <p className="text-text-secondary text-sm">
+                          Send <span className="text-accent font-semibold">{challenge.amount} AXM</span> to verify
                         </p>
                       </div>
 
                       {/* Verification Address */}
-                      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-3">
+                      <div className="bg-surface-2 border border-border rounded-[var(--radius-md)] p-3">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-gray-500 uppercase">Send to Address</span>
+                          <span className="text-xs text-text-tertiary uppercase">Send to Address</span>
                           <button
                             onClick={handleCopyAddress}
                             className={`text-xs flex items-center gap-1 transition-colors ${
                               copyAddressState === 'copied'
-                                ? 'text-green-400'
-                                : 'text-purple-400 hover:text-purple-300'
+                                ? 'text-[var(--success)]'
+                                : 'text-accent hover:text-accent-hover'
                             }`}
                           >
                             {copyAddressState === 'copied' ? (
@@ -422,21 +422,21 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                             )}
                           </button>
                         </div>
-                        <p className="text-xs font-mono text-green-400 break-all select-all leading-relaxed">
+                        <p className="text-xs font-mono text-[var(--success)] break-all select-all leading-relaxed">
                           {challenge.verificationAddress}
                         </p>
                       </div>
 
                       {/* Memo Code */}
-                      <div className="bg-gray-800/50 border border-gray-700 rounded-xl p-3">
+                      <div className="bg-surface-2 border border-border rounded-[var(--radius-md)] p-3">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs text-gray-500 uppercase">Memo (Required)</span>
+                          <span className="text-xs text-text-tertiary uppercase">Memo (Required)</span>
                           <button
                             onClick={handleCopyMemo}
                             className={`text-xs flex items-center gap-1 transition-colors ${
                               copyMemoState === 'copied'
-                                ? 'text-green-400'
-                                : 'text-purple-400 hover:text-purple-300'
+                                ? 'text-[var(--success)]'
+                                : 'text-accent hover:text-accent-hover'
                             }`}
                           >
                             {copyMemoState === 'copied' ? (
@@ -456,13 +456,13 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                             )}
                           </button>
                         </div>
-                        <p className="text-sm font-mono text-white break-all select-all">
+                        <p className="text-sm font-mono text-text-primary break-all select-all">
                           {challenge.code}
                         </p>
                       </div>
 
                       {/* Amount reminder */}
-                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-2">
+                      <div className="bg-amber-500/10 border border-amber-500/20 rounded-[var(--radius-md)] p-2">
                         <div className="flex items-center gap-2 text-xs">
                           <svg className="w-4 h-4 text-amber-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
@@ -475,9 +475,9 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
 
                       {/* Timer */}
                       <div className="text-center">
-                        <p className="text-xs text-gray-400">
+                        <p className="text-xs text-text-secondary">
                           Expires in:{' '}
-                          <span className={`font-mono ${timeLeft < 60 ? 'text-red-400' : 'text-white'}`}>
+                          <span className={`font-mono ${timeLeft < 60 ? 'text-[var(--danger)]' : 'text-text-primary'}`}>
                             {formatTime(timeLeft)}
                           </span>
                         </p>
@@ -487,7 +487,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                       <Button
                         onClick={handleOpenWallet}
                         disabled={isPolling}
-                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600"
+                        className="w-full bg-accent"
                         size="lg"
                       >
                         {isPolling ? (
@@ -509,7 +509,7 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
                       {!isPolling && (
                         <button
                           onClick={() => setIsPolling(true)}
-                          className="w-full text-sm text-gray-400 hover:text-gray-300 py-2 transition-colors"
+                          className="w-full text-sm text-text-secondary hover:text-text-primary py-2 transition-colors"
                         >
                           Already sent? Click to check status
                         </button>
@@ -520,12 +520,12 @@ export function WalletBindModal({ isOpen, onClose, onSuccess }: WalletBindModalP
               )}
 
               {/* Info */}
-              <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+              <div className="mt-4 p-3 bg-blue-500/10 border border-blue-500/20 rounded-[var(--radius-sm)]">
                 <div className="flex items-start gap-2">
                   <svg className="w-4 h-4 text-blue-400 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-text-secondary">
                     <p className="text-blue-300 font-medium mb-1">Why verify?</p>
                     <p>
                       Verifying your wallet proves ownership and allows you to create tokens on the platform.

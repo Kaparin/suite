@@ -40,7 +40,7 @@ function UserAvatar({ src, name, size = 32 }: { src?: string | null, name: strin
         className="bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center"
         style={{ width: size, height: size }}
       >
-        <span className="text-white font-medium" style={{ fontSize: size * 0.4 }}>
+        <span className="text-text-primary font-medium" style={{ fontSize: size * 0.4 }}>
           {name.charAt(0).toUpperCase()}
         </span>
       </div>
@@ -86,7 +86,7 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
     <div ref={menuRef} className="relative">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-3 px-3 py-2 bg-gray-800/80 hover:bg-gray-700/80 border border-gray-700/50 rounded-xl transition-all duration-300"
+        className="flex items-center gap-3 px-3 py-2 bg-surface-2 hover:bg-surface-3 border border-border rounded-[var(--radius-md)] transition-all duration-300"
       >
         {/* Avatar */}
         <div className="relative">
@@ -96,8 +96,8 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
             size={32}
           />
           {user.wallets && user.wallets.length > 0 && (
-            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-gray-800 flex items-center justify-center">
-              <svg className="w-2 h-2 text-white" fill="currentColor" viewBox="0 0 20 20">
+            <div className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-green-500 rounded-full border-2 border-surface-2 flex items-center justify-center">
+              <svg className="w-2 h-2 text-text-primary" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
               </svg>
             </div>
@@ -105,13 +105,13 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
         </div>
 
         {/* Name */}
-        <span className="text-sm font-medium text-white hidden sm:block">
+        <span className="text-sm font-medium text-text-primary hidden sm:block">
           {displayName}
         </span>
 
         {/* Dropdown arrow */}
         <svg
-          className={`w-4 h-4 text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+          className={`w-4 h-4 text-text-secondary transition-transform ${isOpen ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -128,10 +128,10 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -10, scale: 0.95 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 mt-2 w-72 bg-gray-900/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-xl overflow-hidden z-50"
+            className="absolute right-0 mt-2 w-72 bg-surface-1 backdrop-blur-xl border border-border rounded-[var(--radius-md)] shadow-xl overflow-hidden z-50"
           >
             {/* User info */}
-            <div className="p-4 bg-gradient-to-br from-purple-500/10 to-blue-500/10 border-b border-gray-800">
+            <div className="p-4 bg-accent/5 border-b border-border">
               <div className="flex items-center gap-3">
                 <UserAvatar
                   src={user.telegramPhotoUrl}
@@ -139,23 +139,23 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
                   size={48}
                 />
                 <div>
-                  <p className="font-medium text-white">{user.telegramFirstName || 'User'}</p>
+                  <p className="font-medium text-text-primary">{user.telegramFirstName || 'User'}</p>
                   {user.telegramUsername && (
-                    <p className="text-sm text-gray-400">@{user.telegramUsername}</p>
+                    <p className="text-sm text-text-secondary">@{user.telegramUsername}</p>
                   )}
                 </div>
               </div>
             </div>
 
             {/* Wallet status */}
-            <div className="p-4 border-b border-gray-800">
+            <div className="p-4 border-b border-border">
               {user.wallets && user.wallets.length > 0 ? (
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-gray-500 uppercase">
+                    <span className="text-xs text-text-tertiary uppercase">
                       {user.wallets.length === 1 ? 'Wallet' : `Wallets (${user.wallets.length})`}
                     </span>
-                    <span className="text-xs text-green-400 flex items-center gap-1">
+                    <span className="text-xs text-[var(--success)] flex items-center gap-1">
                       <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
@@ -164,16 +164,16 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
                   </div>
                   {user.wallets.map(w => (
                     <div key={w.id} className="flex items-center gap-2 mb-1">
-                      <p className="text-sm font-mono text-white">{truncateAddress(w.address)}</p>
+                      <p className="text-sm font-mono text-text-primary">{truncateAddress(w.address)}</p>
                       {w.isPrimary && (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-purple-500/20 text-purple-400 rounded">Primary</span>
+                        <span className="text-[10px] px-1.5 py-0.5 bg-accent/10 text-accent rounded">Primary</span>
                       )}
                     </div>
                   ))}
                 </div>
               ) : (
                 <div>
-                  <p className="text-sm text-gray-400 mb-3">
+                  <p className="text-sm text-text-secondary mb-3">
                     Verify your wallet to create tokens
                   </p>
                   <button
@@ -181,7 +181,7 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
                       setIsOpen(false)
                       onVerifyWallet()
                     }}
-                    className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white text-sm font-medium rounded-lg transition-colors"
+                    className="w-full px-4 py-2 bg-accent hover:bg-accent-hover text-text-primary text-sm font-medium rounded-[var(--radius-sm)] transition-colors"
                   >
                     Verify Wallet
                   </button>
@@ -190,13 +190,13 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
             </div>
 
             {/* Plan badge */}
-            <div className="px-4 py-3 border-b border-gray-800">
+            <div className="px-4 py-3 border-b border-border">
               <div className="flex items-center justify-between">
-                <span className="text-xs text-gray-500 uppercase">Plan</span>
+                <span className="text-xs text-text-tertiary uppercase">Plan</span>
                 <span className={`text-xs font-medium px-2 py-1 rounded-full ${
                   user.plan === 'PRO'
-                    ? 'bg-purple-500/20 text-purple-400'
-                    : 'bg-gray-700 text-gray-400'
+                    ? 'bg-accent/10 text-accent'
+                    : 'bg-surface-3 text-text-secondary'
                 }`}>
                   {user.plan || 'FREE'}
                 </span>
@@ -205,13 +205,13 @@ export function UserMenu({ user, onLogout, onVerifyWallet }: UserMenuProps) {
 
             {/* Actions */}
             <div className="p-2">
-              <div className="my-2 border-t border-gray-800" />
+              <div className="my-2 border-t border-border" />
               <button
                 onClick={() => {
                   setIsOpen(false)
                   onLogout()
                 }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
+                className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-[var(--danger)] hover:text-red-300 hover:bg-[var(--danger-bg)] rounded-[var(--radius-sm)] transition-colors"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />

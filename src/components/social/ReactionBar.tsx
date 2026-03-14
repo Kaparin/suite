@@ -44,8 +44,8 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
               onClick={() => handleReaction(type)}
               className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-colors ${
                 hasReacted(type)
-                  ? 'bg-purple-500/20 text-purple-300'
-                  : 'bg-gray-800 text-gray-400 hover:bg-gray-700'
+                  ? 'bg-accent/10 text-accent'
+                  : 'bg-surface-2 text-text-secondary hover:bg-surface-3'
               }`}
               title={REACTION_LABELS[type]}
             >
@@ -61,7 +61,7 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
   return (
     <div className="space-y-3">
       <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-400">React:</span>
+        <span className="text-sm text-text-secondary">React:</span>
         <div className="flex gap-1">
           {reactionTypes.map((type) => (
             <motion.button
@@ -70,10 +70,10 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
               whileTap={{ scale: 0.9 }}
               onClick={() => handleReaction(type)}
               disabled={isLoading}
-              className={`relative p-2 rounded-lg transition-colors ${
+              className={`relative p-2 rounded-[var(--radius-sm)] transition-colors ${
                 hasReacted(type)
-                  ? 'bg-purple-500/20 ring-1 ring-purple-500/50'
-                  : 'bg-gray-800/50 hover:bg-gray-700/50'
+                  ? 'bg-accent/10 ring-1 ring-accent/30'
+                  : 'bg-surface-2 hover:bg-surface-3'
               }`}
               title={REACTION_LABELS[type]}
             >
@@ -81,8 +81,8 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
               {counts[type] > 0 && (
                 <span className={`absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center rounded-full text-xs font-medium ${
                   hasReacted(type)
-                    ? 'bg-purple-500 text-white'
-                    : 'bg-gray-700 text-gray-300'
+                    ? 'bg-accent text-text-primary'
+                    : 'bg-surface-3 text-text-secondary'
                 }`}>
                   {counts[type]}
                 </span>
@@ -93,7 +93,7 @@ export function ReactionBar({ projectId, compact = false }: ReactionBarProps) {
       </div>
 
       {!isAuthenticated && (
-        <p className="text-xs text-gray-500">Connect wallet to react</p>
+        <p className="text-xs text-text-tertiary">Connect wallet to react</p>
       )}
     </div>
   )

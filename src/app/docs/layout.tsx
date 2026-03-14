@@ -59,7 +59,7 @@ function SidebarContent({
 }) {
   return (
     <div className="space-y-3">
-      <div className="text-[10px] font-bold text-zinc-600 uppercase tracking-[0.15em] mb-5">
+      <div className="text-[10px] font-bold text-text-tertiary uppercase tracking-[0.15em] mb-5">
         {t('sidebar.title')}
       </div>
       {DOCS_NAV.map((nav) => {
@@ -71,10 +71,10 @@ function SidebarContent({
             <Link
               href={nav.href}
               onClick={onNavigate}
-              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-xl text-[13px] font-semibold transition-all duration-200 ${
+              className={`flex items-center gap-2.5 px-3 py-2.5 rounded-[var(--radius-md)] text-[13px] font-semibold transition-all duration-200 ${
                 isActive
                   ? 'bg-indigo-500/15 text-indigo-400 shadow-sm shadow-indigo-500/5'
-                  : 'text-zinc-500 hover:text-zinc-200 hover:bg-zinc-800/40'
+                  : 'text-text-tertiary hover:text-text-primary hover:bg-surface-2'
               }`}
             >
               {nav.key === 'overview' ? (
@@ -89,17 +89,17 @@ function SidebarContent({
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: 'auto' }}
                 transition={{ duration: 0.25, ease: 'easeOut' }}
-                className="mt-1.5 ml-5 pl-3 border-l border-zinc-800/60 space-y-px overflow-hidden"
+                className="mt-1.5 ml-5 pl-3 border-l border-border space-y-px overflow-hidden"
               >
                 {nav.sections.map((s) => (
                   <a
                     key={s.id}
                     href={`#${s.id}`}
                     onClick={onNavigate}
-                    className={`block px-2.5 py-1.5 rounded-lg text-[11px] transition-all duration-150 ${
+                    className={`block px-2.5 py-1.5 rounded-[var(--radius-sm)] text-[11px] transition-all duration-150 ${
                       activeSection === s.id
                         ? 'text-indigo-400 bg-indigo-500/10 font-semibold'
-                        : 'text-zinc-600 hover:text-zinc-300 hover:bg-zinc-800/30'
+                        : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-2'
                     }`}
                   >
                     {t(`sidebar.sections.${s.key}`)}
@@ -149,9 +149,9 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
   }, [pathname])
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#0a0a12] to-[#12121e]">
+    <div className="min-h-screen bg-background">
       {/* Desktop sidebar */}
-      <nav className="hidden xl:flex fixed top-20 left-0 bottom-0 w-60 flex-col border-r border-zinc-800/30 bg-[#0a0a12]/95 backdrop-blur-xl z-30 overflow-y-auto py-6 px-4">
+      <nav className="hidden xl:flex fixed top-20 left-0 bottom-0 w-60 flex-col border-r border-border bg-background/95 backdrop-blur-xl z-30 overflow-y-auto py-6 px-4">
         <SidebarContent
           pathname={pathname}
           activeSection={activeSection}
@@ -162,10 +162,10 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
       {/* Mobile trigger */}
       <button
         onClick={() => setMobileOpen(true)}
-        className="xl:hidden fixed top-24 left-4 z-40 p-2.5 bg-zinc-900/90 rounded-xl backdrop-blur-sm border border-zinc-700/40 shadow-lg shadow-black/30 hover:bg-zinc-800/90 transition-colors"
+        className="xl:hidden fixed top-24 left-4 z-40 p-2.5 bg-surface-1 rounded-[var(--radius-md)] backdrop-blur-sm border border-border shadow-lg shadow-black/30 hover:bg-surface-2 transition-colors"
         aria-label="Open docs navigation"
       >
-        <Menu className="w-5 h-5 text-zinc-400" />
+        <Menu className="w-5 h-5 text-text-secondary" />
       </button>
 
       {/* Mobile sidebar */}
@@ -185,17 +185,17 @@ export default function DocsLayout({ children }: { children: ReactNode }) {
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: -300, opacity: 0 }}
               transition={{ type: 'spring', damping: 28, stiffness: 220 }}
-              className="xl:hidden fixed top-0 left-0 bottom-0 w-72 bg-[#0c0c16] border-r border-zinc-800/40 z-50 overflow-y-auto shadow-2xl shadow-black/60"
+              className="xl:hidden fixed top-0 left-0 bottom-0 w-72 bg-surface-1 border-r border-border z-50 overflow-y-auto shadow-2xl shadow-black/60"
             >
-              <div className="flex items-center justify-between p-4 border-b border-zinc-800/30">
-                <span className="text-sm font-bold text-white tracking-wide">
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <span className="text-sm font-bold text-text-primary tracking-wide">
                   Documentation
                 </span>
                 <button
                   onClick={() => setMobileOpen(false)}
-                  className="p-1.5 rounded-lg hover:bg-zinc-800/50 transition-colors"
+                  className="p-1.5 rounded-[var(--radius-sm)] hover:bg-surface-2 transition-colors"
                 >
-                  <X className="w-4 h-4 text-zinc-500" />
+                  <X className="w-4 h-4 text-text-tertiary" />
                 </button>
               </div>
               <div className="p-4">

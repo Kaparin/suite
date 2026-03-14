@@ -101,8 +101,8 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
       }}
       layout
     >
-      <div className={`flex gap-3 p-4 rounded-xl transition-all duration-200 ${
-        isHovered ? 'bg-gray-800/50' : 'bg-gray-800/30'
+      <div className={`flex gap-3 p-4 rounded-[var(--radius-md)] transition-all duration-200 ${
+        isHovered ? 'bg-surface-2' : 'bg-surface-2/30'
       }`}>
         {/* Avatar */}
         <div className="flex-shrink-0">
@@ -112,11 +112,11 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
               alt={displayName}
               width={40}
               height={40}
-              className="w-10 h-10 rounded-full ring-2 ring-gray-700"
+              className="w-10 h-10 rounded-full ring-2 ring-border"
             />
           ) : (
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center ring-2 ring-gray-700">
-              <span className="text-sm font-bold text-white">
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center ring-2 ring-border">
+              <span className="text-sm font-bold text-text-primary">
                 {(comment.user.telegramFirstName || 'A').charAt(0).toUpperCase()}
               </span>
             </div>
@@ -128,15 +128,15 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
           {/* Header */}
           <div className="flex items-center justify-between gap-2 mb-1.5">
             <div className="flex items-center gap-2 min-w-0">
-              <span className="text-sm font-semibold text-white truncate">{displayName}</span>
+              <span className="text-sm font-semibold text-text-primary truncate">{displayName}</span>
               {comment.user.isVerified && (
-                <svg className="w-4 h-4 text-green-400 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-4 h-4 text-[var(--success)] flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                 </svg>
               )}
-              <span className="text-xs text-gray-500 flex-shrink-0">{formatDate(comment.createdAt)}</span>
+              <span className="text-xs text-text-tertiary flex-shrink-0">{formatDate(comment.createdAt)}</span>
               {comment.isEdited && (
-                <span className="text-xs text-gray-600 flex-shrink-0">(edited)</span>
+                <span className="text-xs text-text-tertiary flex-shrink-0">(edited)</span>
               )}
             </div>
 
@@ -152,7 +152,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                   {!showDeleteConfirm ? (
                     <button
                       onClick={() => setShowDeleteConfirm(true)}
-                      className="p-1.5 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors"
+                      className="p-1.5 text-text-tertiary hover:text-[var(--danger)] hover:bg-[var(--danger-bg)] rounded-[var(--radius-sm)] transition-colors"
                       title="Delete comment"
                     >
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,7 +164,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                       <button
                         onClick={handleDelete}
                         disabled={isDeleting}
-                        className="px-2 py-1 text-xs font-medium text-white bg-red-500 hover:bg-red-600 rounded-md transition-colors disabled:opacity-50"
+                        className="px-2 py-1 text-xs font-medium text-text-primary bg-red-500 hover:bg-red-600 rounded-md transition-colors disabled:opacity-50"
                       >
                         {isDeleting ? (
                           <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -174,7 +174,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                       </button>
                       <button
                         onClick={() => setShowDeleteConfirm(false)}
-                        className="px-2 py-1 text-xs font-medium text-gray-400 hover:text-white bg-gray-700 hover:bg-gray-600 rounded-md transition-colors"
+                        className="px-2 py-1 text-xs font-medium text-text-secondary hover:text-text-primary bg-surface-3 hover:bg-surface-3 rounded-md transition-colors"
                       >
                         Cancel
                       </button>
@@ -186,7 +186,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
           </div>
 
           {/* Comment text */}
-          <p className="text-sm text-gray-300 whitespace-pre-wrap break-words leading-relaxed">
+          <p className="text-sm text-text-secondary whitespace-pre-wrap break-words leading-relaxed">
             {comment.content}
           </p>
 
@@ -200,8 +200,8 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                   onClick={() => setShowReactions(!showReactions)}
                   className={`flex items-center gap-1 px-2 py-1 rounded-full text-xs transition-all ${
                     totalReactions > 0
-                      ? 'bg-gray-700/50 hover:bg-gray-700'
-                      : 'text-gray-500 hover:text-gray-400 hover:bg-gray-700/50'
+                      ? 'bg-surface-2 hover:bg-surface-3'
+                      : 'text-text-tertiary hover:text-text-secondary hover:bg-surface-2'
                   }`}
                 >
                   {totalReactions > 0 ? (
@@ -217,7 +217,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                             </span>
                           ))}
                       </span>
-                      <span className="text-gray-400 ml-1">{totalReactions}</span>
+                      <span className="text-text-secondary ml-1">{totalReactions}</span>
                     </>
                   ) : (
                     <>
@@ -236,7 +236,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                       initial={{ opacity: 0, scale: 0.8, y: 5 }}
                       animate={{ opacity: 1, scale: 1, y: 0 }}
                       exit={{ opacity: 0, scale: 0.8, y: 5 }}
-                      className="absolute bottom-full left-0 mb-2 flex items-center gap-1 p-1.5 bg-gray-800 border border-gray-700 rounded-full shadow-xl z-10"
+                      className="absolute bottom-full left-0 mb-2 flex items-center gap-1 p-1.5 bg-surface-2 border border-border rounded-full shadow-xl z-10"
                     >
                       {reactionTypes.map((type) => (
                         <motion.button
@@ -247,14 +247,14 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                           disabled={reactionsLoading}
                           className={`relative p-1.5 rounded-full transition-colors ${
                             hasReacted(type)
-                              ? 'bg-purple-500/30 ring-1 ring-purple-500/50'
-                              : 'hover:bg-gray-700'
+                              ? 'bg-accent/20 ring-1 ring-accent/30'
+                              : 'hover:bg-surface-3'
                           }`}
                           title={COMMENT_REACTION_LABELS[type]}
                         >
                           <span className="text-lg">{COMMENT_REACTION_EMOJIS[type]}</span>
                           {counts[type] > 0 && (
-                            <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] flex items-center justify-center bg-gray-900 text-[10px] text-gray-300 rounded-full">
+                            <span className="absolute -top-1 -right-1 min-w-[14px] h-[14px] flex items-center justify-center bg-surface-1 text-[10px] text-text-secondary rounded-full">
                               {counts[type]}
                             </span>
                           )}
@@ -267,7 +267,7 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
 
               {/* Reply button (coming soon) */}
               <button
-                className="flex items-center gap-1 px-2 py-1 text-xs text-gray-500 hover:text-gray-400 hover:bg-gray-700/50 rounded-full transition-colors"
+                className="flex items-center gap-1 px-2 py-1 text-xs text-text-tertiary hover:text-text-secondary hover:bg-surface-2 rounded-full transition-colors"
                 title="Coming soon"
               >
                 <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -290,8 +290,8 @@ export function CommentCard({ comment, onDelete }: CommentCardProps) {
                       onClick={() => handleReaction(type)}
                       className={`flex items-center gap-1 px-2 py-0.5 text-xs rounded-full transition-all ${
                         hasReacted(type)
-                          ? 'bg-purple-500/20 text-purple-300 ring-1 ring-purple-500/30'
-                          : 'bg-gray-700/30 text-gray-400 hover:bg-gray-700/50'
+                          ? 'bg-accent/10 text-accent ring-1 ring-accent/20'
+                          : 'bg-surface-3/30 text-text-secondary hover:bg-surface-2'
                       }`}
                     >
                       <span>{COMMENT_REACTION_EMOJIS[type]}</span>

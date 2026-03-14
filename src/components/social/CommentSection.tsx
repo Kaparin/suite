@@ -50,13 +50,13 @@ export function CommentSection({ projectId }: CommentSectionProps) {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-white flex items-center gap-2">
-          <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <h3 className="text-lg font-semibold text-text-primary flex items-center gap-2">
+          <svg className="w-5 h-5 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
           </svg>
           Comments
           {total > 0 && (
-            <span className="px-2 py-0.5 bg-gray-700 text-gray-300 text-xs rounded-full">
+            <span className="px-2 py-0.5 bg-surface-3 text-text-secondary text-xs rounded-full">
               {total}
             </span>
           )}
@@ -78,11 +78,11 @@ export function CommentSection({ projectId }: CommentSectionProps) {
                 <img
                   src={user.telegramPhotoUrl}
                   alt={user.telegramFirstName || 'You'}
-                  className="w-10 h-10 rounded-full ring-2 ring-gray-700"
+                  className="w-10 h-10 rounded-full ring-2 ring-border"
                 />
               ) : (
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center ring-2 ring-gray-700">
-                  <span className="text-sm font-bold text-white">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center ring-2 ring-border">
+                  <span className="text-sm font-bold text-text-primary">
                     {(user?.telegramFirstName || 'Y').charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -91,8 +91,8 @@ export function CommentSection({ projectId }: CommentSectionProps) {
 
             {/* Input */}
             <div className="flex-1">
-              <div className={`relative rounded-xl transition-all duration-200 ${
-                isFocused ? 'ring-2 ring-purple-500/50' : ''
+              <div className={`relative rounded-[var(--radius-md)] transition-all duration-200 ${
+                isFocused ? 'ring-1 ring-accent/30' : ''
               }`}>
                 <textarea
                   value={newComment}
@@ -102,7 +102,7 @@ export function CommentSection({ projectId }: CommentSectionProps) {
                   placeholder="Share your thoughts..."
                   rows={isFocused ? 3 : 1}
                   maxLength={1000}
-                  className="w-full px-4 py-3 bg-gray-800/70 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:border-purple-500 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 bg-surface-2/70 border border-border rounded-[var(--radius-md)] text-text-primary placeholder-text-tertiary focus:border-accent outline-none transition-all resize-none"
                 />
               </div>
 
@@ -117,7 +117,7 @@ export function CommentSection({ projectId }: CommentSectionProps) {
                     <div className="flex items-center gap-3">
                       <span className={`text-xs ${
                         newComment.length > 900 ? 'text-orange-400' :
-                        newComment.length > 800 ? 'text-yellow-400' : 'text-gray-500'
+                        newComment.length > 800 ? 'text-yellow-400' : 'text-text-tertiary'
                       }`}>
                         {newComment.length}/1000
                       </span>
@@ -143,7 +143,7 @@ export function CommentSection({ projectId }: CommentSectionProps) {
                         type="submit"
                         disabled={!newComment.trim() || isSubmitting}
                         size="sm"
-                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500"
+                        className="bg-accent hover:bg-accent-hover"
                       >
                         {isSubmitting ? (
                           <div className="flex items-center gap-2">
@@ -170,14 +170,14 @@ export function CommentSection({ projectId }: CommentSectionProps) {
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-6 bg-gradient-to-br from-purple-500/10 to-blue-500/10 rounded-xl border border-purple-500/20 text-center"
+          className="p-6 bg-accent/5 rounded-[var(--radius-md)] border border-accent/20 text-center"
         >
-          <div className="w-12 h-12 mx-auto mb-4 bg-purple-500/20 rounded-full flex items-center justify-center">
-            <svg className="w-6 h-6 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-12 h-12 mx-auto mb-4 bg-accent/10 rounded-full flex items-center justify-center">
+            <svg className="w-6 h-6 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
           </div>
-          <p className="text-gray-400">Comments coming soon</p>
+          <p className="text-text-secondary">Comments coming soon</p>
         </motion.div>
       )}
 
@@ -188,12 +188,12 @@ export function CommentSection({ projectId }: CommentSectionProps) {
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-3 p-4 bg-red-500/10 border border-red-500/30 rounded-xl"
+            className="flex items-center gap-3 p-4 bg-[var(--danger-bg)] border border-[var(--danger)]/30 rounded-[var(--radius-md)]"
           >
-            <svg className="w-5 h-5 text-red-400 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg className="w-5 h-5 text-[var(--danger)] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            <span className="text-red-400 text-sm">{error}</span>
+            <span className="text-[var(--danger)] text-sm">{error}</span>
           </motion.div>
         )}
       </AnimatePresence>
@@ -204,13 +204,13 @@ export function CommentSection({ projectId }: CommentSectionProps) {
           // Loading skeleton
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="flex gap-3 p-4 bg-gray-800/30 rounded-xl animate-pulse">
-                <div className="w-10 h-10 bg-gray-700 rounded-full" />
+              <div key={i} className="flex gap-3 p-4 bg-surface-2/30 rounded-[var(--radius-md)] animate-pulse">
+                <div className="w-10 h-10 bg-surface-3 rounded-full" />
                 <div className="flex-1 space-y-2">
-                  <div className="h-4 bg-gray-700 rounded w-28" />
-                  <div className="h-4 bg-gray-700 rounded w-full" />
-                  <div className="h-4 bg-gray-700 rounded w-3/4" />
-                  <div className="h-6 bg-gray-700 rounded w-24 mt-2" />
+                  <div className="h-4 bg-surface-3 rounded w-28" />
+                  <div className="h-4 bg-surface-3 rounded w-full" />
+                  <div className="h-4 bg-surface-3 rounded w-3/4" />
+                  <div className="h-6 bg-surface-3 rounded w-24 mt-2" />
                 </div>
               </div>
             ))}
@@ -221,13 +221,13 @@ export function CommentSection({ projectId }: CommentSectionProps) {
             animate={{ opacity: 1, scale: 1 }}
             className="text-center py-12"
           >
-            <div className="w-16 h-16 mx-auto mb-4 bg-gray-800 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <div className="w-16 h-16 mx-auto mb-4 bg-surface-2 rounded-full flex items-center justify-center">
+              <svg className="w-8 h-8 text-text-tertiary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
               </svg>
             </div>
-            <p className="text-gray-400 mb-2">No comments yet</p>
-            <p className="text-gray-600 text-sm">Be the first to share your thoughts!</p>
+            <p className="text-text-secondary mb-2">No comments yet</p>
+            <p className="text-text-tertiary text-sm">Be the first to share your thoughts!</p>
           </motion.div>
         ) : (
           <>
@@ -264,7 +264,7 @@ export function CommentSection({ projectId }: CommentSectionProps) {
                 >
                   {isLoading ? (
                     <div className="flex items-center gap-2">
-                      <div className="w-4 h-4 border-2 border-gray-400/30 border-t-gray-400 rounded-full animate-spin" />
+                      <div className="w-4 h-4 border-2 border-text-secondary/30 border-t-text-secondary rounded-full animate-spin" />
                       Loading...
                     </div>
                   ) : (

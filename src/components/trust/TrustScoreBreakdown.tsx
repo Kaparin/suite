@@ -34,10 +34,10 @@ function ScoreBar({ label, score, icon }: { label: string; score: number; icon: 
       <span className="text-base w-6 text-center">{icon}</span>
       <div className="flex-1 min-w-0">
         <div className="flex justify-between mb-1">
-          <span className="text-sm text-gray-300">{label}</span>
-          <span className="text-sm font-medium text-gray-200">{score}</span>
+          <span className="text-sm text-text-secondary">{label}</span>
+          <span className="text-sm font-medium text-text-secondary">{score}</span>
         </div>
-        <div className="h-1.5 bg-gray-700 rounded-full overflow-hidden">
+        <div className="h-1.5 bg-surface-3 rounded-full overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-500 ${getBarColor(score)}`}
             style={{ width: `${score}%` }}
@@ -62,23 +62,23 @@ export function TrustScoreBreakdown({ data }: TrustScoreBreakdownProps) {
   ]
 
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+    <div className="bg-surface-1 border border-border rounded-[var(--radius-md)] overflow-hidden">
       {/* Header - always visible */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-surface-2 transition-colors"
       >
         <div className="flex items-center gap-3">
           <TrustScoreBadge score={data.totalScore} rating={data.rating} size="md" />
           <div className="text-left">
-            <h3 className="font-semibold text-white">{t('title')}</h3>
-            <p className="text-sm text-gray-400">
+            <h3 className="font-semibold text-text-primary">{t('title')}</h3>
+            <p className="text-sm text-text-secondary">
               {t(`rating.${data.rating}`)}
             </p>
           </div>
         </div>
         <svg
-          className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-text-secondary transition-transform ${isExpanded ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -89,7 +89,7 @@ export function TrustScoreBreakdown({ data }: TrustScoreBreakdownProps) {
 
       {/* Expanded breakdown */}
       {isExpanded && (
-        <div className="px-4 pb-4 space-y-3 border-t border-gray-800 pt-3">
+        <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
           {factors.map((factor) => (
             <ScoreBar
               key={factor.key}
@@ -98,7 +98,7 @@ export function TrustScoreBreakdown({ data }: TrustScoreBreakdownProps) {
               icon={factor.icon}
             />
           ))}
-          <p className="text-xs text-gray-500 pt-2">
+          <p className="text-xs text-text-tertiary pt-2">
             {t('calculatedAt', { date: new Date(data.calculatedAt).toLocaleDateString() })}
           </p>
         </div>

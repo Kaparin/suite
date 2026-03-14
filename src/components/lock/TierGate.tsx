@@ -81,7 +81,7 @@ export function TierGate({ requiredTier, children, fallback }: TierGateProps) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-8">
-        <div className="w-6 h-6 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
+        <div className="w-6 h-6 border-2 border-accent/20 border-t-accent rounded-full animate-spin" />
       </div>
     )
   }
@@ -97,8 +97,8 @@ export function TierGate({ requiredTier, children, fallback }: TierGateProps) {
   const requiredTierName = t(TIER_TRANSLATION_KEY[requiredTier])
 
   return (
-    <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-6 text-center">
-      <div className="w-12 h-12 bg-violet-500/15 rounded-xl flex items-center justify-center mx-auto mb-4">
+    <div className="bg-surface-1 border border-border rounded-[var(--radius-md)] p-6 text-center">
+      <div className="w-12 h-12 bg-violet-500/15 rounded-[var(--radius-md)] flex items-center justify-center mx-auto mb-4">
         <svg
           className="w-6 h-6 text-violet-400"
           fill="none"
@@ -113,15 +113,15 @@ export function TierGate({ requiredTier, children, fallback }: TierGateProps) {
           />
         </svg>
       </div>
-      <p className="text-white font-medium mb-2">
+      <p className="text-text-primary font-medium mb-2">
         {t('gate.requires', { tier: requiredTierName })}
       </p>
-      <p className="text-sm text-zinc-400 mb-4">
+      <p className="text-sm text-text-secondary mb-4">
         {t('gate.lockToUpgrade')}
       </p>
       <Link
         href="/lock"
-        className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 text-white text-sm font-medium rounded-xl transition-all shadow-lg shadow-blue-500/20"
+        className="inline-flex items-center gap-2 px-5 py-2.5 bg-accent hover:bg-accent-hover text-text-primary text-sm font-medium rounded-[var(--radius-md)] transition-all shadow-sm"
       >
         {t('gate.lockButton')}
       </Link>

@@ -61,20 +61,20 @@ export function ChangeHistory({ changes }: ChangeHistoryProps) {
   const displayChanges = isExpanded ? changes : changes.slice(0, 3)
 
   return (
-    <div className="bg-gray-900/50 border border-gray-800 rounded-xl overflow-hidden">
+    <div className="bg-surface-1 border border-border rounded-[var(--radius-md)] overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-gray-800/30 transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-surface-2 transition-colors"
       >
         <div className="flex items-center gap-2">
           <span className="text-lg">📋</span>
-          <h3 className="font-semibold text-white">{t('title')}</h3>
-          <span className="text-xs text-gray-500 bg-gray-800 px-2 py-0.5 rounded-full">
+          <h3 className="font-semibold text-text-primary">{t('title')}</h3>
+          <span className="text-xs text-text-tertiary bg-surface-2 px-2 py-0.5 rounded-full">
             {changes.length}
           </span>
         </div>
         <svg
-          className={`w-5 h-5 text-gray-400 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          className={`w-5 h-5 text-text-secondary transition-transform ${isExpanded ? 'rotate-180' : ''}`}
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -87,26 +87,26 @@ export function ChangeHistory({ changes }: ChangeHistoryProps) {
         {displayChanges.map((change) => (
           <div
             key={change.id}
-            className="flex items-start gap-3 py-2 border-t border-gray-800/50 first:border-t-0"
+            className="flex items-start gap-3 py-2 border-t border-border first:border-t-0"
           >
             <span className="text-base mt-0.5">
               {changeTypeIcons[change.changeType] || '🔧'}
             </span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-medium text-gray-300">
+                <span className="text-sm font-medium text-text-secondary">
                   {t(`type.${change.changeType}`, { defaultValue: change.changeType })}
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-text-tertiary">
                   {timeAgo(change.createdAt)}
                 </span>
               </div>
               {isExpanded && (
                 <div className="mt-1 text-xs space-y-0.5">
-                  <div className="text-red-400/70 line-through truncate">
+                  <div className="text-[var(--danger)] opacity-70 line-through truncate">
                     {formatValue(change.oldValue)}
                   </div>
-                  <div className="text-green-400/70 truncate">
+                  <div className="text-[var(--success)] opacity-70 truncate">
                     {formatValue(change.newValue)}
                   </div>
                 </div>
@@ -116,7 +116,7 @@ export function ChangeHistory({ changes }: ChangeHistoryProps) {
         ))}
 
         {!isExpanded && changes.length > 3 && (
-          <p className="text-xs text-gray-500 text-center pt-1">
+          <p className="text-xs text-text-tertiary text-center pt-1">
             +{changes.length - 3} {t('more')}
           </p>
         )}

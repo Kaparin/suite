@@ -280,19 +280,19 @@ export function SignTransactionFlow({
     if (step === 'success') {
       return (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-8 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-green-500/20 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 mx-auto bg-[var(--success-bg)] rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-[var(--success)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <p className="text-xl font-medium text-white">{t('success')}</p>
+          <p className="text-xl font-medium text-text-primary">{t('success')}</p>
           {txHash && (
             <a href={`https://axiomechain.org/transactions/${txHash}`} target="_blank" rel="noopener noreferrer"
-              className="text-sm text-purple-400 hover:text-purple-300 font-mono break-all transition-colors">
+              className="text-sm text-accent hover:text-accent font-mono break-all transition-colors">
               TX: {txHash.slice(0, 16)}...{txHash.slice(-8)}
             </a>
           )}
-          <button onClick={handleClose} className="mt-4 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-white font-medium rounded-xl transition-colors">
+          <button onClick={handleClose} className="mt-4 px-6 py-2.5 bg-green-600 hover:bg-green-500 text-text-primary font-medium rounded-[var(--radius-md)] transition-colors">
             {t('done')}
           </button>
         </motion.div>
@@ -302,16 +302,16 @@ export function SignTransactionFlow({
     if (step === 'error') {
       return (
         <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="py-8 text-center space-y-4">
-          <div className="w-16 h-16 mx-auto bg-red-500/20 rounded-full flex items-center justify-center">
-            <svg className="w-8 h-8 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div className="w-16 h-16 mx-auto bg-[var(--danger-bg)] rounded-full flex items-center justify-center">
+            <svg className="w-8 h-8 text-[var(--danger)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </div>
-          <p className="text-xl font-medium text-white">{t('failed')}</p>
-          <p className="text-sm text-red-400">{error}</p>
+          <p className="text-xl font-medium text-text-primary">{t('failed')}</p>
+          <p className="text-sm text-[var(--danger)]">{error}</p>
           <div className="flex gap-3 justify-center mt-4">
-            <button onClick={handleRetry} className="px-6 py-2 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors">{t('tryAgain')}</button>
-            <button onClick={handleClose} className="px-6 py-2 border border-gray-700 hover:border-gray-600 text-gray-300 font-medium rounded-xl transition-colors">{t('cancel')}</button>
+            <button onClick={handleRetry} className="px-6 py-2 bg-surface-2 hover:bg-surface-3 text-text-primary font-medium rounded-[var(--radius-md)] transition-colors">{t('tryAgain')}</button>
+            <button onClick={handleClose} className="px-6 py-2 border border-border hover:border-gray-600 text-text-secondary font-medium rounded-[var(--radius-md)] transition-colors">{t('cancel')}</button>
           </div>
         </motion.div>
       )
@@ -321,8 +321,8 @@ export function SignTransactionFlow({
       return (
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="py-8 text-center space-y-4">
           <div className="w-16 h-16 mx-auto border-4 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-          <p className="text-white font-medium">{t('checkingTransaction')}</p>
-          <p className="text-sm text-gray-400">{t('mayTakeMoments')}</p>
+          <p className="text-text-primary font-medium">{t('checkingTransaction')}</p>
+          <p className="text-sm text-text-secondary">{t('mayTakeMoments')}</p>
         </motion.div>
       )
     }
@@ -332,17 +332,17 @@ export function SignTransactionFlow({
 
     return (
       <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-4">
-        <p className="text-gray-400 text-center text-sm">{description}</p>
+        <p className="text-text-secondary text-center text-sm">{description}</p>
 
         {signingCode ? (
           <CopyCodeBlock code={signingCode} label={t('transactionCode')} copyText={t('copy')} />
         ) : (
           <div className="space-y-2">
-            <span className="text-xs text-gray-400 font-medium">{t('transactionCode')}</span>
-            <div className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 text-center">
+            <span className="text-xs text-text-secondary font-medium">{t('transactionCode')}</span>
+            <div className="p-3 bg-surface-2 rounded-[var(--radius-md)] border border-border text-center">
               <div className="flex items-center justify-center gap-2">
                 <div className="w-4 h-4 border-2 border-purple-500/30 border-t-purple-500 rounded-full animate-spin" />
-                <span className="text-sm text-gray-400">{t('gettingCode')}</span>
+                <span className="text-sm text-text-secondary">{t('gettingCode')}</span>
               </div>
             </div>
           </div>
@@ -352,23 +352,23 @@ export function SignTransactionFlow({
         {!isMobile && connectToken && (
           <div className="space-y-3">
             {/* QR mode toggle */}
-            <div className="flex bg-gray-800 rounded-xl p-1">
+            <div className="flex bg-surface-2 rounded-[var(--radius-md)] p-1">
               <button
                 onClick={() => setQrMode('wallet')}
-                className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                className={`flex-1 py-2 px-3 text-xs font-medium rounded-[var(--radius-sm)] transition-all ${
                   qrMode === 'wallet'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-gray-400 hover:text-gray-300'
+                    ? 'bg-purple-600 text-text-primary shadow-sm'
+                    : 'text-text-secondary hover:text-text-secondary'
                 }`}
               >
                 {t('qrModeWallet')}
               </button>
               <button
                 onClick={() => setQrMode('camera')}
-                className={`flex-1 py-2 px-3 text-xs font-medium rounded-lg transition-all ${
+                className={`flex-1 py-2 px-3 text-xs font-medium rounded-[var(--radius-sm)] transition-all ${
                   qrMode === 'camera'
-                    ? 'bg-purple-600 text-white shadow-sm'
-                    : 'text-gray-400 hover:text-gray-300'
+                    ? 'bg-purple-600 text-text-primary shadow-sm'
+                    : 'text-text-secondary hover:text-text-secondary'
                 }`}
               >
                 {t('qrModeCamera')}
@@ -377,7 +377,7 @@ export function SignTransactionFlow({
 
             {/* QR code */}
             <div className="flex justify-center">
-              <div className="bg-white p-3 rounded-xl">
+              <div className="bg-white p-3 rounded-[var(--radius-md)]">
                 <QRCodeSVG
                   value={qrMode === 'wallet'
                     ? `axm:auth:token:${connectToken}`
@@ -390,39 +390,39 @@ export function SignTransactionFlow({
             </div>
 
             {/* Hint for selected mode */}
-            <p className="text-xs text-gray-400 text-center">
+            <p className="text-xs text-text-secondary text-center">
               {qrMode === 'wallet' ? t('qrHintWallet') : t('qrHintCamera')}
             </p>
           </div>
         )}
 
         <div className="text-center space-y-1">
-          <p className="text-white font-medium text-sm">
+          <p className="text-text-primary font-medium text-sm">
             {connectToken
               ? (isMobile ? t('enterCodeMobile') : signingCode ? t('enterCodeOrScan') : t('scanQR'))
               : (signingCode ? t('enterCodeMobile') : t('gettingCode'))
             }
           </p>
           {!connectToken && signingCode && (
-            <p className="text-xs text-gray-400">Open Axiome Wallet and enter the transaction code</p>
+            <p className="text-xs text-text-secondary">Open Axiome Wallet and enter the transaction code</p>
           )}
         </div>
 
         {isSigning && (
-          <div className="flex items-center justify-center gap-2 text-sm text-gray-400">
+          <div className="flex items-center justify-center gap-2 text-sm text-text-secondary">
             <div className={`w-2 h-2 rounded-full animate-pulse ${apiStatus === 'broadcast' ? 'bg-yellow-500' : 'bg-purple-500'}`} />
             {getStatusLabel()}
           </div>
         )}
 
         <button onClick={isSigning ? openWalletApp : handleOpenWallet}
-          className="w-full py-3 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 text-white font-medium rounded-xl transition-all shadow-lg shadow-purple-500/20">
+          className="w-full py-3 bg-accent hover:bg-accent-hover text-text-primary font-medium rounded-[var(--radius-md)] transition-all shadow-sm">
           {isSigning ? t('openWallet') : (isMobile ? t('signInWallet') : t('openWallet'))}
         </button>
 
         {isSigning && (
           <button onClick={handleCheckTransaction} disabled={isChecking}
-            className="w-full py-2.5 bg-gray-800 hover:bg-gray-700 text-white font-medium rounded-xl transition-all flex items-center justify-center gap-2 text-sm">
+            className="w-full py-2.5 bg-surface-2 hover:bg-surface-3 text-text-primary font-medium rounded-[var(--radius-md)] transition-all flex items-center justify-center gap-2 text-sm">
             {isChecking ? (
               <><div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />{t('checking')}</>
             ) : t('checkTransaction')}
@@ -430,8 +430,8 @@ export function SignTransactionFlow({
         )}
 
         {isSigning && !isMobile && (
-          <div className="rounded-xl bg-gray-800/50 border border-gray-700/50 px-4 py-3">
-            <p className="text-xs text-gray-400 leading-relaxed">
+          <div className="rounded-[var(--radius-md)] bg-surface-2 border border-border px-4 py-3">
+            <p className="text-xs text-text-secondary leading-relaxed">
               {t('walletHint')}
             </p>
           </div>
@@ -445,19 +445,19 @@ export function SignTransactionFlow({
     return (
       <>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={handleClose} className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" />
+          onClick={handleClose} className="fixed inset-0 z-50 bg-black/60" />
         <motion.div
           initial={{ y: '100%' }} animate={{ y: 0 }} exit={{ y: '100%' }}
           transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-          className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] bg-gray-900 border-t border-gray-700 rounded-t-2xl shadow-2xl overflow-y-auto"
+          className="fixed inset-x-0 bottom-0 z-50 max-h-[90vh] bg-surface-1 border-t border-border rounded-t-[var(--radius-lg)] shadow-2xl overflow-y-auto"
         >
           <div className="flex justify-center pt-3 pb-1">
-            <div className="w-10 h-1 bg-gray-700 rounded-full" />
+            <div className="w-10 h-1 bg-surface-3 rounded-full" />
           </div>
-          <div className="flex items-center justify-between px-5 py-3 border-b border-gray-800">
-            <h2 className="text-lg font-semibold text-white">{title}</h2>
+          <div className="flex items-center justify-between px-5 py-3 border-b border-border">
+            <h2 className="text-lg font-semibold text-text-primary">{title}</h2>
             <button onClick={handleClose}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors">
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-2 rounded-[var(--radius-sm)] transition-colors">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -474,14 +474,14 @@ export function SignTransactionFlow({
     <AnimatePresence>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-          onClick={handleClose} className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          onClick={handleClose} className="absolute inset-0 bg-black/60" />
         <motion.div initial={{ opacity: 0, scale: 0.95, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-gray-800">
-            <h2 className="text-xl font-semibold text-white">{title}</h2>
-            <button onClick={handleClose} className="p-2 hover:bg-gray-800 rounded-lg transition-colors">
-              <svg className="w-5 h-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          className="relative w-full max-w-md bg-surface-1 border border-border rounded-[var(--radius-lg)] shadow-2xl overflow-hidden">
+          <div className="flex items-center justify-between p-6 border-b border-border">
+            <h2 className="text-xl font-semibold text-text-primary">{title}</h2>
+            <button onClick={handleClose} className="p-2 hover:bg-surface-2 rounded-[var(--radius-sm)] transition-colors">
+              <svg className="w-5 h-5 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
@@ -510,13 +510,13 @@ function CopyCodeBlock({ code, label, copyText }: { code: string; label: string;
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs text-gray-400 font-medium">{label}</span>
-        <button onClick={handleCopy} className="text-xs text-purple-400 hover:text-purple-300 font-medium transition-colors">
+        <span className="text-xs text-text-secondary font-medium">{label}</span>
+        <button onClick={handleCopy} className="text-xs text-accent hover:text-accent font-medium transition-colors">
           {copied ? t('copied') : copyText}
         </button>
       </div>
-      <div onClick={handleCopy} className="p-3 bg-gray-800/80 rounded-xl border border-gray-700 cursor-pointer hover:border-purple-500/40 transition-colors text-center">
-        <p className="text-lg text-white font-mono tracking-wider select-all">{code}</p>
+      <div onClick={handleCopy} className="p-3 bg-surface-2 rounded-[var(--radius-md)] border border-border cursor-pointer hover:border-purple-500/40 transition-colors text-center">
+        <p className="text-lg text-text-primary font-mono tracking-wider select-all">{code}</p>
       </div>
     </div>
   )
