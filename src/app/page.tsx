@@ -444,12 +444,12 @@ export default function HomePage() {
           </motion.p>
 
           <motion.div {...fadeInUp} className="flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="https://t.me/axiome" target="_blank" rel="noopener noreferrer"
+            <a href="https://t.me/Pompario" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white font-semibold rounded-[var(--radius-md)] transition-all duration-200"
             >
               {t('community.submitIdea')}
             </a>
-            <a href="https://t.me/axiome" target="_blank" rel="noopener noreferrer"
+            <a href="https://t.me/axiome_launch" target="_blank" rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-border-hover text-text-primary font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2"
             >
               {t('community.joinCommunity')}
