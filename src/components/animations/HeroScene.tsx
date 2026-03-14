@@ -1,19 +1,39 @@
 'use client'
 
 import { useRef, useState, useCallback, useEffect } from 'react'
-import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useSpring, useTransform, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
+import Link from 'next/link'
+
+/* ── Project data for orbiting items ── */
+const PROJECTS = [
+  {
+    id: 'heads-or-tails',
+    name: 'Heads or Tails',
+    status: 'Live',
+    statusColor: 'text-[var(--success)]',
+    statusBg: 'bg-[var(--success-bg)]',
+    description: 'PvP coin flip game with real AXM stakes',
+    logo: '/coin-token-logo.png',
+    logoBack: '/coin-token-logo.back.png',
+    href: 'https://coinflip.axiome-launch.com/game',
+    external: true,
+    glowColor: 'rgba(245, 158, 11, 0.4)',
+    borderColor: 'border-amber-400/30',
+  },
+]
 
 /**
  * Interactive 3D Hero Scene
- * - Large central token with mouse-tracking tilt
- * - Heads or Tails coin orbiting with 3D flip
+ * - Central floating token with mouse-tracking tilt
+ * - Orbiting project coins with click-to-reveal info cards
  * - Orbiting rings and geometric shapes
  * - Glowing particles — all responds to cursor
  */
 export function HeroScene({ className = '' }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [isHovered, setIsHovered] = useState(false)
+  const [expandedProject, setExpandedProject] = useState<string | null>(null)
 
   const mouseX = useMotionValue(0)
   const mouseY = useMotionValue(0)
@@ -58,6 +78,10 @@ export function HeroScene({ className = '' }: { className?: string }) {
     return () => cancelAnimationFrame(frame)
   }, [isHovered, mouseX, mouseY])
 
+  const toggleProject = useCallback((id: string) => {
+    setExpandedProject(prev => prev === id ? null : id)
+  }, [])
+
   return (
     <div
       ref={containerRef}
@@ -80,63 +104,111 @@ export function HeroScene({ className = '' }: { className?: string }) {
         transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
       />
 
-      {/* ── Outer orbit ring — with Heads or Tails coin ── */}
+      {/* ── Project orbit rings — each project gets its own ring ── */}
+
+      {/* Ring 1 — Heads or Tails (outermost) */}
       <motion.div
-        className="absolute inset-[2%] pointer-events-none"
-        style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
+        className="absolute inset-[4%]"
+        style={{ rotateX, rotateY, transformStyle: 'preserve-3d', pointerEvents: 'none' }}
       >
         <motion.div
-          className="w-full h-full rounded-full border border-accent/12"
+          className="w-full h-full rounded-full border border-amber-400/10"
           animate={{ rotate: 360 }}
           transition={{ duration: 24, repeat: Infinity, ease: 'linear' }}
         >
-          {/* Heads or Tails coin — orbiting with 3D flip */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
-            <motion.div
-              className="relative w-12 h-12 sm:w-14 sm:h-14"
-              animate={{ rotateY: [0, 360] }}
-              transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-              style={{ transformStyle: 'preserve-3d' }}
-            >
-              {/* Front side */}
-              <div
-                className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-amber-400/30"
-                style={{ backfaceVisibility: 'hidden' }}
-              >
-                <Image
-                  src="/coin-token-logo.png"
-                  alt="Heads"
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              {/* Back side */}
-              <div
-                className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-amber-400/30"
-                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
-              >
-                <Image
-                  src="/coin-token-logo.back.png"
-                  alt="Tails"
-                  width={56}
-                  height={56}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            </motion.div>
-          </div>
+          {PROJECTS.map((project) => (
+            <div key={project.id} className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2" style={{ pointerEvents: 'auto' }}>
+              <div className="relative">
+                {/* Coin — clickable */}
+                <motion.button
+                  onClick={() => toggleProject(project.id)}
+                  className="relative w-12 h-12 sm:w-14 sm:h-14 cursor-pointer z-10 focus:outline-none"
+                  animate={{ rotateY: expandedProject === project.id ? 0 : [0, 360] }}
+                  transition={expandedProject === project.id
+                    ? { duration: 0.4, ease: 'easeOut' }
+                    : { duration: 3, repeat: Infinity, ease: 'easeInOut' }
+                  }
+                  style={{ transformStyle: 'preserve-3d' }}
+                  whileHover={{ scale: 1.15 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Front side */}
+                  <div
+                    className={`absolute inset-0 rounded-full overflow-hidden border-2 ${project.borderColor}`}
+                    style={{ backfaceVisibility: 'hidden', boxShadow: `0 0 20px ${project.glowColor}` }}
+                  >
+                    <Image src={project.logo} alt={project.name} width={56} height={56} className="w-full h-full object-cover" />
+                  </div>
+                  {/* Back side */}
+                  {project.logoBack && (
+                    <div
+                      className={`absolute inset-0 rounded-full overflow-hidden border-2 ${project.borderColor}`}
+                      style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)', boxShadow: `0 0 20px ${project.glowColor}` }}
+                    >
+                      <Image src={project.logoBack} alt={`${project.name} back`} width={56} height={56} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                </motion.button>
 
-          {/* Opposite dot */}
+                {/* Expanded info card */}
+                <AnimatePresence>
+                  {expandedProject === project.id && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.8, y: -5 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: -5 }}
+                      transition={{ duration: 0.25, ease: 'easeOut' }}
+                      className="absolute top-full left-1/2 -translate-x-1/2 mt-3 z-20"
+                      style={{ pointerEvents: 'auto' }}
+                    >
+                      <div className="glass-card rounded-[var(--radius-md)] p-3.5 w-[200px] sm:w-[220px] text-center relative">
+                        <div className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rotate-45 bg-[rgba(10,25,41,0.5)] border-l border-t border-[rgba(255,255,255,0.08)]" />
+
+                        <div className="flex items-center justify-center gap-1.5 mb-2">
+                          <span className={`inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-semibold rounded-full ${project.statusBg} ${project.statusColor} border border-current/20`}>
+                            <span className="w-1 h-1 rounded-full bg-current animate-pulse" />
+                            {project.status}
+                          </span>
+                        </div>
+
+                        <h4 className="text-sm font-bold text-text-primary mb-1">{project.name}</h4>
+                        <p className="text-[11px] text-text-secondary mb-3 leading-relaxed">{project.description}</p>
+
+                        {project.external ? (
+                          <a href={project.href} target="_blank" rel="noopener noreferrer"
+                            className="glass-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs w-full justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Play Now
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                          </a>
+                        ) : (
+                          <Link href={project.href}
+                            className="glass-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs w-full justify-center"
+                            onClick={(e) => e.stopPropagation()}
+                          >
+                            Learn More
+                            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                          </Link>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </div>
+          ))}
+
+          {/* Opposite accent dot */}
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2">
-            <div className="w-2.5 h-2.5 rounded-full bg-purple-400/50 shadow-[0_0_10px_rgba(139,92,246,0.4)]" />
+            <div className="w-2.5 h-2.5 rounded-full bg-amber-400/40 shadow-[0_0_10px_rgba(245,158,11,0.3)]" />
           </div>
         </motion.div>
       </motion.div>
 
-      {/* ── Middle orbit ring ── */}
+      {/* Ring 2 — decorative (for future projects, slightly tighter) */}
       <motion.div
-        className="absolute inset-[14%] pointer-events-none"
+        className="absolute inset-[16%] pointer-events-none"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
       >
         <motion.div
@@ -144,19 +216,18 @@ export function HeroScene({ className = '' }: { className?: string }) {
           animate={{ rotate: -360 }}
           transition={{ duration: 18, repeat: Infinity, ease: 'linear' }}
         >
-          {/* Orbiting cube */}
+          {/* Decorative orbiting elements */}
           <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2">
             <motion.div
-              className="w-7 h-7 rounded-[var(--radius-sm)] bg-gradient-to-br from-accent/20 to-purple-500/20 border border-accent/20"
+              className="w-5 h-5 rounded-[3px] bg-gradient-to-br from-accent/15 to-purple-500/15 border border-accent/15"
               animate={{ rotate: [0, 90, 180, 270, 360] }}
               transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
             />
           </div>
-          {/* Orbiting circle */}
           <div className="absolute top-1/2 left-0 -translate-x-1/2 -translate-y-1/2">
             <motion.div
-              className="w-4 h-4 rounded-full bg-gradient-to-br from-cyan-400/25 to-blue-500/15 border border-cyan-400/20"
-              animate={{ scale: [1, 1.4, 1] }}
+              className="w-3 h-3 rounded-full bg-gradient-to-br from-cyan-400/20 to-blue-500/10 border border-cyan-400/15"
+              animate={{ scale: [1, 1.3, 1] }}
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
             />
           </div>
@@ -229,9 +300,8 @@ export function HeroScene({ className = '' }: { className?: string }) {
         className="absolute inset-[12%] flex items-center justify-center"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
       >
-        {/* Glow behind token */}
         <motion.div
-          className="absolute inset-[-15%] rounded-full"
+          className="absolute inset-[-15%] rounded-full pointer-events-none"
           style={{
             background: 'radial-gradient(circle, rgba(32, 129, 226, 0.35) 0%, rgba(139, 92, 246, 0.18) 40%, transparent 70%)',
             filter: 'blur(25px)',
@@ -240,7 +310,6 @@ export function HeroScene({ className = '' }: { className?: string }) {
           transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
         />
 
-        {/* Token body */}
         <motion.div
           className="relative w-full h-full rounded-full overflow-hidden"
           style={{
@@ -251,7 +320,6 @@ export function HeroScene({ className = '' }: { className?: string }) {
           animate={{ rotate: [0, 2, -2, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         >
-          {/* Shine sweep */}
           <motion.div
             className="absolute inset-0 pointer-events-none"
             style={{
@@ -261,7 +329,6 @@ export function HeroScene({ className = '' }: { className?: string }) {
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', repeatDelay: 2 }}
           />
 
-          {/* Logo — fills most of the token */}
           <div className="absolute inset-0 flex items-center justify-center p-[8%]">
             <Image
               src="/axiome-launch-suite-logo.png"
@@ -274,14 +341,13 @@ export function HeroScene({ className = '' }: { className?: string }) {
           </div>
         </motion.div>
 
-        {/* Inner orbit ring */}
         <motion.div
-          className="absolute inset-[-6%] rounded-full border border-accent/8 pointer-events-none"
+          className="absolute inset-[-2%] rounded-full border border-accent/8 pointer-events-none"
           animate={{ rotate: -360 }}
           transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
         >
-          <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-accent/30" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1.5 h-1.5 rounded-full bg-purple-400/25" />
+          <div className="absolute top-1/2 right-0 translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-accent/30" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-1 h-1 rounded-full bg-purple-400/25" />
         </motion.div>
       </motion.div>
 
@@ -297,6 +363,14 @@ export function HeroScene({ className = '' }: { className?: string }) {
         </svg>
         Move cursor
       </motion.div>
+
+      {/* Click outside to close expanded project */}
+      {expandedProject && (
+        <div
+          className="fixed inset-0 z-0"
+          onClick={() => setExpandedProject(null)}
+        />
+      )}
     </div>
   )
 }
