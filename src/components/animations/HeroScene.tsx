@@ -311,66 +311,78 @@ export function HeroScene({ className = '' }: { className?: string }) {
         </motion.div>
       </motion.div>
 
-      {/* ── Project info card — anchored to bottom center of scene, always readable ── */}
+      {/* ── Project info card — fixed to viewport bottom on mobile, absolute on desktop ── */}
       <AnimatePresence>
         {selectedData && (
-          <motion.div
-            initial={{ opacity: 0, y: 10, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 10, scale: 0.95 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="absolute bottom-2 left-1/2 -translate-x-1/2 z-50"
-            style={{ pointerEvents: 'auto' }}
-          >
-            <div className="glass-card rounded-[var(--radius-md)] px-4 py-3 flex items-center gap-3 w-max max-w-[calc(100%-16px)]">
-              {/* Mini logo */}
-              <div className="w-9 h-9 rounded-full overflow-hidden border border-amber-400/30 flex-shrink-0"
-                style={{ boxShadow: `0 0 12px ${selectedData.glowColor}` }}
-              >
-                <Image src={selectedData.logo} alt={selectedData.name} width={36} height={36} className="w-full h-full object-cover" />
-              </div>
+          <>
+            {/* Backdrop — click to close */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 z-40"
+              onClick={() => setSelectedProject(null)}
+            />
 
-              {/* Info */}
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-text-primary">{selectedData.name}</span>
-                  <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold rounded-full ${selectedData.statusBg} ${selectedData.statusColor}`}>
-                    <span className="w-1 h-1 rounded-full bg-current animate-pulse" />
-                    {selectedData.status}
-                  </span>
+            {/* Card */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="fixed bottom-4 left-4 right-4 sm:absolute sm:bottom-2 sm:left-4 sm:right-4 z-50"
+              style={{ pointerEvents: 'auto' }}
+            >
+              <div className="glass-card rounded-[var(--radius-md)] p-3 flex items-center gap-3 mx-auto max-w-md">
+                {/* Mini logo */}
+                <div className="w-10 h-10 sm:w-9 sm:h-9 rounded-full overflow-hidden flex-shrink-0"
+                  style={{ border: `2px solid color-mix(in srgb, ${selectedData.glowColor} 50%, transparent)`, boxShadow: `0 0 12px ${selectedData.glowColor}` }}
+                >
+                  <Image src={selectedData.logo} alt={selectedData.name} width={40} height={40} className="w-full h-full object-cover" />
                 </div>
-                <p className="text-[11px] text-text-tertiary truncate">{selectedData.description}</p>
+
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-sm font-bold text-text-primary">{selectedData.name}</span>
+                    <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 text-[9px] font-semibold rounded-full ${selectedData.statusBg} ${selectedData.statusColor}`}>
+                      <span className="w-1 h-1 rounded-full bg-current animate-pulse" />
+                      {selectedData.status}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-text-tertiary leading-tight mt-0.5">{selectedData.description}</p>
+                </div>
+
+                {/* CTA */}
+                {selectedData.comingSoon ? (
+                  <span className="text-[10px] flex-shrink-0 text-text-tertiary font-medium whitespace-nowrap">
+                    Soon
+                  </span>
+                ) : selectedData.external ? (
+                  <a href={selectedData.href} target="_blank" rel="noopener noreferrer"
+                    className="glass-btn px-3 py-1.5 text-xs flex-shrink-0 inline-flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Play
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
+                  </a>
+                ) : (
+                  <Link href={selectedData.href}
+                    className="glass-btn px-3 py-1.5 text-xs flex-shrink-0 inline-flex items-center gap-1"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Open
+                    <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+                  </Link>
+                )}
+
+                {/* Close */}
+                <button onClick={() => setSelectedProject(null)} className="p-1.5 -mr-1 text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0">
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
               </div>
-
-              {/* CTA */}
-              {selectedData.comingSoon ? (
-                <span className="px-3 py-1.5 text-xs flex-shrink-0 text-text-tertiary font-medium">
-                  Coming soon
-                </span>
-              ) : selectedData.external ? (
-                <a href={selectedData.href} target="_blank" rel="noopener noreferrer"
-                  className="glass-btn px-3 py-1.5 text-xs flex-shrink-0 inline-flex items-center gap-1"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Play
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" /></svg>
-                </a>
-              ) : (
-                <Link href={selectedData.href}
-                  className="glass-btn px-3 py-1.5 text-xs flex-shrink-0 inline-flex items-center gap-1"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  Open
-                  <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
-                </Link>
-              )}
-
-              {/* Close */}
-              <button onClick={() => setSelectedProject(null)} className="p-1 text-text-tertiary hover:text-text-primary transition-colors flex-shrink-0">
-                <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
-          </motion.div>
+            </motion.div>
+          </>
         )}
       </AnimatePresence>
 
