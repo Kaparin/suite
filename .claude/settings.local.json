@@ -71,7 +71,10 @@
       "Bash(ls:*)",
       "Bash(do if:*)",
       "Bash(echo === FOUND in $chunk ===:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(git status:*)",
+      "WebFetch(domain:opensea.io)",
+      "Bash(head:*)"
     ]
   }
 }

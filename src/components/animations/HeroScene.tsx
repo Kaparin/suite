@@ -98,10 +98,27 @@ export function HeroScene({ className = '' }: { className?: string }) {
               transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
               style={{ transformStyle: 'preserve-3d' }}
             >
-              <div className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-amber-400/30">
+              {/* Front side */}
+              <div
+                className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-amber-400/30"
+                style={{ backfaceVisibility: 'hidden' }}
+              >
                 <Image
                   src="/coin-token-logo.png"
-                  alt="Heads or Tails"
+                  alt="Heads"
+                  width={56}
+                  height={56}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              {/* Back side */}
+              <div
+                className="absolute inset-0 rounded-full overflow-hidden shadow-[0_0_20px_rgba(245,158,11,0.4)] border-2 border-amber-400/30"
+                style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}
+              >
+                <Image
+                  src="/coin-token-logo.back.png"
+                  alt="Tails"
                   width={56}
                   height={56}
                   className="w-full h-full object-cover"
