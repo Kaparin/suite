@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react'
 import { AXMPriceTicker } from '@/components/price/AXMPriceTicker'
+import { MeshGradient } from '@/components/animations/MeshGradient'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -199,27 +200,47 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen">
+      {/* Animated mesh gradient background — visible on all sections */}
+      <MeshGradient />
 
       {/* ════ HERO ════ */}
-      <section className="relative pt-12 sm:pt-16 md:pt-24 pb-16 sm:pb-20 overflow-hidden">
-        {/* Subtle background gradient */}
-        <div className="absolute inset-0 bg-gradient-to-b from-accent/5 via-transparent to-transparent pointer-events-none" />
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-accent/8 rounded-full blur-[120px] pointer-events-none" />
+      <section className="relative pt-10 sm:pt-14 md:pt-20 pb-16 sm:pb-24 overflow-hidden">
+        {/* Hero-specific glow — brighter accent blob behind logo area */}
+        <motion.div
+          className="absolute top-[-10%] left-1/2 -translate-x-1/2 w-[500px] sm:w-[700px] md:w-[900px] h-[400px] sm:h-[500px] md:h-[600px] pointer-events-none"
+          style={{
+            background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.15) 0%, rgba(139, 92, 246, 0.08) 30%, transparent 70%)',
+            filter: 'blur(60px)',
+          }}
+          animate={{ scale: [1, 1.05, 1], opacity: [0.8, 1, 0.8] }}
+          transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
+        />
 
         <div className="container-page relative z-10">
-          {/* Logo */}
+          {/* Logo — large, with animated glow underneath */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="text-center mb-8"
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
+            className="text-center mb-6 sm:mb-10 relative"
           >
+            {/* Glow layer beneath logo */}
+            <motion.div
+              className="absolute left-1/2 -translate-x-1/2 top-[55%] w-[300px] sm:w-[500px] md:w-[700px] h-[120px] sm:h-[180px] md:h-[220px] pointer-events-none"
+              style={{
+                background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.25) 0%, rgba(139, 92, 246, 0.15) 30%, transparent 70%)',
+                filter: 'blur(40px)',
+              }}
+              animate={{ opacity: [0.5, 0.8, 0.5], scale: [1, 1.08, 1] }}
+              transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+            />
+
             <Image
               src="/axiome-launch-suite-logo.png"
               alt="Axiome Launch Suite"
-              width={700}
-              height={252}
-              className="h-24 sm:h-36 md:h-48 w-auto object-contain mx-auto"
+              width={800}
+              height={288}
+              className="h-28 sm:h-40 md:h-56 lg:h-64 w-auto object-contain mx-auto relative z-10 drop-shadow-[0_0_30px_rgba(32,129,226,0.2)]"
               priority
             />
           </motion.div>
@@ -236,8 +257,10 @@ export default function HomePage() {
                 ))}
               </motion.div>
 
-              <motion.h1 variants={staggerItem} className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold leading-[1.1] mb-5 text-text-primary">
-                {t('hero.title')}
+              <motion.h1 variants={staggerItem} className="text-3xl sm:text-4xl md:text-5xl lg:text-[56px] font-bold leading-[1.1] mb-5">
+                <span className="bg-gradient-to-r from-white via-blue-100 to-blue-200 bg-clip-text text-transparent">
+                  {t('hero.title')}
+                </span>
               </motion.h1>
 
               <motion.p variants={staggerItem} className="text-base sm:text-lg text-text-secondary max-w-xl mx-auto lg:mx-0 leading-relaxed mb-4">
@@ -247,12 +270,12 @@ export default function HomePage() {
 
               <motion.div variants={staggerItem} className="flex flex-wrap justify-center lg:justify-start items-center gap-3 mb-5">
                 <Link href="#projects"
-                  className="inline-flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent-hover text-white text-sm sm:text-base font-semibold rounded-[var(--radius-md)] shadow-sm hover:shadow-md transition-all duration-200 active:scale-[0.97]"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 bg-accent hover:bg-accent-hover text-white text-sm sm:text-base font-semibold rounded-[var(--radius-md)] shadow-md shadow-accent/20 hover:shadow-lg hover:shadow-accent/30 transition-all duration-200 active:scale-[0.97]"
                 >
                   {t('hero.cta1')}
                 </Link>
                 <Link href="/explorer"
-                  className="inline-flex items-center gap-2 px-6 py-3 border border-border hover:border-border-hover text-text-primary text-sm sm:text-base font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2 active:scale-[0.97]"
+                  className="inline-flex items-center gap-2 px-7 py-3.5 border border-border hover:border-border-hover text-text-primary text-sm sm:text-base font-semibold rounded-[var(--radius-md)] transition-all duration-200 hover:bg-surface-2 active:scale-[0.97]"
                 >
                   {t('hero.cta2')}
                 </Link>
@@ -278,7 +301,12 @@ export default function HomePage() {
               className="hidden lg:block"
             >
               <div className="relative">
-                <div className="absolute -inset-4 bg-accent/5 rounded-[var(--radius-xl)] blur-2xl" />
+                <motion.div
+                  className="absolute -inset-4 rounded-[var(--radius-xl)]"
+                  style={{ background: 'radial-gradient(ellipse at center, rgba(32, 129, 226, 0.12) 0%, rgba(139, 92, 246, 0.06) 50%, transparent 70%)' }}
+                  animate={{ opacity: [0.6, 1, 0.6], scale: [1, 1.02, 1] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                />
 
                 <div className="relative bg-surface-1 border border-border rounded-[var(--radius-xl)] p-6 shadow-lg">
                   {/* Header row */}
