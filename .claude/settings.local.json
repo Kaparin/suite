@@ -74,7 +74,8 @@
       "Bash(python3:*)",
       "Bash(git status:*)",
       "WebFetch(domain:opensea.io)",
-      "Bash(head:*)"
+      "Bash(head:*)",
+      "Bash(npx next-image-size:*)"
     ]
   }
 }
