@@ -139,11 +139,11 @@ function ProjectSlider({ t }: { t: any }) {
                     <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-10">
                       <div className="shrink-0 self-center md:self-start">
                         <Image
-                          src="/checkers-logo-with-text.png"
+                          src="/checkers-logo-with-text2.png"
                           alt="Checkers"
                           width={200}
                           height={200}
-                          className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 object-contain opacity-90"
+                          className="w-28 h-28 sm:w-36 sm:h-36 md:w-44 md:h-44 object-contain"
                         />
                       </div>
 
