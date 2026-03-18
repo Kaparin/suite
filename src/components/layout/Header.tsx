@@ -207,7 +207,7 @@ export function Header() {
                               Staking
                             </Link>
                             <a
-                              href={`https://axiomechain.org/address/${address}`}
+                              href={`https://axiomechain.pro/address/${address}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="dropdown-item"

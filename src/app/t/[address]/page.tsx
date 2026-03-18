@@ -43,7 +43,7 @@ type TokenData = {
   } | null
 }
 
-const EXPLORER_URL = 'https://axiomechain.org'
+const EXPLORER_URL = 'https://axiomechain.pro'
 
 function formatSupply(supply: string, decimals: number): string {
   if (decimals === 0) return Number(supply).toLocaleString()

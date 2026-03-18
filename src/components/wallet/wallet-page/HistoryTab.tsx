@@ -27,7 +27,7 @@ import {
 import { useWallet, useTransactionHistory, truncateAddress } from '@/lib/wallet'
 import type { Transaction, TransactionType } from '@/lib/wallet'
 
-const EXPLORER_URL = 'https://axiomechain.org'
+const EXPLORER_URL = 'https://axiomechain.pro'
 
 type FilterType = 'all' | TransactionType
 

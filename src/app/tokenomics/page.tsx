@@ -420,7 +420,7 @@ export default function TokenomicsPage() {
               </div>
               <div className="flex flex-wrap gap-4">
                 <a
-                  href={`https://axiomechain.org/contract/${TOKEN_CONTRACT}`}
+                  href={`https://axiomechain.pro/contract/${TOKEN_CONTRACT}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-2 px-4 py-2 bg-violet-500/20 text-violet-400 rounded-lg hover:bg-violet-500/30 transition-colors"

@@ -287,7 +287,7 @@ export function SignTransactionFlow({
           </div>
           <p className="text-xl font-medium text-text-primary">{t('success')}</p>
           {txHash && (
-            <a href={`https://axiomechain.org/transactions/${txHash}`} target="_blank" rel="noopener noreferrer"
+            <a href={`https://axiomechain.pro/transactions/${txHash}`} target="_blank" rel="noopener noreferrer"
               className="text-sm text-accent hover:text-accent font-mono break-all transition-colors">
               TX: {txHash.slice(0, 16)}...{txHash.slice(-8)}
             </a>

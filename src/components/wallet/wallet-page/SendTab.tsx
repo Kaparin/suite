@@ -213,7 +213,7 @@ export function SendTab() {
 
             {txHash && (
               <a
-                href={`https://axiomechain.org/transactions/${txHash}`}
+                href={`https://axiomechain.pro/transactions/${txHash}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 text-accent hover:text-accent mb-6"

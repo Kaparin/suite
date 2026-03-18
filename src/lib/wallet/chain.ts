@@ -7,7 +7,7 @@ export const AXIOME_CHAIN = {
   network: process.env.NEXT_PUBLIC_AXIOME_NETWORK || 'axiome-1',
   rpc: process.env.NEXT_PUBLIC_AXIOME_RPC,
   rest: process.env.NEXT_PUBLIC_AXIOME_REST,
-  explorer: 'https://axiomechain.org',
+  explorer: 'https://axiomechain.pro',
   denom: 'uaxm',
   displayDenom: 'AXM',
   decimals: 6,
