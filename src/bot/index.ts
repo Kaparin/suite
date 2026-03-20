@@ -414,7 +414,20 @@ async function handleAuthStart(ctx: MyContext, payload: string) {
 
 // ── New member welcome (group/supergroup) — auto-deletes after 10s ───
 
-const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+/** Schedule message deletion via a separate serverless invocation */
+function scheduleDelete(chatId: number, messageId: number, delay: number) {
+  const url = `${SITE_URL}/api/telegram/delete-message`
+  fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chatId,
+      messageId,
+      delay,
+      secret: process.env.TELEGRAM_BOT_TOKEN,
+    }),
+  }).catch((err) => console.error('Failed to schedule delete:', err))
+}
 
 bot.on('chat_member', async (ctx) => {
   const update = ctx.chatMember
@@ -447,13 +460,8 @@ bot.on('chat_member', async (ctx) => {
       }
     )
 
-    // Wait then delete — must be awaited so serverless doesn't kill the process
-    await sleep(WELCOME_AUTO_DELETE_MS)
-    try {
-      await ctx.api.deleteMessage(update.chat.id, sent.message_id)
-    } catch (delErr) {
-      console.error('Failed to auto-delete welcome message:', delErr)
-    }
+    // Fire-and-forget: separate serverless function handles the delay + delete
+    scheduleDelete(update.chat.id, sent.message_id, WELCOME_AUTO_DELETE_MS)
   } catch (err) {
     console.error('Failed to send group welcome:', err)
   }
