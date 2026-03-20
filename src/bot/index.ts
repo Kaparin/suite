@@ -15,7 +15,7 @@ const COINFLIP_URL = 'https://coinflip.axiome-launch.com'
 const DOCS_URL = `${SITE_URL}/docs`
 
 /** Auto-delete timeout for group/channel welcome messages (ms) */
-const WELCOME_AUTO_DELETE_MS = 7_000
+const WELCOME_AUTO_DELETE_MS = 10_000
 
 // Session middleware
 bot.use(session({
@@ -412,7 +412,9 @@ async function handleAuthStart(ctx: MyContext, payload: string) {
   )
 }
 
-// ── New member welcome (group/supergroup) — auto-deletes after 7s ────
+// ── New member welcome (group/supergroup) — auto-deletes after 10s ───
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
 
 bot.on('chat_member', async (ctx) => {
   const update = ctx.chatMember
@@ -445,14 +447,13 @@ bot.on('chat_member', async (ctx) => {
       }
     )
 
-    // Auto-delete after 7 seconds
-    setTimeout(async () => {
-      try {
-        await ctx.api.deleteMessage(update.chat.id, sent.message_id)
-      } catch {
-        // Message may already be deleted or bot lacks permission — ignore
-      }
-    }, WELCOME_AUTO_DELETE_MS)
+    // Wait then delete — must be awaited so serverless doesn't kill the process
+    await sleep(WELCOME_AUTO_DELETE_MS)
+    try {
+      await ctx.api.deleteMessage(update.chat.id, sent.message_id)
+    } catch (delErr) {
+      console.error('Failed to auto-delete welcome message:', delErr)
+    }
   } catch (err) {
     console.error('Failed to send group welcome:', err)
   }
